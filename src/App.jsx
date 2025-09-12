@@ -9,7 +9,8 @@ function App() {
   return (
     <>
       console.log(init);
-      console.log(first)
+      console.log(first);
+      console.log(aaa);
     </>
   )
 }
