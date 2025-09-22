@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
-    const [isSidebarVisible, setIsSidebarVisible] = useState(false);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
-
+    const navigate=useNavigate();
+    const gotoAuth=()=>{
+        navigate("/AuthPage")
+    }
     useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY >= 250) {
@@ -148,15 +150,16 @@ const Header = () => {
                                     <i className="fal fa-arrow-right"></i>
                                 </Link>
                                 {/* Menu Sidebar */}
-                                <div className="menu-sidebar">
-                                    <button
-                                        className="bg-transparent"
-                                        onClick={() => setIsSidebarVisible(!isSidebarVisible)}
-                                    >
-                                        <span className="icon-bar"></span>
-                                        <span className="icon-bar"></span>
-                                        <span className="icon-bar"></span>
-                                    </button>
+                                <div className="menu-sidebar" onClick={gotoAuth}>
+                                    
+                                        <button
+                                            className="bg-transparent"
+                                        >
+                                            <span className="icon-bar"></span>
+                                            <span className="icon-bar"></span>
+                                            <span className="icon-bar"></span>
+                                        </button>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -165,56 +168,7 @@ const Header = () => {
                 {/* End Header Upper */}
             </header>
 
-            {/* Form Back Drop */}
-            <div
-                className={`form-back-drop ${isSidebarVisible ? 'side-content-visible' : ''}`}
-                onClick={() => setIsSidebarVisible(false)}
-            ></div>
 
-            {/* Hidden Sidebar */}
-            <section className={`hidden-bar ${isSidebarVisible ? 'side-content-visible' : ''}`}>
-                <div className="inner-box text-center">
-                    <div className="cross-icon">
-                        <span
-                            className="fa fa-times"
-                            onClick={() => setIsSidebarVisible(false)}
-                        ></span>
-                    </div>
-                    <div className="title">
-                        <h4>Get Appointment</h4>
-                    </div>
-
-                    {/* Appointment Form */}
-                    <div className="appointment-form">
-                        <form method="post" action="/contact">
-                            <div className="form-group">
-                                <input type="text" name="text" value="" placeholder="Name" required readOnly />
-                            </div>
-                            <div className="form-group">
-                                <input type="email" name="email" value="" placeholder="Email Address" required readOnly />
-                            </div>
-                            <div className="form-group">
-                                <textarea placeholder="Message" rows="5"></textarea>
-                            </div>
-                            <div className="form-group">
-                                <button type="submit" className="theme-btn style-two">
-                                    <span data-hover="Submit now">Submit now</span>
-                                    <i className="fal fa-arrow-right"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    {/* Social Icons */}
-                    <div className="social-style-one">
-                        <a href="/contact"><i className="fab fa-twitter"></i></a>
-                        <a href="/contact"><i className="fab fa-facebook-f"></i></a>
-                        <a href="/contact"><i className="fab fa-instagram"></i></a>
-                        <button className="social-link" aria-label="Pinterest"><i className="fab fa-pinterest-p"></i></button>
-                    </div>
-                </div>
-            </section>
-            {/* End Hidden Sidebar */}
         </>
     );
 };

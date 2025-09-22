@@ -1,8 +1,17 @@
-# React + Vite
+# Hotel Booking - Frontend (ReactJS)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🚀 Cài đặt
+### Yêu cầu
+- Node.js >= 18
+- npm hoặc yarn
 
-Currently, two official plugins are available:
+### Các bước
+```bash
+# Di chuyển vào thư mục frontend
+cd frontend
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Cài đặt dependencies
+npm install   # hoặc yarn install
+
+# Chạy ứng dụng
+npm start
