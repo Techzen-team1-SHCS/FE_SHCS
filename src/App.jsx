@@ -18,7 +18,7 @@ function App() {
         {/* Route KHÔNG dùng MainLayout */}
         <Route path="/AuthPage" element={<AuthPage />} />
       </Routes>
-      <div>test ci</div>
+      <div>test cd</div>
     </Router>
   )
 }
