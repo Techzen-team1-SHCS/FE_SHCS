@@ -1,5 +1,5 @@
 import React from "react";
-import HotelCard1 from "./HotelCard1";
+import HotelCard1 from "../HotelCard/HotelCard1";
 const topHotel = [
   {
     id: 1,
@@ -72,11 +72,7 @@ const Destinations = () => {
 
         <div className="row justify-content-center">
           {topHotel.map((topHotel, index) => (
-            <HotelCard1
-              key={topHotel.id}
-              topHotel={topHotel}
-              aosDelay={index * 100}
-            />
+            <HotelCard1 key={topHotel.id} topHotel={topHotel} aosDelay={index * 100} />
           ))}
         </div>
       </div>

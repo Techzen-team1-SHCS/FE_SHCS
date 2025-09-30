@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import initScripts from '../utils/initScripts';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
+import initScripts from '../../utils/initScripts';
 import { Outlet } from 'react-router-dom';
 const MainLayout = ({ children }) => {
     useEffect(() => {
