@@ -1,8 +1,8 @@
 import React from 'react'
-import "../assets/fonts/material-icon/css/material-design-iconic-font.min.css";
-import "../assets/css/style.css";
-import signupImage from "../assets/images/signup-image.jpg";
-import signinImage from "../assets/images/signin-image.jpg";
+import "../../assets/fonts/material-icon/css/material-design-iconic-font.min.css";
+import "../../assets/css/style.css";
+import signupImage from "../../assets/images/signup-image.jpg";
+import signinImage from "../../assets/images/signin-image.jpg";
 function AuthPage() {
     return (
         <div><div className="main">

@@ -1,5 +1,6 @@
 import React from "react";
-import HotelCard3 from "./HotelCard3";
+import HotelCard from "../HotelCard/HotelCard1";
+import HotelCard3 from "../HotelCard/HotelCard3";
 
 const hotelsData = [
   {
@@ -93,7 +94,7 @@ const HotelSection = () => {
         </div>
 
         <div className="row justify-content-center">
-          {hotelsData.map((hotel,index) => (
+          {hotelsData.map((hotel, index) => (
             <HotelCard3 key={hotel.id} hotel={hotel} aosDelay={hotel.delay} index={index} />
           ))}
         </div>

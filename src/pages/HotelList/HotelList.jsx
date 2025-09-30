@@ -1,7 +1,7 @@
 import React from 'react'
-import SearchBar from '../components/SearchBar'
-import Breadcrumb from '../components/Breadcrumb'
-import Hotel from '../components/Hotel';
+import SearchBar from '../../components/SearchBar/SearchBar'
+import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
+import Hotel from '../../components/Hotel/Hotel';
 
 function HotelList() {
     const tours = [
@@ -16,7 +16,7 @@ function HotelList() {
             description: "Bali, Indonesia, is tropical paradise renowned breathtaking beaches, vibrant culture, and lush landscapes",
             duration: "3 days 2 nights",
             guests: "5-8 guest",
-            rating:3
+            rating: 3
         },
         {
             id: 2,
@@ -28,7 +28,7 @@ function HotelList() {
             description: "Bali, Indonesia, is tropical paradise renowned breathtaking beaches, vibrant culture, and lush landscapes",
             duration: "3 days 2 nights",
             guests: "5-8 guest",
-            rating:2
+            rating: 2
         },
         {
             id: 3,
@@ -39,7 +39,7 @@ function HotelList() {
             description: "Bali, Indonesia, is tropical paradise renowned breathtaking beaches, vibrant culture, and lush landscapes",
             duration: "3 days 2 nights",
             guests: "5-8 guest",
-            rating:3
+            rating: 3
         },
         {
             id: 4,
@@ -52,7 +52,7 @@ function HotelList() {
             description: "Bali, Indonesia, is tropical paradise renowned breathtaking beaches, vibrant culture, and lush landscapes",
             duration: "3 days 2 nights",
             guests: "5-8 guest",
-            rating:5
+            rating: 5
         }
     ];
     return (

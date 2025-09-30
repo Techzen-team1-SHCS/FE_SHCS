@@ -1,5 +1,5 @@
 import React from 'react';
-import SearchBar from './SearchBar';
+import SearchBar from '../SearchBar/SearchBar';
 
 const HeroSection = () => {
     return (
@@ -20,7 +20,7 @@ const HeroSection = () => {
                 >
                 </div>
             </div>
-            <SearchBar/>
+            <SearchBar />
         </section>
     );
 };

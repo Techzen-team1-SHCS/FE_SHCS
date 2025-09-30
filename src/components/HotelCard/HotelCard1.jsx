@@ -1,6 +1,6 @@
 import React from 'react'
 
-const HotelCard = ({ topHotel, aosDelay }) => {
+const HotelCard1 = ({ topHotel, aosDelay }) => {
     return (
         <div className="col-xxl-3 col-xl-4 col-md-6">
             <div
@@ -41,4 +41,4 @@ const HotelCard = ({ topHotel, aosDelay }) => {
     )
 }
 
-export default HotelCard
+export default HotelCard1
