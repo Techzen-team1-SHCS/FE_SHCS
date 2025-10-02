@@ -1,10 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { hotelApi } from '../../api';
 const Header = () => {
+    const [searchTerm, setSearchTerm] = useState('');
     const [isScrolled, setIsScrolled] = useState(false);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const navigate = useNavigate();
+     const handleSearchSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!searchTerm.trim()) return;
+      // CÁCH 3: Chỉ chuyển hướng URL, không gọi API
+      const searchUrl = hotelApi.createSearchUrl(searchTerm);
+      navigate(searchUrl);
+
+      // Ẩn form search sau khi tìm kiếm
+      setIsSearchVisible(false);
+      setSearchTerm('');
+  };
     const gotoAuth = () => {
         navigate("/AuthPage")
     }
@@ -164,8 +177,9 @@ const Header = () => {
                                     className="far fa-search"
                                     onClick={() => setIsSearchVisible(!isSearchVisible)}
                                 ></button>
-                                <form className={isSearchVisible ? '' : 'hide'}>
-                                    <input type="text" placeholder="Search" className="searchbox" required="" />
+                                <form className={isSearchVisible ? '' : 'hide'} onSubmit={handleSearchSubmit}>
+                                    <input type="text" placeholder="Search" className="searchbox" required="" value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)} />
                                     <button type="submit" className="searchbutton far fa-search"></button>
                                 </form>
                             </div>
