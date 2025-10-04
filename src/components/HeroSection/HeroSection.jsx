@@ -4,7 +4,7 @@ import SearchBar from '../SearchBar/SearchBar';
 const HeroSection = () => {
     return (
         <section className="hero-area bgc-black pt-200 rpt-120 rel z-2">
-            <div className="container-fluid">
+            <div className="container-fluid px-0">
                 <h1
                     className="hero-title"
                     data-aos="flip-up"
@@ -16,7 +16,7 @@ const HeroSection = () => {
                 </h1>
                 <div
                     className="main-hero-image bgs-cover"
-                    style={{ backgroundImage: 'url(/assets/images/hero/hero.jpg)' }}
+                    style={{ backgroundImage: 'url(/assets/images/hero/hero.png)' }}
                 >
                 </div>
             </div>

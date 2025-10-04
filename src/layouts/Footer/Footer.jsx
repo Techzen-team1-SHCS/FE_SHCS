@@ -1,9 +1,100 @@
-import React from "react";
 import { Link } from "react-router-dom";
-
+import React from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 const Footer = () => {
+  // Email validation schema
+  const emailSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("❌ Email không hợp lệ")
+      .required("❌ Vui lòng nhập email")
+      .matches(
+        /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+        "❌ Email phải có định dạng example@domain.com"
+      )
+      .test(
+        "is-gmail",
+        "❌ Chỉ chấp nhận email Gmail",
+        (value) => {
+          if (!value) return true;
+          return value.toLowerCase().endsWith('@gmail.com');
+        }
+      )
+    // .test(
+    //   "no-special-chars-before-at",
+    //   "❌ Phần trước @ không được chứa ký tự đặc biệt",
+    //   function(value) { // Sử dụng function thay vì arrow function để có this
+    //     if (!value || !value.includes('@')) return true;
+
+    //     const localPart = value.split('@')[0];
+    //     const validLocalPartRegex = /^[A-Z0-9._+-]+$/i;
+
+    //     // Kiểm tra nếu có ký tự không hợp lệ
+    //     if (!validLocalPartRegex.test(localPart)) {
+    //       const invalidChars = localPart.match(/[^A-Z0-9._+-]/gi);
+    //       if (invalidChars && invalidChars.length > 0) {
+    //         const uniqueInvalidChars = [...new Set(invalidChars)];
+    //         return this.createError({
+    //           message: `❌ Phần trước @ chứa ký tự đặc biệt không hợp lệ: ${uniqueInvalidChars.join(', ')}. Chỉ cho phép . _ % + -`
+    //         });
+    //       }
+    //     }
+    //     return true;
+    //   }
+    // )
+    // .test(
+    //   "no-special-chars-after-at",
+    //   "❌ Phần sau @ không được chứa ký tự đặc biệt ngoại trừ . -",
+    //   (value) => {
+    //     if (!value || !value.includes('@')) return true;
+
+    //     const domainPart = value.split('@')[1];
+    //     const validDomainPartRegex = /^[A-Z0-9.-]+$/i;
+
+    //     if (!validDomainPartRegex.test(domainPart)) {
+    //       const invalidChars = domainPart.match(/[^A-Z0-9.-]/gi);
+    //       if (invalidChars && invalidChars.length > 0) {
+    //         const uniqueInvalidChars = [...new Set(invalidChars)];
+    //         return `❌ Phần sau @ chứa ký tự đặc biệt không hợp lệ: ${uniqueInvalidChars.join(', ')}. Chỉ cho phép . -`;
+    //       }
+    //     }
+    //     return true;
+    //   }
+    // )
+    // .test(
+    //   "no-consecutive-special-chars",
+    //   "❌ Không được có hai ký tự đặc biệt liên tiếp nhau",
+    //   (value) => {
+    //     if (!value) return true;
+    //     const consecutiveSpecialCharsRegex = /[._%+-]{2,}/;
+    //     return !consecutiveSpecialCharsRegex.test(value);
+    //   }
+    // )
+  });
+
+  // Formik setup
+  const formik = useFormik({
+    initialValues: {
+      email: ""
+    },
+    validationSchema: emailSchema,
+    onSubmit: async (values, { resetForm, setSubmitting }) => {
+      try {
+        console.log("Email hợp lệ:", values.email);
+        toast.success(`✅ Đăng ký thành công! Chúng tôi sẽ gửi tin tức đến: ${values.email}`);
+        resetForm();
+      } catch (error) {
+        console.error("Lỗi submit:", error);
+      } finally {
+        setSubmitting(false);
+      }
+    }
+  });
+
   // -----------------------------
-  // Footer menu data
+  // Footer menu data (giữ nguyên)
   // -----------------------------
   const footerLinks = [
     {
@@ -140,27 +231,63 @@ const Footer = () => {
                   most popular experience you'll remember
                 </p>
               </div>
-              <form className="newsletter-form mb-50" action="#">
-                <input
-                  id="news-email"
-                  type="email"
-                  placeholder="Email Address"
-                  required
-                />
+
+              {/* Formik Form */}
+              <form
+                className="newsletter-form mb-50 justify-content-between"
+                onSubmit={formik.handleSubmit}
+                noValidate
+              >
+                <div>
+                  <input
+                    id="news-email"
+                    name="email"
+                    type="email"
+                    placeholder="Email Address"
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className={formik.errors.email && formik.touched.email ? "error" : ""}
+                    disabled={formik.isSubmitting}
+                  />
+                </div>
                 <button
                   type="submit"
+                  disabled={formik.isSubmitting}
                   className="theme-btn bgc-secondary style-two"
+                  style={{ maxHeight: '50px' }}
                 >
-                  <span data-hover="Subscribe">Subscribe</span>
-                  <i className="fal fa-arrow-right"></i>
+                  {formik.isSubmitting ? (
+                    "Đang xử lý..."
+                  ) : (
+                    <>
+                      <span data-hover="Subscribe">Subscribe</span>
+                      <i className="fal fa-arrow-right"></i>
+                    </>
+                  )}
                 </button>
               </form>
+
+              {/* Error Message */}
+              {formik.errors.email && formik.touched.email && (
+                <div
+                  className="error-message"
+                  style={{
+                    color: '#ff6b6b',
+                    fontSize: '12px',
+                    marginTop: '0px',
+                    textAlign: 'left',
+                  }}
+                >
+                  {formik.errors.email}
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Widgets area */}
+      {/* Widgets area (giữ nguyên) */}
       <div className="widget-area pt-95 pb-45">
         <div className="container">
           <div className="row row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-2">
@@ -218,7 +345,7 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom section */}
+      {/* Bottom section (giữ nguyên) */}
       <div className="footer-bottom pt-20 pb-5">
         <div className="container">
           <div className="row">

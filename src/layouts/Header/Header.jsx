@@ -37,22 +37,22 @@ const Header = () => {
         {
             label: "Home",
             path: "/",
-            sub: [
-                { label: "Travel Agency", path: "/" },
-                { label: "City Tour", path: "/city-tour" },
-                { label: "Tour Package", path: "/tour-package" },
-            ],
+            // sub: [
+            //     { label: "Travel Agency", path: "/" },
+            //     { label: "City Tour", path: "/city-tour" },
+            //     { label: "Tour Package", path: "/tour-package" },
+            // ],
         },
-        { label: "About", path: "/about" },
+        { label: "About", path: "/About", },
         {
-            label: "Tours",
-            path: "/tours",
+            label: "Hotels",
+            path: "/Hotels",
             sub: [
                 { label: "Hotel List", path: "/HotelList" },
-                { label: "Tour Grid", path: "/tour-grid" },
-                { label: "Tour Sidebar", path: "/tour-sidebar" },
-                { label: "Tour Details", path: "/tour-details" },
-                { label: "Tour Guide", path: "/tour-guide" },
+                // { label: "Tour Grid", path: "/tour-grid" },
+                // { label: "Tour Sidebar", path: "/tour-sidebar" },
+                { label: "Hotel Details", path: "/HotelDetail" },
+                // { label: "Tour Guide", path: "/tour-guide" },
             ],
         },
         {
@@ -60,42 +60,42 @@ const Header = () => {
             path: "/destinations",
             sub: [
                 { label: "Destination 01", path: "/destination1" },
-                { label: "Destination 02", path: "/destination2" },
-                { label: "Destination Details", path: "/destination-details" },
+                // { label: "Destination 02", path: "/destination2" },
+                // { label: "Destination Details", path: "/destination-details" },
             ],
         },
         {
             label: "Pages",
             path: "/pages",
             sub: [
-                { label: "Pricing", path: "/pricing" },
-                { label: "FAQs", path: "/faqs" },
-                {
-                    label: "Gallery",
-                    path: "/gallery",
-                    sub: [
-                        { label: "Gallery Grid", path: "/gallery-grid" },
-                        { label: "Gallery Slider", path: "/gallery-slider" },
-                    ],
-                },
-                {
-                    label: "Products",
-                    path: "/products",
-                    sub: [
-                        { label: "Our Products", path: "/shop" },
-                        { label: "Product Details", path: "/product-details" },
-                    ],
-                },
-                { label: "Contact Us", path: "/contact" },
-                { label: "404 Error", path: "/404" },
+                // { label: "Pricing", path: "/pricing" },
+                // { label: "FAQs", path: "/faqs" },
+                // {
+                //     label: "Gallery",
+                //     path: "/gallery",
+                //     sub: [
+                //         { label: "Gallery Grid", path: "/gallery-grid" },
+                //         { label: "Gallery Slider", path: "/gallery-slider" },
+                //     ],
+                // },
+                // {
+                //     label: "Products",
+                //     path: "/products",
+                //     sub: [
+                //         { label: "Our Products", path: "/shop" },
+                //         { label: "Product Details", path: "/product-details" },
+                //     ],
+                // },
+                { label: "Contact Us", path: "/ContactUs" },
+                { label: "404 Error", path: "*" },
             ],
         },
         {
             label: "Blog",
             path: "/blog",
             sub: [
-                { label: "Blog List", path: "/blog" },
-                { label: "Blog Details", path: "/blog-details" },
+                { label: "Blog List", path: "/BlogList" },
+                // { label: "Blog Details", path: "/blog-details" },
             ],
         },
     ];
@@ -172,7 +172,7 @@ const Header = () => {
                             </div>
 
                             {/* Nav Search */}
-                            <div className="nav-search">
+                            {/* <div className="nav-search">
                                 <button
                                     className="far fa-search"
                                     onClick={() => setIsSearchVisible(!isSearchVisible)}
@@ -182,7 +182,7 @@ const Header = () => {
                                         onChange={(e) => setSearchTerm(e.target.value)} />
                                     <button type="submit" className="searchbutton far fa-search"></button>
                                 </form>
-                            </div>
+                            </div> */}
 
                             {/* Menu Button */}
                             <div className="menu-btns py-10">
@@ -191,7 +191,7 @@ const Header = () => {
                                     <i className="fal fa-arrow-right"></i>
                                 </Link>
                                 {/* Menu Sidebar */}
-                                <div className="menu-sidebar" onClick={gotoAuth}>
+                                {/* <div className="menu-sidebar" onClick={gotoAuth}>
 
                                     <button
                                         className="bg-transparent"
@@ -201,7 +201,7 @@ const Header = () => {
                                         <span className="icon-bar"></span>
                                     </button>
 
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

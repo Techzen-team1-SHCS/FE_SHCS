@@ -61,7 +61,7 @@ const AboutUs = () => {
                   </div>
                 </div>
               </div>
-              <a href="destination1.html" className="theme-btn mt-10 style-two">
+              <a href="HotelList" className="theme-btn mt-10 style-two">
                 <span data-hover="Explore Destinations">
                   Explore Destinations
                 </span>
