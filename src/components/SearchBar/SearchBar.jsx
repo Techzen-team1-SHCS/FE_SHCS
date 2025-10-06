@@ -1,17 +1,50 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function SearchBar() {
     const [filters, setFilters] = useState({
         destination: "",
         roomType: "",
         checkIn: "",
         checkOut: "",
-        guests: ""
+        guests: "",
+        searchTerm: ""
     });
     const [showDropdown, setShowDropdown] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(null); // 'checkIn' hoặc 'checkOut'
-    const navigate=useNavigate();
+    const navigate = useNavigate();
+
+    const handleSearchInput = (e) => {
+    const value = e.target.value;
+    const regex = /^[a-zA-Z0-9\s]*$/; // chỉ cho chữ, số, khoảng trắng
+
+    // Nếu nhập ký tự đặc biệt
+    if (!regex.test(value)) {
+        toast.error("❌ Không được chứa ký tự đặc biệt");
+        // Reset về giá trị trước đó
+        setFilters(prev => ({
+            ...prev,
+            searchTerm: prev.searchTerm || ""
+        }));
+        return;
+    }
+     if (value.length > 12) {
+        const trimmedValue = value.slice(0, 12); // Cắt chỉ lấy 12 ký tự đầu
+        setFilters(prev => ({
+            ...prev,
+            searchTerm: trimmedValue
+        }));
+        toast.error("❌ Từ khóa tìm kiếm tối đa 12 ký tự");
+        return;
+    }
+
+    // Update state bình thường (maxLength sẽ tự giới hạn)
+    setFilters(prev => ({
+        ...prev,
+        searchTerm: value
+    }));
+};
     const handleOptionSelect = (key, value) => {
         setFilters(prev => ({
             ...prev,
@@ -21,44 +54,60 @@ function SearchBar() {
     };
 
     const handleDateSelect = (date) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // reset giờ
+
+        const selectedDate = new Date(date);
+
+        if (selectedDate <= today) {
+            toast.error("❌ Không thể chọn ngày hiện tại hoặc quá khứ");
+            return;
+        }
+
         if (showDatePicker === 'checkIn') {
             setFilters(prev => ({ ...prev, checkIn: date }));
-            // Tự động chuyển sang chọn checkOut nếu chưa có
             if (!filters.checkOut) {
                 setShowDatePicker('checkOut');
             } else {
                 setShowDatePicker(null);
             }
         } else if (showDatePicker === 'checkOut') {
+            // check-out phải sau check-in
+            if (filters.checkIn && selectedDate <= new Date(filters.checkIn)) {
+                toast.error("❌ Ngày trả phòng phải sau ngày nhận phòng");
+                return;
+            }
             setFilters(prev => ({ ...prev, checkOut: date }));
             setShowDatePicker(null);
         }
     };
 
+
     const handleSearch = async () => {
-    // Kiểm tra điều kiện check-out phải sau check-in
-    if (filters.checkIn && filters.checkOut) {
-        const checkInDate = new Date(filters.checkIn);
-        const checkOutDate = new Date(filters.checkOut);
+        // Kiểm tra điều kiện check-out phải sau check-in
+        if (filters.checkIn && filters.checkOut) {
+            const checkInDate = new Date(filters.checkIn);
+            const checkOutDate = new Date(filters.checkOut);
 
-        if (checkOutDate <= checkInDate) {
-            alert('❌ LỖI: Ngày trả phòng phải sau ngày nhận phòng');
-            return; // Thêm return để dừng hàm
+            if (checkOutDate <= checkInDate) {
+                toast.error("❌ Ngày trả phòng phải sau ngày nhận phòng");
+                return; // Thêm return để dừng hàm
+            }
         }
-    }
 
-    // Tạo search params cho URL
-    const searchParams = new URLSearchParams({
-        destination: filters.destination || '',
-        roomType: filters.roomType || '',
-        checkIn: filters.checkIn || '',
-        checkOut: filters.checkOut || '',
-        guests: filters.guests || ''
-    });
+        // Tạo search params cho URL
+        const searchParams = new URLSearchParams({
+            destination: filters.destination || '',
+            roomType: filters.roomType || '',
+            checkIn: filters.checkIn || '',
+            checkOut: filters.checkOut || '',
+            guests: filters.guests || '',
+            searchTerm: filters.searchTerm || ''
+        });
 
-    // Chuyển hướng đến HotelList với query parameters
-    navigate(`/HotelList?${searchParams.toString()}`);
-};
+        // Chuyển hướng đến HotelList với query parameters
+        navigate(`/HotelList?${searchParams.toString()}`);
+    };
 
     // Tạo lịch cho 2 tháng
     const generateCalendar = () => {
@@ -207,12 +256,12 @@ function SearchBar() {
                 {/* Room Type Dropdown */}
                 <div className="filter-item clearfix" style={{ position: 'relative' }}>
                     <div className="icon"><i className="fal fa-bed"></i></div>
-                    <span className="title">Loại phòng</span>
+                    <span className="title">Thể loại</span>
                     <div
                         style={dropdownStyle}
                         onClick={() => setShowDropdown(showDropdown === 'roomType' ? null : 'roomType')}
                     >
-                        {filters.roomType || "Chọn loại phòng"}
+                        {filters.roomType || "Chọn thể loại"}
                     </div>
                     {showDropdown === 'roomType' && (
                         <div style={dropdownMenuStyle}>
@@ -286,9 +335,13 @@ function SearchBar() {
 
 
                 {/* Search Button */}
-                <div className="search-button">
+                <div className="search-button   display-flex ">
+                    <input className='w-50 p-1 ' type="text" placeholder="Search" required="" maxLength={13} value={filters.searchTerm}
+                        onChange={handleSearchInput}>
+                    </input>
                     <button
-                        className="theme-btn"
+                        className="theme-btn w-50 "
+                        style={{ marginLeft: '20px' }}
                         onClick={handleSearch}
 
                     >
@@ -296,6 +349,19 @@ function SearchBar() {
                         <i className="far fa-search"></i>
                     </button>
                 </div>
+                {/* Nav Search */}
+                {/* <div className="nav-search">
+                    
+                    <button
+                        className="far fa-search"
+                        onClick={() => setIsSearchVisible(!isSearchVisible)}
+                    ></button>
+                    <form className={isSearchVisible ? '' : 'hide'} onSubmit={handleSearch}>
+                        <input type="text" placeholder="Search" className="searchbox" required="" value={filters.searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)} />
+                        <button type="submit" className="searchbutton far fa-search"></button>
+                    </form>
+                </div> */}
             </div>
         </div>
     )

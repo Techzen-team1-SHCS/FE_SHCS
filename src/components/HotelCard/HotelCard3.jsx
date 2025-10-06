@@ -1,7 +1,7 @@
 import React from "react";
 
 const HotelCard3 = ({ hotel, aosDelay,index }) => {
-    const isContentFirst = index < 2;
+    const isContentFirst = index <2;
   return (
     
     <div className="col-xxl-6 col-xl-8 col-lg-10">

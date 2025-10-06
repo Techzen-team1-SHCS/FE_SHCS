@@ -1,6 +1,11 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const HotelCard1 = ({ topHotel, aosDelay }) => {
+    const navigate=useNavigate();
+    const gotoHotelList = () => {
+        navigate("/HotelList")
+    }
     return (
         <div className="col-xxl-3 col-xl-4 col-md-6">
             <div
@@ -32,7 +37,7 @@ const HotelCard1 = ({ topHotel, aosDelay }) => {
                     <span className="price">
                         <span>{topHotel.price}</span>/per person
                     </span>
-                    <a href="#" className="read-more">
+                    <a href="/HotelDetail" className="read-more">
                         Book Now <i className="fal fa-angle-right"></i>
                     </a>
                 </div>

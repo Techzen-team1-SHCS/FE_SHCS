@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import HotelCard from "../HotelCard/HotelCard1";
 import HotelCard3 from "../HotelCard/HotelCard3";
 
@@ -67,9 +67,63 @@ const hotelsData = [
     ],
     delay: 50,
   },
+  {
+    id: 5,
+    img: "assets/images/destinations/hotel4.jpg",
+    title: "House pool Jungle Pool Indonesia Hotel",
+    location: "Ao Nang, Thailand",
+    link: "#",
+    rating: 4.8,
+    price: "$85.00",
+    features: [
+      { icon: "fal fa-bed-alt", text: "2 Bed room" },
+      { icon: "fal fa-hat-chef", text: "1 kitchen" },
+      { icon: "fal fa-bath", text: "2 Wash room" },
+      { icon: "fal fa-router", text: "Internet" },
+    ],
+    delay: 50,
+  },
+  {
+    id: 6,
+    img: "assets/images/destinations/hotel4.jpg",
+    title: "House pool Jungle Pool Indonesia Hotel",
+    location: "Ao Nang, Thailand",
+    link: "#",
+    rating: 4.8,
+    price: "$85.00",
+    features: [
+      { icon: "fal fa-bed-alt", text: "2 Bed room" },
+      { icon: "fal fa-hat-chef", text: "1 kitchen" },
+      { icon: "fal fa-bath", text: "2 Wash room" },
+      { icon: "fal fa-router", text: "Internet" },
+    ],
+    delay: 50,
+  },
+  {
+    id: 7,
+    img: "assets/images/destinations/hotel4.jpg",
+    title: "House pool Jungle Pool Indonesia Hotel",
+    location: "Ao Nang, Thailand",
+    link: "#",
+    rating: 4.8,
+    price: "$85.00",
+    features: [
+      { icon: "fal fa-bed-alt", text: "2 Bed room" },
+      { icon: "fal fa-hat-chef", text: "1 kitchen" },
+      { icon: "fal fa-bath", text: "2 Wash room" },
+      { icon: "fal fa-router", text: "Internet" },
+    ],
+    delay: 50,
+  },
 ];
 
 const HotelSection = () => {
+  const [showAll, setShowAll] = useState(false);
+
+  const handleLoadMore = () => {
+    setShowAll(true);
+  };
+  const hotelsToShow = showAll ? hotelsData : hotelsData.slice(0, 4);
   return (
     <section className="hotel-area bgc-black py-100 rel z-1">
       <div className="container-fluid">
@@ -94,17 +148,19 @@ const HotelSection = () => {
         </div>
 
         <div className="row justify-content-center">
-          {hotelsData.map((hotel, index) => (
+          {hotelsToShow.map((hotel, index) => (
             <HotelCard3 key={hotel.id} hotel={hotel} aosDelay={hotel.delay} index={index} />
           ))}
         </div>
 
-        <div className="hotel-more-btn text-center mt-40">
-          <a href="destination2.html" className="theme-btn style-four">
-            <span data-hover="Explore More Hotel">Explore More Hotel</span>
-            <i className="fal fa-arrow-right"></i>
-          </a>
-        </div>
+        {!showAll && (
+          <div className="hotel-more-btn text-center mt-40">
+            <a className="theme-btn style-four" onClick={handleLoadMore} style={{cursor: "pointer"}}>
+              <span data-hover="Explore More Hotel">Explore More Hotel</span>
+              <i className="fal fa-arrow-right"></i>
+            </a>
+          </div>
+        )}
       </div>
     </section>
   );
