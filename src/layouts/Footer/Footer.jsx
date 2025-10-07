@@ -22,56 +22,6 @@ const Footer = () => {
           return value.toLowerCase().endsWith('@gmail.com');
         }
       )
-    // .test(
-    //   "no-special-chars-before-at",
-    //   "❌ Phần trước @ không được chứa ký tự đặc biệt",
-    //   function(value) { // Sử dụng function thay vì arrow function để có this
-    //     if (!value || !value.includes('@')) return true;
-
-    //     const localPart = value.split('@')[0];
-    //     const validLocalPartRegex = /^[A-Z0-9._+-]+$/i;
-
-    //     // Kiểm tra nếu có ký tự không hợp lệ
-    //     if (!validLocalPartRegex.test(localPart)) {
-    //       const invalidChars = localPart.match(/[^A-Z0-9._+-]/gi);
-    //       if (invalidChars && invalidChars.length > 0) {
-    //         const uniqueInvalidChars = [...new Set(invalidChars)];
-    //         return this.createError({
-    //           message: `❌ Phần trước @ chứa ký tự đặc biệt không hợp lệ: ${uniqueInvalidChars.join(', ')}. Chỉ cho phép . _ % + -`
-    //         });
-    //       }
-    //     }
-    //     return true;
-    //   }
-    // )
-    // .test(
-    //   "no-special-chars-after-at",
-    //   "❌ Phần sau @ không được chứa ký tự đặc biệt ngoại trừ . -",
-    //   (value) => {
-    //     if (!value || !value.includes('@')) return true;
-
-    //     const domainPart = value.split('@')[1];
-    //     const validDomainPartRegex = /^[A-Z0-9.-]+$/i;
-
-    //     if (!validDomainPartRegex.test(domainPart)) {
-    //       const invalidChars = domainPart.match(/[^A-Z0-9.-]/gi);
-    //       if (invalidChars && invalidChars.length > 0) {
-    //         const uniqueInvalidChars = [...new Set(invalidChars)];
-    //         return `❌ Phần sau @ chứa ký tự đặc biệt không hợp lệ: ${uniqueInvalidChars.join(', ')}. Chỉ cho phép . -`;
-    //       }
-    //     }
-    //     return true;
-    //   }
-    // )
-    // .test(
-    //   "no-consecutive-special-chars",
-    //   "❌ Không được có hai ký tự đặc biệt liên tiếp nhau",
-    //   (value) => {
-    //     if (!value) return true;
-    //     const consecutiveSpecialCharsRegex = /[._%+-]{2,}/;
-    //     return !consecutiveSpecialCharsRegex.test(value);
-    //   }
-    // )
   });
 
   // Formik setup

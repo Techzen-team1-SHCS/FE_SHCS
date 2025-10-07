@@ -16,35 +16,35 @@ function SearchBar() {
     const navigate = useNavigate();
 
     const handleSearchInput = (e) => {
-    const value = e.target.value;
-    const regex = /^[a-zA-Z0-9\s]*$/; // chỉ cho chữ, số, khoảng trắng
+        const value = e.target.value;
+        const regex = /^[a-zA-Z0-9\s]*$/; // chỉ cho chữ, số, khoảng trắng
 
-    // Nếu nhập ký tự đặc biệt
-    if (!regex.test(value)) {
-        toast.error("❌ Không được chứa ký tự đặc biệt");
-        // Reset về giá trị trước đó
+        // Nếu nhập ký tự đặc biệt
+        if (!regex.test(value)) {
+            toast.error("❌ Không được chứa ký tự đặc biệt");
+            // Reset về giá trị trước đó
+            setFilters(prev => ({
+                ...prev,
+                searchTerm: prev.searchTerm || ""
+            }));
+            return;
+        }
+        if (value.length > 12) {
+            const trimmedValue = value.slice(0, 12); // Cắt chỉ lấy 12 ký tự đầu
+            setFilters(prev => ({
+                ...prev,
+                searchTerm: trimmedValue
+            }));
+            toast.error("❌ Từ khóa tìm kiếm tối đa 12 ký tự");
+            return;
+        }
+
+        // Update state bình thường (maxLength sẽ tự giới hạn)
         setFilters(prev => ({
             ...prev,
-            searchTerm: prev.searchTerm || ""
+            searchTerm: value
         }));
-        return;
-    }
-     if (value.length > 12) {
-        const trimmedValue = value.slice(0, 12); // Cắt chỉ lấy 12 ký tự đầu
-        setFilters(prev => ({
-            ...prev,
-            searchTerm: trimmedValue
-        }));
-        toast.error("❌ Từ khóa tìm kiếm tối đa 12 ký tự");
-        return;
-    }
-
-    // Update state bình thường (maxLength sẽ tự giới hạn)
-    setFilters(prev => ({
-        ...prev,
-        searchTerm: value
-    }));
-};
+    };
     const handleOptionSelect = (key, value) => {
         setFilters(prev => ({
             ...prev,
@@ -185,7 +185,9 @@ function SearchBar() {
         borderRadius: '4px',
         backgroundColor: 'white',
         cursor: 'pointer',
-        minWidth: '180px'
+        minWidth: '180px',
+        marginRight: '10px'
+
     };
 
     const dropdownMenuStyle = {
@@ -335,10 +337,11 @@ function SearchBar() {
 
 
                 {/* Search Button */}
-                <div className="search-button   display-flex ">
+                <div className="search-button ">
                     <input className='w-50 p-1 ' type="text" placeholder="Search" required="" maxLength={13} value={filters.searchTerm}
                         onChange={handleSearchInput}>
                     </input>
+
                     <button
                         className="theme-btn w-50 "
                         style={{ marginLeft: '20px' }}

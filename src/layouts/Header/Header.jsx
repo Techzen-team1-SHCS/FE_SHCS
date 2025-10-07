@@ -1,26 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { hotelApi } from '../../api';
-const Header = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [isScrolled, setIsScrolled] = useState(false);
-    const [isSearchVisible, setIsSearchVisible] = useState(false);
-    const navigate = useNavigate();
-     const handleSearchSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!searchTerm.trim()) return;
-      // CÁCH 3: Chỉ chuyển hướng URL, không gọi API
-      const searchUrl = hotelApi.createSearchUrl(searchTerm);
-      navigate(searchUrl);
+import Auth from '../../components/Auth/Auth';
 
-      // Ẩn form search sau khi tìm kiếm
-      setIsSearchVisible(false);
-      setSearchTerm('');
-  };
-    const gotoAuth = () => {
-        navigate("/AuthPage")
-    }
+const Header = () => {
+    const [isAuthVisible, setIsAuthVisible] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [isAuthAppear, setIsAuthAppear] = useState(false);
+    const handleAuthClick = () => {
+        setIsAuthVisible(!isAuthVisible);
+    };
+    const handleAuthAppear = () => {
+        setIsAuthAppear(!isAuthAppear);
+    };
+    const navigate = useNavigate();
     useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY >= 250) {
@@ -33,6 +25,8 @@ const Header = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+
     const navItems = [
         {
             label: "Home",
@@ -184,14 +178,49 @@ const Header = () => {
                                 </form>
                             </div> */}
 
-                            {/* Menu Button */}
-                            <div className="menu-btns py-10">
-                                <Link to="/contact" className="theme-btn style-two bgc-secondary">
-                                    <span data-hover="Book Now">Book Now</span>
-                                    <i className="fal fa-arrow-right"></i>
-                                </Link>
-                                {/* Menu Sidebar */}
-                                {/* <div className="menu-sidebar" onClick={gotoAuth}>
+                            {/* Auth Button */}
+                            <div className='' onClick={handleAuthAppear}>
+                                <div className='auth-t'>
+                                    <div className='fal fa-user custom-fa-user'></div>
+                                    <div className='auth-user'>Tài khoản</div>
+                                    <div className='fal fa-caret-down custom-fa-down'></div>
+                                </div>
+
+                                {isAuthAppear && <div className='position-absolute auth-appear '>
+
+                                    <div className="menu-btns py-10 position-relative ">
+                                        <div className="theme-btn style-two bgc-secondary " onClick={handleAuthClick}
+                                            style={{ cursor: 'pointer' }}>
+                                            <span data-hover="Login/Register">Login/Register</span>
+                                            <i className="fal fa-arrow-right"></i>
+                                        </div>
+
+                                    </div>
+                                    <div>
+                                        Quý khách đã có tài khoản chưa?
+                                    </div>
+                                </div>
+                                }
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                {/* End Header Upper */}
+                {isAuthVisible && (
+                    <Auth setIsAuthVisible={setIsAuthVisible} />
+                )}
+            </header>
+
+
+        </>
+    );
+};
+
+export default Header;
+{/* Menu Sidebar */ }
+{/* <div className="menu-sidebar" onClick={gotoAuth}>
 
                                     <button
                                         className="bg-transparent"
@@ -202,16 +231,3 @@ const Header = () => {
                                     </button>
 
                                 </div> */}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/* End Header Upper */}
-            </header>
-
-
-        </>
-    );
-};
-
-export default Header; 

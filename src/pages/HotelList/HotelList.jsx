@@ -1,60 +1,28 @@
-import React from 'react'
+import { useState, useEffect } from 'react';
+import { hotelService } from '../../services/hotelService';
 import SearchBar from '../../components/SearchBar/SearchBar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Hotel from '../../components/Hotel/Hotel';
 
 function HotelList() {
-    const tours = [
-        {
-            id: 1,
-            name: "Bay Cruise by Boat in Bali, Indonesia",
-            location: "Bali, Indonesia",
-            image: "/assets/images/destinations/tour-list1.jpg",
-            price: "$58.00",
-            badge: "Featured",
-            badgeClass: "bgc-pink",
-            description: "Bali, Indonesia, is tropical paradise renowned breathtaking beaches, vibrant culture, and lush landscapes",
-            duration: "3 days 2 nights",
-            guests: "5-8 guest",
-            rating: 3
-        },
-        {
-            id: 2,
-            name: "Buenos Aires, Calafate & Ushuaia",
-            location: "Rome, Italy",
-            image: "/assets/images/destinations/tour-list2.jpg",
-            price: "$105.00",
-            badge: "10% Off",
-            description: "Bali, Indonesia, is tropical paradise renowned breathtaking beaches, vibrant culture, and lush landscapes",
-            duration: "3 days 2 nights",
-            guests: "5-8 guest",
-            rating: 2
-        },
-        {
-            id: 3,
-            name: "Camels on desert Morocco, Sahara.",
-            location: "Tamnougalt, Morocco",
-            image: "/assets/images/destinations/tour-list3.jpg",
-            price: "$386.00",
-            description: "Bali, Indonesia, is tropical paradise renowned breathtaking beaches, vibrant culture, and lush landscapes",
-            duration: "3 days 2 nights",
-            guests: "5-8 guest",
-            rating: 3
-        },
-        {
-            id: 4,
-            name: "Venice Grand Canal, Metropolitan Summer",
-            location: "City of Venice, Italy",
-            image: "/assets/images/destinations/tour-list4.jpg",
-            price: "$258.00",
-            badge: "Popular",
-            badgeClass: "bgc-primary",
-            description: "Bali, Indonesia, is tropical paradise renowned breathtaking beaches, vibrant culture, and lush landscapes",
-            duration: "3 days 2 nights",
-            guests: "5-8 guest",
-            rating: 5
+    const [hotels, setHotels] = useState([]);
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        loadHotels();
+    }, []);
+    const loadHotels = async () => {
+        try {
+            const response = await hotelService.searchHotels();
+            if (response.status === 200) {
+                setHotels(response.content.data || []);
+            }
+        } catch (error) {
+            console.error('Error loading hotels:', error);
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
+
     return (
         <div className='page-wrapper'>
             <section
@@ -86,22 +54,25 @@ function HotelList() {
 
                         </div>
                         <div className="col-lg-9">
-                            {tours.map((tour) => (
-                                <Hotel
-                                    key={tour.id}
-                                    image={tour.image}
-                                    title={tour.name}
-                                    description={tour.description}
-                                    location={tour.location}
-                                    duration={tour.duration}
-                                    guests={tour.guests}
-                                    price={tour.price}
-                                    badgeLabel={tour.badge}
-                                    badgeClass={tour.badgeClass}
-                                    rating={tour.rating}
-                                    detailsUrl={`/tour/${tour.id}`}
-                                />
-                            ))}
+                            {loading ? (
+                                <div>Loading...</div>
+                            ) : (
+                                hotels.map((hotel) => (
+                                    <Hotel
+                                        key={hotel.id}
+                                        image={hotel.images?.[0]?.url || '/assets/images/default-hotel.jpg'}
+                                        title={hotel.name}
+                                        description={hotel.description}
+                                        location={hotel.province}
+                                        duration={hotel.duration}
+                                        guests={hotel.guests}
+                                        price={`${hotel.price_formatted || hotel.price} VNĐ`}
+                                        badgeLabel={hotel.badge}
+                                        badgeClass={hotel.badgeClass}
+                                        rating={hotel.rating}
+                                        detailsUrl={`/hotel/${hotel.id}`}
+                                    />
+                                )))}
                         </div>
                     </div>
                 </div>
