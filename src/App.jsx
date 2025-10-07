@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home/Home';
 import './App.css'
-import AuthPage from './pages/AuthPage/AuthPage';
 import HotelList from './pages/HotelList/HotelList';
 import MainLayout from './layouts/MainLayout/MainLayout';
 import About from './pages/About/About';
@@ -32,7 +31,6 @@ function App() {
         </Route>
 
         {/* Route KHÔNG dùng MainLayout */}
-        <Route path="/AuthPage" element={<AuthPage />} />
       </Routes>
       <ToastContainer
         position="top-right"
