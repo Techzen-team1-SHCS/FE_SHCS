@@ -3,13 +3,23 @@ import { hotelService } from '../../services/hotelService';
 import SearchBar from '../../components/SearchBar/SearchBar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Hotel from '../../components/Hotel/Hotel';
+import ReviewFilter from '../../components/ReviewFilter/ReviewFilter';
+import CategoryFilter from '../../components/CategoryFilter/CategoryFilter';
 
 function HotelList() {
     const [hotels, setHotels] = useState([]);
+    const [filteredHotels, setFilteredHotels] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedRating, setSelectedRating] = useState(5);
     useEffect(() => {
         loadHotels();
     }, []);
+    useEffect(() => {
+        if (hotels.length > 0) {
+            handleFilterByRating(selectedRating); // tự filter khi load xong
+        }
+    }, [hotels, selectedRating]);
+
     const loadHotels = async () => {
         try {
             const response = await hotelService.searchHotels();
@@ -22,7 +32,11 @@ function HotelList() {
             setLoading(false);
         }
     };
-
+    const handleFilterByRating = (rating) => {
+        setSelectedRating(rating);
+        const filtered = hotels.filter((hotel) => hotel.rating >= rating);
+        setFilteredHotels(filtered);
+    };
     return (
         <div className='page-wrapper'>
             <section
@@ -37,7 +51,7 @@ function HotelList() {
                             data-aos-duration="1500"
                             data-aos-offset="50"
                         >
-                            Tour List View
+                            Hotel List View
                         </h2>
                         <Breadcrumb items={[
                             { label: "Home", href: "/", active: false },
@@ -51,16 +65,38 @@ function HotelList() {
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-3 col-md-6 col-sm-10 rmb-75">
-
+                            <div className="shop-sidebar mb-30">
+                                <ReviewFilter onSelect={handleFilterByRating} selectedRating={selectedRating} />
+                                <CategoryFilter />
+                            </div>
                         </div>
                         <div className="col-lg-9">
+                            <div className='shop-shorter rel z-3 mb-20'>
+                                <div className="sort-text mb-15 me-4 me-xl-auto">
+                                    0 Tours found
+                                </div>
+                                <div className="sort-text mb-15 me-4">
+                                    Sort By
+                                </div>
+                                <select>
+                                    <option value="default" selected="">Short By</option>
+                                    <option value="new">Newness</option>
+                                    <option value="old">Oldest</option>
+                                    <option value="hight-to-low">High To Low</option>
+                                    <option value="low-to-high">Low To High</option>
+                                </select>
+                            </div>
+
                             {loading ? (
                                 <div>Loading...</div>
-                            ) : (
-                                hotels.map((hotel) => (
+                            ) : filteredHotels.length > 0 ? (
+                                filteredHotels.map((hotel) => (
                                     <Hotel
                                         key={hotel.id}
-                                        image={hotel.images?.[0]?.url || '/assets/images/default-hotel.jpg'}
+                                        image={
+                                            hotel.images?.[0]?.url ||
+                                            "/assets/images/default-hotel.jpg"
+                                        }
                                         title={hotel.name}
                                         description={hotel.description}
                                         location={hotel.province}
@@ -72,7 +108,10 @@ function HotelList() {
                                         rating={hotel.rating}
                                         detailsUrl={`/hotel/${hotel.id}`}
                                     />
-                                )))}
+                                ))
+                            ) : (
+                                <div>Không có khách sạn phù hợp.</div>
+                            )}
                         </div>
                     </div>
                 </div>
