@@ -11689,7 +11689,7 @@ blockquote .blockquote-footer:before {
   padding: 10px;
   display: -webkit-box;
   display: -ms-flexbox;
-  display: flex;
+
   background: #fff;
   position: relative;
   border-radius: 35px;
@@ -11783,8 +11783,9 @@ blockquote .blockquote-footer:before {
 }
 .auth-appear{
   background-color: white;
-  top:60px;
+  top:70px;
   right: 10px;
+
 }
 .auth-popup {
   font-family: var(--base-font);

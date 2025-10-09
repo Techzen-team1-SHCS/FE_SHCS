@@ -12,12 +12,25 @@
   margin: 0 auto;
   text-align: center;
 }
+.triangle-up {
+      width: 0;
+      height:0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 10px solid #ffffff;
+}
 .dangky{
+    cursor: pointer;
     width: 100%;
     padding: 10px 7px;
     background-color:rgb(123, 239, 246);
-    border-radius: 10px;
+    border-radius: 100px;
+    color: rgb(0, 0, 0);
+}
+.dangky:hover{
+    background-color: blue;
     color: whitesmoke;
+    transition: ease-in-out 0.3s;
 }
 .linkLogin{
     color: blue;
