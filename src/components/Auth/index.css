@@ -1,0 +1,8 @@
+.forgotPass-btn{
+    cursor: pointer;
+    width: 34%;
+    color: #007bff;
+}
+.forgotPass-btn:hover{
+    text-decoration: underline;
+}

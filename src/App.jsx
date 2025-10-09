@@ -11,6 +11,7 @@ import BlogList from './pages/BlogList/BlogList';
 import HotelDetail from './pages/HotelDetail/HotelDetail';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ResetPassword from './pages/ResetPassword/ResetPassword';
 // import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
             <Route path='*' element={<NotFoundPage />}></Route>
             <Route path='/BlogList' element={<BlogList />}></Route>
             <Route path='/HotelDetail' element={<HotelDetail />}></Route>
+            <Route path='/ResetPassword' element={<ResetPassword/>}></Route>
             {/* có thể thêm các page khác cần layout */}
           </Route>
 
