@@ -1,33 +1,54 @@
+import axios from 'axios';
 import api from './api';
 
 export const authService = {
-  async login(email, password) {
-    const response = await api.post('/auth/login', { email, password });
+  // 🔹 LOGIN
+  login: async (email, password) => {
+    const response = await axios.post('/api/auth/login', { email, password });
+
     if (response.data.status === 200) {
-      localStorage.setItem('auth_token', response.data.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.data.user));
+      const token = response.data.data.access_token;
+      const user = response.data.data.user;
+
+      // ✅ Lưu token & user vào localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // ✅ Trả về gọn gàng để dùng trong AuthContext.login()
+      return { status: 200, token, user };
     }
+
     return response.data;
   },
 
-  async register(userData) {
+  // 🔹 REGISTER
+  register: async (userData) => {
     const response = await api.post('/auth/register', userData);
     return response.data;
   },
 
-  async logout() {
-    const response = await api.post('/auth/logout');
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user');
-    return response.data;
+  // 🔹 LOGOUT
+  logout: async () => {
+    try {
+      const response = await api.post('/auth/logout');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      return response.data;
+    } catch (error) {
+      console.error('Logout error:', error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
   },
 
-  getCurrentUser() {
+  // 🔹 Lấy user hiện tại
+  getCurrentUser: () => {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   },
 
-  isAuthenticated() {
-    return !!localStorage.getItem('auth_token');
+  // 🔹 Kiểm tra đã đăng nhập chưa
+  isAuthenticated: () => {
+    return !!localStorage.getItem('token');
   }
 };

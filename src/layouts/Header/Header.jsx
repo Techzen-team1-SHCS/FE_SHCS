@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Auth from '../../components/Auth/Auth';
+import '../Header/index.css'
+import { useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const Header = () => {
+    const { user, logout } = useContext(AuthContext);
     const [isAuthVisible, setIsAuthVisible] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isAuthAppear, setIsAuthAppear] = useState(false);
-    const handleAuthClick = () => {
-        setIsAuthVisible(!isAuthVisible);
-    };
+    const [isLogin, setIsLogin] = useState('');
+    
     const handleAuthAppear = () => {
         setIsAuthAppear(!isAuthAppear);
     };
-    const navigate = useNavigate();
+    const navigate=useNavigate();
     useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY >= 250) {
@@ -117,10 +120,6 @@ const Header = () => {
     return (
         <>
             {/* Preloader */}
-            <div className="preloader">
-                <div className="custom-loader"></div>
-            </div>
-
             {/* Main Header */}
             <header className={`main-header header-one white-menu menu-absolute ${isScrolled ? 'fixed-header' : ''}`}>
                 {/* Header-Upper */}
@@ -164,43 +163,112 @@ const Header = () => {
                                 </nav>
                                 {/* Main Menu End */}
                             </div>
-
-                            {/* Nav Search */}
-                            {/* <div className="nav-search">
-                                <button
-                                    className="far fa-search"
-                                    onClick={() => setIsSearchVisible(!isSearchVisible)}
-                                ></button>
-                                <form className={isSearchVisible ? '' : 'hide'} onSubmit={handleSearchSubmit}>
-                                    <input type="text" placeholder="Search" className="searchbox" required="" value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)} />
-                                    <button type="submit" className="searchbutton far fa-search"></button>
-                                </form>
-                            </div> */}
-
                             {/* Auth Button */}
-                            <div className='' onClick={handleAuthAppear}>
+                            <div onClick={handleAuthAppear}>
                                 <div className='auth-t'>
                                     <div className='fal fa-user custom-fa-user'></div>
-                                    <div className='auth-user'>Tài khoản</div>
+
+                                    <div className='auth-user'>
+                                    {user ? `Xin chào, ${user.name}` : 'Tài khoản'}
+                                    </div>
+
                                     <div className='fal fa-caret-down custom-fa-down'></div>
                                 </div>
-
-                                {isAuthAppear && <div className='position-absolute auth-appear '>
-
-                                    <div className="menu-btns py-10 position-relative ">
-                                        <div className="theme-btn style-two bgc-secondary " onClick={handleAuthClick}
-                                            style={{ cursor: 'pointer' }}>
-                                            <span data-hover="Login/Register">Login/Register</span>
-                                            <i className="fal fa-arrow-right"></i>
+                                 
+                                {isAuthAppear && (
+                                <div className='position-absolute auth-appear show'>
+                                    {!user ? (
+                                    // Nếu chưa đăng nhập
+                                    <div className="btnRegister">
+                                        <div className="content">
+                                        <span
+                                            onClick={() => {
+                                            setIsLogin(false);
+                                            setIsAuthVisible(true);
+                                            setIsAuthAppear(false);
+                                            }}
+                                            className='dangky'
+                                        >
+                                            Đăng ký
+                                        </span>
+                                        <span>Quý khách đã có tài khoản chưa?</span>
+                                        <a
+                                            className='linkLogin'
+                                            onClick={() => {
+                                            setIsLogin(true);
+                                            setIsAuthVisible(true);
+                                            setIsAuthAppear(false);
+                                            }}
+                                        >
+                                            Đăng nhập ngay
+                                        </a>
                                         </div>
+                                    </div>
+                                    ) : (
+                                    // Nếu đã đăng nhập
+                                    <div className="btnRegister p-3" style={{ minWidth: '200px' }}>
+                                        <div className="content text-start">
+                                        <p className="fw-semibold mb-1">Xin chào, {user.name}</p>
+                                       
+                                        {/* Các tùy chọn giống trang booking */}
+                                        <ul className="list-unstyled mb-2">
+                                            <li>
+                                            <button
+                                                className="btn btn-link text-dark p-0 w-100 text-start"
+                                                onClick={() => navigate('/profile')}
+                                            >
+                                                👤 Hồ sơ của tôi
+                                            </button>
+                                            </li>
+                                            <li>
+                                            <button
+                                                className="btn btn-link text-dark p-0 w-100 text-start"
+                                                onClick={() => navigate('/my-bookings')}
+                                            >
+                                                🧳 Đặt phòng của tôi
+                                            </button>
+                                            </li>
+                                            <li>
+                                            <button
+                                                className="btn btn-link text-dark p-0 w-100 text-start"
+                                                onClick={() => navigate('/saved-places')}
+                                            >
+                                                💖 Địa điểm đã lưu
+                                            </button>
+                                            </li>
+                                            <li>
+                                            <button
+                                                className="btn btn-link text-dark p-0 w-100 text-start"
+                                                onClick={() => navigate('/privacy-settings')}
+                                            >
+                                                ⚙️ Cài đặt quyền riêng tư
+                                            </button>
+                                            </li>
+                                            <li>
+                                            <button
+                                                className="btn btn-link text-dark p-0 w-100 text-start"
+                                                onClick={() => navigate('/help')}
+                                            >
+                                                ❓ Trung tâm hỗ trợ
+                                            </button>
+                                            </li>
+                                        </ul>
 
+                                        <hr className="my-2" />
+                                        <button
+                                            onClick={() => {
+                                            logout();
+                                            setIsAuthAppear(false);
+                                            }}
+                                            className='btn btn-danger btn-sm w-100'
+                                        >
+                                            🚪 Đăng xuất
+                                        </button>
+                                        </div>
                                     </div>
-                                    <div>
-                                        Quý khách đã có tài khoản chưa?
-                                    </div>
+                                    )}
                                 </div>
-                                }
+                                )}
 
                             </div>
 
@@ -209,8 +277,13 @@ const Header = () => {
                 </div>
                 {/* End Header Upper */}
                 {isAuthVisible && (
-                    <Auth setIsAuthVisible={setIsAuthVisible} />
+                    <Auth
+                        setIsAuthVisible={setIsAuthVisible}
+                        isLogin={isLogin}
+                        setIsLogin={setIsLogin}
+                    />
                 )}
+
             </header>
 
 
@@ -219,15 +292,3 @@ const Header = () => {
 };
 
 export default Header;
-{/* Menu Sidebar */ }
-{/* <div className="menu-sidebar" onClick={gotoAuth}>
-
-                                    <button
-                                        className="bg-transparent"
-                                    >
-                                        <span className="icon-bar"></span>
-                                        <span className="icon-bar"></span>
-                                        <span className="icon-bar"></span>
-                                    </button>
-
-                                </div> */}
