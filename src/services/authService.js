@@ -20,13 +20,24 @@ export const authService = {
 
     return response.data;
   },
+  getUserById: async (id) => {
+        const response = await axios.get(`/api/auth/user/${id}`);
+        return response.data;
+  },
 
   // 🔹 REGISTER
   register: async (userData) => {
     const response = await api.post('/auth/register', userData);
     return response.data;
   },
-
+  forgotPassword:async(email)=>{
+    const response = await api.post('/auth/forgot-password', {email});
+    return response.data;
+  },
+  resetPassword:async(data)=>{
+    const response=await api.post('/auth/reset-password',data);
+    return response.data;
+  },
   // 🔹 LOGOUT
   logout: async () => {
     try {

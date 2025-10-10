@@ -8,7 +8,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import "../Auth/index.css"
 const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
     const navigate = useNavigate();
-    const { login } = useContext(AuthContext);
+    const { login,setUser } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -75,10 +75,18 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                 if (isLogin) {
                     const result = await authService.login(email, password);
                     if (result.status === 200) {
+                        const userId = result.user.id;
+                        const token = result.token;
+
+                        // 🔹 Gọi API lấy thông tin chi tiết user (có avatar_url)
+                        const userRes = await authService.getUserById(userId);
+                        const fullUser = userRes.user;
+                        
+                        // 🔹 Lưu vào context & localStorage
+                        login(fullUser, token); 
                         toast.success('Đăng nhập thành công!');
-                        login(result.user, result.token);
                         setIsAuthVisible(false);
-                    }
+                        navigate('/');                     }
                 } else {
                     const result = await authService.register({
                         name,
@@ -136,6 +144,8 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                 toast.success('Email đặt lại mật khẩu đã được gửi!');
                 setIsForgotPassword(false);
                 setForgotEmail('');
+                setIsAuthVisible(false);
+                navigate('/');
             } else {
                 toast.error(result.message || 'Không thể gửi email, vui lòng thử lại');
             }
