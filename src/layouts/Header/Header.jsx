@@ -212,7 +212,7 @@ const Header = () => {
                                                     <div className="content text-start">
                                                         <p className="fw-semibold mb-1">Xin chào, {user.name}</p>
                                                          <img
-                                                            src={user.avatar_url || '/default-avatar.png'}
+                                                            src={user.avatar_url || 'assets/images/avatar/avatar_default.png'}
                                                             alt="avatar"
                                                             className="rounded-circle"
                                                             width={60}
