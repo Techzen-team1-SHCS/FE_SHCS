@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HotelCard1 from "../HotelCard/HotelCard1";
+import { destinationService } from '../../services/destinationService';
 const topHotel = [
   {
     id: 1,
@@ -43,6 +44,80 @@ const topHotel = [
   },
 ];
 const Destinations = () => {
+  const [topHotels, setTopHotels] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    const fetchTopHotels = async () => {
+      try {
+        setLoading(true);
+        const data = await destinationService.getTopHotels();
+        setTopHotels(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching top hotels:", err);
+        //setError("Failed to load destinations. Please try again later."); //sau khi thêm API thì có thể thêm dòng này
+        setTopHotels(topHotel); //này là dữ liệu mẫu sau khi thêm được api thì để topHotel thành rỗng
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTopHotels();
+  }, []);
+  if (loading) {
+    return (
+      <section className="destinations-area bgc-black pt-100 pb-70 rel z-1">
+        <div className="container-fluid">
+          <div className="row justify-content-center">
+            <div className="col-lg-12">
+              <div className="section-title text-white text-center counter-text-wrap mb-70">
+                <h2>Discover the World's Treasures with SCHS</h2>
+                <p>Loading destinations...</p>
+              </div>
+            </div>
+          </div>
+          <div className="row justify-content-center">
+            <div className="col-12 text-center text-white">
+              <p>Loading amazing destinations for you...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+   if (error) {
+    return (
+      <section className="destinations-area bgc-black pt-100 pb-70 rel z-1">
+        <div className="container-fluid">
+          <div className="row justify-content-center">
+            <div className="col-lg-12">
+              <div className="section-title text-white text-center counter-text-wrap mb-70">
+                <h2>Discover the World's Treasures with SCHS</h2>
+                <p>{error}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+  if (!topHotels || topHotels.length === 0) {
+    return (
+      <section className="destinations-area bgc-black pt-100 pb-70 rel z-1">
+        <div className="container-fluid">
+          <div className="row justify-content-center">
+            <div className="col-lg-12">
+              <div className="section-title text-white text-center counter-text-wrap mb-70">
+                <h2>Discover the World's Treasures with SCHS</h2>
+                <p>No destinations available at the moment.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="destinations-area bgc-black pt-100 pb-70 rel z-1">
       <div className="container-fluid">
@@ -71,8 +146,8 @@ const Destinations = () => {
         </div>
 
         <div className="row justify-content-center">
-          {topHotel.map((topHotel, index) => (
-            <HotelCard1 key={topHotel.id} topHotel={topHotel} aosDelay={index * 100} />
+          {topHotels.map((hotel, index) => (
+            <HotelCard1 key={hotel.id} topHotel={hotel} aosDelay={index * 100} />
           ))}
         </div>
       </div>
