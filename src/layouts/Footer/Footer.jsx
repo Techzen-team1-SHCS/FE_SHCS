@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import "./Footer.css"
 const Footer = () => {
   // Email validation schema
   const emailSchema = Yup.object().shape({

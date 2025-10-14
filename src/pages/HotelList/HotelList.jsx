@@ -3,16 +3,95 @@ import { hotelService } from '../../services/hotelService';
 import SearchBar from '../../components/SearchBar/SearchBar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Hotel from '../../components/Hotel/Hotel';
-
+import HotelListFilter from '../../components/HotelListFilter/HotelListFilter';
+const filterData = [
+    {
+        title: "Các bộ lọc phổ biến",
+        options: [
+            { name: "4 sao", },
+            { name: "Khách sạn", },
+            { name: "Tuyệt hảo: 9 điểm trở lên", },
+            { name: "Hồ bơi", },
+            { name: "WiFi miễn phí", },
+            { name: "Trung tâm Spa & chăm sóc sức khoẻ", },
+            { name: "Ban công", },
+            { name: "Căn hộ", },
+        ],
+    },
+    {
+        title: "Các chứng chỉ",
+        options: [{ name: "Chứng chỉ bền vững", }],
+    },
+    {
+        title: "Thương hiệu",
+        options: [
+            { name: "OYO Rooms", },
+            { name: "VBA Hospitality Group", },
+            { name: "Somerset", },
+            { name: "Belvilla", },
+            { name: "Muong Thanh Hospitality", },
+            { name: "InterContinental Hotels & Resorts", },
+        ],
+    },
+    {
+    title: "Tiện nghi",
+    options: [
+      { name: "Chỗ đỗ xe" },
+      { name: "Nhà hàng" },
+      { name: "Dịch vụ phòng" },
+      { name: "Lễ tân 24 giờ" },
+      { name: "Trung tâm thể dục" },
+    ],
+  },
+  {
+    title: "Tiện nghi phòng",
+    options: [
+      { name: "Ban công" },
+      { name: "Hồ bơi riêng" },
+      { name: "Nhìn ra biển" },
+      { name: "Phòng tắm riêng" },
+      { name: "Bể sục" },
+    ],
+  },
+  {
+    title: "Điểm đánh giá của khách",
+    options: [
+      { name: "Tuyệt hảo: 9 điểm trở lên" },
+      { name: "Rất tốt: 8 điểm trở lên" },
+      { name: "Tốt: 7 điểm trở lên" },
+      { name: "Dễ chịu: 6 điểm trở lên" },
+    ],
+  },
+   {
+    title: "Loại chỗ ở",
+    options: [
+      { name: "Căn hộ" },
+      { name: "Khách sạn" },
+      { name: "Chỗ nghỉ nhà dân" },
+      { name: "Nhà khách" },
+      { name: "Nhà trọ" },
+      { name: "Nhà nghỉ B&B" },
+      { name: "Biệt thự" },
+      { name: "Nhà nghỉ mát" },
+      { name: "Khách sạn tình nhân" },
+      { name: "Khách sạn khoang ngủ" },
+      { name: "Resort" },
+      { name: "Khu cắm trại" },
+      { name: "Nhà nghỉ giữa thiên nhiên" },
+    ],
+  },
+];
 function HotelList() {
     const [hotels, setHotels] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedFilters, setSelectedFilters] = useState([]);
     useEffect(() => {
         loadHotels();
-    }, []);
+    }, [selectedFilters]);
     const loadHotels = async () => {
+        setLoading(true);
         try {
-            const response = await hotelService.searchHotels();
+            const response = await hotelService.searchHotels({ filters: selectedFilters });
             if (response.status === 200) {
                 setHotels(response.content.data || []);
             }
@@ -22,7 +101,9 @@ function HotelList() {
             setLoading(false);
         }
     };
-
+    const handleFilterChange = (newFilters) => {
+        setSelectedFilters(newFilters);
+    };
     return (
         <div className='page-wrapper'>
             <section
@@ -51,7 +132,7 @@ function HotelList() {
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-3 col-md-6 col-sm-10 rmb-75">
-
+                            <HotelListFilter filters={filterData}  onFilterChange={handleFilterChange}/>
                         </div>
                         <div className="col-lg-9">
                             {loading ? (
