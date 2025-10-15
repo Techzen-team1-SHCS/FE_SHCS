@@ -1,0 +1,7 @@
+.price{
+    font-size: 12px;
+}
+.destination-footer{
+    display: flex;
+    gap: 20px;
+}

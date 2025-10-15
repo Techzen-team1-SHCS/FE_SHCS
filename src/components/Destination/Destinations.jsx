@@ -54,7 +54,7 @@ const Destinations = () => {
               data-aos-duration="1500"
               data-aos-offset="50"
             >
-              <h2>Discover the World's Treasures with SCHS</h2>
+              
               <p>
                 One site{" "}
                 <span

@@ -8,7 +8,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import "../Auth/index.css"
 const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
     const navigate = useNavigate();
-    const { login,setUser } = useContext(AuthContext);
+    const { login,user } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');

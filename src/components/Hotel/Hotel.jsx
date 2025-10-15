@@ -1,5 +1,5 @@
 import React from "react";
-
+import './style.css';
 const Hotel = ({
   image,
   title,
@@ -9,7 +9,7 @@ const Hotel = ({
   guests,
   price,
   badgeLabel = null,
-  rating = 4,
+  rating ,
   detailsUrl = "#",
 }) => {
   return (
@@ -20,7 +20,9 @@ const Hotel = ({
       data-aos-offset="50"
     >
       <div className="image">
-        {badgeLabel && <span className="badge bgc-pink">{badgeLabel}</span>}
+        <div className="ratting">
+          <i className="fas fa-star"></i> {rating}
+        </div>
         <a href="#" className="heart">
           <i className="fas fa-heart"></i>
         </a>
@@ -31,11 +33,7 @@ const Hotel = ({
           <span className="location">
             <i className="fal fa-map-marker-alt"></i> {location}
           </span>
-          <div className="ratting">
-            {Array.from({ length: rating }).map((_, i) => (
-              <i key={i} className="fas fa-star"></i>
-            ))}
-          </div>
+          
         </div>
         <h5>
           <a href={detailsUrl}>{title}</a>
@@ -51,7 +49,7 @@ const Hotel = ({
         </ul>
         <div className="destination-footer">
           <span className="price">
-            <span>${price}</span>/person
+            ${price}/person
           </span>
           <a href={detailsUrl} className="theme-btn style-two style-three">
             <span data-hover="Book Now">Book Now</span>

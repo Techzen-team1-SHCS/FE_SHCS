@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 const HotelCard1 = ({ topHotel, aosDelay }) => {
     const navigate=useNavigate();
-    const gotoHotelList = () => {
-        navigate("/HotelList")
-    }
+    
     return (
         <div className="col-xxl-3 col-xl-4 col-md-6">
             <div
