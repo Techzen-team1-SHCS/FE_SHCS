@@ -3,8 +3,13 @@ import { useLocation } from "react-router-dom";
 import { hotelService } from "../../services/hotelService";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import Hotel from "../../components/Hotel/Hotel";
+import HotelListFilter from '../../components/HotelListFilter/HotelListFilter';
 
 function HotelList() {
+  const [selectedFilters, setSelectedFilters] = useState([]);
+const handleFilterChange = (newFilters) => {
+        setSelectedFilters(newFilters);
+    };
   const location = useLocation();
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -45,7 +50,7 @@ function HotelList() {
   useEffect(() => {
     const filters = getFiltersFromQuery();
     loadHotels(filters);
-  }, [location.search]);
+  }, [location.search,selectedFilters]);
 
   const handlePageChange = (page) => {
     const filters = getFiltersFromQuery();
@@ -88,6 +93,7 @@ function HotelList() {
                               loading="lazy"
                               title="Map"
                             ></iframe>
+                            <HotelListFilter  onFilterChange={handleFilterChange} />
                         </div>
                         <div className="col-lg-9">
                             {loading ? (
