@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import IncludedExcluded from '../../components/IncludedExcluded/IncludedExcluded';
 import HotelBooking from '../../components/HotelBooking/HotelBooking';
 import { useParams } from 'react-router-dom';
 import { hotelService } from '../../services/hotelService';
 import SearchBar from '../../components/SearchBar/SearchBar';
+import NearbyPlaces from '../../components/NearbyPlaces/NearbyPlaces';
 const HotelDetail = () => {
   const { hotelId } = useParams();
   const [showAllPhotos, setShowAllPhotos] = useState(false);
@@ -36,6 +36,35 @@ const HotelDetail = () => {
     },
     mapUrl: "https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d96777.16150026117!2d-74.00840582560909!3d40.71171357405996!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1706508986625!5m2!1sen!2sbd"
   };
+  const mockNearbyData = [
+  {
+    title: "Xung quanh có gì?",
+    icon: "fas fa-location",
+    places: [
+      { name: "Pullman Playground", distance: "1,5 km" },
+      { name: "Upside Down World Danang", distance: "1,8 km" },
+      { name: "Công viên biển Phạm Văn Đồng", distance: "1,9 km" },
+    ],
+  },
+  {
+    title: "Nhà hàng & quán cà phê",
+    icon: "fas fa-utensils",
+    places: [
+      { name: "N Pub", distance: "150 m" },
+      { name: "Oni Coffee & Live Music", distance: "150 m" },
+      { name: "Hữu Nghị Mart Đỗ Bá", distance: "50 m" },
+    ],
+  },
+  {
+    title: "Các bãi biển trong khu vực",
+    icon: "fas fa-umbrella-beach",
+    places: [
+      { name: "Bãi biển Mỹ Khê", distance: "550 m" },
+      { name: "Bãi biển Bắc Mỹ An", distance: "1,1 km" },
+      { name: "Bãi biển Non Nước", distance: "4,8 km" },
+    ],
+  },
+];
   useEffect(() => {
     const fetchHotelData = async () => {
       setLoading(true);
@@ -70,14 +99,12 @@ const HotelDetail = () => {
   const galleryColumns = hotelDataMock.images;
   return (
     <div className='page-wrapper'>
-      
       <section className="page-banner-two rel z-1 mt-150">
-        
+
         <div className="container-fluid mt-250">
           <SearchBar />
-          <hr className="mt-0" />
           <div className="container ">
-            
+
             <div className="banner-inner pt-15  mt-30">
               <h2
                 className="page-title "
@@ -128,7 +155,7 @@ const HotelDetail = () => {
       <section className="tour-header-area pt-70 rel z-1">
         <div className="container">
           <div className="row justify-content-between">
-            <div className="col-lg-7">
+            <div>
               <div
                 className="tour-header-content mb-15"
                 data-aos="fade-left"
@@ -149,55 +176,61 @@ const HotelDetail = () => {
               </div>
             </div>
 
-            <div
-              className="col-xl-4 col-lg-5 text-lg-end"
-              data-aos="fade-right"
-              data-aos-duration="1500"
-              data-aos-offset="50"
-            >
-              <div className="tour-header-social mb-10">
-                <a href="#">
-                  <i className="far fa-share-alt"></i> Share hotel
-                </a>
-                <a href="#">
-                  <i className="fas fa-heart bgc-secondary"></i> Wish list
-                </a>
-              </div>
-            </div>
+
           </div>
 
-          <hr className="mt-50 mb-70" />
+          <hr className=" mb-30" />
         </div>
       </section>
       <section className="tour-details-page pb-100">
         <div className="container">
           <div className="row">
-            {/* Left Content */}
-            <div className="col-lg-8">
-              {/* Included / Excluded */}
-                <IncludedExcluded included={displayData.amenities.included}
-                  excluded={displayData.amenities.excluded} />
-              {/* Map */}
-              <h3>Maps</h3>
-              <div className="tour-map mt-30 mb-50">
-                <iframe
-                  src={displayData.mapUrl}
-                  style={{ border: 0, width: "100%" }}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Tour Map"
-                ></iframe>
+            <div className="">
+              <h2>
+                Các tiện nghi được ưa chuộng nhất
+              </h2>
+              <div className='d-flex gap-4 mb-20 mt-20'>
+                <h3>
+                  <i class="fas fa-wifi color008234"></i> Wifi miễn phí
+                </h3>
+                <h3>
+                  <i class="fas fa-parking color008234"></i> Wifi miễn phí
+                </h3>
               </div>
-            </div>
 
-            {/* Right Sidebar */}
+
+
+            </div>
+            {/* Left Sidebar */}
             <div className="col-lg-4 col-md-8 col-sm-10 rmt-75">
               <div className="blog-sidebar tour-sidebar">
                 {/* Booking Widget */}
                 <HotelBooking onBook={handleBookNow} />
 
-                {/* Contact Widget */}
+              </div>
+            </div>
+            {/* Right Content */}
+            <div className="col-lg-4 col-md-8 col-sm-10 rmt-75">
+              <div className="blog-sidebar tour-sidebar">
+                <div>
+                  <i className='fa fa-location'></i>{displayData.address}
+                  <h2>{displayData.name}</h2>
+                  <div
+                    className="col-xl-4 col-lg-5 text-lg-end"
+                    data-aos="fade-right"
+                    data-aos-duration="1500"
+                    data-aos-offset="50"
+                  >
+                    <div className="tour-header-social mb-10 d-flex min-vw-100">
+                      <a href="#">
+                        <i className="far fa-share-alt"></i> Share hotel
+                      </a>
+                      <a href="#">
+                        <i className="fas fa-heart bgc-secondary"></i> Wish list
+                      </a>
+                    </div>
+                  </div>
+                  {/* Contact Widget */}
                 <div
                   className="widget widget-contact mt-50"
                   data-aos="fade-up"
@@ -216,9 +249,16 @@ const HotelDetail = () => {
                     </li>
                   </ul>
                 </div>
+                </div>
+                
               </div>
             </div>
           </div>
+          <div className='mt-40'>
+            <h2>Xung quanh chỗ nghỉ</h2>               
+            <NearbyPlaces data={mockNearbyData}/>
+          </div>
+            
         </div>
       </section>
 
@@ -227,4 +267,3 @@ const HotelDetail = () => {
 }
 
 export default HotelDetail
-
