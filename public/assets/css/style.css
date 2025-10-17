@@ -5743,8 +5743,8 @@ blockquote {
   background: white;
   border-radius: 12px;
   padding: 28px 55px 10px;
-  -webkit-box-shadow: 10px 4px 60px rgba(197, 197, 197, 0.25);
-  box-shadow: 10px 4px 60px rgba(197, 197, 197, 0.25);
+  -webkit-box-shadow: 10px 4px 60px rgba(99, 98, 98, 0.25);
+  box-shadow: 10px 4px 60px rgba(65, 65, 65, 0.25);
 }
 
 @media only screen and (max-width: 1299px) {
@@ -6702,6 +6702,7 @@ blockquote {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+  
 }
 
 .destination-item.style-three.bgc-lighter .content .destination-header .location {
@@ -7109,6 +7110,7 @@ blockquote {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
+  
 }
 
 .tour-grid-wrap .tour-grid.destination-item .content .blog-meta li:not(:last-child) {
@@ -9710,6 +9712,7 @@ blockquote {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+
 }
 
 .blog-meta li {
@@ -11687,9 +11690,9 @@ blockquote .blockquote-footer:before {
 
 .newsletter-form {
   padding: 10px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-
+  /* display: -webkit-box;
+  display: -ms-flexbox; */
+  display: flex;
   background: #fff;
   position: relative;
   border-radius: 35px;

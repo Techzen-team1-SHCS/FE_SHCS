@@ -28,7 +28,7 @@ const Hotel = ({
       </div>
       <div className="content">
         <div className="content1">
-          <div className="destination-header">
+          <div className="destination-header mt-10">
           <div className="location">
             <i className="fal fa-map-marker-alt"></i>
             <span>{location}</span>
@@ -39,8 +39,8 @@ const Hotel = ({
             </div>
           </div>
         </div>
-        <h5>
-          <a href={detailsUrl}>{title}</a>
+        <h5 >
+          <a className="hotel-title"href={detailsUrl}>{title}</a>
         </h5>
         <p>{description}</p>
         <ul className="blog-meta">
@@ -48,7 +48,8 @@ const Hotel = ({
             <i className="far fa-clock"></i> {duration}
           </li>
           <li>
-            <i className="far fa-user"></i> {guests}
+            <i className="far fa-user"></i> {guests}/
+            <i className="far fa-bed"></i>
           </li>
         </ul>
         <div className="destination-footer">
