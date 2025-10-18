@@ -1,5 +1,7 @@
-import React from "react";
+
 import './style.css';
+import { MdOutlineBedroomParent } from "react-icons/md";
+
 const Hotel = ({
   image,
   title,
@@ -48,7 +50,8 @@ const Hotel = ({
             <i className="far fa-clock"></i> {duration}
           </li>
           <li>
-            <i className="far fa-user"></i> {guests}
+            <i className="far fa-user"></i> {guests}/<MdOutlineBedroomParent size={24} color="#333" />
+
           </li>
         </ul>
         <div className="destination-footer">

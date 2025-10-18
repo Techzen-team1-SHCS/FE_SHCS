@@ -101,22 +101,30 @@ const handleFilterChange = (newFilters) => {
                             ) : (
                                  <>
                                     <h4 style={{fontWeight:700}}>{destination}: tìm thấy {totalResults} chỗ nghỉ</h4>
-                                    {hotels.map((hotel) => (
-                                      <Hotel
-                                        key={hotel.id}
-                                        image={hotel.images?.[0]?.url || '/assets/images/default-hotel.jpg'}
-                                        title={hotel.name}
-                                        description={hotel.description}
-                                        location={hotel.province}
-                                        duration={hotel.duration}
-                                        guests={hotel.guests}
-                                        price={`${hotel.price_formatted || hotel.price} VNĐ`}
-                                        badgeLabel={hotel.badge}
-                                        badgeClass={hotel.hotel_class}
-                                        rating={(hotel.hotel_class / 10).toFixed(1)}
-                                        detailsUrl={`/hotel/${hotel.id}`}
-                                      />
-                                    ))}
+                                    {hotels.map((hotel) => {
+                                      const firstRoom = hotel.rooms[0];
+                                      const dateRoom=firstRoom.available_from;
+                                      const dueRoom=firstRoom.available_to;
+                                      const duration = (dateRoom && dueRoom)
+                                          ? `Từ ${dateRoom} đến ${dueRoom}`
+                                          : 'Chưa có thông tin';
+                                      return(
+                                        <Hotel
+                                          key={hotel.id}
+                                          image={hotel.images?.[0]?.url || '/assets/images/default-hotel.jpg'}
+                                          title={hotel.name}
+                                          description={hotel.description}
+                                          location={hotel.province}
+                                          duration={duration}
+                                          guests={firstRoom?.max_guest || 0}
+                                          price={`${ hotel.price_formatted || hotel.price} VNĐ`}
+                                          badgeLabel={hotel.badge}
+                                          badgeClass={hotel.hotel_class}
+                                          rating={(hotel.hotel_class / 10).toFixed(1)}
+                                          detailsUrl={`/hotel/${hotel.id}`}
+                                        />
+                                      )
+                                    })}
                                   </>
                                 )}
                                 {pagination.last_page > 1 && (
