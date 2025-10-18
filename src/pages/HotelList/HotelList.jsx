@@ -4,7 +4,7 @@ import { hotelService } from "../../services/hotelService";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import Hotel from "../../components/Hotel/Hotel";
 import HotelListFilter from '../../components/HotelListFilter/HotelListFilter';
-
+import TopHotelSlider from "../../components/TopHotelSlider/TopHotelSlider";
 function HotelList() {
   const [selectedFilters, setSelectedFilters] = useState([]);
 const handleFilterChange = (newFilters) => {
@@ -150,6 +150,7 @@ const handleFilterChange = (newFilters) => {
                             )}
                         </div>
                     </div>
+                    <TopHotelSlider/>
                 </div>
             </section>
             
