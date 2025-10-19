@@ -18,23 +18,16 @@ function SearchBar() {
 
     // ✅ Fix search input
     const handleSearchInput = (e) => {
-        let value = e.target.value;
-
-        const regex = /^[a-zA-Z0-9\s]*$/;
-        if (!regex.test(value)) {
-            toast.error("❌ Không được chứa ký tự đặc biệt");
-            return;
-        }
-
-        if (value.length > 12) {
-            value = value.slice(0, 12);
-            toast.error("❌ Từ khóa tìm kiếm tối đa 12 ký tự");
-        }
-
-        setFilters((prev) => ({
-            ...prev,
-            searchTerm: value,
-        }));
+    let value = e.target.value;
+     if(value.length>30){
+        value=value.slice(0,30);
+        toast.warning("Giới hạn tối đa 30 ký tự")
+     }
+    setFilters((prev) => ({
+        ...prev,
+        searchTerm: value,
+    }));
+    
     };
 
     const handleOptionSelect = (key, value) => {
