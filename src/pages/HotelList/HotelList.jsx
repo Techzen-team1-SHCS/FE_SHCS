@@ -4,7 +4,9 @@ import { hotelService } from "../../services/hotelService";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import Hotel from "../../components/Hotel/Hotel";
 import HotelListFilter from "../../components/HotelListFilter/HotelListFilter";
+
 import './HotelList.css';
+import TopHotelSlider from "../../components/TopHotelSlider/TopHotelSlider";
 function HotelList() {
   const location = useLocation();
 
@@ -142,8 +144,6 @@ function HotelList() {
                   <HotelListFilter onFilterChange={handleFilterChange} />
                 </div>
               </div>
-
-
             <div className="col-lg-9">
               {loading ? (
                 <div>Loading...</div>
@@ -204,6 +204,7 @@ function HotelList() {
                 </div>
               )}
             </div>
+           <TopHotelSlider></TopHotelSlider>
           </div>
         </div>
       </section>

@@ -26,7 +26,7 @@ export const hotelService = {
 
   async getTopHotel() {
     const response = await api.get("/auth/tophotels");
-    return response.data;
+    return response.data.data;
   },
 
   async getHotelById(id) {
