@@ -1,45 +1,55 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "../../components/HotelListFilter/HotelListFilter.module.css";
-// import { hotelFilterService } from "../../services/hotelFilterService";
 
 const HotelListFilter = ({ onFilterChange }) => {
-    const filterData = [
-    {
-        title: "Các bộ lọc phổ biến",
-        options: [
-            { name: "4 sao", },
-            { name: "Khách sạn", },
-            { name: "Tuyệt hảo: 9 điểm trở lên", },
-            { name: "Hồ bơi", },
-            { name: "WiFi miễn phí", },
-            { name: "Trung tâm Spa & chăm sóc sức khoẻ", },
-            { name: "Ban công", },
-            { name: "Căn hộ", },
-        ],
-    },
-    {
-        title: "Các chứng chỉ",
-        options: [{ name: "Chứng chỉ bền vững", }],
-    },
-    {
-        title: "Thương hiệu",
-        options: [
-            { name: "OYO Rooms", },
-            { name: "VBA Hospitality Group", },
-            { name: "Somerset", },
-            { name: "Belvilla", },
-            { name: "Muong Thanh Hospitality", },
-            { name: "InterContinental Hotels & Resorts", },
-        ],
-    },
-    {
+  const filterData = [
+  {
+    title: "Các bộ lọc phổ biến",
+    options: [
+      { name: "4 sao" },
+      { name: "Hồ bơi" },
+      { name: "WiFi miễn phí" },
+      { name: "Trung tâm Spa & chăm sóc sức khoẻ" },
+      { name: "Ban công" },
+      { name: "Phòng tắm riêng" },
+      { name: "Bể sục" },
+      { name: "Kitchenette" },
+    ],
+  },
+  {
+    title: "Các chứng chỉ",
+    options: [{ name: "Chứng chỉ bền vững" }],
+  },
+  {
+    title: "Thương hiệu",
+    options: [
+      { name: "OYO Rooms" },
+      { name: "VBA Hospitality Group" },
+      { name: "Somerset" },
+      { name: "Belvilla" },
+      { name: "Muong Thanh Hospitality" },
+      { name: "InterContinental Hotels & Resorts" },
+    ],
+  },
+  {
     title: "Tiện nghi",
     options: [
-      { name: "Chỗ đỗ xe" },
+      { name: "WiFi miễn phí" },
       { name: "Nhà hàng" },
       { name: "Dịch vụ phòng" },
       { name: "Lễ tân 24 giờ" },
       { name: "Trung tâm thể dục" },
+      { name: "Trung tâm Spa & chăm sóc sức khoẻ" },
+      { name: "Hồ bơi" },
+      { name: "Quầy Bar" },
+      { name: "Chỗ đỗ xe" },
+      { name: "Quầy tour" },
+      { name: "Shared kitchen" },
+      { name: "Laundry" },
+      { name: "Sky bar" },
+      { name: "Beach access" },
+      { name: "Garden" },
+      { name: "Terrace" },
     ],
   },
   {
@@ -50,6 +60,9 @@ const HotelListFilter = ({ onFilterChange }) => {
       { name: "Nhìn ra biển" },
       { name: "Phòng tắm riêng" },
       { name: "Bể sục" },
+      { name: "Kitchenette" },
+      { name: "Common area" },
+      { name: "Căn hộ" },
     ],
   },
   {
@@ -61,11 +74,11 @@ const HotelListFilter = ({ onFilterChange }) => {
       { name: "Dễ chịu: 6 điểm trở lên" },
     ],
   },
-   {
+  {
     title: "Loại chỗ ở",
     options: [
-      { name: "Căn hộ" },
       { name: "Khách sạn" },
+      { name: "Căn hộ" },
       { name: "Chỗ nghỉ nhà dân" },
       { name: "Nhà khách" },
       { name: "Nhà trọ" },
@@ -81,30 +94,16 @@ const HotelListFilter = ({ onFilterChange }) => {
   },
 ];
 
-  const [countData, setCountData] = useState({});
   const [selected, setSelected] = useState([]);
 
   const handleCheckboxChange = (name, checked) => {
     let newSelected = [...selected];
-
-    if (checked) {
-      newSelected.push(name);
-    } else {
-      newSelected = newSelected.filter((item) => item !== name);
-    }
+    if (checked) newSelected.push(name);
+    else newSelected = newSelected.filter((item) => item !== name);
 
     setSelected(newSelected);
     onFilterChange(newSelected); // gửi danh sách filter lên cha
   };
-
-  useEffect(() => {
-    const fetchCounts = async () => {
-      const data = await hotelFilterService.getFilterCounts();
-      setCountData(data);
-    };
-    fetchCounts();
-  }, []);
-//   if (!Array.isArray(filterData)) return null;
 
   return (
     <aside className={styles.sidebar}>
@@ -115,7 +114,6 @@ const HotelListFilter = ({ onFilterChange }) => {
           key={index}
           title={group.title}
           options={group.options}
-          countData={countData}
           selected={selected}
           onCheckboxChange={handleCheckboxChange}
         />
@@ -124,7 +122,7 @@ const HotelListFilter = ({ onFilterChange }) => {
   );
 };
 
-const FilterGroup = ({ title, options, countData, selected, onCheckboxChange }) => {
+const FilterGroup = ({ title, options, selected, onCheckboxChange }) => {
   const [showAll, setShowAll] = useState(false);
   const visibleOptions = showAll ? options : options.slice(0, 5);
 
@@ -133,15 +131,19 @@ const FilterGroup = ({ title, options, countData, selected, onCheckboxChange }) 
       <h4 className={styles.groupTitle}>{title}</h4>
       <ul className={styles.optionList}>
         {visibleOptions.map((option, idx) => {
-          const count = countData[option.name] ?? option.count ?? 0;
           const isChecked = selected.includes(option.name);
           return (
             <li key={idx} className={styles.optionItem}>
               <label className={styles.label}>
-                <input type="checkbox"  className={styles.checkbox} checked={isChecked}
-                  onChange={(e) => onCheckboxChange(option.name, e.target.checked)} />
+                <input
+                  type="checkbox"
+                  className={styles.checkbox}
+                  checked={isChecked}
+                  onChange={(e) =>
+                    onCheckboxChange(option.name, e.target.checked)
+                  }
+                />
                 <span className={styles.optionText}>{option.name}</span>
-                <span className={styles.count}>{count}</span>
               </label>
             </li>
           );
