@@ -12,12 +12,14 @@ import HotelDetail from './pages/HotelDetail/HotelDetail';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
+import { BehaviorProvider } from './contexts/BehaviorContext';
 // import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
 
   return (
-        <Router>
+    <BehaviorProvider>
+      <Router>
         <Routes>
           {/* Routes có dùng MainLayout */}
           <Route element={<MainLayout />}>
@@ -48,7 +50,8 @@ function App() {
           pauseOnHover
           theme="colored"
         />
-        </Router>
+      </Router>
+    </BehaviorProvider>
   )
 }
 

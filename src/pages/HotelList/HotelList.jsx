@@ -4,47 +4,48 @@ import { hotelService } from "../../services/hotelService";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import Hotel from "../../components/Hotel/Hotel";
 import HotelListFilter from "../../components/HotelListFilter/HotelListFilter";
+import { useBehavior } from "../../contexts/BehaviorContext";
 
 import './HotelList.css';
 import TopHotelSlider from "../../components/TopHotelSlider/TopHotelSlider";
 function HotelList() {
   const location = useLocation();
-
+  const { logBehavior } = useBehavior();
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({ current_page: 1, last_page: 1 });
   const [totalResults, setTotalResults] = useState(0);
   const [selectedFilters, setSelectedFilters] = useState([]);
   const amenitiesMap = {
-  // Tiện nghi phổ biến
-  "WiFi miễn phí": "WiFi",
-  "Nhà hàng": "Restaurant",
-  "Dịch vụ phòng": "Room service",
-  "Lễ tân 24 giờ": "24h front desk",
-  "Trung tâm thể dục": "Fitness center",
-  "Trung tâm Spa & chăm sóc sức khoẻ": "Spa",
-  "Hồ bơi": "Swimming pool",
-  "Ban công": "Balcony",
-  "Căn hộ": "Apartment",
-  "Chỗ đỗ xe": "Parking",
-  "Bể sục": "Jacuzzi",
-  "Phòng tắm riêng": "Private bathroom",
-  "Nhìn ra biển": "Sea view",
-  "Quầy Bar": "Bar",
-  "Quầy tour": "Tour desk",
-  "Family rooms": "Family rooms",
-  "Kitchenette": "Kitchenette",
-  "Shared kitchen": "Shared kitchen",
-  "Common area": "Common area",
-  "Laundry": "Laundry",
-  "Sky bar": "Sky bar",
-  "Fitness center": "Fitness center",
-  "Beach access": "Beach access",
-  "Private pool": "Private pool",
-  "Garden": "Garden",
-  "Terrace": "Terrace",
-  "Spa": "Spa"
-};
+    // Tiện nghi phổ biến
+    "WiFi miễn phí": "WiFi",
+    "Nhà hàng": "Restaurant",
+    "Dịch vụ phòng": "Room service",
+    "Lễ tân 24 giờ": "24h front desk",
+    "Trung tâm thể dục": "Fitness center",
+    "Trung tâm Spa & chăm sóc sức khoẻ": "Spa",
+    "Hồ bơi": "Swimming pool",
+    "Ban công": "Balcony",
+    "Căn hộ": "Apartment",
+    "Chỗ đỗ xe": "Parking",
+    "Bể sục": "Jacuzzi",
+    "Phòng tắm riêng": "Private bathroom",
+    "Nhìn ra biển": "Sea view",
+    "Quầy Bar": "Bar",
+    "Quầy tour": "Tour desk",
+    "Family rooms": "Family rooms",
+    "Kitchenette": "Kitchenette",
+    "Shared kitchen": "Shared kitchen",
+    "Common area": "Common area",
+    "Laundry": "Laundry",
+    "Sky bar": "Sky bar",
+    "Fitness center": "Fitness center",
+    "Beach access": "Beach access",
+    "Private pool": "Private pool",
+    "Garden": "Garden",
+    "Terrace": "Terrace",
+    "Spa": "Spa"
+  };
   // Lấy filter từ URL
   const getFiltersFromQuery = () => {
     const searchParams = new URLSearchParams(location.search);
@@ -66,9 +67,9 @@ function HotelList() {
     setLoading(true);
     try {
       const mappedFilters = selectedFilters.map(
-      (f) => amenitiesMap[f] || f
+        (f) => amenitiesMap[f] || f
       );
-      const filters = { ...params, selectedFilters:mappedFilters }; // lấy từ state
+      const filters = { ...params, selectedFilters: mappedFilters }; // lấy từ state
       const response = await hotelService.searchHotels(filters);
       setHotels(response.hotels || []);
       setPagination(response.pagination || { current_page: 1, last_page: 1 });
@@ -89,18 +90,23 @@ function HotelList() {
   // Khi tick/un-tick filter
   const handleFilterChange = (newFilters) => {
     setSelectedFilters(newFilters);
+    logBehavior("filter_change", { filters: newFilters });
     const filtersFromQuery = getFiltersFromQuery();
     loadHotels(filtersFromQuery);
   };
 
   // Pagination
   const handlePageChange = (page) => {
+    logBehavior("page_change", { page });
     const filters = getFiltersFromQuery();
     filters.page = page;
     loadHotels(filters);
   };
 
   const destination = getFiltersFromQuery().destination || "Hanoi";
+  useEffect(() => {
+    logBehavior("page_view", { page: "HotelList" });
+  }, []);
 
   return (
     <div className="page-wrapper">
@@ -121,29 +127,29 @@ function HotelList() {
         <div className="container">
           <div className="row flex">
             <div className="col-lg-3 col-md-6 col-sm-10 rmb-75">
-                <div className="sticky-sidebar">
-                  <div
-                    style={{
-                      borderRadius: "12px",
-                      overflow: "hidden",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                      marginBottom: "15px",
-                    }}
-                  >
-                    <iframe
-                      src={`https://www.google.com/maps?q=${encodeURIComponent(destination)}&output=embed`}
-                      width="100%"
-                      height="300px"
-                      style={{ border: 0, display: "block" }}
-                      allowFullScreen
-                      loading="lazy"
-                      title="Map"
-                    ></iframe>
-                  </div>
-
-                  <HotelListFilter onFilterChange={handleFilterChange} />
+              <div className="sticky-sidebar">
+                <div
+                  style={{
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                    marginBottom: "15px",
+                  }}
+                >
+                  <iframe
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(destination)}&output=embed`}
+                    width="100%"
+                    height="300px"
+                    style={{ border: 0, display: "block" }}
+                    allowFullScreen
+                    loading="lazy"
+                    title="Map"
+                  ></iframe>
                 </div>
+
+                <HotelListFilter onFilterChange={handleFilterChange} />
               </div>
+            </div>
             <div className="col-lg-9">
               {loading ? (
                 <div>Loading...</div>
@@ -204,7 +210,7 @@ function HotelList() {
                 </div>
               )}
             </div>
-           <TopHotelSlider></TopHotelSlider>
+            <TopHotelSlider></TopHotelSlider>
           </div>
         </div>
       </section>

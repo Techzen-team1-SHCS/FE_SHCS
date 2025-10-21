@@ -8,7 +8,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import "../Auth/index.css"
 const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
     const navigate = useNavigate();
-    const { login,user } = useContext(AuthContext);
+    const { login, user } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -63,6 +63,9 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
             } else if (phone.replace(/[^0-9]/g, '').length < 10) {
                 newErrors.phone = 'Số điện thoại phải có ít nhất 10 chữ số';
             }
+            else if (/\s/.test(phone.trim())) {
+                newErrors.phone = 'Số điện thoại không được chứa dấu cách';
+            }
         }
 
         setErrors(newErrors);
@@ -81,12 +84,13 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                         // 🔹 Gọi API lấy thông tin chi tiết user (có avatar_url)
                         const userRes = await authService.getUserById(userId);
                         const fullUser = userRes.user;
-                        
+
                         // 🔹 Lưu vào context & localStorage
-                        login(fullUser, token); 
+                        login(fullUser, token);
                         toast.success('Đăng nhập thành công!');
                         setIsAuthVisible(false);
-                        navigate('/');                     }
+                        navigate('/');
+                    }
                 } else {
                     const result = await authService.register({
                         name,
