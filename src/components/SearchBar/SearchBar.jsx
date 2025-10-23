@@ -200,7 +200,7 @@ function SearchBar() {
     };
 
     return (
-        <div className="container container-1400" style={{ fontFamily: "'Outfit', sans-serif" }}>
+        <div className="container container-1200" style={{ fontFamily: "'Outfit', sans-serif" }}>
             <div
                 className="search-filter-inner"
                 data-aos="zoom-out-down"
@@ -317,17 +317,18 @@ function SearchBar() {
                 {/* Search Button */}
                 <div className="search-button">
                     <input
-                        className="w-50 p-1"
+                        className="w-50 p-1 "
                         type="text"
                         placeholder="Search"
                         maxLength={13}
                         value={filters.searchTerm}
-                        onChange={handleSearchInput}
+                        onChange={handleSearchInput} 
+                       
                     />
 
                     <button
                         className="theme-btn w-50"
-                        style={{ marginLeft: '20px' }}
+                        style={{ marginLeft: '20px', height: '50px', marginTop: '10px' }}
                         onClick={handleSearch}
                     >
                         <span data-hover="Tìm kiếm">Tìm kiếm</span>

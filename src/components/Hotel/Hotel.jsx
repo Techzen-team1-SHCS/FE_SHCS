@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom';
 import './style.css';
 import { MdOutlineBedroomParent } from "react-icons/md";
 
@@ -42,7 +43,7 @@ const Hotel = ({
           </div>
         </div>
         <h5>
-          <a href={detailsUrl}>{title}</a>
+           <Link to={detailsUrl}>{title}</Link>
         </h5>
         <p>{description}</p>
         <ul className="blog-meta">
@@ -58,10 +59,10 @@ const Hotel = ({
           <span className="price">
             {price}/person
           </span>
-          <a href={detailsUrl} className="theme-btn style-two style-three">
-            <span data-hover="Book Now">Book Now</span>
-            <i className="fal fa-arrow-right"></i>
-          </a>
+          <Link to={detailsUrl} className="theme-btn style-two style-three">
+              <span data-hover="Book Now">Book Now</span>
+              <i className="fal fa-arrow-right"></i>
+          </Link>
         </div>
         </div>
       </div>

@@ -28,7 +28,7 @@ function App() {
             <Route path="/ContactUs" element={<ContactUs />} />
             <Route path='*' element={<NotFoundPage />}></Route>
             <Route path='/BlogList' element={<BlogList />}></Route>
-            <Route path='/HotelDetail' element={<HotelDetail />}></Route>
+            <Route path='/hotel/:hotelId' element={<HotelDetail />}></Route>
             <Route path="/reset-password/:token" element={<ResetPassword />} />
 
             {/* có thể thêm các page khác cần layout */}

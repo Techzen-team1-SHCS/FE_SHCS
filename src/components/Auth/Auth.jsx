@@ -21,7 +21,7 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
     const [phone, setPhone] = useState('');
     const validateForm = () => {
         const newErrors = {};
-
+ 
         // Validate email
         if (!email.trim()) {
             newErrors.email = 'Email là bắt buộc';
@@ -34,6 +34,14 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
             newErrors.password = 'Mật khẩu là bắt buộc';
         } else if (password.length < 6) {
             newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+        } else if (!/[A-Z]/.test(password)) {
+            newErrors.password = 'Mật khẩu phải chứa ít nhất 1 chữ hoa';
+        } else if (!/[a-z]/.test(password)) {
+            newErrors.password = 'Mật khẩu phải chứa ít nhất 1 chữ thường';
+        } else if (!/[0-9]/.test(password)) {
+            newErrors.password = 'Mật khẩu phải chứa ít nhất 1 số';
+        } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+            newErrors.password = 'Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt';
         }
 
         // Validate confirm password for register
@@ -58,10 +66,12 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
         if (!isLogin) {
             if (!phone.trim()) {
                 newErrors.phone = 'Số điện thoại là bắt buộc';
-            } else if (!/^[0-9+\-\s()]+$/.test(phone)) {
+            } else if (!/^[0-9+\-()]+$/.test(phone)) { // bỏ \s để ko cho phép khoảng trắng
                 newErrors.phone = 'Số điện thoại không hợp lệ';
             } else if (phone.replace(/[^0-9]/g, '').length < 10) {
                 newErrors.phone = 'Số điện thoại phải có ít nhất 10 chữ số';
+            } else if (/^(\d)\1+$/.test(phone.replace(/[^0-9]/g, ''))) {
+                newErrors.phone = 'Số điện thoại không hợp lệ';
             }
         }
 

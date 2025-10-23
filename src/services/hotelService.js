@@ -31,7 +31,7 @@ export const hotelService = {
 
   async getHotelById(id) {
     const response = await api.get(`/auth/hotel/${id}`);
-    return response.data;
+    return response.data.data;
   },
 
   async getAllHotels() {
