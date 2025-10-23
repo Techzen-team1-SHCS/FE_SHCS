@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
-import HotelCardRecommendation from '../../components/HotelCardRecommendation/HotelCardRecommendation';
+import HotelCardRecommendation from '../HotelCardRecommendation/HotelCardRecommendation';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -85,6 +85,12 @@ const HotelRecommendation = () => {
                             data-aos-offset="50"
                         >
                             <h1>Hotel Recommend by AI</h1>
+                            <div className="hotel-more-btn text-center mt-40">
+                                <a className="theme-btn style-four" href='/HotelsRecommend' style={{ cursor: "pointer" }}>
+                                    <span data-hover="Explore More Hotel">Explore More Hotel</span>
+                                    <i className="fal fa-arrow-right"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -113,7 +119,7 @@ const HotelRecommendation = () => {
                                 slidesPerView: 4,
                             }
                         }}
-                        className="hotel-swiper"
+                        className="hotel-swiper w-100"
                     >
                         {/* {hotels.map((hotel) => (
                              <SwiperSlide key={hotel.id}>
@@ -132,14 +138,15 @@ const HotelRecommendation = () => {
                         {hotels.map((hotel) => (
                             <SwiperSlide key={hotel.id}>
                                 <HotelCardRecommendation key={hotel.id}
-                                    image={hotel.images?.[0]?.url || "/assets/images/default-hotel.jpg"}
+                                    image={hotel.images?.[0]?.url || hotel.images}
                                     title={hotel.name}
-                                    location={hotel.province}                                   
+                                    location={hotel.province}
+                                    description={hotel.description}
                                     price={`${hotel.price_formatted || hotel.price} VNĐ`}
-                                    rating={(hotel.hotel_class / 10).toFixed(1)}
-                                    detailsUrl={`/hotel/${hotel.id}`} 
+                                    rating={(hotel.rating / 1).toFixed(1)}
+                                    detailsUrl={`/hotel/${hotel.id}`}
                                     amenities={hotel.amenities}
-                                    />
+                                />
                             </SwiperSlide>
                         ))}
                     </Swiper>

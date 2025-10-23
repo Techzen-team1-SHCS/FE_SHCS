@@ -2,12 +2,13 @@ import React from 'react'
 import styles from './HotelCardRecommendation.module.css'
 
 const HotelCardRecommendation = ({ image,
-  title,
-  location,
-  price,
-  rating ,
-  amenities,
-  detailsUrl = "#", }) => {
+    title,
+    location,
+    price,
+    rating,
+    amenities,
+    description,
+    detailsUrl = "#", }) => {
     return (
         <div className={styles.hotelCard}>
             <div className={styles.hotelImage}>
@@ -19,9 +20,10 @@ const HotelCardRecommendation = ({ image,
             <div className={styles.hotelInfo}>
                 <h3 className={styles.hotelName}>{title}</h3>
                 <div className={styles.hotelLocation}><div className='fa fa-location'></div> {location}</div>
+                <div className={styles.hoteldescription}>{description}</div>
                 <div className={styles.hotelAmenities}>
-                    
-                    {amenities.slice(0,4).map((amenity, index) => (
+
+                    {amenities.slice(0, 4).map((amenity, index) => (
                         <span key={index} className={styles.amenityTag}>
                             {amenity}
                         </span>

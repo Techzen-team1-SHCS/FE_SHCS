@@ -5,14 +5,14 @@ import Destinations from '../../components/Destination/Destinations'
 import AboutUs from '../../components/AboutUs/AboutUs'
 import Features from '../../components/Features/Features'
 import HotelSection from '../../components/HotelSection/HotelSection'
-import HotelRecommendation from '../../components/HotelRecommendation/HotelRecommendation'
+import HotelRecommendationSlider from '../../components/HotelRecommendationSlider/HotelRecommendationSlider'
 
 const Home = () => {
     return (
         <div className="page-wrapper">
             <HeroSection />
             <Destinations />
-            <HotelRecommendation/>
+            <HotelRecommendationSlider/>
             <AboutUs />
             <PopularDestinations />
             <Features />
