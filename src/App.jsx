@@ -12,43 +12,46 @@ import HotelDetail from './pages/HotelDetail/HotelDetail';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
+import Profile from './pages/Profile/Profile';
+
 // import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
 
   return (
-        <Router>
-        <Routes>
-          {/* Routes có dùng MainLayout */}
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/HotelList" element={<HotelList />} />
-            <Route path="/About" element={<About />} />
-            <Route path="/Destination1" element={<Destination1 />} />
-            <Route path="/ContactUs" element={<ContactUs />} />
-            <Route path='*' element={<NotFoundPage />}></Route>
-            <Route path='/BlogList' element={<BlogList />}></Route>
-            <Route path='/HotelDetail' element={<HotelDetail />}></Route>
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
+    <Router>
+      <Routes>
+        {/* Routes có dùng MainLayout */}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/HotelList" element={<HotelList />} />
+          <Route path="/About" element={<About />} />
+          <Route path="/Destination1" element={<Destination1 />} />
+          <Route path="/ContactUs" element={<ContactUs />} />
 
-            {/* có thể thêm các page khác cần layout */}
-          </Route>
+          <Route path='/BlogList' element={<BlogList />}></Route>
+          <Route path='/HotelDetail' element={<HotelDetail />}></Route>
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path='/profile' element={<Profile />}></Route>
+          {/* có thể thêm các page khác cần layout */}
+        </Route>
+        <Route path='*' element={<NotFoundPage />}></Route>
+        {/* Route KHÔNG dùng MainLayout */}
+      </Routes>
 
-          {/* Route KHÔNG dùng MainLayout */}
-        </Routes>
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-        />
-        </Router>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+    </Router>
   )
 }
 

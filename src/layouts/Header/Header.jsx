@@ -116,7 +116,7 @@ const Header = () => {
             ))}
         </>
     );
-   
+
     return (
         <>
             {/* Preloader */}
@@ -211,14 +211,14 @@ const Header = () => {
                                                 <div className="btnRegister p-3" style={{ minWidth: '200px' }}>
                                                     <div className="content text-start">
                                                         <p className="fw-semibold mb-1">Xin chào, {user.name}</p>
-                                                         <img
+                                                        <img
                                                             src={user.avatar_url || 'assets/images/avatar/avatar_default.png'}
                                                             alt="avatar"
                                                             className="rounded-circle"
                                                             width={60}
                                                             height={60}
                                                         />
-                                                        
+
                                                         {/* Các tùy chọn giống trang booking */}
                                                         <ul className="list-unstyled mb-2">
                                                             <li>
