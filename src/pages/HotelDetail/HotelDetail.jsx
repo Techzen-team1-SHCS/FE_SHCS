@@ -4,6 +4,7 @@ import HotelBooking from '../../components/HotelBooking/HotelBooking.jsx';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import { hotelService } from '../../services/hotelService';
 import "./style.css";
+
 const HotelDetail = () => {
   const { hotelId } = useParams();
   const [showAllPhotos, setShowAllPhotos] = useState(false);
@@ -44,11 +45,12 @@ const HotelDetail = () => {
       {hotelArray.map((hotel) => {
         const galleryImages = hotel.images || [];
         const amenitiesArray = hotel.amenities ? JSON.parse(hotel.amenities) : [];
+        const roomArray=hotel.rooms || [];
+        const styleArray=hotel.styles || [];
         console.log(galleryImages);
         return (
           <div key={hotel.id}>
-            <section className="page-banner-two rel z-1 mt-250">
-              <SearchBar />
+            <section className="page-banner-two rel z-1 mt-150">
               <div className="container-fluid" style={{ width: '85%',alignItems: 'center', justifyContent: 'center'   }}>
                 <div className="container3">
                   <div className="banner-inner ">
@@ -74,18 +76,60 @@ const HotelDetail = () => {
                       <HotelBooking onBook={handleBookNow} />
                   </div>
                 </div>
+                <div className='container2'>
+                  {roomArray.length > 0 ?(
+                  <>
+                    {roomArray.map((room)=>(
+                      <div key={room.id} className='roomStyle'>
+                        <div className='item1'>
+                          <img src="/assets/images/about/icon-user-grey.svg" alt="" />
+                          <p>{room.max_guest} GUEST</p>
+                        </div>
+                        <div className='item1'>
+                          <img src="/assets/images/about/icon-plan-grey.svg" alt="" />
+                          <p>70 ft</p>
+                        </div>
+                        <div className='item1'>
+                          <img src="/assets/images/about/icon-bed-grey.svg" alt="" />
+                          <p>{Number(room.price).toLocaleString('vi-VN')} / PER NIGHT</p>
+                        </div>
+                        <div className='item1'>
+                          <img src="/assets/images/about/icon-calendar-grey.svg" alt="" />
+                          <p>WEEK PRICE</p>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ):(
+                  <div>Không có dữ liệu</div>
+                )}
+                </div>
+                <div className='lineRoom'></div>
               </div>
             </div>
 
             <section  className="container-fluid pt-70" style={{ width: '85%',alignItems: 'center', justifyContent: 'center'   }}>
               <div className="container3">
                 <div className="tour-header-content mb-15">
-                  <div className="section-title pb-5">
-                    <h2>
-                      <div className="tour-details-content">
-                        <p>{hotel.description || 'Description'}</p>
-                      </div>
-                    </h2>
+                  <div className=" body-content pb-5">
+                    <div className="description-content">
+                        <p>{hotel.text || 'Description'}</p>
+                    </div>
+                    <div className='style2-content'>
+                        <div className='title-style'>
+                          <h2>Thể Loại</h2>
+                        </div>
+                        <div className='content-style'>
+                          {styleArray.map((item, index) => (
+                            item?.style && (
+                              <div key={index} className='contentStyle'>
+                                <img src="/assets/images/about/pdf-gold.svg" alt="" />
+                                <p>Thể Loại {item.style}</p>
+                              </div>
+                            )
+                          ))}
+                        </div>
+                    </div>                  
                   </div>
                 </div>
                 <hr className="mb-30" />
@@ -110,10 +154,13 @@ const HotelDetail = () => {
                     )}
                 </div>
 
-                <div className="col-lg-4 col-md-8 col-sm-10 rmt-75">
-                  <div className="blog-sidebar tour-sidebar">
-                   
-                  </div>
+                <div className='around-Hotel'>
+                  <h1 className='title-around'>Around The Hotel </h1>
+                  <div className='content-around' >
+                    <img  src={galleryImages[0]?.url} alt="Destination 1" style={{objectPosition:'top left'}}/>
+                    <img  src={galleryImages[1]?.url} alt="Destination 1" style={{objectPosition:'bottom right'}} />
+                    <img  src={galleryImages[2]?.url} alt="Destination 1" style={{objectPosition:'center'}} />
+                  </div>                   
                 </div>
               </div>
             </section>

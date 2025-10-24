@@ -105,3 +105,87 @@
     align-items: center;
     
 }
+.container2{
+  margin-top: 40px;
+  width: 100%;
+  height: 150px;
+}
+.roomStyle{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+.item1{
+  flex: 1;
+  text-align: center;
+}
+.item1 img{
+  width: 100px;
+  height: auto;
+}
+.item1 p{
+  padding-top: 20px;
+  font-size: 19px;
+}
+.lineRoom{
+  margin-top: 40px;
+  width: 100%;
+  border: 1px solid rgb(212, 209, 209);
+}
+.body-content{
+  width: 100%;
+  display: flex;
+  gap: 30px;
+}
+.description-content{
+  width: 70%;
+}
+.description-content p{
+  color: #5c5c5c;
+}
+.style2-content{
+  width: 28%;
+  padding-left: 30px;
+}
+
+.contentStyle{
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  
+}
+.contentStyle img{
+  width: 70px;
+}
+.contentStyle p{
+  padding-top: 20px;
+  font-size: 20px;
+  color: #5c5c5c;
+}
+.around-Hotel{
+  width: 100;
+  
+}
+.around-Hotel h1{
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.content-around{
+  width: 100%;
+  display: flex;
+  gap: 15px;
+}
+.content-around img{
+  width: 400px;
+  height: 400px;
+  object-fit: cover;
+  object-position: top right;
+}
+.title-around{
+  font-weight: 200;
+}

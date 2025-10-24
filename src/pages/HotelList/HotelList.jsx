@@ -182,6 +182,7 @@ function HotelList() {
                         badgeClass={hotel.hotel_class}
                         rating={(hotel.hotel_class / 10).toFixed(1)}
                         detailsUrl={`/hotel/${hotel.id}`}
+                        id={hotel.id}
                       />
                     );
                   })}

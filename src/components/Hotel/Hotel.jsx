@@ -15,6 +15,7 @@ const Hotel = ({
   badgeLabel = null,
   rating,
   detailsUrl = "#",
+  id
 }) => {
 
   const { logBehavior } = useBehavior();
