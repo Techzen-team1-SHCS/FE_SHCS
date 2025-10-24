@@ -2,6 +2,7 @@
 import { useContext, useEffect, useState } from 'react';
 import HotelCardRecommendation from '../../components/HotelCardRecommendation/HotelCardRecommendation'
 import { AuthContext } from '../../contexts/AuthContext';
+import TopHotelSlider from "../../components/TopHotelSlider/TopHotelSlider"
 const HotelsRecommend = () => {
   const [hotelsRecommendPage, setHotelsRecommendPage] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -111,6 +112,7 @@ const HotelsRecommend = () => {
               />
             ))}
           </div>
+          <TopHotelSlider/>
         </div>
       </section>
     </div>
