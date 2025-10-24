@@ -77,7 +77,6 @@ const HotelListFilter = ({ onFilterChange }) => {
   {
     title: "Loại chỗ ở",
     options: [
-      { name: "Khách sạn" },
       { name: "Căn hộ" },
       { name: "Chỗ nghỉ nhà dân" },
       { name: "Nhà khách" },

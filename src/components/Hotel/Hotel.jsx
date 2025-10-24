@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom';
 import './style.css';
 import { MdOutlineBedroomParent } from "react-icons/md";
 import { useBehavior } from "../../contexts/BehaviorContext";

@@ -1,0 +1,107 @@
+.container1{
+    display: flex;
+    width: 100%;
+    height: auto;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-sequence {
+  position: relative;
+  width: 65%; /* chỉnh theo ý bạn */
+  height: 400px; /* chỉnh theo ý bạn */
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.image-sequence img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 0.8s ease;
+}
+
+/* Ảnh đầu tiên hiển thị mặc định */
+.image-sequence img:first-child {
+  opacity: 1;
+  z-index: 1;
+}
+
+/* Khi hover bắt đầu vòng lặp */
+.image-sequence:hover img:nth-child(1) {
+  animation: fadeDark 8s linear 0s infinite;
+}
+.image-sequence:hover img:nth-child(2) {
+  animation: fadeDark 8s linear 2s infinite;
+}
+.image-sequence:hover img:nth-child(3) {
+  animation: fadeDark 8s linear 4s infinite;
+}
+.image-sequence:hover img:nth-child(4) {
+  animation: fadeDark 8s linear 6s infinite;
+}
+
+/* Keyframes: phủ đen nhẹ rồi hiện ảnh, lặp mượt */
+@keyframes fadeDark {
+  0% {
+    opacity: 0;
+    filter: brightness(100%);
+    z-index: 2;
+  }
+  10% {
+    opacity: 1;
+    filter: brightness(70%); /* phủ đen nhẹ */
+    z-index: 2;
+  }
+  40% {
+    opacity: 1;
+    filter: brightness(100%);
+  }
+  50% {
+    opacity: 0;
+    filter: brightness(100%);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.content2{
+    width: 35%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: auto;
+    background-color: rgb(107, 103, 103);
+    height: 400px;
+    flex-direction: column;
+}
+.children3{
+    width: 100%;
+    object-fit: cover;
+}
+.container3{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.banner-inner{
+    width: 100%;
+    display: flex;
+    text-align: left;
+    align-items: left;
+    justify-content: left;
+}
+.datePicker{
+    width: 90%;
+    display:flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    
+}

@@ -61,7 +61,7 @@ const TopHotelSlider = () => {
                 {[...Array(Math.floor((hotel.hotel_class / 10).toFixed(1)))].map((_, i) => (
                   <i key={i} className="fas fa-star" style={{ color: "#FFD700" }}></i>
                 ))}
-            </div>
+                    </div>
 
                     <h4 className={styles.hotelName}>{hotel.name}</h4>
 
