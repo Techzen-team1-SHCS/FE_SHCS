@@ -12,12 +12,15 @@ import HotelDetail from './pages/HotelDetail/HotelDetail';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
+import { BehaviorProvider } from './contexts/BehaviorContext';
+import HotelsRecommend from './pages/HotelsRecommend/HotelsRecommend';
 // import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
 
   return (
-        <Router>
+    <BehaviorProvider>
+      <Router>
         <Routes>
           {/* Routes có dùng MainLayout */}
           <Route element={<MainLayout />}>
@@ -30,7 +33,7 @@ function App() {
             <Route path='/BlogList' element={<BlogList />}></Route>
             <Route path='/hotel/:hotelId' element={<HotelDetail />}></Route>
             <Route path="/reset-password/:token" element={<ResetPassword />} />
-
+            <Route path='/HotelsRecommend' element={<HotelsRecommend />}></Route>
             {/* có thể thêm các page khác cần layout */}
           </Route>
 
@@ -48,7 +51,8 @@ function App() {
           pauseOnHover
           theme="colored"
         />
-        </Router>
+      </Router>
+    </BehaviorProvider>
   )
 }
 

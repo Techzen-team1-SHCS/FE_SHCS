@@ -49,6 +49,7 @@ const Header = () => {
                 // { label: "Tour Grid", path: "/tour-grid" },
                 // { label: "Tour Sidebar", path: "/tour-sidebar" },
                 { label: "Hotel Details", path: "/HotelDetail" },
+                { label: "Hotel Recommendation", path: "/HotelsRecommend" },
                 // { label: "Tour Guide", path: "/tour-guide" },
             ],
         },

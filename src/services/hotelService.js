@@ -38,4 +38,8 @@ export const hotelService = {
     const response = await api.get("/auth/hotel");
     return response.data;
   },
+    async getRecommendedHotels() {
+    const response = await api.get('/auth/hotels/recommended');
+    return response.data;
+  },
 };
