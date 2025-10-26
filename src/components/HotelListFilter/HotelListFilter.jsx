@@ -63,6 +63,7 @@ const HotelListFilter = ({ onFilterChange }) => {
       { name: "Kitchenette" },
       { name: "Common area" },
       { name: "Căn hộ" },
+      {name:"Phòng gia đình"}
     ],
   },
   {

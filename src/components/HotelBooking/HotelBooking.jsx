@@ -193,9 +193,9 @@ const HotelBooking = ({ onBook }) => {
           </div>
         </div>
 
-        <div className="booking-item">
+        <div className="booking-item ">
           <h4>NIGHTS</h4>
-          <div className="value-box">
+          <div className="value-box number-box">
             <span className="number-display">{nights}</span>
           </div>
         </div>

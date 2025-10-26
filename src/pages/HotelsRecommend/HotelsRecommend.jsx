@@ -86,18 +86,6 @@ const HotelsRecommend = () => {
       <section className="tour-list-page py-50 rel z-1">
         <div className="container">
           <div className="d-flex flex-wrap justify-content-between" style={{ gap: '10px' }}>
-            {/* {hotelsRecommendPage.map((hotel) => (
-              <HotelCardRecommendation key={hotel.id}
-                image={hotel.images?.[0]?.url || hotel.images}
-                title={hotel.name}
-                location={hotel.province}
-                price={`${hotel.price_formatted || hotel.price} VNĐ`}
-                rating={(hotel.rating / 1).toFixed(1)}
-                detailsUrl={`/hotel/${hotel.id}`}
-                description={hotel.description}
-                amenities={hotel.amenities}
-              />
-            ))} */}
             {/* dữ liệu mẫu */}
             {hotels.map((hotel) => (
               <HotelCardRecommendation key={hotel.id}

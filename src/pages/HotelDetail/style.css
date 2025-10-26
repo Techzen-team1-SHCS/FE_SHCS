@@ -141,13 +141,15 @@
   gap: 30px;
 }
 .description-content{
-  width: 70%;
+  width: 65%;
 }
 .description-content p{
   color: #5c5c5c;
+  font-size: 20px;
+  font-weight: bold;
 }
 .style2-content{
-  width: 28%;
+  width: 35%;
   padding-left: 30px;
 }
 
@@ -166,9 +168,21 @@
   font-size: 20px;
   color: #5c5c5c;
 }
+.info-around-Hotel{
+  width: 100%;
+  display: flex;
+  gap: 30px;
+}
 .around-Hotel{
-  width: 100;
-  
+  width: 65%;
+}
+.branch-Hotel{
+  width: 35%;
+}
+
+.title-style{
+  font-size: 30px;
+  font-weight: 400;
 }
 .around-Hotel h1{
   width: 100%;
@@ -188,4 +202,39 @@
 }
 .title-around{
   font-weight: 200;
+}
+.contentRoom{
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.roomRender{
+  width: 100%;
+  display: flex;
+  gap: 15px;
+}
+.containerRoom img{
+  width: 200px;
+  height: 200px;
+  padding-bottom: 30px;
+  object-fit: cover;
+}
+.info-room{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.titleRoom{
+  font-size: 30px;
+  font-weight: 400;
+}
+.room_type{
+  font-weight: bold;
+  font-size: 30px;
+}
+.info-room .price{
+  font-size: 30px;
+  font-weight: 400;
 }

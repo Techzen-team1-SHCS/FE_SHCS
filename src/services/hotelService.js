@@ -36,7 +36,7 @@ export const hotelService = {
 
   async getAllHotels() {
     const response = await api.get("/auth/hotel");
-    return response.data;
+    return response.data.data;
   },
     async getRecommendedHotels() {
     const response = await api.get('/auth/hotels/recommended');

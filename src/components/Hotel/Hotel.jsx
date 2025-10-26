@@ -1,9 +1,10 @@
-
 import { Link } from 'react-router-dom';
 import './style.css';
 import { MdOutlineBedroomParent } from "react-icons/md";
 import { useBehavior } from "../../contexts/BehaviorContext";
-import { useEffect } from "react"
+import { useContext, useState } from "react"
+import { AuthContext } from '../../contexts/AuthContext';
+
 const Hotel = ({
   image,
   title,
@@ -17,19 +18,13 @@ const Hotel = ({
   detailsUrl = "#",
   id
 }) => {
-
+  const { user } = useContext(AuthContext);
   const { logBehavior } = useBehavior();
-  useEffect(() => {
-    logBehavior("view_hotel_card", {
-      hotelId: id,
-      hotelName: title,
-      location,
-      price,
-      rating,
-    });
-  }, []);
-    const handleBookClick = () => {
+  const [isZoomed, setIsZoomed] = useState(false);
+
+  const handleBookClick = () => {
     logBehavior("click_book_now", {
+      userId: user?.id || null,
       hotelId: id,
       hotelName: title,
       price,
@@ -37,58 +32,111 @@ const Hotel = ({
     });
   };
 
-  return (
-    <div
-      className="destination-item style-three bgc-lighter"
+  const handleWishlist = () => {
+    logBehavior("wishlist", {
+      userId: user?.id || null,
+      hotelId: id,
+      hotelName: title,
+      price,
+      location,
+    });
+  };
 
-    >
-      <div className="image">
-        <div className="ratting">
-          <i className="fas fa-star"></i> {rating}
+  const handleZoomImage = () => {
+    setIsZoomed(!isZoomed);
+    
+    logBehavior("zoom_image", {
+      userId: user?.id || null,
+      hotelId: id,
+      hotelName: title,
+      action: isZoomed ? "zoom_out" : "zoom_in"
+    });
+  };
+
+  const handleCloseZoom = (e) => {
+    if (e.target.classList.contains('image-zoom-overlay')) {
+      setIsZoomed(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="destination-item style-three bgc-lighter">
+        <div className="image">
+          <div className="ratting">
+            <i className="fas fa-star"></i> {rating}
+          </div>
+          <button className="heart" onClick={handleWishlist}>
+            <i className="fas fa-heart"></i>
+          </button>
+          <img 
+            src={image} 
+            alt={title} 
+            onClick={handleZoomImage}
+            className="zoomable-image"
+          />
         </div>
-        <a href="#" className="heart">
-          <i className="fas fa-heart"></i>
-        </a>
-        <img src={image} alt={title} />
-      </div>
-      <div className="content">
-        <div className="content1">
-          <div className="destination-header">
-            <div className="location">
-              <i className="fal fa-map-marker-alt"></i>
-              <span>{location}</span>
-              <div className="ratting">
-                {[...Array(Math.floor(rating))].map((_, i) => (
-                  <i key={i} className="fas fa-star" style={{ color: "#FFD700" }}></i>
-                ))}
+        <div className="content">
+          <div className="content1">
+            <div className="destination-header">
+              <div className="location">
+                <i className="fal fa-map-marker-alt"></i>
+                <span>{location}</span>
+                <div className="ratting">
+                  {[...Array(Math.floor(rating))].map((_, i) => (
+                    <i key={i} className="fas fa-star" style={{ color: "#FFD700" }}></i>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-          <h5>
-            <a href={detailsUrl}>{title}</a>
-          </h5>
-          <p>{description}</p>
-          <ul className="blog-meta">
-            <li>
-              <i className="far fa-clock"></i> {duration}
-            </li>
-            <li>
-              <i className="far fa-user"></i> {guests}/<MdOutlineBedroomParent size={24} color="#333" />
-
-            </li>
-          </ul>
-          <div className="destination-footer">
-            <span className="price">
-              {price}/person
-            </span>
-            <a href={detailsUrl} className="theme-btn style-two style-three"  onClick={handleBookClick}>
-              <span data-hover="Book Now">Book Now</span>
-              <i className="fal fa-arrow-right"></i>
-            </a>
+            <h5>
+              <a href={detailsUrl}>{title}</a>
+            </h5>
+            <p>{description}</p>
+            <ul className="blog-meta">
+              <li>
+                <i className="far fa-clock"></i> {duration}
+              </li>
+              <li>
+                <i className="far fa-user"></i> {guests}/<MdOutlineBedroomParent size={24} color="#333" />
+              </li>
+            </ul>
+            <div className="destination-footer">
+              <span className="price">
+                {price}/person
+              </span>
+              <Link to={detailsUrl} className="theme-btn style-two style-three" onClick={handleBookClick}>
+                <span data-hover="Book Now">Book Now</span>
+                <i className="fal fa-arrow-right"></i>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Zoom Overlay */}
+      {isZoomed && (
+        <div 
+          className="image-zoom-overlay"
+          onClick={handleCloseZoom}
+        >
+          <div className="zoomed-image-container">
+            <img 
+              src={image} 
+              alt={title}
+              className="zoomed-image"
+              onClick={handleZoomImage}
+            />
+            <button 
+              className="close-zoom-btn"
+              onClick={() => setIsZoomed(false)}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

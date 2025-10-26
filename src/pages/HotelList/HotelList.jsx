@@ -88,12 +88,14 @@ function HotelList() {
   }, [location.search, selectedFilters]);
 
   // Khi tick/un-tick filter
-  const handleFilterChange = (newFilters) => {
-    setSelectedFilters(newFilters);
-    logBehavior("filter_change", { filters: newFilters });
-    const filtersFromQuery = getFiltersFromQuery();
-    loadHotels(filtersFromQuery);
-  };
+ const handleFilterChange = (newFilters) => {
+  setSelectedFilters(newFilters); // cập nhật state
+  logBehavior("filter_change", { filters: newFilters }); // log cho tracking
+  const filtersFromQuery = getFiltersFromQuery();
+  // override selectedFilters bằng newFilters
+  const filtersToLoad = { ...filtersFromQuery, selectedFilters: newFilters };
+  loadHotels(filtersToLoad); // gửi filter chính xác
+};
 
   // Pagination
   const handlePageChange = (page) => {
@@ -104,9 +106,6 @@ function HotelList() {
   };
 
   const destination = getFiltersFromQuery().destination || "Hanoi";
-  useEffect(() => {
-    logBehavior("page_view", { page: "HotelList" });
-  }, []);
 
   return (
     <div className="page-wrapper">

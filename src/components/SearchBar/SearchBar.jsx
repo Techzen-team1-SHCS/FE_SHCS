@@ -2,6 +2,7 @@ import  { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './style.css'
 function SearchBar() {
      const [filters, setFilters] = useState({
         destination: "",
@@ -200,7 +201,7 @@ function SearchBar() {
     };
 
     return (
-        <div className="container container-1200" style={{ fontFamily: "'Outfit', sans-serif" }}>
+        <div className="container container-1200" style={{ fontFamily: "'Outfit', sans-serif",zIndex:'80' }}>
             <div
                 className="search-filter-inner"
                 data-aos="zoom-out-down"
