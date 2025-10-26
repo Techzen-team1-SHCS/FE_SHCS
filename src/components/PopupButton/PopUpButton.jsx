@@ -40,7 +40,7 @@ const PopUpButton = ({onLoginClick,isAuthVisible  }) => {
         <div style={fixedStyle} onClick={onLoginClick}>
         <div className={styles.tooltipContainer}>
             <span className={styles.tooltip}>Hãy đăng nhập</span>
-            <span className={styles.text}>Để chúng tôi hiểu sở thích của bạn</span>
+            <span className={styles.text}>Dừng lại! Để chúng tôi hiểu sở thích của bạn</span>
             <svg
                 className={styles.calque1}
                 viewBox="0 0 377 270"
