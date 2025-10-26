@@ -8,9 +8,9 @@ const HotelCardRecommendation = ({ image,
     rating,
     amenities,
     description,
-    detailsUrl = "#", }) => {
+    detailsUrl = "#",}) => {
     return (
-        <div className={styles.hotelCard}>
+        <div className={styles.hotelCard} >
             <div className={styles.hotelImage}>
                 <img src={image} alt={title} />
                 <div className={styles.hotelRating}>

@@ -85,7 +85,7 @@ const HotelsRecommend = () => {
       </section>
       <section className="tour-list-page py-50 rel z-1">
         <div className="container">
-          <div className="d-flex flex-wrap justify-content-between" style={{ gap: '10px' }}>
+          <div className="d-flex flex-wrap justify-center" style={{ gap: '83px' }}>
             {/* {hotelsRecommendPage.map((hotel) => (
               <HotelCardRecommendation key={hotel.id}
                 image={hotel.images?.[0]?.url || hotel.images}

@@ -6,7 +6,7 @@
     margin-bottom: 30px;
     max-height:800px;
     border: 1px solid #92A498;
-    min-width: 350px;
+    flex: 0 0 29%;
 }
 .hoteldescription{
     color: #92A498;
