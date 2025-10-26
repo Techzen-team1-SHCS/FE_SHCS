@@ -1,0 +1,116 @@
+.container {
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.sectionTitle {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+  padding-bottom: 5px;
+}
+.serviceContainer{
+    display: flex;
+    flex-wrap: wrap;
+}
+.serviceItem {
+  padding-left:20px ;  
+  display: flex;
+  flex: 0 0 50%;
+  margin-bottom: 5px;
+
+}
+
+.serviceName {
+    color: #333;
+
+}
+
+.formSection {
+  margin-top: 30px;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.formGroup {
+  flex: 1;
+  min-width: 200px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+  cursor:auto;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  background-color: #dcdcdc;
+}
+.formGroup select{
+    height: 58%;
+}
+.formGroup textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.required::after {
+  content: " *";
+  color: red;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #868686;
+  margin: 20px 0;
+}
+
+.noServices {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+.reviewSection{
+    display: flex;
+    flex-direction: column;
+}
+.reviewInfo {
+    display: flex;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.reviewRow {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 35%;
+}
+.buttonGroup{
+    display: flex;
+    gap: 40px;
+}
+.taxSection{
+    margin-top: 30px;
+}

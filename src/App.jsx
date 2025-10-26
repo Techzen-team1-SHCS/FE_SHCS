@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
 import { BehaviorProvider } from './contexts/BehaviorContext';
 import HotelsRecommend from './pages/HotelsRecommend/HotelsRecommend';
+import Booking from './pages/Booking/Booking';
 // import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
             <Route path='/hotel/:hotelId' element={<HotelDetail />}></Route>
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path='/HotelsRecommend' element={<HotelsRecommend />}></Route>
+            <Route path='/booking/:bookingId' element={<Booking />}></Route>
             {/* có thể thêm các page khác cần layout */}
           </Route>
 
