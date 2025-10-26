@@ -295,7 +295,10 @@ const Header = () => {
                     />
                 )}
             </header>
-             {!user && <PopUpButton />}
+            {!user && !isAuthVisible && <PopUpButton onLoginClick={() => {
+                setIsLogin(true);
+                setIsAuthVisible(true);
+            }} />}
         </>
     );
 };

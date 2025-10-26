@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import styles from "./PopUpButton.module.css"
+import { AuthContext } from '../../contexts/AuthContext';
 
-const PopUpButton = () => {
+const PopUpButton = ({onLoginClick,isAuthVisible  }) => {
+    const { user } = useContext(AuthContext)
     const [isVisible, setIsVisible] = useState(false)
 
     useEffect(() => {
+         if (user || isAuthVisible ) {
+            setIsVisible(false)
+            return
+        }
         const handleScroll = () => {
             const currentScrollY = window.scrollY
             
@@ -18,8 +24,8 @@ const PopUpButton = () => {
 
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
-    }, [])
-
+    }, [user,isAuthVisible ])
+    if (user || isAuthVisible ) return null
     // Style cho fixed position
     const fixedStyle = {
         position: 'fixed',
@@ -31,7 +37,7 @@ const PopUpButton = () => {
         transition: 'opacity 0.3s ease, visibility 0.3s ease'
     }
     return (
-        <div style={fixedStyle}>
+        <div style={fixedStyle} onClick={onLoginClick}>
         <div className={styles.tooltipContainer}>
             <span className={styles.tooltip}>Hãy đăng nhập</span>
             <span className={styles.text}>Để chúng tôi hiểu sở thích của bạn</span>
