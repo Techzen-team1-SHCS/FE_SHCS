@@ -1,0 +1,35 @@
+.profileContainer {
+    margin-top: 150px;
+  display: flex;
+  min-height: 100vh;
+    padding: 30px;
+}
+
+.sidebar { 
+  width: 40%;
+
+}
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+.navButton{
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding-left:10px ;
+    height:50px;
+    background-color: none;
+    cursor: pointer;
+    border: 1px solid black;
+}
+.content{
+    width: 70%;
+}
+.active{
+  color: #AD9668;
+}

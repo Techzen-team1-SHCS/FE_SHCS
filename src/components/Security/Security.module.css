@@ -1,0 +1,139 @@
+.container{
+    width: 100%;
+}
+.header{
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+}
+.subHeader{
+    font-size: 16px;
+    font-weight: 400;
+    color: black;
+}
+.section{
+    display: flex;
+    justify-content: space-between;
+}
+.group{
+    width: 30%;
+}
+.iconContainer{
+    width: 40%;
+    
+}
+.icon{
+    width: 10px;
+    transition: transform 0.3s ease;
+    
+}
+.icon i{
+    cursor: pointer;
+}
+.icon.rotate {
+    transform: rotate(180deg);
+}
+.deleteButton{
+    width: 200px;
+    background-color: white;
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal {
+    background: white;
+    border-radius: 8px;
+    padding: 0;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    color: black;
+}
+.modalHeader {
+    padding: 24px 24px 16px 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.modalHeader h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.modalContent {
+    padding: 24px;
+}
+
+.warningList {
+    margin: 16px 0;
+    padding-left: 20px;
+}
+
+.warningList li {
+    margin-bottom: 8px;
+}
+
+.processInfo {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-top: 16px;
+}
+
+.modalDivider {
+    height: 1px;
+    background-color: #e2e8f0;
+    margin: 0;
+}
+
+.modalActions {
+    padding: 24px;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    background-color: #f0f0f0;
+}
+
+.cancelButton {
+    padding: 10px 20px;
+    border: 1px solid #cbd5e0;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4a5568;
+    transition: all 0.3s ease;
+}
+
+.cancelButton:hover {
+    background-color: #f7fafc;
+    border-color: #a0aec0;
+}
+
+.confirmDeleteButton {
+    padding: 10px 20px;
+    background-color: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.confirmDeleteButton:hover {
+    background-color: #c53030;
+}

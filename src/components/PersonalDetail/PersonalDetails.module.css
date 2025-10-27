@@ -1,0 +1,39 @@
+.container{
+    width: 100%;
+}
+.header{
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+}
+.titleColumn{
+    width: 20%;
+}
+.infoColumn{
+    width: 40%;
+}
+.buttons{
+    width: 10%;
+}
+.titleItem{
+    font-weight: 550;
+    color: black;
+    margin-top: 20px;
+}
+.infoItems{
+    margin-top: 20px;
+}
+
+.avatar{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+}
+.avatarBtn{
+    margin-top: 20px;
+    background-color: white;
+    padding: 5px;
+    border: 1px solid black;
+    width: 150px;
+}
