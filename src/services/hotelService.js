@@ -28,7 +28,14 @@ export const hotelService = {
     const response = await api.get("/auth/tophotels");
     return response.data.data;
   },
-
+  async getSameProvince(id){
+    const response=await api.get(`/auth/hotels/${id}/same-province`);
+    return response.data.data;
+  },
+  async getSimilarHotel(id){
+    const response=await api.get(`/auth/hotels/${id}/same-style`);
+    return response.data.data;
+  },
   async getHotelById(id) {
     const response = await api.get(`/auth/hotel/${id}`);
     return response.data.data;

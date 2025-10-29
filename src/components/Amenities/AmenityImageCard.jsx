@@ -7,8 +7,8 @@ const AmenityImageCard = ({ amenityName }) => {
 
   return (
     <div className="amenity-image-card" style={{ 
-      width: '300px', 
-      height: '300px', 
+      width: '250px', 
+      height: '250px', 
       position: 'relative',
       textAlign: 'center'
     }}>

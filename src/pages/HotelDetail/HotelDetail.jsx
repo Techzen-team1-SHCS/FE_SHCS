@@ -6,6 +6,8 @@ import "./style.css";
 import Button from '../../components/Button/Button.jsx';
 import AmenityIcon from '../../components/Amenities/AmenityIcon.jsx';
 import AmenityImageCard from '../../components/Amenities/AmenityImageCard.jsx';
+import SameProvinceHotels from '../../components/SameProvinces/SameProvinceHotels.jsx';
+import SimilarHotel from '../../components/SimilarHotel/SimilarHotel.jsx';
 
 
 
@@ -186,7 +188,7 @@ const HotelDetail = () => {
                <div className='info-around-Hotel'>
                 <div className='around-Hotel'>
                   <h1 className='title-around'>Around The Hotel</h1>
-                  <div className='content-around' style={{ display: 'flex', overflowX: 'auto', gap: '30px' }}>
+                  <div className='content-around' style={{ display: 'flex',gap: '30px' }}>
                     {amenitiesArray.length
                       ? amenitiesArray.slice(0,3).map((amenity, i) => (
                           <div key={i} className="amenity-item" style={{ minWidth: '150px' }}>
@@ -198,9 +200,13 @@ const HotelDetail = () => {
                   </div>  
                                 
                </div>
-               <hr className="mb-30" style={{height:'500px',width:'1px'}} />  
-               <div className='branch-Hotel'></div>
+               <hr className="mb-30" style={{height:'400px',width:'1px'}} />  
+               <div className='branch-Hotel'>
+                <SameProvinceHotels currentHotelId={hotel.id}></SameProvinceHotels>
                </div>
+               </div>
+               <hr className="mb-30" />
+               <SimilarHotel currentHotelId={hotel.id}/>
               </div>
             </section>
           </div>
