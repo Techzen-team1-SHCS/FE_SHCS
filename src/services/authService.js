@@ -20,6 +20,32 @@ export const authService = {
 
     return response.data;
   },
+  //Login với google
+  loginGoogle: async (idToken) => {
+    try {
+      const res = await api.post("auth/loginGoogle", {
+        id_token: idToken,
+      });
+
+      if (res.data.status) {
+        const { token, user } = res.data;
+        // Lưu thông tin đăng nhập
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        return { success: true, user, token };
+      } else {
+        return { success: false, message: res.data.message };
+      }
+    } catch (error) {
+      console.error("Login Google error:", error);
+      return {
+        success: false,
+        message:
+          error.response?.data?.message ||
+          "Lỗi kết nối server khi đăng nhập Google.",
+      };
+    }
+  },
   getUserById: async (id) => {
         const response = await axios.get(`/api/auth/user/${id}`);
         return response.data;

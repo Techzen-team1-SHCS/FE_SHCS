@@ -1,57 +1,39 @@
-import { useEffect, useRef } from 'react';
-import api  from '../../services/api';
-import { toast } from 'react-toastify';
+import { GoogleLogin } from "@react-oauth/google";
+import { authService } from "../../services/authService";
+import { toast } from "react-toastify";
+import { AuthContext } from "../../contexts/AuthContext";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function GoogleLoginButton({ onSuccess }) {
-  const googleDivRef = useRef(null);
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-      if (!clientId) {
-        toast.error('Thiếu VITE_GOOGLE_CLIENT_ID');
-        return;
-      }
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        callback: async (response) => {
-          try {
-            const { credential: id_token } = response; // JWT từ Google
-            const res = await api.post('/auth/login-google', { id_token });
-            if (res.data?.status) {
-              const token = res.data.token;
-              const user = res.data.user;
-              if (token) localStorage.setItem('auth_token', token);
-              if (user) localStorage.setItem('user', JSON.stringify(user));
-              toast.success('Đăng nhập Google thành công');
-              onSuccess?.(user);
-            } else {
-              toast.error(res.data?.message || 'Đăng nhập Google thất bại');
-            }
-          } catch (err) {
-            toast.error(err.response?.data?.message || 'Có lỗi khi đăng nhập Google');
-          }
-        },
-      });
-      if (googleDivRef.current) {
-        window.google.accounts.id.renderButton(googleDivRef.current, {
-          theme: 'outline',
-          size: 'large',
-          type: 'standard',
-          text: 'signin_with',
-          shape: 'rectangular',
-        });
-      }
-    };
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
+  const handleGoogleSuccess = async (credentialResponse) => {
+    const idToken = credentialResponse?.credential;
+    if (!idToken) return toast.error("Không lấy được mã Google!");
 
-  return <div ref={googleDivRef} />;
+    const result = await authService.loginGoogle(idToken);
+
+    if (result.success) {
+      const token = result.token;
+      const fullUser = result.user;
+
+      // Lưu vào context + localStorage
+      login(fullUser, token);
+
+      toast.success(`Xin chào ${fullUser.name}!`);
+      if (onSuccess) onSuccess(fullUser);
+      navigate('/');
+    } else {
+      toast.error(result.message);
+    }
+  };
+
+  return (
+    <GoogleLogin
+      onSuccess={handleGoogleSuccess}
+      onError={() => toast.error("Đăng nhập Google thất bại!")}
+    />
+  );
 }

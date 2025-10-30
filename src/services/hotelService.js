@@ -45,8 +45,18 @@ export const hotelService = {
     const response = await api.get("/auth/hotel");
     return response.data.data;
   },
-    async getRecommendedHotels() {
-    const response = await api.get('/auth/hotels/recommended');
-    return response.data;
+  async getRecommendedHotels(userId) {
+    const token = localStorage.getItem("token");
+    const headers = {};
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const response = await api.get(`/auth/recommendations/${userId}`, {
+      headers,
+    });
+
+    return response.data.data || [];
   },
 };
