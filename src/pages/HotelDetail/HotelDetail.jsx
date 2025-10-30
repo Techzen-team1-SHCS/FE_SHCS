@@ -8,6 +8,7 @@ import AmenityIcon from '../../components/Amenities/AmenityIcon.jsx';
 import AmenityImageCard from '../../components/Amenities/AmenityImageCard.jsx';
 import SameProvinceHotels from '../../components/SameProvinces/SameProvinceHotels.jsx';
 import SimilarHotel from '../../components/SimilarHotel/SimilarHotel.jsx';
+import NavigationTabs from '../../components/NavigationTabs/NavigationTabs.jsx';
 
 
 
@@ -49,6 +50,7 @@ const HotelDetail = () => {
 
   return (
     <div className="page-wrapper">
+      <NavigationTabs hotelId={hotelId} />
       {hotelArray.map((hotel) => {
         const galleryImages = hotel.images || [];
         const amenitiesArray = hotel.amenities ? JSON.parse(hotel.amenities) : [];
@@ -81,7 +83,7 @@ const HotelDetail = () => {
                       <img  src={galleryImages[2]?.url} alt="Destination 1" />
                   </div>
                   <div className='content2'>
-                      <HotelBooking onBook={handleBookNow} />
+                      <HotelBooking onBook={handleBookNow} hotelId={hotelId}/>
                   </div>
                 </div>
                 <div className='container2'>
