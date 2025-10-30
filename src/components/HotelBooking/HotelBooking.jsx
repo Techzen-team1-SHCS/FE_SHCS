@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import "./HotelBooking.css";
+import { useNavigate } from "react-router-dom";
 
-const HotelBooking = ({ onBook }) => {
+const HotelBooking = ({ onBook,hotelId }) => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
   const [nights, setNights] = useState(0);
   const [showDatePicker, setShowDatePicker] = useState(null); // 'checkIn' | 'checkOut' | null
   const [tempDate, setTempDate] = useState("");
-
+  const navigate=useNavigate()
   // Khởi tạo ngày mặc định
   useEffect(() => {
     const today = new Date();
@@ -41,6 +42,7 @@ const HotelBooking = ({ onBook }) => {
       alert("❌ Please select valid dates");
       return;
     }
+    navigate(`/booking/${hotelId}`)
     alert(`✅ Booking success!\nGuests: ${guests}\nNights: ${nights}`);
   };
 
@@ -206,6 +208,7 @@ const HotelBooking = ({ onBook }) => {
         className="book-btn"
         onClick={handleSubmit}
         disabled={!checkIn || !checkOut || nights <= 0}
+        
       >
         BOOK NOW
       </button>
