@@ -1,0 +1,370 @@
+.layoutContainer {
+  display: flex;
+  min-height: 100vh;
+
+}
+
+.sidebar { 
+  width: 20%;
+    border-right: 1px solid #d9d9d9;
+}
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+align-items: center;
+    justify-content: center;
+
+}
+.navButton{
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    height:50px;
+    background-color: none;
+    cursor: pointer;
+    color: black;
+    font-weight: 600;
+    padding-left: 10%;
+    border-radius: 30px;
+}
+.content{
+    width: 80%;
+}
+.active{
+  background-color: #E0E0E0;
+}
+.profileContainer{
+    width: 100%;
+}
+.general{
+    color: #DFA144;
+    font-size: 21px;
+    font-weight: 500;
+    width: min-content;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    border-bottom: 2px solid #DFA144;
+}
+/* Header */
+.headerContainer{
+    padding: 40px 40px 0 40px;
+    border-bottom: 1px solid #D9D9D9;
+}
+.profileHeader{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    max-height: 150px;
+}
+.headerGroup{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.headerTitle{
+    font-size: 30px;
+    font-weight: bold;
+}
+.helpBtn{
+    border-radius: 1000px;
+    width: 50px;
+    height: 50px;
+}
+/* avatar */
+.avatarcontainer{
+    display: flex;
+    justify-content: space-between;
+    width: 70%;
+}
+.avatarSection{
+    padding: 30px;
+    border-bottom: 1px solid #D9D9D9;
+}
+.avatarGroup{
+    display: flex;
+    gap: 20px;
+}
+.userName{
+    font-size: 25px;
+    font-weight: 700;
+}
+
+/* info */
+.userInfo{
+    padding: 30px;
+    border-bottom: 1px solid #D9D9D9;
+}
+.sectionTitle{
+    font-size: 25px;
+    font-weight: 700;
+}
+.infoLabel{
+    font-size: 21px;
+    font-weight: 700;
+}
+.infoGroup{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+.infoItem{
+    display: flex;
+    justify-content: space-between;
+    width: 70%;
+}
+.infoRow{
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    border-bottom: 1px solid #D9D9D9;
+}
+/* addressInfo */
+.addressInfo{
+    padding: 30px;
+    border-bottom: 1px solid #D9D9D9;
+    margin-bottom: 10px;
+}
+/* edit */
+.editActions{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.editInput{
+    padding: 2px;
+    border: 1px solid black;
+}
+/* Modal Styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.avatarModal {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.modalHeader h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.closeButton:hover {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+.modalContent {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.avatarPreview {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9fafb;
+}
+
+.previewImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.uploadSection {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.uploadBtn {
+    padding: 10px 20px;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.uploadBtn:hover {
+    background-color: #059669;
+}
+.uploadHint {
+    margin: 0;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-top: 1px solid #e5e7eb;
+    gap: 16px;
+}
+
+.removeBtn {
+    padding: 8px 16px;
+    background: none;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.removeBtn:hover:not(:disabled) {
+    background-color: #ef4444;
+    color: white;
+}
+
+.removeBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.actionButtons {
+    display: flex;
+    gap: 12px;
+}
+
+.cancelModalBtn {
+    padding: 10px 20px;
+    background: none;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancelModalBtn:hover {
+    background-color: #f9fafb;
+}
+
+.saveModalBtn {
+    padding: 10px 20px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.saveModalBtn:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.saveModalBtn:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .avatarModal {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .modalActions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .actionButtons {
+        width: 100%;
+    }
+    
+    .cancelModalBtn,
+    .saveModalBtn {
+        flex: 1;
+    }
+    
+    .avatarPreview {
+        width: 150px;
+        height: 150px;
+    }
+}
+.saveBtn {
+    width: 100px;
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background-color: #DFA144;
+  color: #ffffff;
+  font-weight: Bold;
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+}
+
+.saveBtn:hover {
+  background-color: rgb(230, 208, 97);
+  box-shadow: 0 0 20px #6fc5ff50;
+  transform: scale(1.1);
+}
+
+.saveBtn:active {
+  background-color: #9a7235;
+  transition: all 0.25s;
+  -webkit-transition: all 0.25s;
+  box-shadow: none;
+  transform: scale(0.98);
+}

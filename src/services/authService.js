@@ -61,5 +61,36 @@ export const authService = {
   // 🔹 Kiểm tra đã đăng nhập chưa
   isAuthenticated: () => {
     return !!localStorage.getItem('token');
+  },
+  // 🔹 UPDATE PROFILE
+  updateProfile: async (userId, profileData) => {
+    const response = await api.put(`/auth/user/${userId}`, profileData);
+    return response.data;
+  },
+
+  // 🔹 UPLOAD AVATAR
+  uploadAvatar: async (userId, file) => {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    
+    const response = await api.post(`/auth/user/${userId}/avatar`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  // 🔹 REMOVE AVATAR
+  removeAvatar: async (userId) => {
+    const response = await api.delete(`/auth/user/${userId}/avatar`);
+    return response.data;
+  },
+
+  // 🔹 GET USER PROFILE
+  getUserProfile: async (userId) => {
+    const response = await api.get(`/auth/user/${userId}/profile`);
+    return response.data;
   }
+
 };
