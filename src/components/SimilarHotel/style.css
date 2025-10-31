@@ -90,13 +90,19 @@
   font-size: 14px;
   color: #777;
   line-height: 1.5;
-  margin-bottom: 20px;
+ 
 }
 
 /* Nút */
 
 
-
+.contentDescription{
+  display: -webkit-box;        /* Cho phép cắt theo box */
+    -webkit-line-clamp: 2;       /* Chỉ hiển thị 2 dòng */
+    -webkit-box-orient: vertical;/* Chiều hướng box */
+    overflow: hidden;            /* Ẩn phần vượt quá */
+    text-overflow: ellipsis; 
+}
 
 /* Tiêu đề khu vực */
 .similar-hotels-title {

@@ -19,7 +19,7 @@ const HotelBooking = ({ onBook,hotelId }) => {
     setCheckIn(today.toISOString().split("T")[0]);
     setCheckOut(tomorrow.toISOString().split("T")[0]);
   }, []);
-
+ 
   // Validate dates và tính số đêm
   useEffect(() => {
     if (checkIn && checkOut) {
@@ -35,15 +35,39 @@ const HotelBooking = ({ onBook,hotelId }) => {
       setNights(0);
     }
   }, [checkIn, checkOut]);
+  const getMinCheckInDate = () => {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const today = new Date();
+    if (new Date(checkIn) < new Date(today.toISOString().split("T")[0])) {
+      alert("❌ Check-in date cannot be in the past");
+      return;
+    }
     if (!checkIn || !checkOut || nights <= 0) {
       alert("❌ Please select valid dates");
       return;
     }
-    navigate(`/booking/${hotelId}`)
-    alert(`✅ Booking success!\nGuests: ${guests}\nNights: ${nights}`);
+    const bookingData = {
+      checkIn,
+      checkOut,
+      guests,
+      nights
+    };
+
+    console.log('Booking data:', bookingData);
+
+    // Gọi hàm onBook từ props
+    if (onBook) {
+      onBook(bookingData);
+    } else {
+      // Fallback: navigate đến booking page nếu không có onBook
+      navigate(`/booking/${hotelId}`);
+    }
   };
 
   // Lấy ngày tối thiểu cho check-out
@@ -74,20 +98,35 @@ const HotelBooking = ({ onBook,hotelId }) => {
   };
 
   // Chọn ngày
-  const handleDateSelect = (date) => {
-    if (showDatePicker === 'checkIn') {
-      setCheckIn(date);
-      // Tự động điều chỉnh check-out nếu cần
-      if (new Date(date) >= new Date(checkOut)) {
-        const newCheckOut = new Date(date);
-        newCheckOut.setDate(newCheckOut.getDate() + 1);
-        setCheckOut(newCheckOut.toISOString().split("T")[0]);
-      }
-    } else if (showDatePicker === 'checkOut') {
-      setCheckOut(date);
+ const handleDateSelect = (date) => {
+  const today = new Date().toISOString().split("T")[0];
+
+  if (showDatePicker === 'checkIn') {
+    if (date < today) {
+      alert("❌ Check-in cannot be in the past");
+      setTempDate(today);
+      return;
     }
-    setShowDatePicker(null);
-  };
+    setCheckIn(date);
+
+    // Tự động điều chỉnh check-out nếu cần
+    if (new Date(date) >= new Date(checkOut)) {
+      const newCheckOut = new Date(date);
+      newCheckOut.setDate(newCheckOut.getDate() + 1);
+      setCheckOut(newCheckOut.toISOString().split("T")[0]);
+    }
+  } else if (showDatePicker === 'checkOut') {
+    if (new Date(date) <= new Date(checkIn)) {
+      alert("❌ Check-out must be after check-in");
+      setTempDate(getMinCheckOutDate());
+      return;
+    }
+    setCheckOut(date);
+  }
+
+  setShowDatePicker(null);
+};
+
 
   // Render date picker modal
   const renderDatePickerModal = () => {
@@ -117,7 +156,7 @@ const HotelBooking = ({ onBook,hotelId }) => {
               type="date"
               value={tempDate}
               onChange={(e) => setTempDate(e.target.value)}
-              min={minDate}
+              min={showDatePicker === 'checkIn' ? getMinCheckInDate() : getMinCheckOutDate()}
               className="date-picker-input"
               autoFocus
             />

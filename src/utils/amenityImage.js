@@ -30,9 +30,9 @@ export const amenityImages = {
   'sky bar': '/assets/images/amenities/sky-bar.jpg',
   'beach access': '/assets/images/amenities/beach.jpg',
   'garden': '/assets/images/amenities/garden.jpg',
-  'terrace': '/assets/images/amenities/terrace.jpg',
+  'Terrace': '/assets/images/amenities/terrace.jpg',
   'restaurant': '/assets/images/amenities/restaurant.jpg',
-  'family rooms': '/assets/images/amenities/family-room.jpg',
+  'Family rooms': '/assets/images/amenities/family-room.jpg',
   // Tiện nghi phòng
   'hồ bơi riêng': '/assets/images/amenities/private-pool.jpg',
   'nhìn ra biển': '/assets/images/amenities/sea-view.jpg',

@@ -69,20 +69,6 @@ const Booking = () => {
         )
     }
 
-    // if (error) {
-    //   return (
-    //     <div className='page-wrapper'>
-    //       <div className={styles.error}>{error}</div>
-    //     </div>
-    //   )
-    // }
-    // if (!hotelData) {
-    //   return (
-    //     <div className='page-wrapper'>
-    //       <div className={styles.error}>No hotel data found</div>
-    //     </div>
-    //   )
-    // }
     return (
         <div className='page-wrapper'>
             <section

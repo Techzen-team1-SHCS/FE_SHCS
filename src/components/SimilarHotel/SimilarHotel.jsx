@@ -49,7 +49,7 @@ function SimilarHotel({currentHotelId}) {
                       <span>70 ft</span>
                   </div>
                 </div>
-                <span>{hotel.description}</span>
+                <span className='contentDescription'>{hotel.description}</span>
                 <Button props={'Book Now'}></Button>
                 </div>
             </div>

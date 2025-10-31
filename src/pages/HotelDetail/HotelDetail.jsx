@@ -1,5 +1,5 @@
-import  { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import  { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import HotelBooking from '../../components/HotelBooking/HotelBooking.jsx';
 import { hotelService } from '../../services/hotelService';
 import "./style.css";
@@ -9,17 +9,71 @@ import AmenityImageCard from '../../components/Amenities/AmenityImageCard.jsx';
 import SameProvinceHotels from '../../components/SameProvinces/SameProvinceHotels.jsx';
 import SimilarHotel from '../../components/SimilarHotel/SimilarHotel.jsx';
 import NavigationTabs from '../../components/NavigationTabs/NavigationTabs.jsx';
-
-
-
+import AvailableRooms from '../../components/AvailableRooms/AvailableRooms.jsx';
 
 const HotelDetail = () => {
   const { hotelId } = useParams();
   const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [availableRooms,setAvailableRooms]=useState([]);
+  const [showAvailableRooms,setShowAvailableRooms]=useState(false);
+   const [searchParams, setSearchParams] = useState(null);
   const [hotelData, setHotelData] = useState(null); // object
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [loadingRooms, setLoadingRooms] = useState(false);
+  const navigate=useNavigate();
+  const availableRoomsSectionRef = useRef(null);
 
+  // Thêm useEffect để xử lý scroll
+  useEffect(() => {
+    if (showAvailableRooms && availableRooms.length > 0) {
+      setTimeout(() => {
+        if (availableRoomsSectionRef.current) {
+          availableRoomsSectionRef.current.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 400);
+    }
+  }, [showAvailableRooms, availableRooms]);
+  const handleBookNowFromCalendar = async (bookingData) => {
+    console.log('Booking data from calendar:', bookingData);
+    
+    try {
+      setLoadingRooms(true);
+      const rooms = await hotelService.getAvailableRooms(
+        hotelId, 
+        bookingData.checkIn, 
+        bookingData.checkOut, 
+        bookingData.guests,
+        bookingData.nights
+      );
+      
+      setAvailableRooms(rooms);
+      setSearchParams(bookingData);
+      setShowAvailableRooms(true);
+      console.log('🔍 searchParams sau khi set:', bookingData);
+      // Scroll xuống phần phòng trống
+    } catch (err) {
+      console.error('Error fetching available rooms:', err);
+      alert('Không thể tải danh sách phòng trống');
+    } finally {
+      setLoadingRooms(false);
+    }
+  };
+  const handleRoomSelect = (room, quantity) => {
+    console.log('Selected room:', room, 'Quantity:', quantity);
+    // Điều hướng đến trang checkout hoặc xử lý booking
+    navigate(`/booking/`, { 
+      state: { 
+        room, 
+        quantity, 
+        searchParams,
+        hotel: hotelData 
+      } 
+    });
+  };
   useEffect(() => {
     const fetchHotelData = async () => {
       setLoading(true);
@@ -41,16 +95,14 @@ const HotelDetail = () => {
   if (error) return <div className="page-wrapper">Error: {error}</div>;
   if (!hotelData) return <div className="page-wrapper">No data found</div>;
 
-  const handleBookNow = (data) => {
-    console.log('Booking data:', data);
-  };
+  
 
   // Chuyển hotelData thành array để map giống TopHotelSlider
   const hotelArray = [hotelData];
 
   return (
     <div className="page-wrapper">
-      <NavigationTabs hotelId={hotelId} />
+      
       {hotelArray.map((hotel) => {
         const galleryImages = hotel.images || [];
         const amenitiesArray = hotel.amenities ? JSON.parse(hotel.amenities) : [];
@@ -60,6 +112,7 @@ const HotelDetail = () => {
         return (
           <div key={hotel.id}>
             <img  src={galleryImages[0]?.url} alt="Destination 1" style={{height:'500px',width:'100%',objectFit:'cover'}} />
+            <NavigationTabs hotelId={hotel.id} />
             <section className="page-banner-two rel z-1 mt-20">
               <div className="container-fluid" style={{ width: '85%',alignItems: 'center', justifyContent: 'center'   }}>
                 <div className="container3">
@@ -83,13 +136,13 @@ const HotelDetail = () => {
                       <img  src={galleryImages[2]?.url} alt="Destination 1" />
                   </div>
                   <div className='content2'>
-                      <HotelBooking onBook={handleBookNow} hotelId={hotelId}/>
+                      <HotelBooking onBook={handleBookNowFromCalendar} hotelId={hotelId}/>
                   </div>
                 </div>
                 <div className='container2'>
                   {roomArray.length > 0 ?(
                   <>
-                    {roomArray.map((room)=>(
+                    {roomArray.slice(0,1).map((room)=>(
                       <div key={room.id} className='roomStyle'>
                         <div className='item1'>
                           <img src="/assets/images/about/icon-user-grey.svg" alt="" />
@@ -124,6 +177,23 @@ const HotelDetail = () => {
                   <div className=" body-content pb-5">
                     <div className="description-content">
                         <p>{hotel.text || 'Description'}</p>
+                        {showAvailableRooms && (
+                        <section id="available-rooms-section"  style={{ width: '100%', marginTop: '50px' }}>
+                          
+                          
+                          {loadingRooms ? (
+                            <div>Đang tải danh sách phòng...</div>
+                          ) : availableRooms.length > 0 ? (
+                            <AvailableRooms 
+                              availableRooms={availableRooms}
+                              searchParams={searchParams}
+                              onRoomSelect={handleRoomSelect}
+                            />
+                          ) : (
+                            <div>Không có phòng trống cho khoảng ngày đã chọn</div>
+                          )}
+                        </section>
+                      )}
                     </div>
                     <div className='style2-content'>
                         <div className='contentRoom'>
@@ -167,7 +237,7 @@ const HotelDetail = () => {
                 <hr className="mb-30" />
               </div>
             </section>
-
+           
             <section className="container-fluid pb-70px" style={{ width: '85%',alignItems: 'center', justifyContent: 'center'   }}>
               <div className="container3">
                 <h2>Các tiện nghi được ưa chuộng nhất</h2>
@@ -210,6 +280,7 @@ const HotelDetail = () => {
                <hr className="mb-30" />
                <SimilarHotel currentHotelId={hotel.id}/>
               </div>
+               
             </section>
           </div>
         );
