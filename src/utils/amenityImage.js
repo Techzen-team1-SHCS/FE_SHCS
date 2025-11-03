@@ -2,7 +2,7 @@
 export const amenityImages = {
   // Các bộ lọc phổ biến
   'wifi': '/assets/images/amenities/wifi.png',
-  'hồ bơi': '/assets/images/amenities/pool.jpg',
+  'Swimming Pool': '/assets/images/amenities/pool.jpg',
   'trung tâm spa & chăm sóc sức khoẻ': '/assets/images/amenities/spa.jpg',
   'ban công': '/assets/images/amenities/balcony.jpg',
   'phòng tắm riêng': '/assets/images/amenities/bathroom.jpg',

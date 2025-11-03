@@ -38,7 +38,7 @@ const HotelDetail = () => {
     }
   }, [showAvailableRooms, availableRooms]);
   const handleBookNowFromCalendar = async (bookingData) => {
-    console.log('Booking data from calendar:', bookingData);
+    
     
     try {
       setLoadingRooms(true);
@@ -108,6 +108,7 @@ const HotelDetail = () => {
         const amenitiesArray = hotel.amenities ? JSON.parse(hotel.amenities) : [];
         const roomArray=hotel.rooms || [];
         const styleArray=hotel.styles || [];
+        console.log(amenitiesArray);
         console.log(galleryImages);
         return (
           <div key={hotel.id}>
@@ -269,7 +270,8 @@ const HotelDetail = () => {
                         ))
                       : null
                     }
-                  </div>  
+                  </div> 
+                   
                                 
                </div>
                <hr className="mb-30" style={{height:'400px',width:'1px'}} />  
