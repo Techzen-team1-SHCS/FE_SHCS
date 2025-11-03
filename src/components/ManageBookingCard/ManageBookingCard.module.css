@@ -1,0 +1,116 @@
+/* ---- Card ---- */
+.card {
+  background: #ffffff;
+  border-radius: 10px;
+  width: 50%;
+  box-shadow:1px 2px 4px 8px rgba(0, 0, 0, 0.1);
+   overflow: hidden;
+   transition: all 0.3s ease;
+     border: 1px solid #cfcfcf;
+
+}
+.card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+.hotelInfo{
+  padding: 40px;
+  border-bottom: 3px solid lightgray;
+  display: flex;
+  justify-content: space-between;
+}
+.cardBody {
+  
+  display: flex;
+  gap: 15px;
+
+}
+.cardGroup{
+  display: flex;
+  flex-direction: column;
+}
+.cardBody img {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.rebookBtn {
+  border: none;
+  color: #333;
+  font-weight: 500;
+  text-align: left;
+  display: flex;
+  gap:10px
+}
+
+
+.cardName{
+  color: black;
+  font-size: 40px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+.cardInfo{
+  font-weight: 300;
+  font-size: 25px;
+}
+.status{
+  margin-top: 10px;
+  font-size: 22px;
+  color: gray;
+}
+.btn{
+    background: none;
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.btn:hover{
+    background-color: #f0f0f0; 
+}
+.dotBtn{
+  cursor: pointer;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  height: 20px;
+}
+.menuWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.menu {
+  position: absolute;
+  top: 15%;
+  right: 0%;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+  min-width: 120px;
+}
+
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: white;
+  cursor: pointer;
+  color: #ff4444;
+  font-size: 14px;
+}
+
+.deleteBtn:hover {
+  background: #fff5f5;
+}
