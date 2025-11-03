@@ -78,5 +78,25 @@ export const bookingService={
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Cancel failed');
     }
+  },
+  async getMyBookings() {
+    try {
+      const response = await api.get('/bookings/me');
+      return response.data;
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách booking:', error);
+      throw error;
+    }
+  },
+
+
+  async deleteBooking(bookingId) {
+    try {
+      const response = await api.delete(`/bookings/${bookingId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Lỗi khi xóa booking:', error);
+      throw error;
+    }
   }
 }

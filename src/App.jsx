@@ -16,6 +16,7 @@ import { BehaviorProvider } from './contexts/BehaviorContext';
 import HotelsRecommend from './pages/HotelsRecommend/HotelsRecommend';
 import Booking from './pages/Booking/Booking';
 import PaymentResult from './pages/PaymentResult/PaymentResult';
+import ManageBooking from './pages/ManageBooking/ManageBooking';
 import Profile from './pages/Profile/Profile';
 // import { AuthProvider } from './contexts/AuthContext';
 
@@ -39,6 +40,7 @@ function App() {
             <Route path='/HotelsRecommend' element={<HotelsRecommend />}></Route>
             <Route path='/booking/:bookingId' element={<Booking />}></Route>
             <Route path="/payment-result" element={<PaymentResult />} />
+            <Route path="/my-bookings" element={<ManageBooking/>}/>
             <Route path="/profile" element={<Profile />} />
             {/* có thể thêm các page khác cần layout */}
           </Route>
