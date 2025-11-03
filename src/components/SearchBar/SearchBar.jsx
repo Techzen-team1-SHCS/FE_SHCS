@@ -1,17 +1,17 @@
-import  { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './style.css'
 function SearchBar() {
-     const [filters, setFilters] = useState({
+    const [filters, setFilters] = useState({
         destination: "",
         roomType: "",
         checkIn: "",
         checkOut: "",
         guests: "",
         searchTerm: "",
-        sort:"price_asc"
+        sort: "price_asc"
     });
     const [showDropdown, setShowDropdown] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(null);
@@ -19,29 +19,36 @@ function SearchBar() {
 
     // ✅ Fix search input
     const handleSearchInput = (e) => {
-    let value = e.target.value;
-     if(value.length>30){
-        value=value.slice(0,30);
-        toast.warning("Giới hạn tối đa 30 ký tự")
-     }
-    setFilters((prev) => ({
-        ...prev,
-        searchTerm: value,
-    }));
-    
+        let value = e.target.value;
+        if (value.length > 30) {
+            value = value.slice(0, 30);
+            toast.warning("Giới hạn tối đa 30 ký tự")
+        }
+        setFilters((prev) => ({
+            ...prev,
+            searchTerm: value,
+        }));
+
     };
 
     const handleOptionSelect = (key, value) => {
-        setFilters(prev => ({
-            ...prev,
-            [key]: value
-        }));
-        setShowDropdown(null);
+        if (value === "clear") {
+            setFilters(prev => ({
+                ...prev,
+                [key]: ""
+            }));
+            setShowDropdown(null);
+        } else {
+            setFilters(prev => ({
+                ...prev,
+                [key]: value
+            }));
+            setShowDropdown(null);
+        }
     };
-
     const handleDateSelect = (date) => {
         const today = new Date();
-        today.setHours(0,0,0,0);
+        today.setHours(0, 0, 0, 0);
         const selectedDate = new Date(date);
 
         if (selectedDate <= today) {
@@ -62,7 +69,13 @@ function SearchBar() {
             setShowDatePicker(null);
         }
     };
-
+    const clearDate = (type) => {
+        setFilters(prev => ({
+            ...prev,
+            [type]: "",
+            checkOut: ""
+        }));
+    };
     // ✅ Fix handleSearch: chỉ gửi giá trị hợp lệ
     const handleSearch = () => {
         // Kiểm tra ngày
@@ -81,7 +94,7 @@ function SearchBar() {
         if (filters.roomType) searchParams.append('roomType', filters.roomType);
         if (filters.checkIn) searchParams.append('checkIn', filters.checkIn);
         if (filters.checkOut) searchParams.append('checkOut', filters.checkOut);
-       
+
 
         // Chuyển hướng
         navigate(`/HotelList?${searchParams.toString()}`);
@@ -201,7 +214,7 @@ function SearchBar() {
     };
 
     return (
-        <div className="container container-1200" style={{ fontFamily: "'Outfit', sans-serif",zIndex:'80' }}>
+        <div className="container container-1200" style={{ fontFamily: "'Outfit', sans-serif", zIndex: '80' }}>
             <div
                 className="search-filter-inner"
                 data-aos="zoom-out-down"
@@ -221,6 +234,12 @@ function SearchBar() {
                     </div>
                     {showDropdown === 'destination' && (
                         <div style={dropdownMenuStyle}>
+                            <div
+                                style={dropdownItemStyle}
+                                onClick={() => handleOptionSelect('destination', 'clear')}
+                            >
+                                Chọn điểm đến
+                            </div>
                             {destinations.map(dest => (
                                 <div
                                     key={dest}
@@ -246,6 +265,12 @@ function SearchBar() {
                     </div>
                     {showDropdown === 'roomType' && (
                         <div style={dropdownMenuStyle}>
+                            <div
+                                style={dropdownItemStyle}
+                                onClick={() => handleOptionSelect('roomType', 'clear')}
+                            >
+                                Chọn thể loại
+                            </div>
                             {roomTypes.map(room => (
                                 <div
                                     key={room}
@@ -272,6 +297,7 @@ function SearchBar() {
                     >
                         {filters.checkIn ? new Date(filters.checkIn).toLocaleDateString('vi-VN') : "Chọn ngày"}
                     </div>
+                    
                 </div>
 
                 {/* Check-out Date Picker */}
@@ -287,6 +313,7 @@ function SearchBar() {
                     >
                         {filters.checkOut ? new Date(filters.checkOut).toLocaleDateString('vi-VN') : "Chọn ngày"}
                     </div>
+
                 </div>
 
                 {/* Date Picker Popup */}
@@ -295,7 +322,23 @@ function SearchBar() {
                         <div style={{ display: 'flex', gap: '20px' }}>
                             {generateCalendar()}
                         </div>
-                        <div style={{ marginTop: '15px', textAlign: 'center' }}>
+                        <div style={{ marginTop: '15px', textAlign: 'center',display:'flex',gap:'20px',alignItems:'center',justifyContent:'center' }}>
+                            <button
+                                onClick={() => {
+                                    clearDate(showDatePicker);
+                                    setShowDatePicker(null);
+                                }}
+                                style={{
+                                    padding: '8px 16px',
+                                    backgroundColor: '#ff4444',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Chọn lại
+                            </button>
                             <button
                                 onClick={() => setShowDatePicker(null)}
                                 style={{
@@ -309,6 +352,7 @@ function SearchBar() {
                             >
                                 Đóng
                             </button>
+
                         </div>
                     </div>
                 )}
@@ -323,20 +367,20 @@ function SearchBar() {
                         placeholder="Search"
                         maxLength={13}
                         value={filters.searchTerm}
-                        onChange={handleSearchInput} 
-                       
+                        onChange={handleSearchInput}
+
                     />
 
                     <button
                         className="theme-btn w-50"
-                        style={{ marginLeft: '20px', height: '50px', marginTop: '10px' }}
+                        style={{ marginLeft: '20px', height: '50px', marginTop: '10px',padding:'0px' }}
                         onClick={handleSearch}
                     >
                         <span data-hover="Tìm kiếm">Tìm kiếm</span>
                         <i className="far fa-search"></i>
                     </button>
                 </div>
-                
+
             </div>
         </div>
     )
