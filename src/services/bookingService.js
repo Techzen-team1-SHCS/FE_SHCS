@@ -41,14 +41,26 @@ export const bookingService={
       }
     }
   },
-   async getBooking(bookingId) {
-    try {
-      const response = await api.get(`/bookings/${bookingId}`);
-      return response.data;
-    } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch booking');
+  async getBooking(id) {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found');
     }
-  },
+
+    const response = await api.get(`auth/booking/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch booking');
+  }
+},
+
    async getUserBookings(userId) {
     try {
       const response = await api.get(`/users/${userId}/bookings`);
