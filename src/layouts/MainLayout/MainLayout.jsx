@@ -12,10 +12,10 @@ const MainLayout = ({ children }) => {
 
         return () => clearTimeout(timer);
     }, []);
-
+    const hideHeader = location.pathname === '/profile';
     return (
         <>
-            <Header />
+            {!hideHeader && <Header />}
             <main>
                 <Outlet />
             </main>
