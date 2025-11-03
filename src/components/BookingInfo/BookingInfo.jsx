@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import styles from './BookingInfo.module.css'
-import PaymentButton from '../Payment/PaymentButton'
-import PaymentButton2 from '../Payment/PaymentButton2'
 import { getAmenityImage } from '../../utils/amenityImage'
-const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, totalPrice }) => {
+import PaymentButtonVnPay from '../Payment/PaymentButtonVnPay'
+const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm }) => {
     const [services, setServices] = useState([])
     const [loading, setLoading] = useState(true)
     const [isSubmitted, setIsSubmitted] = useState(false)
@@ -22,7 +21,7 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, to
         arrival: '',
         coupon: ''
     })
-
+    console.log(hotelData?.id);
     useEffect(() => {
         if (hotelData && hotelData.amenities) {
             try {
@@ -154,16 +153,10 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, to
                     <div className={styles.paymentSection}>
                         <h4>Payment Options:</h4>
                         {/* Thêm các option thanh toán ở đây */}
-                        <PaymentButton
-                            amount={hotelData.price}
-                            bookingData={{
-                                name: formData.name,
-                                email: formData.email,
-                                telephone: formData.telephone,
-                                hotel: hotelData.name,
-                            }}
+                        <PaymentButtonVnPay
+                            bookingId={hotelData?.id}
+                            amount={Number(hotelData?.total_price)}
                         />
-                        <PaymentButton2 hotelData={hotelData} amount={totalPrice} />
                     </div>
 
                     <div className={styles.buttonGroup}>

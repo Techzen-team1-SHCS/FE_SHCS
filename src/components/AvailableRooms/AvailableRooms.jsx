@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { bookingService } from '../../services/bookingService';
 import { AuthContext } from '../../contexts/AuthContext';
 import '../../config/echo';
+import { toast } from 'react-toastify';
 const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
   const [selectedRooms, setSelectedRooms] = useState({});
  const [loading, setLoading] = useState({});
@@ -63,8 +64,8 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
       const userId = user?.id;
 
       if (!userId) {
-        alert('Vui lòng đăng nhập để đặt phòng');
-        // navigate('/login');
+        toast.warn('Vui lòng đăng nhập để đặt phòng');
+        navigate('/login');
         return;
       }
 
@@ -83,8 +84,8 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
       const result = await bookingService.createBooking(bookingData);
 
       if (result.success) {
-        alert('🎉 Đặt phòng thành công!');
-        
+        toast.success('🎉 Đặt phòng thành công!');
+         
         // Cập nhật realtime quantity
         setRoomQuantities(prev => ({
           ...prev,
