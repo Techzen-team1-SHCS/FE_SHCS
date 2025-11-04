@@ -6,13 +6,16 @@
 .statsHeader {
   margin-bottom: 24px;
   padding-bottom: 16px;
+  
 }
 
 .statsHeader h3 {
-  font-size: 20px;
+  display: flex;
+  align-items: center;
+  flex: 0 0 20%;
+  font-size: 40px;
   font-weight: 600;
   color: #333;
-  margin: 0;
 }
 
 .statsGrid {
