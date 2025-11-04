@@ -91,4 +91,37 @@ export const hotelService = {
 
     return response.data.data || [];
   },
+  async submitReview(reviewData) {
+    try {
+      const response = await api.post("/auth/reviews", {
+        hotel_id: reviewData.hotelId,
+        rating: reviewData.rating,
+        comment: reviewData.comment
+      });
+      
+      if (response.data.status === 200 || response.data.success) {
+        return response.data;
+      } else {
+        throw new Error(response.data.message || 'Failed to submit review');
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      throw error;
+    }
+  },
+  async getHotelReviewStats(hotelId) {
+    try {
+      const response = await api.get(`/auth/hotels/${hotelId}/review-stats`);
+      
+      if (response.data.status === 200 || response.data.success) {
+        return response.data.data || {};
+      } else {
+        throw new Error(response.data.message || 'Failed to fetch review stats');
+      }
+    } catch (error) {
+      console.error('Error fetching review stats:', error);
+      throw error;
+    }
+  }
 };
+

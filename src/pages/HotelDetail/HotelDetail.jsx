@@ -10,6 +10,9 @@ import SameProvinceHotels from '../../components/SameProvinces/SameProvinceHotel
 import SimilarHotel from '../../components/SimilarHotel/SimilarHotel.jsx';
 import NavigationTabs from '../../components/NavigationTabs/NavigationTabs.jsx';
 import AvailableRooms from '../../components/AvailableRooms/AvailableRooms.jsx';
+import HotelReviewSubmit from '../../components/HotelReviewSubmit/HotelReviewSubmit.jsx';
+import HotelReviewsList from '../../components/HotelReviewsList/HotelReviewsList.jsx';
+import HotelReviewStats from '../../components/HotelReviewStats/HotelReviewStats.jsx';
 
 const HotelDetail = () => {
   const { hotelId } = useParams();
@@ -23,7 +26,70 @@ const HotelDetail = () => {
   const [loadingRooms, setLoadingRooms] = useState(false);
   const navigate=useNavigate();
   const availableRoomsSectionRef = useRef(null);
+  const [reviews, setReviews] = useState([]);
+  const [loadingReviews, setLoadingReviews] = useState(false);
+  const [reviewStats, setReviewStats] = useState(null);
+  const [loadingStats, setLoadingStats] = useState(false);
+  const handleReviewSubmit = async (reviewData) => {
+    try {
+      // Mock function - thay bằng API call thực tế
+      const response = await hotelService.submitReview(reviewData);
+      const newReview = {
+        id: response.data?.id || Date.now(),
+        ...reviewData,
+        user: response.data?.user?.name || response.data?.user_name || "Current User",
+        date: response.data?.created_at ? new Date(response.data.created_at).toLocaleDateString('vi-VN') : new Date().toLocaleDateString('vi-VN'),
+        avatar: response.data?.user?.avatar || response.data?.avatar || "/assets/images/users/user-default.jpg"
+      };
+      
+      setReviews(prev => [newReview, ...prev]);
+      return newReview;
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      throw error;
+    }
+  };
+  // Thêm useEffect để load review stats
+  useEffect(() => {
+    const loadReviewStats = async () => {
+      if (!hotelId) return;
+      
+      setLoadingStats(true);
+      try {
+        const statsData = await hotelService.getHotelReviewStats(hotelId);
+        setReviewStats(statsData);
+      } catch (error) {
+        console.error('Error loading review stats:', error);
+        // Có thể giữ null để component sử dụng default data
+      } finally {
+        setLoadingStats(false);
+      }
+    };
 
+    if (hotelId) {
+      loadReviewStats();
+    }
+  }, [hotelId]);
+  useEffect(() => {
+    const loadReviews = async () => {
+      if (!hotelId) return;
+      
+      setLoadingReviews(true);
+      try {
+        const reviewsData = await hotelService.getHotelReviews(hotelId);
+        setReviews(reviewsData);
+      } catch (error) {
+        console.error('Error loading reviews:', error);
+        // Không set mock data, để mảng rỗng nếu API fail
+      } finally {
+        setLoadingReviews(false);
+      }
+    };
+
+   if (hotelId) {
+      loadReviews();
+   }
+}, [hotelId]);
   // Thêm useEffect để xử lý scroll
   useEffect(() => {
     if (showAvailableRooms && availableRooms.length > 0) {
@@ -282,7 +348,13 @@ const HotelDetail = () => {
                <hr className="mb-30" />
                <SimilarHotel currentHotelId={hotel.id}/>
               </div>
-               
+               <hr className="mb-30" />
+            </section>
+            <section className="container-fluid pb-70px" style={{ width: '85%',alignItems: 'center', justifyContent: 'center'   }}>
+              <HotelReviewStats statsData={reviewStats} loading={loadingStats}/>
+              <HotelReviewSubmit hotelId={hotelId} onReviewSubmit={handleReviewSubmit}/>
+              <hr className="mb-30" />
+              <HotelReviewsList reviews={reviews} loading={loadingReviews} />
             </section>
           </div>
         );
