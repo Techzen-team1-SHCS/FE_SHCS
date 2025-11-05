@@ -77,7 +77,6 @@ export const authService = {
       localStorage.removeItem('user');
     }
   },
-
   // 🔹 Lấy user hiện tại
   getCurrentUser: () => {
     const user = localStorage.getItem('user');
@@ -89,18 +88,29 @@ export const authService = {
     return !!localStorage.getItem('token');
   },
   // 🔹 UPDATE PROFILE
-  updateProfile: async (userId, profileData) => {
-    const response = await api.put(`/auth/user/${userId}`, profileData);
-    return response.data;
-  },
+  updateProfile: async (userId, profileData,token) => {
 
+  const response = await api.post(
+    `/auth/user/update/${userId}`,
+    profileData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  return response.data;
+},
   // 🔹 UPLOAD AVATAR
   uploadAvatar: async (userId, file) => {
     const formData = new FormData();
     formData.append('avatar', file);
-    
-    const response = await api.post(`/auth/user/${userId}/avatar`, formData, {
+    const token=localStorage.getItem('token');
+    const response = await api.post(`/auth/user/upload-avatar/${userId}`, formData, {
       headers: {
+        Authorization:`Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
       },
     });
