@@ -2,26 +2,30 @@ import React, { useEffect } from 'react';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import initScripts from '../../utils/initScripts';
-import { Outlet } from 'react-router-dom';
-const MainLayout = ({ children }) => {
-    useEffect(() => {
-        // Initialize scripts after component mounts
-        const timer = setTimeout(() => {
-            initScripts();
-        }, 100);
+import { Outlet, useLocation } from 'react-router-dom'; // 👈 thêm useLocation
 
-        return () => clearTimeout(timer);
-    }, []);
-    const hideHeader = location.pathname === '/profile';
-    return (
-        <>
-            {!hideHeader && <Header />}
-            <main>
-                <Outlet />
-            </main>
-            <Footer />
-        </>
-    );
+const MainLayout = () => {
+  const location = useLocation(); // 👈 lấy location từ React Router
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      initScripts();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [location]); // 👈 optional: chạy lại script mỗi khi route đổi
+
+  const hideHeader = location.pathname === '/profile'; // 👈 location đúng của React Router
+
+  return (
+    <>
+      {!hideHeader && <Header />}
+      <main>
+        <Outlet />
+      </main>
+      <Footer />
+    </>
+  );
 };
 
-export default MainLayout; 
+export default MainLayout;

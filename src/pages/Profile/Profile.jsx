@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styles from "./Profile.module.css"
 import { useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
@@ -10,25 +10,35 @@ import 'react-toastify/dist/ReactToastify.css';
 const Profile = () => {
     const [activeTab, setActiveTab] = useState('profile');
     const { user, updateUser } = useContext(AuthContext);
-    
+    useEffect(() => {
+    if (user) {
+        setFormData({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        gender: user.gender || 'male',
+        birth: user.birth || '',
+        address: user.address || ''
+        });
+    }
+    }, [user]);
     // State cho các trường đang edit
     const [editingField, setEditingField] = useState(null);
     const [formData, setFormData] = useState({
-        name: user?.name || 'Tran Vi',
-        email: user?.email || 'Vit76404@gmail.com',
-        phone: user?.phone || 'xxxxxx223',
-        gender: user?.gender || 'male',
-        dob: user?.dob || '',
+        name: user?.name ,
+        email: user?.email,
+        phone: user?.phone,
+        gender: user?.gender,
+        birth:user?.birth,
         address: user?.address || '256 LeDuan'
     });
-
     // State cho loading và thông báo
     const [loading, setLoading] = useState(false);
-
     // State cho avatar
     const [avatar, setAvatar] = useState(user?.avatar_url || 'assets/images/avatar/avatar_default.png');
     const [showAvatarModal, setShowAvatarModal] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [preview, setPreview] = useState(user?.image || "");
     const [previewUrl, setPreviewUrl] = useState('');
     const fileInputRef = useRef(null);
 
@@ -59,11 +69,13 @@ const Profile = () => {
             setPreviewUrl(e.target.result);
         };
         reader.readAsDataURL(file);
+        setPreview(URL.createObjectURL(file));
     }
 };
 
     // Hàm mở modal edit avatar
     const handleEditAvatar = () => {
+        console.log("🟢 Clicked Edit Avatar!");
         setShowAvatarModal(true);
     };
 
@@ -77,73 +89,43 @@ const Profile = () => {
     // Hàm upload avatar lên server
     const saveAvatar = async () => {
     if (!selectedFile) {
-        closeAvatarModal();
+        toast.error("No file selected");
         return;
     }
 
     setLoading(true);
-    try {
-        const response = await authService.uploadAvatar(user.id, selectedFile);
-        
-        if (response.status === 200) {
-            const newAvatarUrl = response.data.avatar_url;
-            setAvatar(newAvatarUrl);
-            
-            // Cập nhật context
-            if (updateUser) {
-                updateUser({ avatar_url: newAvatarUrl });
-            }
 
-            // Cập nhật localStorage
-            const currentUser = JSON.parse(localStorage.getItem('user'));
-            const updatedUser = { ...currentUser, avatar_url: newAvatarUrl };
+    // 🟢 Hiển thị ảnh tạm ngay lập tức
+    if (previewUrl) setAvatar(previewUrl);
+
+    try {
+        const res = await authService.uploadAvatar(user.id, selectedFile);
+
+        if (res.status === 200 || res.status === 'success') {
+        const newAvatarUrl = res.data?.avatar_url || res.avatar_url;
+        if (newAvatarUrl) {
+            const newUrl = `${newAvatarUrl}?t=${Date.now()}`; // ⚡ chống cache
+            setAvatar(newUrl);
+
+            // cập nhật context + localStorage
+            updateUser?.({ ...user, avatar_url: newUrl });
+            const updatedUser = { ...user, avatar_url: newUrl };
             localStorage.setItem('user', JSON.stringify(updatedUser));
 
-            toast.success('Avatar updated successfully');
+            toast.success('Avatar updated successfully!');
+        }
         } else {
-            toast.error(response.message || 'Failed to upload avatar');
+        toast.error('Failed to upload avatar');
         }
     } catch (error) {
         console.error('Error uploading avatar:', error);
-        toast.error('Error uploading avatar. Please try again.');
+        toast.error('Upload error');
     } finally {
         setLoading(false);
         closeAvatarModal();
     }
-};
+    };
 
-    // Hàm xóa avatar
-    const removeAvatar = async () => {
-    setLoading(true);
-    try {
-        const response = await authService.removeAvatar(user.id);
-        
-        if (response.status === 200) {
-            const defaultAvatar = 'assets/images/avatar/avatar_default.png';
-            setAvatar(defaultAvatar);
-            
-            // Cập nhật context
-            if (updateUser) {
-                updateUser({ avatar_url: defaultAvatar });
-            }
-
-            // Cập nhật localStorage
-            const currentUser = JSON.parse(localStorage.getItem('user'));
-            const updatedUser = { ...currentUser, avatar_url: defaultAvatar };
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-
-            toast.success('Avatar removed successfully');
-        } else {
-            toast.error(response.message || 'Failed to remove avatar');
-        }
-    } catch (error) {
-        console.error('Error removing avatar:', error);
-        toast.error('Error removing avatar. Please try again.');
-    } finally {
-        setLoading(false);
-        closeAvatarModal();
-    }
-};
 
     // Hàm bắt đầu edit các trường
     const startEditing = (field) => {
@@ -157,8 +139,8 @@ const Profile = () => {
             name: user?.name || 'Tran Vi',
             email: user?.email || 'Vit76404@gmail.com',
             phone: user?.phone || 'xxxxxx223',
-            gender: user?.gender || 'male',
-            dob: user?.dob || '',
+            gender: user?.gender ,
+            birth: user?.birth || '',
             address: user?.address || '256 LeDuan'
         });
     };
@@ -168,25 +150,27 @@ const Profile = () => {
     setLoading(true);
     try {
         const updateData = { [field]: formData[field] };
-        const response = await authService.updateProfile(user.id, updateData);
-        
-        if (response.status === 200) {
-            const updatedUser = response.data.user;
-            
-            // Cập nhật context
-            if (updateUser) {
-                updateUser(updatedUser);
-            }
+        const token = localStorage.getItem('token');
 
-            // Cập nhật localStorage
-            const currentUser = JSON.parse(localStorage.getItem('user'));
-            const newUser = { ...currentUser, ...updatedUser };
-            localStorage.setItem('user', JSON.stringify(newUser));
+        const response = await authService.updateProfile(user.id, updateData, token);
 
-            toast.success(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully`);
-            setEditingField(null);
+        if (response.status === 200 || response.status === 'success') {
+        const updatedUser = response.data?.data || response.data?.user || response.user;
+
+        // 🧠 Cập nhật vào context
+        if (updateUser && updatedUser) {
+            updateUser(updatedUser);
+        }
+
+        // 💾 Cập nhật vào localStorage
+        const currentUser = JSON.parse(localStorage.getItem('user'));
+        const newUser = { ...currentUser, ...updatedUser };
+        localStorage.setItem('user', JSON.stringify(newUser));
+
+        toast.success(`${field} updated successfully`);
+        setEditingField(null);
         } else {
-            toast.error(response.message || `Failed to update ${field}`);
+        toast.error(response.message || `Failed to update ${field}`);
         }
     } catch (error) {
         console.error(`Error updating ${field}:`, error);
@@ -194,7 +178,8 @@ const Profile = () => {
     } finally {
         setLoading(false);
     }
-};
+    };
+
 
     // Hàm xử lý thay đổi input
     const handleInputChange = (field, value) => {
@@ -279,7 +264,10 @@ const Profile = () => {
                 <div className={styles.sidebar}>
                     <div className={styles.logo}>
                         <Link to="/">
-                            <img src="/assets/images/logos/logo.png" alt="Logo" title="Logo" />
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100px' }}>
+                            <img src="/assets/images/logos/logo.png" alt="Logo" title="Logo" style={{ width: '120px' }} />
+                            <h4 style={{ marginLeft: '-40px' }}>SHCS</h4>
+                            </div>
                         </Link>
                     </div>
                     <nav className={styles.sidebarNav}>
@@ -304,7 +292,7 @@ const Profile = () => {
                                     <div className={styles.headerGroup}>
                                         <button className={styles.helpBtn}>?</button>
                                         <img
-                                            src={avatar}
+                                            src={preview || avatar}
                                             alt="avatar"
                                             className="rounded-circle"
                                             width={60}
@@ -320,7 +308,7 @@ const Profile = () => {
                                     <div className={styles.avatarSection}>
                                         <div className={styles.avatarcontainer}>
                                             <div className={styles.avatarGroup}>
-                                                <img src={avatar}
+                                                <img src={preview || avatar}
                                                     alt="avatar"
                                                     className="rounded-circle"
                                                     width={80}
@@ -395,12 +383,12 @@ const Profile = () => {
                                         <div className={styles.infoItem}>
                                             <div className={styles.infoContent}>
                                                 <label className={styles.infoLabel}>Date of birth</label>
-                                                {renderEditField('dob', 'date of birth', 'date')}
+                                                {renderEditField('birth', 'date of birth', 'date')}
                                             </div>
-                                            {editingField === 'dob' ? (
-                                                <EditActions field="dob" />
+                                            {editingField === 'birth' ? (
+                                                <EditActions field="birth" />
                                             ) : (
-                                                <EditButton onClick={() => startEditing('dob')} />
+                                                <EditButton onClick={() => startEditing('birth')} />
                                             )}
                                         </div>
                                     </div>
@@ -473,17 +461,16 @@ const Profile = () => {
                                 >
                                     {loading ? 'Uploading...' : 'Choose Photo'}
                                 </button>
-
                                 <p className={styles.uploadHint}>
                                     Supported formats: JPG, PNG, GIF • Max size: 5MB
                                 </p>
+                                
                             </div>
                         </div>
 
                         <div className={styles.modalActions}>
                             <button
                                 className={styles.removeBtn}
-                                onClick={removeAvatar}
                                 disabled={loading || avatar === 'assets/images/avatar/avatar_default.png'}
                             >
                                 {loading ? 'Removing...' : 'Remove Photo'}

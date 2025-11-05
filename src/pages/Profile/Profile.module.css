@@ -6,13 +6,14 @@
 
 .sidebar { 
   width: 20%;
-    border-right: 1px solid #d9d9d9;
+  border-right: 1px solid #d9d9d9;
 }
 .sidebarNav {
   display: flex;
   flex-direction: column;
-align-items: center;
-    justify-content: center;
+  align-items: center;
+  justify-content: center;
+  margin-left: -50px;
 
 }
 .navButton{
@@ -27,6 +28,9 @@ align-items: center;
     font-weight: 600;
     padding-left: 10%;
     border-radius: 30px;
+}
+.logo{
+    margin-left: -140px;
 }
 .content{
     width: 80%;
@@ -156,7 +160,7 @@ align-items: center;
     border-radius: 12px;
     width: 90%;
     max-width: 500px;
-    max-height: 90vh;
+    max-height: 100vh;
     overflow: hidden;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }

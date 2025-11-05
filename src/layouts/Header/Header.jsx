@@ -66,24 +66,6 @@ const Header = () => {
             label: "Pages",
             path: "/pages",
             sub: [
-                // { label: "Pricing", path: "/pricing" },
-                // { label: "FAQs", path: "/faqs" },
-                // {
-                //     label: "Gallery",
-                //     path: "/gallery",
-                //     sub: [
-                //         { label: "Gallery Grid", path: "/gallery-grid" },
-                //         { label: "Gallery Slider", path: "/gallery-slider" },
-                //     ],
-                // },
-                // {
-                //     label: "Products",
-                //     path: "/products",
-                //     sub: [
-                //         { label: "Our Products", path: "/shop" },
-                //         { label: "Product Details", path: "/product-details" },
-                //     ],
-                // },
                 { label: "Contact Us", path: "/ContactUs" },
                 { label: "404 Error", path: "*" },
             ],
@@ -93,7 +75,6 @@ const Header = () => {
             path: "/blog",
             sub: [
                 { label: "Blog List", path: "/BlogList" },
-                // { label: "Blog Details", path: "/blog-details" },
             ],
         },
     ];
@@ -213,7 +194,7 @@ const Header = () => {
                                                     <div className="content text-start">
                                                         <p className="fw-semibold mb-1">Xin chào, {user.name}</p>
                                                         <img
-                                                            src={user.avatar_url || 'assets/images/avatar/avatar_default.png'}
+                                                            src={user?.image}
                                                             alt="avatar"
                                                             className="rounded-circle"
                                                             width={60}
