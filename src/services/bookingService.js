@@ -88,15 +88,4 @@ export const bookingService={
       throw error;
     }
   },
-
-
-  async deleteBooking(bookingId) {
-    try {
-      const response = await api.delete(`/bookings/${bookingId}`);
-      return response.data;
-    } catch (error) {
-      console.error('Lỗi khi xóa booking:', error);
-      throw error;
-    }
-  }
 }

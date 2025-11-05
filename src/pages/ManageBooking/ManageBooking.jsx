@@ -14,23 +14,23 @@ const ManageBooking = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("active");
     const [loading, setLoading] = useState(false);
-    const [allBookings, setAllBookings] = useState([]); 
+    const [allBookings, setAllBookings] = useState([]);
     const [error, setError] = useState(null);
 
     // Filter bookings theo tab
     const filteredBookings = allBookings.filter(booking => {
         switch (activeTab) {
             case "active":
-                return booking.status === "Đang hoạt động" || booking.status === "Đang xác nhận" || booking.status === "Đã xác nhận";
+                return booking.status === "Paid" ;
             case "past":
-                return booking.status === "Đã qua";
-            case "canceled":
-                return booking.status === "Đã hủy";
+                return booking.status === "Past";
+            case "cancelled":
+                return booking.status === "Cancelled";
             default:
                 return true;
         }
     });
-
+    
     const fetchAllBookings = async () => {
         // if (!user) {
         //     setError("Vui lòng đăng nhập để xem booking");
@@ -53,7 +53,7 @@ const ManageBooking = () => {
             }
         } catch (error) {
             console.error("Lỗi khi fetch bookings:", error);
-            setError("Không thể tải danh sách booking");
+            //setError("Không thể tải danh sách booking");
             // Fallback dùng mock data
             setAllBookings(getMockBookings().all);
         } finally {
@@ -68,72 +68,57 @@ const ManageBooking = () => {
                 id: 280,
                 city: "Đà Nẵng",
                 name: "Sea Hotel",
-                date: "02 - 03 tháng 5, 2025",
-                price: "650.000 VNĐ",
-                status: "Đang hoạt động",
-                image: "/assets/images/banner/banner.jpg",
-                hotelId: "hotel-123"
+                checkIn: "03 tháng 5, 2025",
+                checkOut: "03 tháng 5, 2025",
+                price: "650000",
+                status: "Paid",
+                image: "/assets/images/banner/banner3.png",
+                province: "hotel-123adsgwqdjhgksajg"
             },
             {
                 id: 284,
-                city: "Đà Nẵng", 
+                city: "Đà Nẵng",
                 name: "Sea Hotel Premium",
-                date: "10 - 12 tháng 5, 2025",
-                price: "850.000 VNĐ",
-                status: "Đang xác nhận",
+                checkIn: "03 tháng 5, 2025",
+                checkOut: "03 tháng 5, 2025", price: "850000",
+                status: "Past",
                 image: "/assets/images/banner/banner.jpg",
-                hotelId: "hotel-124"
+                province: "hotel-124"
             },
             {
                 id: 282,
                 city: "Đà Nẵng",
                 name: "Sea Hotel Deluxe",
-                date: "15 - 17 tháng 5, 2025",
-                price: "750.000 VNĐ",
-                status: "Đã xác nhận",
+                checkIn: "03 tháng 5, 2025",
+                checkOut: "03 tháng 5, 2025", price: "750000",
+                status: "Cancelled",
                 image: "/assets/images/banner/banner.jpg",
-                hotelId: "hotel-125"
+                province: "hotel-125"
             },
             {
                 id: 2,
                 city: "Đà Nẵng",
                 name: "Sea Hotel Old",
-                date: "01 - 02 tháng 4, 2025", 
-                price: "550.000 VNĐ",
-                status: "Đã qua",
+                checkIn: "03 tháng 5, 2025",
+                checkOut: "03 tháng 5, 2025", price: "550000",
+                status: "Cancelled",
                 image: "/assets/images/banner/banner.jpg",
-                hotelId: "hotel-123"
+                province: "hotel-123"
             },
             {
                 id: 1,
                 city: "Huế",
                 name: "Yên Homestay",
-                date: "07 - 08 tháng 6, 2025",
-                price: "396.000 VNĐ",
-                status: "Đã hủy",
+                checkIn: "03 tháng 5, 2025",
+                checkOut: "03 tháng 5, 2025", price: "39600000",
+                status: "Paid",
                 image: "/assets/images/banner/banner-2.png",
-                hotelId: "hotel-456"
+                province: "hotel-456"
             }
         ];
 
         return { all: allBookings };
     };
-
-    // Hàm xử lý xóa booking
-    const handleDeleteBooking = async (bookingId) => {
-        if (!window.confirm("Bạn có chắc muốn xóa booking này?")) return;
-
-        try {
-            await bookingService.deleteBooking(bookingId);
-            // Cập nhật lại danh sách sau khi xóa
-            setAllBookings(prev => prev.filter(booking => booking.id !== bookingId));
-            alert("Xóa booking thành công");
-        } catch (error) {
-            console.error("Lỗi khi xóa booking:", error);
-            alert("Không thể xóa booking: " + error.message);
-        }
-    };
-
     // Hàm xử lý xem chi tiết
     const handleViewDetails = (booking) => {
         console.log("Xem chi tiết booking:", booking);
@@ -158,15 +143,15 @@ const ManageBooking = () => {
                 </div>
 
                 <div className={tabs}>
-                    {["active", "past", "canceled"].map((tab) => (
+                    {["active", "past", "cancelled"].map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`${button} ${activeTab === tab ? activeClass : ""}`}
                         >
-                            {tab === "active" && "Đang hoạt động"}
-                            {tab === "past" && "Đã qua"}
-                            {tab === "canceled" && "Đã hủy"}
+                            {tab === "active" && "Paid"}
+                            {tab === "past" && "Past"}
+                            {tab === "cancelled" && "Cancelled"}
                         </button>
                     ))}
                 </div>
@@ -187,7 +172,6 @@ const ManageBooking = () => {
                             <ManageBookingCard
                                 key={b.id}
                                 booking={b}
-                                onDelete={handleDeleteBooking}
                                 onViewDetails={handleViewDetails}
                                 onReBook={handleReBook}
                             />

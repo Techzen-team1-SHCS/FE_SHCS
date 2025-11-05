@@ -1,40 +1,40 @@
 .cardSkeleton {
     background: #ffffff;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 800px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #f0f0f0;
+    border-radius: 10px;
+    width: 70%;
+    box-shadow: 1px 2px 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #cfcfcf;
+    height: auto;
     overflow: hidden;
     margin: 0 auto;
 }
 
 .hotelInfoSkeleton {
-    padding: 32px;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 20px;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
+    height: 100%;
+    padding-left: 50px;
 }
 
 .cardBodySkeleton {
     display: flex;
-    gap: 20px;
-    flex: 1;
+    gap: 15px;
+    flex: 0 0 65%;
 }
 
 .contentSkeleton {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     flex: 1;
 }
 
 .imageSkeleton {
-    width: 120px;
-    height: 120px;
-    border-radius: 12px;
+    flex: 0 0 25%;
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
     background-color: #e3e3e3;
     position: relative;
     overflow: hidden;
@@ -56,8 +56,33 @@
     animation: shimmer 1.5s infinite;
 }
 
+.lineXLarge {
+    height: 35px;
+    background-color: #e3e3e3;
+    border-radius: 4px;
+    width: 80%;
+    position: relative;
+    overflow: hidden;
+}
+
+.lineXLarge::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.6),
+        transparent
+    );
+    animation: shimmer 1.5s infinite;
+}
+
 .lineLarge {
-    height: 24px;
+    height: 20px;
     background-color: #e3e3e3;
     border-radius: 4px;
     width: 70%;
@@ -82,7 +107,7 @@
 }
 
 .lineMedium {
-    height: 16px;
+    height: 18px;
     background-color: #e3e3e3;
     border-radius: 4px;
     width: 50%;
@@ -107,7 +132,7 @@
 }
 
 .lineSmall {
-    height: 18px;
+    height: 16px;
     background-color: #e3e3e3;
     border-radius: 4px;
     width: 40%;
@@ -132,10 +157,10 @@
 }
 
 .statusSkeleton {
-    height: 28px;
+    height: 24px;
     background-color: #e3e3e3;
-    border-radius: 20px;
-    width: 100px;
+    border-radius: 4px;
+    width: 120px;
     position: relative;
     overflow: hidden;
 }
@@ -156,35 +181,17 @@
     animation: shimmer 1.5s infinite;
 }
 
-.menuSkeleton {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: #e3e3e3;
-    position: relative;
-    overflow: hidden;
-}
-
-.menuSkeleton::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.6),
-        transparent
-    );
-    animation: shimmer 1.5s infinite;
+.buttonGroupSkeleton {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .buttonSkeleton {
-    height: 60px;
+    height: 32px;
     background-color: #e3e3e3;
-    width: 100%;
+    border-radius: 10px;
+    width: 100px;
     position: relative;
     overflow: hidden;
 }
