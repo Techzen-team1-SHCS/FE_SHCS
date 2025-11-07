@@ -6928,9 +6928,7 @@ blockquote {
   color: #92A498;
 }
 
-.popular-destinations-wrap {
-  border: 1px solid var(--border-color);
-}
+
 
 .destination-active {
   margin-left: -5px;
