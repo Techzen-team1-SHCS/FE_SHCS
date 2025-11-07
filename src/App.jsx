@@ -18,8 +18,10 @@ import Booking from './pages/Booking/Booking';
 import PaymentResult from './pages/PaymentResult/PaymentResult';
 import ManageBooking from './pages/ManageBooking/ManageBooking';
 import Profile from './pages/Profile/Profile';
+import AdminLayout from './layouts/AdminLayout/AdminLayout';
 // import { AuthProvider } from './contexts/AuthContext';
-
+import Dashboard from './pages/Admin/Dashboard/Dashboard'
+import AdminBooking from './pages/Admin/Booking/Booking'
 function App() {
 
   return (
@@ -44,7 +46,11 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             {/* có thể thêm các page khác cần layout */}
           </Route>
-    
+          {/* Route dùng adminLayout */}
+          <Route element={<AdminLayout/>}>
+            <Route path='/admin/dashboard' element={<Dashboard/>}/>
+            <Route path='/admin/bookings' element={<AdminBooking/>}/>
+          </Route>
           {/* Route KHÔNG dùng MainLayout */}
         </Routes>
         <ToastContainer

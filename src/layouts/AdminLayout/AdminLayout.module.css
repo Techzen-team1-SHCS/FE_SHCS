@@ -1,0 +1,34 @@
+.layout{
+    width: 100%;
+    padding:0px;
+    display: flex;
+    height:100vh;
+    background-color: lightgray;
+    overflow-y: hidden;
+}
+.sidebar{
+    display: flex;
+    flex-direction: column;
+    flex:0 0 20%;
+    background-color: white;
+    border-right:1px solid rgba(232, 232, 232, 1) ;
+    align-items: center;
+}
+.header{
+    display: flex;
+    padding-left: 50px;
+    justify-content: space-between;
+    align-items: center;
+    height: 90px;
+    width: 100%;
+    background-color: white;
+}
+.contentArea{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.mainContent{
+    width: 100%;
+}
