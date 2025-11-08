@@ -88,21 +88,29 @@ export const authService = {
     return !!localStorage.getItem('token');
   },
   // 🔹 UPDATE PROFILE
-  updateProfile: async (userId, profileData,token) => {
+  // Accepts either a plain object (JSON) or FormData (for file upload).
+  updateProfile: async (userId, profileData, token) => {
+    const headers = {
+      Authorization: `Bearer ${token || localStorage.getItem('token')}`,
+    };
 
-  const response = await api.post(
-    `/auth/user/update/${userId}`,
-    profileData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+    // If profileData is NOT FormData, send JSON
+    if (!(profileData instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    } else {
+      headers['Content-Type'] = 'multipart/form-data';
     }
-  );
 
-  return response.data;
-},
+    const response = await api.post(
+      `/auth/user/update/${userId}`,
+      profileData,
+      {
+        headers,
+      }
+    );
+
+    return response.data;
+  },
   // 🔹 UPLOAD AVATAR
   uploadAvatar: async (userId, file) => {
     const formData = new FormData();

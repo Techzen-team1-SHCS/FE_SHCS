@@ -90,42 +90,55 @@ const Profile = () => {
 
     // Hàm upload avatar lên server
     const saveAvatar = async () => {
-    if (!selectedFile) {
-        toast.error("No file selected");
-        return;
-    }
-
-    setLoading(true);
-
-    // 🟢 Hiển thị ảnh tạm ngay lập tức
-    if (previewUrl) setAvatar(previewUrl);
-
-    try {
-        const res = await authService.uploadAvatar(user.id, selectedFile);
-
-        if (res.status === 200 || res.status === 'success') {
-        const newAvatarUrl = res.data?.avatar_url || res.avatar_url;
-        if (newAvatarUrl) {
-            const newUrl = `${newAvatarUrl}?t=${Date.now()}`; // ⚡ chống cache
-            setAvatar(newUrl);
-
-            // cập nhật context + localStorage
-            updateUser?.({ ...user, avatar_url: newUrl });
-            const updatedUser = { ...user, avatar_url: newUrl };
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-
-            toast.success('Avatar updated successfully!');
+        if (!selectedFile) {
+            toast.error('No image selected');
+            return;
         }
-        } else {
-        toast.error('Failed to upload avatar');
+
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            const formData = new FormData();
+            formData.append('avatar', selectedFile);
+
+            // If your backend accepts other fields, you can append them here.
+            const response = await authService.updateProfile(user.id, formData, token);
+
+            // Response shape may vary; try to find updated user
+            const updatedUser = response.data?.data || response.data?.user || response.data || response.user;
+
+            if (response.status === 200 || response.status === 'success' || updatedUser) {
+                // update context and localStorage
+                if (updateUser && updatedUser) {
+                    updateUser(updatedUser);
+                }
+
+                try {
+                    const currentUser = JSON.parse(localStorage.getItem('user')) || {};
+                    const newUser = { ...currentUser, ...updatedUser };
+                    localStorage.setItem('user', JSON.stringify(newUser));
+                } catch (e) {
+                    // ignore localStorage parse errors
+                }
+
+                // update preview/avatar shown in UI
+                const newAvatarUrl = updatedUser?.image || response.avatar_url || '';
+                if (newAvatarUrl) {
+                    setAvatar(newAvatarUrl);
+                    setPreview('');
+                }
+
+                toast.success('Avatar updated successfully');
+                closeAvatarModal();
+            } else {
+                toast.error(response.message || 'Failed to upload avatar');
+            }
+        } catch (error) {
+            console.error('Error uploading avatar:', error);
+            toast.error(error?.response?.data?.message || 'Error uploading avatar. Please try again.');
+        } finally {
+            setLoading(false);
         }
-    } catch (error) {
-        console.error('Error uploading avatar:', error);
-        toast.error('Upload error');
-    } finally {
-        setLoading(false);
-        closeAvatarModal();
-    }
     };
 
 
