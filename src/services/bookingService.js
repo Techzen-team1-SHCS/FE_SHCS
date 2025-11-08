@@ -61,9 +61,18 @@ export const bookingService={
   }
 },
 
-   async getUserBookings(userId) {
+   async getUserBookings() {
     try {
-      const response = await api.get(`/users/${userId}/bookings`);
+      const token=localStorage.getItem('token');
+      if(!token){
+        throw new Error('Authentication token not found');
+      }
+      const response = await api.get('auth/bookings/user',{
+        headers:{
+          'Authorization':`Bearer ${token}`,
+          'Content-Type':'application/json',
+        }
+      });
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to fetch bookings');
@@ -71,21 +80,21 @@ export const bookingService={
   },
 
   // Hủy booking
-  async cancelBooking(bookingId) {
+  async cancelBooking(id){
     try {
-      const response = await api.post(`/bookings/${bookingId}/cancel`);
+      const token=localStorage.getItem('token');
+      if(!token){
+        throw new Error('Authentication token not found');
+      }
+      const response=await api.post(`auth/booking/cancel/${id}`,{},{
+        headers:{
+          Authorization:`Bearer ${token}`,
+          'Content-Type':'application/json'
+        },
+      });
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Cancel failed');
+      throw new Error(error.response?.data?.message || 'Failed to cancel booking');
     }
-  },
-  async getMyBookings() {
-    try {
-      const response = await api.get('/bookings/me');
-      return response.data;
-    } catch (error) {
-      console.error('Lỗi khi lấy danh sách booking:', error);
-      throw error;
-    }
-  },
+  }
 }

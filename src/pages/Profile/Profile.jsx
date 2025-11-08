@@ -7,6 +7,7 @@ import EditButton from '../../components/EditButton/EditButton';
 import { authService } from '../../services/authService';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Loader from '../../components/Loading/Loader';
 const Profile = () => {
     const [activeTab, setActiveTab] = useState('profile');
     const { user, updateUser } = useContext(AuthContext);
@@ -41,6 +42,7 @@ const Profile = () => {
     const [preview, setPreview] = useState(user?.image || "");
     const [previewUrl, setPreviewUrl] = useState('');
     const fileInputRef = useRef(null);
+    
 
     const tabs = [
         { id: 'profile', label: 'Profile', icon: '' },
@@ -257,7 +259,9 @@ const Profile = () => {
             </button>
         </div>
     );
-
+    if(loading){
+        return <Loader></Loader>
+    }
     return (
         <div className='page-wrapper'>
             <div className={styles.layoutContainer}>

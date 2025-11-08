@@ -6,6 +6,7 @@ import { bookingService } from "../../services/bookingService";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { BookingCardSkeleton } from "../../components/LoadingSkeleton/LoadingSkeleton.jsx";
+import Loader from "../../components/Loading/Loader.jsx";
 
 const { container, banner, tabs, button, active: activeClass, content, error: errorClass } = styles;
 
@@ -21,125 +22,64 @@ const ManageBooking = () => {
     const filteredBookings = allBookings.filter(booking => {
         switch (activeTab) {
             case "active":
-                return booking.status === "Paid" ;
+                return booking.status === "pending" ;
             case "past":
-                return booking.status === "Past";
+                return booking.status === "confirmed";
             case "cancelled":
-                return booking.status === "Cancelled";
+                return booking.status === "cancelled";
             default:
                 return true;
         }
     });
     
     const fetchAllBookings = async () => {
-        // if (!user) {
-        //     setError("Vui lòng đăng nhập để xem booking");
-        //     return;
-        // }
+        if (!user) {
+            setError("Vui lòng đăng nhập để xem booking");
+            return;
+        }
 
         setLoading(true);
         setError(null);
 
         try {
             // Chỉ gọi API 1 lần để lấy tất cả bookings
-            const response = await bookingService.getMyBookings();
+            const response = await bookingService.getUserBookings();
 
-            if (response.success) {
+            if (response.status==200) {
                 setAllBookings(response.data);
             } else {
                 setError(response.message || "Có lỗi xảy ra");
-                // Fallback dùng mock data
-                setAllBookings(getMockBookings().all);
             }
         } catch (error) {
             console.error("Lỗi khi fetch bookings:", error);
-            //setError("Không thể tải danh sách booking");
-            // Fallback dùng mock data
-            setAllBookings(getMockBookings().all);
         } finally {
             setLoading(false);
         }
     };
-
-    // Mock data fallback - cấu trúc lại để có tất cả bookings
-    const getMockBookings = () => {
-        const allBookings = [
-            {
-                id: 280,
-                city: "Đà Nẵng",
-                name: "Sea Hotel",
-                checkIn: "03 tháng 5, 2025",
-                checkOut: "03 tháng 5, 2025",
-                price: "650000",
-                status: "Paid",
-                image: "/assets/images/banner/banner3.png",
-                province: "hotel-123adsgwqdjhgksajg"
-            },
-            {
-                id: 284,
-                city: "Đà Nẵng",
-                name: "Sea Hotel Premium",
-                checkIn: "03 tháng 5, 2025",
-                checkOut: "03 tháng 5, 2025", price: "850000",
-                status: "Past",
-                image: "/assets/images/banner/banner.jpg",
-                province: "hotel-124"
-            },
-            {
-                id: 282,
-                city: "Đà Nẵng",
-                name: "Sea Hotel Deluxe",
-                checkIn: "03 tháng 5, 2025",
-                checkOut: "03 tháng 5, 2025", price: "750000",
-                status: "Cancelled",
-                image: "/assets/images/banner/banner.jpg",
-                province: "hotel-125"
-            },
-            {
-                id: 2,
-                city: "Đà Nẵng",
-                name: "Sea Hotel Old",
-                checkIn: "03 tháng 5, 2025",
-                checkOut: "03 tháng 5, 2025", price: "550000",
-                status: "Cancelled",
-                image: "/assets/images/banner/banner.jpg",
-                province: "hotel-123"
-            },
-            {
-                id: 1,
-                city: "Huế",
-                name: "Yên Homestay",
-                checkIn: "03 tháng 5, 2025",
-                checkOut: "03 tháng 5, 2025", price: "39600000",
-                status: "Paid",
-                image: "/assets/images/banner/banner-2.png",
-                province: "hotel-456"
-            }
-        ];
-
-        return { all: allBookings };
-    };
     // Hàm xử lý xem chi tiết
     const handleViewDetails = (booking) => {
-        console.log("Xem chi tiết booking:", booking);
         navigate(`/booking/${booking.id}`);
     };
 
     // Hàm xử lý đặt lại
     const handleReBook = (booking) => {
-        console.log("Đặt lại:", booking);
-        alert(`Đặt lại: ${booking.name}`);
+        navigate(`/hotel/${booking.room.hotel.id}`)
     };
 
     useEffect(() => {
         fetchAllBookings();
     }, [user]); // Chỉ gọi lại khi user thay đổi
-
+    if(loading){
+        return <Loader></Loader>
+    }
     return (
-        <div className="page-wrapper">
+        <div className="page-wrapper" key={filteredBookings.id}>
             <div className={container}>
                 <div className={banner}>
-                    <img src="/assets/images/banner/banner-2.png" alt="Banner" />
+                    <img
+                    src={filteredBookings?.[0]?.room?.hotel?.images?.[1]?.url}
+                    alt="hotel"
+                    />
                 </div>
 
                 <div className={tabs}>
@@ -149,8 +89,8 @@ const ManageBooking = () => {
                             onClick={() => setActiveTab(tab)}
                             className={`${button} ${activeTab === tab ? activeClass : ""}`}
                         >
-                            {tab === "active" && "Paid"}
-                            {tab === "past" && "Past"}
+                            {tab === "active" && "Pending"}
+                            {tab === "past" && "Confirmed"}
                             {tab === "cancelled" && "Cancelled"}
                         </button>
                     ))}
@@ -174,6 +114,7 @@ const ManageBooking = () => {
                                 booking={b}
                                 onViewDetails={handleViewDetails}
                                 onReBook={handleReBook}
+                                onCancelSuccess={fetchAllBookings}
                             />
                         ))
                     )}
