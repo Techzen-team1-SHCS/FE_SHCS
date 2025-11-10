@@ -1,0 +1,33 @@
+.layout{
+    width: 100%;
+    padding:0px;
+    display: flex;
+    height:100%;
+    background-color: lightgray;
+}
+.sidebar{
+    display: flex;
+    flex-direction: column;
+    flex:0 0 20%;
+    background-color: white;
+    border-right:1px solid rgba(232, 232, 232, 1) ;
+    align-items: center;
+}
+.header{
+    display: flex;
+    padding-left: 50px;
+    justify-content: space-between;
+    align-items: center;
+    height: 90px;
+    width: 100%;
+    background-color: white;
+    border-bottom: 1px solid lightgray;
+}
+.contentArea{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.mainContent{
+    flex:0 0 80%;
+}

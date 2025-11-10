@@ -166,9 +166,7 @@ footer:after {
 
 /*======= Input Styles =======*/
 input,
-select,
 textarea,
-.nice-select,
 .form-control {
   width: 100%;
   height: auto;
@@ -185,9 +183,8 @@ textarea,
 }
 
 input:focus,
-select:focus,
+
 textarea:focus,
-.nice-select:focus,
 .form-control:focus {
   outline: none;
   -webkit-box-shadow: none;
@@ -196,7 +193,6 @@ textarea:focus,
 }
 
 input:focus::-webkit-input-placeholder,
-select:focus::-webkit-input-placeholder,
 textarea:focus::-webkit-input-placeholder,
 .nice-select:focus::-webkit-input-placeholder,
 .form-control:focus::-webkit-input-placeholder {
@@ -204,7 +200,6 @@ textarea:focus::-webkit-input-placeholder,
 }
 
 input:focus:-ms-input-placeholder,
-select:focus:-ms-input-placeholder,
 textarea:focus:-ms-input-placeholder,
 .nice-select:focus:-ms-input-placeholder,
 .form-control:focus:-ms-input-placeholder {
@@ -212,17 +207,13 @@ textarea:focus:-ms-input-placeholder,
 }
 
 input:focus::-ms-input-placeholder,
-select:focus::-ms-input-placeholder,
 textarea:focus::-ms-input-placeholder,
-.nice-select:focus::-ms-input-placeholder,
 .form-control:focus::-ms-input-placeholder {
   color: var(--heading-color);
 }
 
 input:focus::placeholder,
-select:focus::placeholder,
 textarea:focus::placeholder,
-.nice-select:focus::placeholder,
 .form-control:focus::placeholder {
   color: var(--heading-color);
 }
