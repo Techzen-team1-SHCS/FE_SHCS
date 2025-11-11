@@ -161,8 +161,8 @@ const Header = () => {
                                     {isAuthAppear && (
                                         <div >
                                             <div className='triangle-up position-absolute'></div>
-                                            <div className='position-absolute auth-appear show'>
-                                                {!user ? (
+                                            <div className='position-absolute auth-appear show' style={{ minWidth: '220px' }}>
+                                                {user ? (
                                                     // Nếu chưa đăng nhập
                                                     <div className="btnRegister">
                                                         <div className="content">
@@ -191,7 +191,7 @@ const Header = () => {
                                                     </div>
                                                 ) : (
                                                     // Nếu đã đăng nhập
-                                                    <div className="user-menu p-0" style={{ minWidth: '280px' }}>
+                                                    <div className="user-menu p-0" >
                                                         <div className="user-header">
                                                             <img
                                                                 src={user?.image || '/default-avatar.png'}
