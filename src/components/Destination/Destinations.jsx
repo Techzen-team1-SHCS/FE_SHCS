@@ -44,12 +44,12 @@ const topHotel = [
 ];
 const Destinations = () => {
   return (
-    <section className="destinations-area bgc-black pt-100 pb-70 rel z-1">
+    <section className="destinations-area bgc-white pt-100 pb-70 rel z-1">
       <div className="container-fluid">
         <div className="row justify-content-center">
           <div className="col-lg-12">
             <div
-              className="section-title text-white text-center counter-text-wrap mb-70"
+              className="section-title text-black text-center counter-text-wrap mb-70"
               data-aos="fade-up"
               data-aos-duration="1500"
               data-aos-offset="50"
