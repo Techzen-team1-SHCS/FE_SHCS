@@ -17,7 +17,7 @@ const Profile = () => {
         name: user.name || '',
         email: user.email || '',
         phone: user.phone || '',
-        gender: user.gender || 'male',
+        gender: user.gender || '',
         birth: user.birth || '',
         address: user.address || ''
         });
@@ -151,49 +151,52 @@ const Profile = () => {
     const cancelEditing = () => {
         setEditingField(null);
         setFormData({
-            name: user?.name || 'Tran Vi',
-            email: user?.email || 'Vit76404@gmail.com',
-            phone: user?.phone || 'xxxxxx223',
+            name: user?.name || '',
+            email: user?.email || '',
+            phone: user?.phone || '',
             gender: user?.gender ,
             birth: user?.birth || '',
-            address: user?.address || '256 LeDuan'
+            address: user?.address || ''
         });
     };
 
     // Hàm lưu thay đổi profile
     const saveChanges = async (field) => {
-    setLoading(true);
-    try {
-        const updateData = { [field]: formData[field] };
-        const token = localStorage.getItem('token');
+  setLoading(true);
+  try {
+    const updateData = { [field]: formData[field] };
+    const token = localStorage.getItem('token');
 
-        const response = await authService.updateProfile(user.id, updateData, token);
+    const response = await authService.updateProfile(user.id, updateData, token);
 
-        if (response.status === 200 || response.status === 'success') {
-        const updatedUser = response.data?.data || response.data?.user || response.user;
+    // lấy data trả về đúng chuẩn
+    const updatedUser = response.data?.data 
+                     || response.data?.user 
+                     || response.user 
+                     || null;
 
-        // 🧠 Cập nhật vào context
-        if (updateUser && updatedUser) {
-            updateUser(updatedUser);
-        }
-
-        // 💾 Cập nhật vào localStorage
-        const currentUser = JSON.parse(localStorage.getItem('user'));
-        const newUser = { ...currentUser, ...updatedUser };
-        localStorage.setItem('user', JSON.stringify(newUser));
-
-        toast.success(`${field} updated successfully`);
-        setEditingField(null);
-        } else {
-        toast.error(response.message || `Failed to update ${field}`);
-        }
-    } catch (error) {
-        console.error(`Error updating ${field}:`, error);
-        toast.error(`Error updating ${field}. Please try again.`);
-    } finally {
-        setLoading(false);
+    if (!updatedUser) {
+      toast.error("Update failed. No user returned.");
+      return;
     }
-    };
+
+    // merge và đồng bộ vào AuthContext -> nó tự sync localStorage
+    updateUser({
+      ...updatedUser,
+      avatar_url: updatedUser.avatar_url || updatedUser.image || user.avatar_url
+    });
+
+    toast.success(`${field} updated successfully`);
+    setEditingField(null);
+    
+  } catch (error) {
+    console.error(`Error updating ${field}:`, error);
+    toast.error(error?.response?.data?.message || `Error updating ${field}.`);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
 
     // Hàm xử lý thay đổi input
@@ -222,9 +225,9 @@ const Profile = () => {
                     onChange={(e) => handleInputChange(field, e.target.value)}
                     disabled={loading}
                 >
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
                 </select>
             );
         }

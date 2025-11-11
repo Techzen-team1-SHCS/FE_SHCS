@@ -4,6 +4,11 @@ import { commentService } from '../../services/commentService';
 import { toast } from 'react-toastify';
 
 const HotelReviewsList = ({ reviews, loading, hotelId, onCommentPosted }) => {
+    // Tính điểm rating trung bình của tất cả bình luận gốc
+    const rootReviews = (reviews || []).filter(r => !r.parent_id);
+    const avgRating = rootReviews.length > 0
+        ? (rootReviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / rootReviews.length).toFixed(1)
+        : null;
     const [replyTo, setReplyTo] = useState(null);
     const [newComment, setNewComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -258,6 +263,19 @@ const HotelReviewsList = ({ reviews, loading, hotelId, onCommentPosted }) => {
 
     return (
         <div className={reviewsList}>
+            {/* Hiển thị điểm rating tổng hợp */}
+            {avgRating && (
+                <div style={{ marginBottom: 18, display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <span style={{ fontWeight: 700, fontSize: 18 }}>Điểm trung bình:</span>
+                    <span style={{ color: '#ffc107', fontSize: 22, fontWeight: 700 }}>{avgRating}</span>
+                    <span style={{ color: '#ffc107', fontSize: 20 }}>
+                        {Array.from({ length: 5 }).map((_, i) => (
+                            <span key={i}>{i < Math.round(avgRating) ? '★' : '☆'}</span>
+                        ))}
+                    </span>
+                    <span style={{ color: '#666', fontSize: 15 }}>({rootReviews.length} đánh giá)</span>
+                </div>
+            )}
             {displayReviews.length > 0 ? (
                 <div className="reviews-container">
                     {renderComments(displayReviews)}
