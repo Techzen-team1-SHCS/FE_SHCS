@@ -161,7 +161,7 @@ const Header = () => {
                                     <div >
                                         <div className='triangle-up position-absolute'></div>
                                         <div className='position-absolute auth-appear show'>
-                                            {!user ? (
+                                            {user ? (
                                                 // Nếu chưa đăng nhập
                                                 <div className="btnRegister">
                                                     <div className="content">
@@ -192,7 +192,7 @@ const Header = () => {
                                                 // Nếu đã đăng nhập
                                                 <div className="btnRegister p-3" style={{ minWidth: '200px' }}>
                                                     <div className="content text-start">
-                                                        <p className="fw-semibold mb-1">Xin chào, {user.name}</p>
+                                                        <p className="fw-semibold mb-1">Xin chào, {user?.name}</p>
                                                         <img
                                                             src={user?.image}
                                                             alt="avatar"
