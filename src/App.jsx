@@ -18,6 +18,9 @@ import Booking from './pages/Booking/Booking';
 import PaymentResult from './pages/PaymentResult/PaymentResult';
 import ManageBooking from './pages/ManageBooking/ManageBooking';
 import Profile from './pages/Profile/Profile';
+import AdminLayout from './layouts/AdminLayout/AdminLayout'
+import Dashboard from './pages/Admin/Dashboard/Dashboard'
+import BookingManage from './pages/Admin/BookingManage/BookingManage';
 // import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -40,11 +43,15 @@ function App() {
             <Route path='/HotelsRecommend' element={<HotelsRecommend />}></Route>
             <Route path='/booking/:bookingId' element={<Booking />}></Route>
             <Route path="/payment-result" element={<PaymentResult />} />
-            <Route path="/my-bookings" element={<ManageBooking/>}/>
+            <Route path="/my-bookings" element={<ManageBooking />} />
             <Route path="/profile" element={<Profile />} />
             {/* có thể thêm các page khác cần layout */}
           </Route>
-    
+          {/* Route admin */}
+          <Route element={<AdminLayout />}>
+            <Route path='/admin/dashboard' element={<Dashboard />} />
+            <Route path='/admin/booking-manage' element={<BookingManage />} />
+          </Route>
           {/* Route KHÔNG dùng MainLayout */}
         </Routes>
         <ToastContainer

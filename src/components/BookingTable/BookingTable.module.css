@@ -1,0 +1,131 @@
+/* BookingTable.module.css */
+.tableCard {
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 24px;
+    border: 1px solid #f1f3f4;
+    transition: box-shadow 0.3s ease;
+}
+
+.tableCard:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.title {
+    color: #2c3e50;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.tableContainer {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    text-align: center;
+}
+
+.tableHeader {
+    background: #f8f9fa;
+}
+
+.th {
+    padding: 16px;
+    text-align: center;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #e9ecef;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+}
+
+.tableBody {
+    background: white;
+}
+
+.tr {
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tr:hover {
+    background-color: #f8f9fa;
+}
+
+.tr:last-child {
+    border-bottom: none;
+}
+
+.td {
+    padding: 16px;
+    color: #9E9E9E;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.roomType {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.bookings {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.rateValue {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.ratingValue {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .tableCard {
+        padding: 16px;
+        margin-top: 16px;
+    }
+    
+    .th, .td {
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tableCard {
+    animation: fadeIn 0.5s ease-out;
+}

@@ -114,20 +114,6 @@
   border-radius: 4px;
   font-size: 15px;
 }
-.formGroup input,
-.formGroup select,
-.formGroup textarea {
-  width: 100%;
-  padding: 4px 8px;
-  border: 1px solid #000000;
-  border-radius: 4px;
-  font-size: 14px;
-  box-sizing: border-box;
-
-}
-.formGroup select{
-    height: 58%;
-}
 .formGroup textarea {
   min-height: 80px;
   resize: vertical;

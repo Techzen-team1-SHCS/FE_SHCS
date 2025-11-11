@@ -1,0 +1,296 @@
+/* BookingManage.module.css */
+.container {
+    background: white;
+}
+
+.tableContainer {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    min-width: 1000px;
+}
+
+.tableHeader {
+    background: #f8f9fa;
+}
+
+.th {
+    padding: 16px;
+    text-align: center;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #e9ecef;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+}
+
+/* Điều chỉnh chiều rộng từng cột cụ thể */
+.th:nth-child(1), .td:nth-child(1) { /* Guest Name */
+    width: 120px;
+    min-width: 120px;
+}
+
+.th:nth-child(2), .td:nth-child(2) { /* Phone Number */
+    width: 130px;
+    min-width: 130px;
+}
+
+.th:nth-child(3), .td:nth-child(3) { /* Room Type */
+    width: 100px;
+    min-width: 100px;
+}
+
+.th:nth-child(4), .td:nth-child(4) { /* Guests */
+    width: 80px;
+    min-width: 80px;
+}
+
+.th:nth-child(5), .td:nth-child(5) { /* Check-In Date */
+    width: 200px;
+    min-width: 200px;
+}
+
+.th:nth-child(6), .td:nth-child(6) { /* Check-out Date */
+    width: 200px;
+    min-width: 200px;
+}
+
+.th:nth-child(7), .td:nth-child(7) { /* Payment Status */
+    width: 120px;
+    min-width: 120px;
+}
+
+.th:nth-child(8), .td:nth-child(8) { /* Booking Status */
+    width: 120px;
+    min-width: 120px;
+}
+
+.tableBody {
+    background: white;
+}
+
+.tr {
+    text-align: center;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tr:hover {
+    background-color: #f8f9fa;
+}
+
+.tr:last-child {
+    border-bottom: none;
+}
+
+.td {
+    padding: 16px;
+    color: #495057;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Status Styles */
+.paymentPaid,
+.paymentBonding,
+.paymentCanceled {
+    color: black;
+    padding: 0px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+}
+
+/* Booking Status Colors */
+.statusConfirmed {
+    background-color: rgba(157, 243, 194, 0.5);
+    border: 1px solid #41BC63;
+}
+
+.statusCheckedIn {
+    background-color: rgba(98, 180, 245, 0.5);
+    border: 1px solid #51A7FD;
+}
+
+.statusCompleted {
+    background-color: rgba(151, 71, 255, 0.3);
+    border: 1px solid rgba(151, 71, 255, 0.8);
+}
+
+.statusCanceled {
+    background-color: rgba(255, 115, 115, 0.5);
+    border: 1px solid #F20808;
+}
+
+/* Payment Status Colors */
+.paymentPaid {
+    background-color: rgba(157, 243, 194, 0.5);
+    border: 1px solid #41BC63;
+}
+
+.paymentBonding {
+    background-color: rgba(255, 184, 0, 0.5);
+    border: 1px solid #CD8124;
+}
+
+.paymentCanceled {
+    background-color: rgba(255, 115, 115, 0.5);
+    border: 1px solid #F20808;
+}
+/* Delete Button */
+.deleteButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.deleteButton:hover {
+    background-color: #f8d7da;
+    transform: scale(1.1);
+}
+
+.deleteButton:active {
+    transform: scale(0.95);
+}
+
+.deleteIcon {
+    width: 20px;
+    height: 20px;
+    color: #dc3545;
+    transition: color 0.2s ease;
+}
+
+.deleteButton:hover .deleteIcon {
+    color: #c82333;
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .statusSelect {
+        width: 100px;
+        padding: 6px 8px;
+        font-size: 11px;
+        background-position: right 8px center;
+    }
+     .th:nth-child(9), .td:nth-child(9) { /* Actions column */
+        width: 60px;
+        min-width: 60px;
+    }
+    
+    .deleteIcon {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .deleteButton {
+        padding: 6px;
+    }
+    .container {
+        padding: 16px;
+        margin: 16px 0;
+    }
+    
+    .th, .td {
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+    
+    .table {
+        min-width: 1000px;
+    }
+    
+    /* Điều chỉnh lại chiều rộng cho mobile */
+    .th:nth-child(1), .td:nth-child(1) { width: 100px; min-width: 100px; }
+    .th:nth-child(2), .td:nth-child(2) { width: 110px; min-width: 110px; }
+    .th:nth-child(3), .td:nth-child(3) { width: 90px; min-width: 90px; }
+    .th:nth-child(4), .td:nth-child(4) { width: 70px; min-width: 70px; }
+    .th:nth-child(5), .td:nth-child(5) { width: 180px; min-width: 180px; }
+    .th:nth-child(6), .td:nth-child(6) { width: 180px; min-width: 180px; }
+    .th:nth-child(7), .td:nth-child(7) { width: 100px; min-width: 100px; }
+    .th:nth-child(8), .td:nth-child(8) { width: 100px; min-width: 100px; }
+    .th:nth-child(9), .td:nth-child(9) { width: 80px; min-width: 80px; }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    animation: fadeIn 0.5s ease-out;
+}
+/* Status Select */
+.statusSelect {
+    width: 120px;
+    padding: 0px 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+    text-align: center;
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 8px;
+}
+
+
+
+/* Select colors based on status */
+.statusSelect.statusConfirmed {
+    background-color: rgba(157, 243, 194, 0.5);
+    border: 1px solid #41BC63;
+    color: black;
+}
+
+.statusSelect.statusCheckedIn {
+    background-color: rgba(98, 180, 245, 0.5);
+    border: 1px solid #51A7FD;
+    color: black;
+}
+
+.statusSelect.statusCompleted {
+    background-color: rgba(151, 71, 255, 0.3);
+    border: 1px solid rgba(151, 71, 255, 0.8);
+    color: black;
+}
+
+.statusSelect.statusCanceled {
+    background-color: rgba(255, 115, 115, 0.5);
+    border: 1px solid #F20808;
+    color: black;
+}
