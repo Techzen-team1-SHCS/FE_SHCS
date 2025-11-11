@@ -99,64 +99,68 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
                                     </span>
                                 </div>
                                 <div className="d-flex" style={{ gap: "10px" }}>
-                                    {booking?.status === "pending" ? (
-                                        (() => {
+                                    {(() => {
                                         const now = new Date();
-                                        const checkInDate = new Date(booking?.check_out);
-                                        const isExpired = checkInDate < now; 
+                                        const checkInDate = new Date(booking?.check_in);
+                                        const isExpired = checkInDate < now; // booking đã quá ngày check-in
 
-                                        return (
+                                        switch (booking?.status) {
+                                        case "pending":
+                                            return (
                                             <ButtonDetail
-                                            text={isExpired ? "Hết hạn" : "Tiếp Tục"}
-                                            color={isExpired ? "gray" : "green"}
-                                            onClick={!isExpired ? handleSeeDetailClick : undefined} // ✅ Vô hiệu hóa click
-                                            disabled={isExpired} // ✅ Thêm prop disabled
+                                                text={isExpired ? "Hết hạn" : "Tiếp Tục"}
+                                                color={isExpired ? "gray" : "green"}
+                                                onClick={!isExpired ? handleSeeDetailClick : undefined}
+                                                disabled={isExpired}
                                             />
-                                        );
-                                        })()
-                                    ) : booking?.status === "confirmed" ? (
-                                        <>
-                                        <ButtonCancel onClick={() => handleCancelBooking(booking.id)} />
-                                        <div className={styles.card}>
-                                            {cancelPolicy.hasFreeCancel ? (
+                                            );
+
+                                        case "confirmed":
+                                            return (
                                             <>
-                                                <div className={styles.cancelFree}>
-                                                Miễn phí huỷ đến{" "}
-                                                <strong>{formatDateTime(cancelPolicy.freeCancelDeadline)}</strong>
-                                                </div>
-                                                <div className={styles.cancelFee}>
-                                                Sau thời điểm đó:{" "}
-                                                <strong>{cancelPolicy.cancelFee.toLocaleString("vi-VN")} VND</strong>
+                                                <ButtonCancel
+                                                text={isExpired ? "Hết hạn" : "HỦY PHÒNG"}
+                                                color={isExpired ? "gray" : "red"}
+                                                onClick={!isExpired ? () => handleCancelBooking(booking.id) : undefined}
+                                                disabled={isExpired}
+                                                />
+                                                <div className={styles.card}>
+                                                {cancelPolicy.hasFreeCancel ? (
+                                                    <>
+                                                    <div className={styles.cancelFree}>
+                                                        Miễn phí huỷ đến <strong>{formatDateTime(cancelPolicy.freeCancelDeadline)}</strong>
+                                                    </div>
+                                                    <div className={styles.cancelFee}>
+                                                        Sau thời điểm đó: <strong>{cancelPolicy.cancelFee.toLocaleString("vi-VN")} VND</strong>
+                                                    </div>
+                                                    </>
+                                                ) : (
+                                                    <div className={styles.cancelFee}>
+                                                    <span>{cancelPolicy.message}</span>
+                                                    <br />
+                                                    <strong>Phí huỷ: {cancelPolicy.cancelFee.toLocaleString("vi-VN")} VND</strong>
+                                                    </div>
+                                                )}
                                                 </div>
                                             </>
-                                            ) : (
-                                            <div className={styles.cancelFee}>
-                                                <span>{cancelPolicy.message}</span>
-                                                <br />
-                                                <strong>
-                                                Phí huỷ: {cancelPolicy.cancelFee.toLocaleString("vi-VN")} VND
-                                                </strong>
-                                            </div>
-                                            )}
-                                        </div>
-                                        </>
-                                    ) : booking?.status === "cancelled" ? (
-                                        (() => {
-                                        const now = new Date();
-                                        const checkInDate = new Date(booking?.check_out);
-                                        const isExpired = checkInDate < now; 
+                                            );
 
-                                        return (
+                                        case "cancelled":
+                                            return (
                                             <ButtonDetail
-                                            text={isExpired ? "Hết hạn" : "ĐẶT LẠI"}
-                                            color={isExpired ? "gray" : "blue"}
-                                            onClick={!isExpired ? handleRebookClick  : undefined} // ✅ Vô hiệu hóa click
-                                            disabled={isExpired} // ✅ Thêm prop disabled
+                                                text={isExpired ? "Hết hạn" : "ĐẶT LẠI"}
+                                                color={isExpired ? "gray" : "blue"}
+                                                onClick={!isExpired ? handleRebookClick : undefined}
+                                                disabled={isExpired}
                                             />
-                                        );
-                                        })()
-                                    ) : null}
-                                    </div>
+                                            );
+
+                                        default:
+                                            return null;
+                                        }
+                                    })()}
+                                </div>
+
 
 
                             </div>

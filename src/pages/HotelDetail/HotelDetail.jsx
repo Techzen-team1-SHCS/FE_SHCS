@@ -12,6 +12,7 @@ import NavigationTabs from '../../components/NavigationTabs/NavigationTabs.jsx';
 import AvailableRooms from '../../components/AvailableRooms/AvailableRooms.jsx';
 import HotelReviewSubmit from '../../components/HotelReviewSubmit/HotelReviewSubmit.jsx';
 import HotelReviewsList from '../../components/HotelReviewsList/HotelReviewsList.jsx';
+import { commentService } from '../../services/commentService';
 import HotelReviewStats from '../../components/HotelReviewStats/HotelReviewStats.jsx';
 
 const HotelDetail = () => {
@@ -26,70 +27,48 @@ const HotelDetail = () => {
   const [loadingRooms, setLoadingRooms] = useState(false);
   const navigate=useNavigate();
   const availableRoomsSectionRef = useRef(null);
-  const [reviews, setReviews] = useState([]);
-  const [loadingReviews, setLoadingReviews] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(false);
   const [reviewStats, setReviewStats] = useState(null);
   const [loadingStats, setLoadingStats] = useState(false);
   const handleReviewSubmit = async (reviewData) => {
     try {
-      // Mock function - thay bằng API call thực tế
-      const response = await hotelService.submitReview(reviewData);
-      const newReview = {
-        id: response.data?.id || Date.now(),
-        ...reviewData,
-        user: response.data?.user?.name || response.data?.user_name || "Current User",
-        date: response.data?.created_at ? new Date(response.data.created_at).toLocaleDateString('vi-VN') : new Date().toLocaleDateString('vi-VN'),
-        avatar: response.data?.user?.avatar || response.data?.avatar || "/assets/images/users/user-default.jpg"
+      // Chỉ truyền các trường backend chấp nhận: comment, maHotel, rating, parent_id
+      const payload = {
+        comment: reviewData.comment,
+        maHotel: hotelId,
+        rating: reviewData.rating || undefined,
+        parent_id: reviewData.parent_id || undefined
       };
-      
-      setReviews(prev => [newReview, ...prev]);
-      return newReview;
+      const response = await commentService.postComment(payload);
+      // Sau khi gửi thành công, reload lại danh sách comment
+      const res = await commentService.getComments({ maHotel: hotelId });
+      setComments(res.data || []);
+      return response.data;
     } catch (error) {
       console.error('Error submitting review:', error);
       throw error;
     }
   };
   // Thêm useEffect để load review stats
+  // Load comments khi hotelId thay đổi
   useEffect(() => {
-    const loadReviewStats = async () => {
+    const loadComments = async () => {
       if (!hotelId) return;
-      
-      setLoadingStats(true);
+      setLoadingComments(true);
       try {
-        const statsData = await hotelService.getHotelReviewStats(hotelId);
-        setReviewStats(statsData);
+        const res = await commentService.getComments({ maHotel: hotelId });
+        // API trả về { status, data } nên lấy res.data
+        setComments(res.data || []);
       } catch (error) {
-        console.error('Error loading review stats:', error);
-        // Có thể giữ null để component sử dụng default data
+        console.error('Error loading comments:', error);
+        setComments([]);
       } finally {
-        setLoadingStats(false);
+        setLoadingComments(false);
       }
     };
-
-    if (hotelId) {
-      loadReviewStats();
-    }
+    loadComments();
   }, [hotelId]);
-  useEffect(() => {
-    const loadReviews = async () => {
-      if (!hotelId) return;
-      
-      setLoadingReviews(true);
-      try {
-        const reviewsData = await hotelService.getHotelReviews(hotelId);
-        setReviews(reviewsData);
-      } catch (error) {
-        console.error('Error loading reviews:', error);
-        // Không set mock data, để mảng rỗng nếu API fail
-      } finally {
-        setLoadingReviews(false);
-      }
-    };
-
-   if (hotelId) {
-      loadReviews();
-   }
-}, [hotelId]);
   // Thêm useEffect để xử lý scroll
   useEffect(() => {
     if (showAvailableRooms && availableRooms.length > 0) {
@@ -354,7 +333,16 @@ const HotelDetail = () => {
               <HotelReviewStats statsData={reviewStats} loading={loadingStats}/>
               <HotelReviewSubmit hotelId={hotelId} onReviewSubmit={handleReviewSubmit}/>
               <hr className="mb-30" />
-              <HotelReviewsList reviews={reviews} loading={loadingReviews} />
+              <HotelReviewsList
+                reviews={comments}
+                loading={loadingComments}
+                hotelId={hotelId}
+                onCommentPosted={() => {
+                  // Reload comments after posting
+                  commentService.getComments({ maHotel: hotelId })
+                    .then(res => setComments(res.data || []));
+                }}
+              />
             </section>
           </div>
         );
