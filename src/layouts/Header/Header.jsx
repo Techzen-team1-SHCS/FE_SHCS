@@ -162,7 +162,7 @@ const Header = () => {
                                         <div >
                                             <div className='triangle-up position-absolute'></div>
                                             <div className='position-absolute auth-appear show' style={{ minWidth: '220px' }}>
-                                                {user ? (
+                                                {!user ? (
                                                     // Nếu chưa đăng nhập
                                                     <div className="btnRegister">
                                                         <div className="content">
