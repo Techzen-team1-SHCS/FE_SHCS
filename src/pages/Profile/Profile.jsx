@@ -11,37 +11,43 @@ import Loader from '../../components/Loading/Loader';
 const Profile = () => {
     const [activeTab, setActiveTab] = useState('profile');
     const { user, updateUser } = useContext(AuthContext);
-    useEffect(() => {
-    if (user) {
-        setFormData({
-        name: user.name || '',
-        email: user.email || '',
-        phone: user.phone || '',
-        gender: user.gender || '',
-        birth: user.birth || '',
-        address: user.address || ''
-        });
-    }
-    }, [user]);
+    
     // State cho các trường đang edit
     const [editingField, setEditingField] = useState(null);
     const [formData, setFormData] = useState({
-        name: user?.name ,
-        email: user?.email,
-        phone: user?.phone,
-        gender: user?.gender,
-        birth:user?.birth,
-        address: user?.address || '256 LeDuan'
+        name: user?.name || '',
+        email: user?.email || '',
+        phone: user?.phone || '',
+        gender: user?.gender || '',
+        birth: user?.birth || '',
+        address: user?.address || ''
     });
     // State cho loading và thông báo
     const [loading, setLoading] = useState(false);
     // State cho avatar
-    const [avatar, setAvatar] = useState(user?.avatar_url || 'assets/images/avatar/avatar_default.png');
+    const [avatar, setAvatar] = useState(user?.image || user?.avatar_url || 'assets/images/avatar/avatar_default.png');
     const [showAvatarModal, setShowAvatarModal] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [preview, setPreview] = useState(user?.image || "");
+    const [preview, setPreview] = useState('');
     const [previewUrl, setPreviewUrl] = useState('');
     const fileInputRef = useRef(null);
+
+    // Sync avatar state khi user context thay đổi
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                name: user.name || '',
+                email: user.email || '',
+                phone: user.phone || '',
+                gender: user.gender || '',
+                birth: user.birth || '',
+                address: user.address || ''
+            });
+            // Avatar sync: prefer image (từ backend update) hoặc avatar_url
+            const newAvatar = user.image || 'assets/images/avatar/avatar_default.png';
+            setAvatar(newAvatar);
+        }
+    }, [user]);
     
 
     const tabs = [
@@ -89,6 +95,7 @@ const Profile = () => {
     };
 
     // Hàm upload avatar lên server
+    // Hàm upload avatar lên server - FIXED VERSION
     const saveAvatar = async () => {
         if (!selectedFile) {
             toast.error('No image selected');
@@ -101,41 +108,49 @@ const Profile = () => {
             const formData = new FormData();
             formData.append('avatar', selectedFile);
 
-            // If your backend accepts other fields, you can append them here.
-            const response = await authService.updateProfile(user.id, formData, token);
+            console.log('🟡 Starting avatar upload...');
+            
+            // 1. Gọi API update avatar
+            await authService.updateProfile(user.id, formData, token);
 
-            // Response shape may vary; try to find updated user
-            const updatedUser = response.data?.data || response.data?.user || response.data || response.user;
+            // 2. 🚀 QUAN TRỌNG: Gọi getUserById để lấy data mới nhất từ server
+            console.log('🟡 Fetching updated user data...');
+            const freshUserData = await authService.getUserById(user.id);
+            
+            console.log('🟢 Fresh user data after avatar update:', freshUserData);
 
-            if (response.status === 200 || response.status === 'success' || updatedUser) {
-                // update context and localStorage
-                if (updateUser && updatedUser) {
-                    updateUser(updatedUser);
-                }
-
-                try {
-                    const currentUser = JSON.parse(localStorage.getItem('user')) || {};
-                    const newUser = { ...currentUser, ...updatedUser };
-                    localStorage.setItem('user', JSON.stringify(newUser));
-                } catch (e) {
-                    // ignore localStorage parse errors
-                }
-
-                // update preview/avatar shown in UI
-                const newAvatarUrl = updatedUser?.image || response.avatar_url || '';
-                if (newAvatarUrl) {
-                    setAvatar(newAvatarUrl);
-                    setPreview('');
-                }
-
-                toast.success('Avatar updated successfully');
-                closeAvatarModal();
-            } else {
-                toast.error(response.message || 'Failed to upload avatar');
+            if (!freshUserData) {
+                toast.error("Avatar update failed. No user data returned.");
+                return;
             }
+
+            // 3. Cập nhật context với data mới hoàn toàn - DÙNG field 'image'
+            if (updateUser) {
+                updateUser(freshUserData);
+            }
+
+            // 4. Cập nhật localStorage
+            localStorage.setItem('user', JSON.stringify(freshUserData));
+
+            // 5. Cập nhật UI state - ƯU TIÊN 'image' field từ data mới
+            const newAvatarUrl = freshUserData.image; // ← CHỈ dùng field 'image'
+            
+            console.log('🔵 New avatar URL from fresh data:', newAvatarUrl);
+            
+            if (newAvatarUrl) {
+                setAvatar(newAvatarUrl);
+            } else {
+                // Fallback nếu không có image
+                setAvatar('assets/images/avatar/avatar_default.png');
+            }
+            
+            setPreview('');
+            toast.success('Avatar updated successfully');
+            closeAvatarModal();
+
         } catch (error) {
-            console.error('Error uploading avatar:', error);
-            toast.error(error?.response?.data?.message || 'Error uploading avatar. Please try again.');
+            console.error('❌ Error in avatar update process:', error);
+            toast.error(error?.response?.data?.message || 'Error uploading avatar');
         } finally {
             setLoading(false);
         }
@@ -162,39 +177,44 @@ const Profile = () => {
 
     // Hàm lưu thay đổi profile
     const saveChanges = async (field) => {
-  setLoading(true);
-  try {
-    const updateData = { [field]: formData[field] };
-    const token = localStorage.getItem('token');
+    setLoading(true);
+    try {
+        const updateData = { [field]: formData[field] };
+        const token = localStorage.getItem('token');
 
-    const response = await authService.updateProfile(user.id, updateData, token);
+        console.log('🟡 Updating profile field:', field, updateData);
 
-    // lấy data trả về đúng chuẩn
-    const updatedUser = response.data?.data 
-                     || response.data?.user 
-                     || response.user 
-                     || null;
+        // 1. Gọi API update profile
+        await authService.updateProfile(user.id, updateData, token);
 
-    if (!updatedUser) {
-      toast.error("Update failed. No user returned.");
-      return;
+        // 2. 🚀 QUAN TRỌNG: Gọi getUserById để lấy data mới nhất từ server
+        console.log('🟡 Fetching updated user data...');
+        const freshUserData = await authService.getUserById(user.id);
+        
+        console.log('🟢 Fresh user data after update:', freshUserData);
+
+        if (!freshUserData) {
+            toast.error("Update failed. No user data returned.");
+            return;
+        }
+
+        // 3. Cập nhật context với data mới hoàn toàn
+        if (updateUser) {
+            updateUser(freshUserData);
+        }
+
+        // 4. Cập nhật localStorage
+        localStorage.setItem('user', JSON.stringify(freshUserData));
+
+        toast.success(`${field} updated successfully`);
+        setEditingField(null);
+        
+    } catch (error) {
+        console.error(`Error updating ${field}:`, error);
+        toast.error(error?.response?.data?.message || `Error updating ${field}.`);
+    } finally {
+        setLoading(false);
     }
-
-    // merge và đồng bộ vào AuthContext -> nó tự sync localStorage
-    updateUser({
-      ...updatedUser,
-      avatar_url: updatedUser.avatar_url || updatedUser.image || user.avatar_url
-    });
-
-    toast.success(`${field} updated successfully`);
-    setEditingField(null);
-    
-  } catch (error) {
-    console.error(`Error updating ${field}:`, error);
-    toast.error(error?.response?.data?.message || `Error updating ${field}.`);
-  } finally {
-    setLoading(false);
-  }
 };
 
 

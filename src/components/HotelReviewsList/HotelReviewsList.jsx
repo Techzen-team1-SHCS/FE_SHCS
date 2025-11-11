@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styles from './HotelReviewsList.module.css';
 import { commentService } from '../../services/commentService';
+import { AuthContext } from '../../contexts/AuthContext'; // ← THÊM IMPORT
 import { toast } from 'react-toastify';
 
-const HotelReviewsList = ({ reviews, loading, hotelId, onCommentPosted }) => {
-    // Tính điểm rating trung bình của tất cả bình luận gốc
-    const rootReviews = (reviews || []).filter(r => !r.parent_id);
-    const avgRating = rootReviews.length > 0
-        ? (rootReviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / rootReviews.length).toFixed(1)
-        : null;
+const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) => {
     const [replyTo, setReplyTo] = useState(null);
     const [newComment, setNewComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [editingContent, setEditingContent] = useState('');
+    
+    // 🎯 THÊM: Lấy user từ context để có data mới nhất
+    const { user: currentUser } = useContext(AuthContext);
 
     const {
         reviewsList,
@@ -23,17 +24,29 @@ const HotelReviewsList = ({ reviews, loading, hotelId, onCommentPosted }) => {
         userInfo,
         userName,
         reviewDate,
-        reviewRating,
-        ratingStars,
         reviewComment,
         reviewICard,
         replyContainer,
         replyButton,
-        commentInput,
-        submitButton,
         replySection
     } = styles;
-    const displayReviews = reviews && reviews.length > 0 ? reviews : [];
+
+    // Calculate average rating from root comments
+    const rootReviews = reviews.filter(r => !r.parent_id);
+    const avgRating = rootReviews.length > 0
+        ? (rootReviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / rootReviews.length)
+        : null;
+
+    // 🎯 HÀM MỚI: Lấy avatar URL mới nhất cho comment
+    const getCurrentUserAvatar = (commentUserId, commentUserAvatar) => {
+        // Nếu comment thuộc về user hiện tại, dùng avatar mới nhất từ context
+        if (currentUser && commentUserId === currentUser.id) {
+            return currentUser.image || '/assets/images/avatar/avatar_default.png';
+        }
+        // Nếu không, dùng avatar từ comment data
+        return commentUserAvatar || '/assets/images/avatar/avatar_default.png';
+    };
+
     if (loading) {
         return (
             <div className={reviewsList}>
@@ -52,234 +65,173 @@ const HotelReviewsList = ({ reviews, loading, hotelId, onCommentPosted }) => {
             toast.error('Vui lòng nhập nội dung bình luận');
             return;
         }
-
         setIsSubmitting(true);
         try {
-            const response = await commentService.postComment({
-                comment: newComment.trim(),
-                parent_id: replyTo,
-                maHotel: hotelId
+            const response = await commentService.postComment({ 
+                comment: newComment.trim(), 
+                parent_id: replyTo, 
+                maHotel: hotelId 
             });
+            toast.success('Đã đăng bình luận thành công');
+            setNewComment('');
+            setReplyTo(null);
+            if (onCommentPosted) onCommentPosted();
+        } catch (err) {
+            console.error(err);
+            toast.error(err?.response?.data?.message || 'Đăng bình luận thất bại');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
-            if (response.status === 201) {
-                toast.success('Đã đăng bình luận thành công');
-                setNewComment('');
-                setReplyTo(null);
-                // Notify parent component to refresh comments
-                if (onCommentPosted) onCommentPosted();
-            }
-        } catch (error) {
-            console.error('Error posting reply:', error);
-            toast.error(error?.response?.data?.message || 'Có lỗi xảy ra khi đăng bình luận');
+    const handleEditClick = (comment) => {
+        setEditingCommentId(comment.id);
+        setEditingContent(comment.comment || '');
+    };
+
+    const handleEditCancel = () => {
+        setEditingCommentId(null);
+        setEditingContent('');
+    };
+
+    const handleEditSave = async (commentId) => {
+        if (!editingContent.trim()) {
+            toast.error('Nội dung không được rỗng');
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+            await commentService.updateComment(commentId, { comment: editingContent.trim() });
+            toast.success('Đã cập nhật bình luận');
+            setEditingCommentId(null);
+            setEditingContent('');
+            if (onCommentPosted) onCommentPosted();
+        } catch (err) {
+            console.error('Error updating comment:', err);
+            toast.error(err?.response?.data?.message || 'Cập nhật thất bại');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDeleteClick = async (commentId) => {
+        const ok = window.confirm('Bạn có chắc muốn xóa bình luận này?');
+        if (!ok) return;
+        setIsSubmitting(true);
+        try {
+            await commentService.deleteComment(commentId);
+            toast.success('Đã xóa bình luận');
+            if (onCommentPosted) onCommentPosted();
+        } catch (err) {
+            console.error('Error deleting comment:', err);
+            toast.error(err?.response?.data?.message || 'Xóa thất bại');
         } finally {
             setIsSubmitting(false);
         }
     };
 
     const renderReplyForm = (parentId) => (
-        <form
-            className={replyContainer}
-            style={{ animation: 'fadeInUp 0.3s' }}
-            onSubmit={e => { e.preventDefault(); handleSubmitReply(); }}
-        >
+        <form className={replyContainer} onSubmit={e => { e.preventDefault(); handleSubmitReply(); }}>
             <textarea
                 value={newComment}
                 onChange={e => setNewComment(e.target.value)}
                 placeholder="Nhập phản hồi..."
                 rows={2}
-                style={{
-                    resize: 'none',
-                    fontSize: 15,
-                    padding: 10,
-                    borderRadius: 10,
-                    border: '1.5px solid #d0d7de',
-                    width: '100%',
-                    boxShadow: '0 2px 8px 0 rgba(0,0,0,0.04)',
-                    transition: 'border 0.2s, box-shadow 0.2s',
-                    outline: 'none',
-                }}
-                onFocus={e => e.target.style.border = '1.5px solid #007bff'}
-                onBlur={e => e.target.style.border = '1.5px solid #d0d7de'}
+                style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #d0d7de' }}
                 disabled={isSubmitting}
             />
-            <div className={replySection} style={{ display: 'flex', gap: 10, marginTop: 8 }}>
-                <button
-                    type="submit"
-                    className={replyButton}
-                    style={{
-                        fontWeight: 600,
-                        color: '#fff',
-                        background: 'linear-gradient(90deg, #007bff 0%, #00c6ff 100%)',
-                        border: 'none',
-                        borderRadius: 20,
-                        padding: '7px 24px',
-                        cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                        boxShadow: '0 2px 8px 0 rgba(0,123,255,0.10)',
-                        transition: 'transform 0.15s, box-shadow 0.15s',
-                        opacity: isSubmitting || !newComment.trim() ? 0.6 : 1,
-                    }}
-                    disabled={isSubmitting || !newComment.trim()}
-                    onMouseDown={e => e.currentTarget.style.transform = 'scale(0.96)'}
-                    onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-                    onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                >
-                    <span style={{ display: 'inline-block', transition: 'transform 0.2s' }}>{isSubmitting ? 'Đang gửi...' : 'Gửi'}</span>
+            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                <button type="submit" className={replyButton} disabled={isSubmitting || !newComment.trim()} style={{ padding: '6px 12px', borderRadius: 8 }}>
+                    {isSubmitting ? 'Đang gửi...' : 'Gửi'}
                 </button>
-                <button
-                    type="button"
-                    className={replyButton}
-                    style={{
-                        fontWeight: 600,
-                        color: '#007bff',
-                        background: '#f4f8fb',
-                        border: '1.5px solid #d0d7de',
-                        borderRadius: 20,
-                        padding: '7px 24px',
-                        cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                        transition: 'background 0.2s, color 0.2s, transform 0.15s',
-                        opacity: isSubmitting ? 0.6 : 1,
-                    }}
-                    onClick={() => setReplyTo(null)}
-                    disabled={isSubmitting}
-                    onMouseDown={e => e.currentTarget.style.transform = 'scale(0.96)'}
-                    onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-                    onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                    onMouseOver={e => {
-                        e.currentTarget.style.background = '#e6f0fa';
-                        e.currentTarget.style.color = '#0056b3';
-                    }}
-                    onMouseOut={e => {
-                        e.currentTarget.style.background = '#f4f8fb';
-                        e.currentTarget.style.color = '#007bff';
-                    }}
-                >
-                    <span style={{ display: 'inline-block', transition: 'transform 0.2s' }}>Hủy</span>
+                <button type="button" className={replyButton} onClick={() => setReplyTo(null)} disabled={isSubmitting} style={{ padding: '6px 12px', borderRadius: 8 }}>
+                    Hủy
                 </button>
             </div>
-            <style>{`
-                @keyframes fadeInUp {
-                    from { opacity: 0; transform: translateY(16px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-            `}</style>
         </form>
     );
 
-    // Đệ quy render bình luận và replies
     const renderComments = (comments, level = 0) => {
         if (!comments || comments.length === 0) return null;
         return (
-            <div style={{ marginLeft: level * 32 }}>
-                {comments.map((comment) => (
-                    <div className={reviewICard} key={comment.id} style={{ marginBottom: 16, background: level === 0 ? '#fff' : '#f8f9fa', borderLeft: level > 0 ? '3px solid #e0e0e0' : 'none', position: 'relative' }}>
-                        <div className={reviewItem}>
-                            <div className={reviewHeader} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <img
-                                        src={comment.userAvatar || '/assets/images/avatar/avatar_default.png'}
-                                        alt={comment.userName}
-                                        className={userAvatar}
+            <div style={{ marginLeft: level * 24 }}>
+                {comments.map(comment => {
+                    // 🎯 LẤY AVATAR MỚI NHẤT
+                    const currentAvatar = getCurrentUserAvatar(comment.userId, comment.userAvatar);
+                    
+                    return (
+                        <div key={comment.id} className={reviewICard} style={{ marginBottom: 12, padding: 12, background: level === 0 ? '#fff' : '#f8f9fa', borderRadius: 8 }}>
+                            <div className={reviewHeader} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <div style={{ display: 'flex', gap: 12 }}>
+                                    {/* 🎯 SỬ DỤNG AVATAR MỚI NHẤT */}
+                                    <img 
+                                        src={currentAvatar} 
+                                        alt={comment.userName} 
+                                        className={userAvatar} 
+                                        onError={(e) => {
+                                            e.target.src = '/assets/images/avatar/avatar_default.png';
+                                        }}
                                     />
-                                    <div className={userInfo}>
+                                    <div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                            <span className={userName}>{comment.userName}</span>
-                                            {/* Hiện rating ở bình luận gốc */}
+                                            <div className={userName}>{comment.userName}</div>
                                             {(!comment.parent_id || comment.parent_id === null) && comment.rating && (
-                                                <span style={{ color: '#ffc107', fontSize: 18, display: 'flex', alignItems: 'center', gap: 2 }}>
-                                                    {Array.from({ length: 5 }).map((_, i) => (
-                                                        <span key={i}>
-                                                            {i < comment.rating ? '★' : '☆'}
-                                                        </span>
-                                                    ))}
-                                                </span>
+                                                <div style={{ color: '#ffc107' }}>{Array.from({ length: 5 }).map((_, i) => <span key={i}>{i < comment.rating ? '★' : '☆'}</span>)}</div>
                                             )}
                                         </div>
-                                        <div className={reviewDate}>
-                                            {comment.time ? new Date(comment.time).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }) : ''}
-                                        </div>
+                                        <div className={reviewDate} style={{ fontSize: 12, color: '#666' }}>{comment.time ? new Date(comment.time).toLocaleString() : ''}</div>
                                     </div>
                                 </div>
-                                {/* Nút Sửa/Xóa luôn hiển thị cho mọi bình luận */}
-                                <div style={{ display: 'flex', gap: 8 }}>
-                                    <button
-                                        style={{
-                                            background: 'none',
-                                            border: 'none',
-                                            color: '#007bff',
-                                            fontWeight: 600,
-                                            cursor: 'pointer',
-                                            padding: '4px 10px',
-                                            borderRadius: 6,
-                                            transition: 'background 0.2s',
-                                        }}
-                                        onClick={() => {/* TODO: handleEdit(comment) */}}
-                                        title="Sửa bình luận"
-                                        onMouseOver={e => e.currentTarget.style.background = '#e6f0fa'}
-                                        onMouseOut={e => e.currentTarget.style.background = 'none'}
-                                    >
-                                        Sửa
-                                    </button>
-                                    <button
-                                        style={{
-                                            background: 'none',
-                                            border: 'none',
-                                            color: '#dc3545',
-                                            fontWeight: 600,
-                                            cursor: 'pointer',
-                                            padding: '4px 10px',
-                                            borderRadius: 6,
-                                            transition: 'background 0.2s',
-                                        }}
-                                        onClick={() => {/* TODO: handleDelete(comment) */}}
-                                        title="Xóa bình luận"
-                                        onMouseOver={e => e.currentTarget.style.background = '#fae6e6'}
-                                        onMouseOut={e => e.currentTarget.style.background = 'none'}
-                                    >
-                                        Xóa
-                                    </button>
-                                </div>
+
+                                {/* 🎯 CHỈ HIỆN NÚT SỬA/XÓA NẾU LÀ COMMENT CỦA USER HIỆN TẠI */}
+                                {currentUser && comment.userId === currentUser.id && (
+                                    <div style={{ display: 'flex', gap: 8 }}>
+                                        <button onClick={() => handleEditClick(comment)} style={{ background: 'none', border: 'none', color: '#007bff', cursor: 'pointer' }}>Sửa</button>
+                                        <button onClick={() => handleDeleteClick(comment.id)} style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer' }}>Xóa</button>
+                                    </div>
+                                )}
                             </div>
-                            <div className={reviewComment} style={{ fontSize: 16, marginBottom: 8 }}>{comment.comment}</div>
-                            {/* Reply button */}
-                            {replyTo === comment.id ? (
-                                renderReplyForm(comment.id)
-                            ) : (
-                                <button
-                                    className={replyButton}
-                                    style={{ fontSize: 14, padding: '4px 12px', marginBottom: 4 }}
-                                    onClick={() => handleReply(comment.id)}
-                                >
-                                    Phản hồi
-                                </button>
-                            )}
-                            {/* Đệ quy hiển thị replies */}
+
+                            <div style={{ marginTop: 8 }}>
+                                {editingCommentId === comment.id ? (
+                                    <div>
+                                        <textarea value={editingContent} onChange={e => setEditingContent(e.target.value)} rows={3} style={{ width: '100%', padding: 8, borderRadius: 6 }} />
+                                        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                                            <button onClick={() => handleEditSave(comment.id)} disabled={isSubmitting || !editingContent.trim()} style={{ padding: '6px 12px', borderRadius: 6, background: '#007bff', color: '#fff' }}>{isSubmitting ? 'Đang lưu...' : 'Lưu'}</button>
+                                            <button onClick={handleEditCancel} disabled={isSubmitting} style={{ padding: '6px 12px', borderRadius: 6 }}>Hủy</button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className={reviewComment} style={{ whiteSpace: 'pre-wrap' }}>{comment.comment}</div>
+                                )}
+                            </div>
+
+                            <div style={{ marginTop: 8 }}>
+                                {replyTo === comment.id ? renderReplyForm(comment.id) : <button className={replyButton} onClick={() => handleReply(comment.id)} style={{ padding: '6px 10px' }}>Phản hồi</button>}
+                            </div>
+
+                            {/* replies */}
                             {comment.replies && comment.replies.length > 0 && renderComments(comment.replies, level + 1)}
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         );
     };
 
     return (
         <div className={reviewsList}>
-            {/* Hiển thị điểm rating tổng hợp */}
-            {avgRating && (
-                <div style={{ marginBottom: 18, display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{ fontWeight: 700, fontSize: 18 }}>Điểm trung bình:</span>
-                    <span style={{ color: '#ffc107', fontSize: 22, fontWeight: 700 }}>{avgRating}</span>
-                    <span style={{ color: '#ffc107', fontSize: 20 }}>
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <span key={i}>{i < Math.round(avgRating) ? '★' : '☆'}</span>
-                        ))}
-                    </span>
-                    <span style={{ color: '#666', fontSize: 15 }}>({rootReviews.length} đánh giá)</span>
+            {avgRating !== null && (
+                <div style={{ marginBottom: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ fontWeight: 700 }}>Điểm trung bình:</div>
+                    <div style={{ color: '#ffc107', fontSize: 18, fontWeight: 700 }}>{avgRating.toFixed(1)}</div>
+                    <div style={{ color: '#ffc107' }}>{Array.from({ length: 5 }).map((_, i) => <span key={i}>{i < Math.round(avgRating) ? '★' : '☆'}</span>)}</div>
+                    <div style={{ color: '#666' }}>({rootReviews.length} đánh giá)</div>
                 </div>
             )}
-            {displayReviews.length > 0 ? (
-                <div className="reviews-container">
-                    {renderComments(displayReviews)}
-                </div>
+
+            {reviews.length > 0 ? (
+                <div className="reviews-container">{renderComments(reviews.filter(r => !r.parent_id))}</div>
             ) : (
                 <div className={emptyState}>
                     <h4>Chưa có đánh giá nào</h4>
