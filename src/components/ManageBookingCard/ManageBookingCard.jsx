@@ -77,95 +77,94 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
             <div className={hotelInfo}>
                 <div className={cardBody}>
                     <div className={cardGroup}>
-                        <span className={cardName}>{booking?.room?.hotel?.name}</span>
-                        <span className={cardInfo}>{booking?.room?.hotel?.province}</span>
-                        <div className="d-flex" style={{ color: 'black' }}>
-                            <span className={cardInfo}>Check-in:</span>{formatDateTime(booking?.check_in)}
-                        </div>
-                        <div className="d-flex" style={{ color: 'black' }}>
-                            <span className={cardInfo}>Check-out:</span>{formatDateTime(booking?.check_out)}
-                        </div>
-                        <div className="d-flex" style={{ color: '#024288', fontSize: "17px" }}>
-                            <span className={cardInfo}>Total:
-                            </span>{new Intl.NumberFormat('vi-VN', {
-                                style: 'currency',
-                                currency: 'VND'
-                            }).format(booking.total_price)}
-                        </div>
-                        {(booking.status === "pending" || booking.status === "confirmed" || booking.status === "cancelled") && (
-                            <div>
-                                <div>
-                                    <span className={status} style={{ color: getStatusColor(booking.status) }}>{getBookContent(booking.status)}
-                                    </span>
+    <span className={cardName}>{booking?.room?.hotel?.name}</span>
+    <span className={cardInfo}>{booking?.room?.hotel?.province}</span>
+    <div className="d-flex" style={{ color: 'black' }}>
+        <span className={cardInfo}>Check-in:</span>{formatDateTime(booking?.check_in)}
+    </div>
+    <div className="d-flex" style={{ color: 'black' }}>
+        <span className={cardInfo}>Check-out:</span>{formatDateTime(booking?.check_out)}
+    </div>
+    <div className="d-flex" style={{ color: '#024288', fontSize: "17px" }}>
+        <span className={cardInfo}>Total:
+        </span>{new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(booking.total_price)}
+    </div>
+    {(booking.status === "pending" || booking.status === "confirmed" || booking.status === "cancelled") && (
+        <div>
+            <div>
+                <span className={status} style={{ color: getStatusColor(booking.status) }}>{getBookContent(booking.status)}
+                </span>
+            </div>
+            <div className="d-flex" style={{ gap: "10px" }}>
+                {(() => {
+                    const now = new Date();
+                    const checkInDate = new Date(booking?.check_in);
+                    const checkOutDate = new Date(booking?.check_out);
+                    const isExpired = checkInDate < now;
+                    const isExpiredCheckOut = checkOutDate < now; // 🎯 SỬA: tính theo checkout
+
+                    switch (booking?.status) {
+                    case "pending":
+                        return (
+                        <ButtonDetail
+                            text={isExpired ? "Hết hạn" : "Tiếp Tục"}
+                            color={isExpired ? "gray" : "green"}
+                            onClick={!isExpired ? handleSeeDetailClick : undefined}
+                            disabled={isExpired}
+                        />
+                        );
+
+                    case "confirmed":
+                        return (
+                        <>
+                            <ButtonCancel
+                            text={isExpiredCheckOut ? "Hết hạn" : "Hủy Phòng"}
+                            color={isExpiredCheckOut ? "gray" : "red"}
+                            onClick={!isExpiredCheckOut ? () => handleCancelBooking(booking.id) : undefined}
+                            disabled={isExpiredCheckOut}
+                            />
+                            <div className={styles.card}>
+                            {cancelPolicy.hasFreeCancel ? (
+                                <>
+                                <div className={styles.cancelFree}>
+                                    Miễn phí huỷ đến <strong>{formatDateTime(cancelPolicy.freeCancelDeadline)}</strong>
                                 </div>
-                                <div className="d-flex" style={{ gap: "10px" }}>
-                                    {(() => {
-                                        const now = new Date();
-                                        const checkInDate = new Date(booking?.check_in);
-                                        const isExpired = checkInDate < now; // booking đã quá ngày check-in
-
-                                        switch (booking?.status) {
-                                        case "pending":
-                                            return (
-                                            <ButtonDetail
-                                                text={isExpired ? "Hết hạn" : "Tiếp Tục"}
-                                                color={isExpired ? "gray" : "green"}
-                                                onClick={!isExpired ? handleSeeDetailClick : undefined}
-                                                disabled={isExpired}
-                                            />
-                                            );
-
-                                        case "confirmed":
-                                            return (
-                                            <>
-                                                <ButtonCancel
-                                                text={isExpired ? "Hết hạn" : "HỦY PHÒNG"}
-                                                color={isExpired ? "gray" : "red"}
-                                                onClick={!isExpired ? () => handleCancelBooking(booking.id) : undefined}
-                                                disabled={isExpired}
-                                                />
-                                                <div className={styles.card}>
-                                                {cancelPolicy.hasFreeCancel ? (
-                                                    <>
-                                                    <div className={styles.cancelFree}>
-                                                        Miễn phí huỷ đến <strong>{formatDateTime(cancelPolicy.freeCancelDeadline)}</strong>
-                                                    </div>
-                                                    <div className={styles.cancelFee}>
-                                                        Sau thời điểm đó: <strong>{cancelPolicy.cancelFee.toLocaleString("vi-VN")} VND</strong>
-                                                    </div>
-                                                    </>
-                                                ) : (
-                                                    <div className={styles.cancelFee}>
-                                                    <span>{cancelPolicy.message}</span>
-                                                    <br />
-                                                    <strong>Phí huỷ: {cancelPolicy.cancelFee.toLocaleString("vi-VN")} VND</strong>
-                                                    </div>
-                                                )}
-                                                </div>
-                                            </>
-                                            );
-
-                                        case "cancelled":
-                                            return (
-                                            <ButtonDetail
-                                                text={isExpired ? "Hết hạn" : "ĐẶT LẠI"}
-                                                color={isExpired ? "gray" : "blue"}
-                                                onClick={!isExpired ? handleRebookClick : undefined}
-                                                disabled={isExpired}
-                                            />
-                                            );
-
-                                        default:
-                                            return null;
-                                        }
-                                    })()}
+                                <div className={styles.cancelFee}>
+                                    Sau thời điểm đó: <strong>{cancelPolicy.cancelFee.toLocaleString("vi-VN")} VND</strong>
                                 </div>
-
-
-
+                                </>
+                            ) : (
+                                <div className={styles.cancelFee}>
+                                <span>{cancelPolicy.message}</span>
+                                <br />
+                                <strong>Phí huỷ: {cancelPolicy.cancelFee.toLocaleString("vi-VN")} VND</strong>
+                                </div>
+                            )}
                             </div>
-                        )}
-                    </div>
+                        </>
+                        );
+
+                    case "cancelled":
+                        return (
+                        <ButtonDetail
+                            text={isExpired ? "Hết hạn" : "ĐẶT LẠI"}
+                            color={isExpired ? "gray" : "blue"}
+                            onClick={!isExpired ? handleRebookClick : undefined}
+                            disabled={isExpired}
+                        />
+                        );
+
+                    default:
+                        return null;
+                    }
+                })()}
+            </div>
+        </div>
+    )}
+</div>
                 </div>
                
                 <div className={styles.menuWrapper}>

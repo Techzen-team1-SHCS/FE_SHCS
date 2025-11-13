@@ -94,8 +94,6 @@ const Profile = () => {
         setPreviewUrl('');
     };
 
-    // Hàm upload avatar lên server
-    // Hàm upload avatar lên server - FIXED VERSION
     const saveAvatar = async () => {
         if (!selectedFile) {
             toast.error('No image selected');
@@ -135,7 +133,6 @@ const Profile = () => {
             // 5. Cập nhật UI state - ƯU TIÊN 'image' field từ data mới
             const newAvatarUrl = freshUserData.image; // ← CHỈ dùng field 'image'
             
-            console.log('🔵 New avatar URL from fresh data:', newAvatarUrl);
             
             if (newAvatarUrl) {
                 setAvatar(newAvatarUrl);
