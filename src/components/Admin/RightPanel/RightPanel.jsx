@@ -1,8 +1,8 @@
 import React from 'react';
 import styles from './RightPanel.module.css';
-import GuestSatisfactionChart from '../GuestSatisfactionChart/GuestSatisfactionChart';
+import GuestSatisfactionChart from '../Charts/GuestSatisfactionChart/GuestSatisfactionChart';
 
-const RightPanel = () => {
+const RightPanel = ({ hotelStats, upcomingReservations,satisfactionData }) => {
     const {
         rightPanel,
         section,
@@ -26,33 +26,6 @@ const RightPanel = () => {
         time
     } = styles;
 
-    const hotelStats = {
-        appointments: '4,250',
-        totalRevenue: '32.1k',
-        rating: '4.8'
-    };
-
-    const upcomingReservations = [
-        {
-            id: 1,
-            hotel: ' hotels',
-            location: 'Hal Chau, Da Nang, Viet Nam',
-            checkIn: '14:00 am 18/09/2025',
-        },
-        {
-            id: 2,
-            hotel: 'Annual homestay',
-            location: 'Cau Giay, Ha Noi, Viet Nam',
-            checkIn: '14:00 am 23/09/2025',
-        }
-    ];
-
-    const satisfactionData = [
-        { level: 'Excellent', percentage: '75%', count: '45,251' },
-        { level: 'Good', percentage: '20%', count: '12,067' },
-        { level: 'Poor', percentage: '5%', count: '3,017' }
-    ];
-
     return (
         <div className={rightPanel}>
             {/* Hotel Manager Stats */}
@@ -60,18 +33,18 @@ const RightPanel = () => {
                 <h3 className={sectionTitle}>Hotel Manager Dashboard</h3>
                 <div className={statsGrid}>
                     <div className={statItem}>
-                        <span className={statLabel}>Appointment</span>
-                        <span className={statValue}>{hotelStats.appointments}</span>
+                        <span className={statLabel}>Occupancy Rate</span>
+                        <span className={statValue}>{hotelStats?.occupancyRate}</span>
                     </div>
                     <hr className={divider}></hr>
                     <div className={statItem}>
-                        <span className={statLabel}>Total Revenue</span>
-                        <span className={statValue}>{hotelStats.totalRevenue}</span>
+                        <span className={statLabel}>Pending Reservations</span>
+                        <span className={statValue}>{hotelStats?.pendingReservations}</span>
                     </div>
                     <hr className={divider}></hr>
                     <div className={statItem}>
-                        <span className={statLabel}>Rating</span>
-                        <span className={statValue}>{hotelStats.rating}</span>
+                        <span className={statLabel}>Average Rating</span>
+                        <span className={statValue}>{hotelStats?.averageRating}</span>
                     </div>
                 </div>
                 <hr className={divider2}></hr>
@@ -84,15 +57,15 @@ const RightPanel = () => {
                     <div className={time}>Sep, 2025
                         <hr className={divider3} />
                     </div>
-                    {upcomingReservations.slice(0, 2).map(reservation => (
-                        <div key={reservation.id} className={reservationCard}>
+                    {upcomingReservations?.slice(0, 2).map(reservation => (
+                        <div key={reservation?.id} className={reservationCard}>
                             <div style={{ paddingLeft: "30px", paddingTop: "15px" }}>
-                                <h4 className={hotelName}>{reservation.hotel}</h4>
-                                <p className={location}>{reservation.location}</p>
+                                <h4 className={hotelName}>{reservation?.hotel}</h4>
+                                <p className={location}>{reservation?.location}</p>
                                 <div className={checkInOut}>
                                     <div className={timeSlot}>
                                         <span className={timeLabel}>check in</span>
-                                        <span className={timeValue}>{reservation.checkIn}</span>
+                                        <span className={timeValue}>{reservation?.checkIn}</span>
                                     </div>
                                 </div>
                             </div>
@@ -104,7 +77,7 @@ const RightPanel = () => {
             </div>
 
             {/* Guest Satisfaction */}
-            <GuestSatisfactionChart />
+            <GuestSatisfactionChart satisfactionData={satisfactionData}/>
         </div>
     );
 };

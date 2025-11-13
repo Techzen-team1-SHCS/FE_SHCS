@@ -21,6 +21,8 @@ import Profile from './pages/Profile/Profile';
 import AdminLayout from './layouts/AdminLayout/AdminLayout'
 import Dashboard from './pages/Admin/Dashboard/Dashboard'
 import BookingManage from './pages/Admin/BookingManage/BookingManage';
+import UserManage from './pages/Admin/UserManage/UserManage';
+import RoomManage from './pages/Admin/RoomManage/RoomManage';
 // import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -51,6 +53,8 @@ function App() {
           <Route element={<AdminLayout />}>
             <Route path='/admin/dashboard' element={<Dashboard />} />
             <Route path='/admin/booking-manage' element={<BookingManage />} />
+            <Route path='/admin/rooms-manage' element={<RoomManage />} />
+            <Route path='/admin/users-manage' element={<UserManage />} />
           </Route>
           {/* Route KHÔNG dùng MainLayout */}
         </Routes>

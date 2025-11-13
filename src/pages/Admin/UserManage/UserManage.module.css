@@ -1,0 +1,284 @@
+/* UserManage.module.css */
+.container {
+    background: white;
+}
+
+.tableContainer {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    min-width: 800px;
+}
+
+.tableHeader {
+    background: #f8f9fa;
+}
+
+.th {
+    padding: 16px;
+    text-align: center;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #e9ecef;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+}
+
+/* Điều chỉnh chiều rộng từng cột */
+.th:nth-child(1), .td:nth-child(1) { /* Username */
+    width: 120px;
+    min-width: 120px;
+}
+
+.th:nth-child(2), .td:nth-child(2) { /* Email */
+    width: 180px;
+    min-width: 180px;
+}
+
+.th:nth-child(3), .td:nth-child(3) { /* Role */
+    width: 100px;
+    min-width: 100px;
+}
+
+.th:nth-child(4), .td:nth-child(4) { /* Join Date */
+    width: 120px;
+    min-width: 120px;
+}
+
+.th:nth-child(5), .td:nth-child(5) { /* Last Login */
+    width: 150px;
+    min-width: 150px;
+}
+
+.th:nth-child(6), .td:nth-child(6) { /* Status */
+    width: 120px;
+    min-width: 120px;
+}
+
+.th:nth-child(7), .td:nth-child(7) { /* Actions */
+    width: 140px;
+    min-width: 140px;
+}
+
+.tableBody {
+    background: white;
+}
+
+.tr {
+    text-align: center;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tr:hover {
+    background-color: #f8f9fa;
+}
+
+.tr:last-child {
+    border-bottom: none;
+}
+
+.td {
+    padding: 16px;
+    color: #495057;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* User Status Colors */
+.statusActive {
+    background-color: rgba(157, 243, 194, 0.5);
+    border: 1px solid #41BC63;
+    color: black;
+    padding: 0px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    width: 100px;
+}
+
+.statusInactive {
+    background-color: rgba(255, 184, 0, 0.5);
+    border: 1px solid #CD8124;
+    color: black;
+    padding: 0px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    width: 100px;
+}
+
+.statusSuspended {
+    background-color: rgba(255, 115, 115, 0.5);
+    border: 1px solid #F20808;
+    color: black;
+    padding: 0px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    width: 100px;
+}
+
+.statusPending {
+    background-color: rgba(98, 180, 245, 0.5);
+    border: 1px solid #51A7FD;
+    color: black;
+    padding: 0px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    width: 100px;
+}
+
+/* Ban/Unban Buttons */
+.banButton {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 0px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+    width: 60px;
+}
+
+.banButton:hover {
+    background: #c82333;
+    transform: scale(1.05);
+}
+
+.unbanButton {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 0px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+    width: 60px;
+}
+
+.unbanButton:hover {
+    background: #218838;
+    transform: scale(1.05);
+}
+
+/* Delete Button */
+.deleteButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.deleteButton:hover {
+    background-color: #f8d7da;
+    transform: scale(1.1);
+}
+
+.deleteIcon {
+    width: 16px;
+    height: 16px;
+    color: #dc3545;
+    transition: color 0.2s ease;
+}
+
+.deleteButton:hover .deleteIcon {
+    color: #c82333;
+}
+
+/* Action cell styling */
+.actionCell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+        margin: 16px 0;
+    }
+    
+    .th, .td {
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+    
+    .table {
+        min-width: 800px;
+    }
+    
+    /* Điều chỉnh lại chiều rộng cho mobile */
+    .th:nth-child(1), .td:nth-child(1) { width: 100px; min-width: 100px; }
+    .th:nth-child(2), .td:nth-child(2) { width: 150px; min-width: 150px; }
+    .th:nth-child(3), .td:nth-child(3) { width: 80px; min-width: 80px; }
+    .th:nth-child(4), .td:nth-child(4) { width: 100px; min-width: 100px; }
+    .th:nth-child(5), .td:nth-child(5) { width: 130px; min-width: 130px; }
+    .th:nth-child(6), .td:nth-child(6) { width: 100px; min-width: 100px; }
+    .th:nth-child(7), .td:nth-child(7) { width: 120px; min-width: 120px; }
+    
+    .banButton, .unbanButton {
+        width: 50px;
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+    
+    .statusActive,
+    .statusInactive,
+    .statusSuspended,
+    .statusPending {
+        width: 70px;
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    animation: fadeIn 0.5s ease-out;
+}

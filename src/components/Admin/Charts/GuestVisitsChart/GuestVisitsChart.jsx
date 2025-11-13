@@ -24,7 +24,7 @@ ChartJS.register(
     Legend
 );
 
-const GuestVisitsChart = () => {
+const GuestVisitsChart = ({GuestVisitData}) => {
     const {
         chartCard,
         header,
@@ -37,7 +37,7 @@ const GuestVisitsChart = () => {
     const chartRef = useRef(null);
 
     // Dữ liệu cho các period khác nhau
-    const chartDataConfig = {
+    const fallbackData = {
         monthly: {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             data: [180, 220, 190, 250, 280, 320, 300, 350, 380, 340, 290, 260]
@@ -60,9 +60,17 @@ const GuestVisitsChart = () => {
         gradient.addColorStop(1, 'rgba(0, 123, 255, 0.05)');
         return gradient;
     };
-
+    const getChartDataConfig = () => {
+        // Nếu có data từ API và có period tương ứng
+        if (GuestVisitData && GuestVisitData[selectedPeriod]) {
+            return GuestVisitData[selectedPeriod];
+        }
+        
+        // Fallback về mock data
+        return fallbackData[selectedPeriod];
+    };
     const getChartData = () => {
-        const config = chartDataConfig[selectedPeriod];
+        const config = getChartDataConfig();
         const ctx = chartRef.current?.ctx;
 
         return {
@@ -88,7 +96,22 @@ const GuestVisitsChart = () => {
             ],
         };
     };
+    // CHỈNH: Tự động tính max value dựa trên data thực
+    const getMaxValue = () => {
+        const config = getChartDataConfig();
+        const data = config.data || [];
+        
+        if (data.length === 0) return 400;
+        
+        const maxDataValue = Math.max(...data);
+        return Math.ceil(maxDataValue / 100) * 100 + 100;
+    };
 
+    // CHỈNH: Tự động tính step size
+    const getStepSize = () => {
+        const maxValue = getMaxValue();
+        return Math.ceil(maxValue / 4);
+    };
     const options = {
         responsive: true,
         maintainAspectRatio: false,
@@ -138,8 +161,7 @@ const GuestVisitsChart = () => {
             },
             y: {
                 beginAtZero: true,
-                max: selectedPeriod === 'monthly' ? 400 : 
-                     selectedPeriod === 'weekly' ? 450 : 100,
+                max:getMaxValue(),
                 grid: {
                     color: '#e9ecef',
                     borderDash: [5, 5],
@@ -147,8 +169,7 @@ const GuestVisitsChart = () => {
                 },
                 ticks: {
                     color: '#6c757d',
-                    stepSize: selectedPeriod === 'monthly' ? 100 : 
-                              selectedPeriod === 'weekly' ? 150 : 25,
+                    stepSize:getStepSize(),
                     callback: function(value) {
                         return value;
                     },
