@@ -13,7 +13,7 @@
     width: 100%;
     border-collapse: collapse;
     background: white;
-    min-width: 800px;
+    min-width: 900px;
 }
 
 .tableHeader {
@@ -31,7 +31,7 @@
     white-space: nowrap;
 }
 
-/* Điều chỉnh chiều rộng từng cột */
+/* Điều chỉnh chiều rộng từng cột với 8 cột */
 .th:nth-child(1), .td:nth-child(1) { /* Username */
     width: 120px;
     min-width: 120px;
@@ -62,9 +62,15 @@
     min-width: 120px;
 }
 
-.th:nth-child(7), .td:nth-child(7) { /* Actions */
-    width: 140px;
-    min-width: 140px;
+.th:nth-child(7), .td:nth-child(7) { /* Actions (Ban/Unban) */
+    width: 100px;
+    min-width: 100px;
+    text-align: center;
+}
+
+.th:nth-child(8), .td:nth-child(8) { /* Actions (Delete) */
+    width: 80px;
+    min-width: 80px;
 }
 
 .tableBody {
@@ -93,6 +99,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    
 }
 
 /* User Status Colors */
@@ -163,6 +170,8 @@
     font-size: 12px;
     transition: all 0.2s ease;
     width: 60px;
+    margin: 0 auto; 
+    display: block;
 }
 
 .banButton:hover {
@@ -180,6 +189,8 @@
     font-size: 12px;
     transition: all 0.2s ease;
     width: 60px;
+    margin: 0 auto; 
+    display: block;
 }
 
 .unbanButton:hover {
@@ -223,7 +234,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+
 }
 
 /* Responsive Design */
@@ -242,14 +253,15 @@
         min-width: 800px;
     }
     
-    /* Điều chỉnh lại chiều rộng cho mobile */
+    /* Điều chỉnh lại chiều rộng cho mobile với 8 cột */
     .th:nth-child(1), .td:nth-child(1) { width: 100px; min-width: 100px; }
     .th:nth-child(2), .td:nth-child(2) { width: 150px; min-width: 150px; }
     .th:nth-child(3), .td:nth-child(3) { width: 80px; min-width: 80px; }
     .th:nth-child(4), .td:nth-child(4) { width: 100px; min-width: 100px; }
     .th:nth-child(5), .td:nth-child(5) { width: 130px; min-width: 130px; }
     .th:nth-child(6), .td:nth-child(6) { width: 100px; min-width: 100px; }
-    .th:nth-child(7), .td:nth-child(7) { width: 120px; min-width: 120px; }
+    .th:nth-child(7), .td:nth-child(7) { width: 90px; min-width: 90px; }
+    .th:nth-child(8), .td:nth-child(8) { width: 70px; min-width: 70px; }
     
     .banButton, .unbanButton {
         width: 50px;

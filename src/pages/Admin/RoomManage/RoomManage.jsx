@@ -44,6 +44,26 @@ const RoomManage = () => {
             price: 100,
             status: "available",
             currentBooking: null // ✅ QUAN TRỌNG: null khi không có booking
+        },
+        {
+            id: 3,
+            hotelName: "Hilton DaNang",
+            roomNumber: "102",
+            roomType: "Standard",
+            capacity: 2,
+            price: 100,
+            status: "maintenance",
+            currentBooking: null // ✅ QUAN TRỌNG: null khi không có booking
+        },
+        {
+            id: 4,
+            hotelName: "Hilton DaNang",
+            roomNumber: "102",
+            roomType: "Standard",
+            capacity: 2,
+            price: 100,
+            status: "cleaning",
+            currentBooking: null // ✅ QUAN TRỌNG: null khi không có booking
         }
     ]);
 
