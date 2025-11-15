@@ -13,7 +13,7 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
         switch (status) {
             case "pending":
                 return "Booking confirm";
-            case "confirmed":
+            case "completed":
                 return "Completed booking";
             case "cancelled":
                 return "Cancelled";
@@ -36,7 +36,6 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
             navigate(`/hotel/${booking.room.hotel.id}`);
         }
     };
-    console.log(booking.room.hotel.id);
     const handleCancelBooking=async(bookingId)=>{
         try {
             const confirm =await Swal.fire({
@@ -62,7 +61,7 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
         switch (status) {
             case "pending":
                 return "#41BC63";
-            case "confirmed":
+            case "completed":
                 return "#62B4F5";
             case "cancelled":
                 return "#dc3545";
@@ -72,7 +71,6 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
     };
     const cancelPolicy = getCancelPolicy(booking);
     return (
-
         <div className={card} >
             <div className={hotelInfo}>
                 <div className={cardBody}>
@@ -102,27 +100,28 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
                                     {(() => {
                                         const now = new Date();
                                         const checkInDate = new Date(booking?.check_in);
-                                        const isExpired = checkInDate < now; // booking đã quá ngày check-in
+                                        const checkOutDate = new Date(booking?.check_out);
+                                        const isExpired = checkInDate < now;
+                                        const isExpiredCheckOut = checkOutDate < now; // 🎯 SỬA: tính theo checkout
 
                                         switch (booking?.status) {
                                         case "pending":
                                             return (
                                             <ButtonDetail
-                                                text={isExpired ? "Hết hạn" : "Tiếp Tục"}
-                                                color={isExpired ? "gray" : "green"}
-                                                onClick={!isExpired ? handleSeeDetailClick : undefined}
-                                                disabled={isExpired}
+                                            text="Tiếp Tục"
+                                            color="green"
+                                            onClick={handleSeeDetailClick}
                                             />
                                             );
 
-                                        case "confirmed":
+                                        case "completed":
                                             return (
                                             <>
                                                 <ButtonCancel
-                                                text={isExpired ? "Hết hạn" : "HỦY PHÒNG"}
-                                                color={isExpired ? "gray" : "red"}
-                                                onClick={!isExpired ? () => handleCancelBooking(booking.id) : undefined}
-                                                disabled={isExpired}
+                                                text={isExpiredCheckOut ? "Đã Hoàn Thành" : "Hủy Phòng"}
+                                                color={isExpiredCheckOut ? "gray" : "red"}
+                                                onClick={!isExpiredCheckOut ? () => handleCancelBooking(booking.id) : undefined}
+                                                disabled={isExpiredCheckOut}
                                                 />
                                                 <div className={styles.card}>
                                                 {cancelPolicy.hasFreeCancel ? (
@@ -144,6 +143,7 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
                                                 </div>
                                             </>
                                             );
+                                        
 
                                         case "cancelled":
                                             return (
@@ -160,9 +160,6 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
                                         }
                                     })()}
                                 </div>
-
-
-
                             </div>
                         )}
                     </div>
@@ -176,8 +173,6 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
                 </div>
 
             </div>
-
-
         </div>
     );
 };

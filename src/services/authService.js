@@ -47,10 +47,22 @@ export const authService = {
     }
   },
   getUserById: async (id) => {
-        const response = await axios.get(`/api/auth/user/${id}`);
-        return response.data;
-  },
-
+    try {
+        const response = await api.get(`/auth/user/${id}`);
+        
+        console.log('🔵 RAW getUserById RESPONSE:', response.data);
+        
+        // Backend trả về data trong field 'data'
+        const userData = response.data.data || response.data;
+        
+        console.log('🟢 Extracted user data:', userData);
+        return userData;
+        
+    } catch (error) {
+        console.error('❌ Error in getUserById:', error);
+        throw error;
+    }
+},
   // 🔹 REGISTER
   register: async (userData) => {
     const response = await api.post('/auth/register', userData);

@@ -1,4 +1,7 @@
-
+.auth-wrapper {
+    position: relative;
+    display: inline-block;
+}
 .btnRegister{
     width: 100%;
     padding: 10px 0;
@@ -18,6 +21,7 @@
       border-left: 10px solid transparent;
       border-right: 10px solid transparent;
       border-bottom: 10px solid #ffffff;
+      left:100px;
 }
 .dangky{
     cursor: pointer;
@@ -38,4 +42,248 @@
     width: 100%;
     text-align: left;
     text-decoration: underline;
+}
+.user-menu {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    width: 100%;
+    
+}
+
+.user-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    color: white;
+    text-align: center;
+    border-radius: 16px 16px 0 0;
+}
+
+.user-avatar {
+    border: 3px solid white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.user-avatar:hover {
+    transform: scale(1.05);
+}
+
+.menu-item {
+    padding: 6px 20px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    color: #333;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.menu-item:hover {
+    background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+    color: #667eea;
+    transform: translateX(5px);
+}
+
+.menu-item .icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.menu-divider {
+    margin: 8px 20px;
+    border: none;
+    border-top: 1px solid #f0f0f0;
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 90%; /* ← HOẶC ĐỂ AUTO */
+    margin: 10px auto; /* ← AUTO CHO CĂN GIỮA */
+    display: block;
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+/*Login/regeister*/
+.auth-t{
+  display:flex;
+  margin-right: 20px;
+  cursor: pointer;
+  width: 200px;
+}
+.custom-fa-user{
+  width: 30px;
+  margin-top: 5px;
+}
+.custom-fa-down{
+  margin-top: 5px;
+  margin-left: 5px;
+}
+.auth-user{
+  color:#0056b3;
+}
+.auth-appear{
+    padding: 0;
+    border-radius: 16px;
+  background-color: white;
+  top:37px;
+  position: absolute;
+  z-index: 1000;
+  left:20px;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.auth-popup {
+  font-family: var(--base-font);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  }
+.auth-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+.auth-container {
+  position: relative;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 400px;
+  z-index: 1001;
+  display: inline-block;
+}
+.auth-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                    border-bottom: 1px solid #eee;
+                    padding-bottom: 15px;
+                }
+                
+                .auth-header h3 {
+                    margin: 0;
+                    color: #333;
+                }
+                
+                .auth-close {
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    color: #666;
+                }
+                
+                .auth-close:hover {
+                    color: #333;
+                }
+                
+                .formAuth-group {
+                   position: relative;
+                   margin-bottom: 10px;
+                    width: 100%;
+                }
+                
+                .formAuth-group label {
+                  top: 10px;
+                    position: relative;
+                    
+                    color: #333;
+                    font-weight: 500;
+                }
+                
+                .formAuth-group input {
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    font-size: 14px;
+                    box-sizing: border-box;
+                }
+                
+                .formAuth-group input:focus {
+                    outline: none;
+                    border-color: #007bff;
+                }
+                
+                .auth-submit-btn {
+                    width: 100%;
+                    margin-top: 30px;
+                    padding: 12px;
+                    background: #007bff;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    margin-bottom: 15px;
+                }
+                
+                .auth-submit-btn:hover {
+                    background: #0056b3;
+                }
+                
+                .auth-footer {
+                  
+                    text-align: center;
+                }
+                
+                .auth-toggle {
+                    color: #007bff;
+                    cursor: pointer;
+                    margin-left: 5px;
+                }
+                
+                .auth-toggle:hover {
+                    text-decoration: underline;
+                }
+.password-toggle {
+  margin-right: 20px;
+                position: absolute;
+                top: 40px;
+                right: 0px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: #666;
+                font-size: 16px;
+                padding: 5px;
+            }
+.error-message{
+  color: red;
 }

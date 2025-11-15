@@ -24,7 +24,7 @@ const ManageBooking = () => {
             case "active":
                 return booking.status === "pending" ;
             case "past":
-                return booking.status === "confirmed";
+                return booking.status === "completed" ;
             case "cancelled":
                 return booking.status === "cancelled";
             default:
@@ -90,7 +90,7 @@ const ManageBooking = () => {
                             className={`${button} ${activeTab === tab ? activeClass : ""}`}
                         >
                             {tab === "active" && "Pending"}
-                            {tab === "past" && "Confirmed"}
+                            {tab === "past" && "Completed"}
                             {tab === "cancelled" && "Cancelled"}
                         </button>
                     ))}

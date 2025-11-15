@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import './Style.css'
 const HotelCard1 = ({ topHotel, aosDelay }) => {
     const navigate=useNavigate();
     
@@ -27,7 +27,7 @@ const HotelCard1 = ({ topHotel, aosDelay }) => {
                         <i className="fal fa-map-marker-alt"></i> {topHotel.location}
                     </span>
                     <h5>
-                        <a href={topHotel.link}>{topHotel.title}</a>
+                        <a href={topHotel.link} className="truncate-2-lines">{topHotel.title}</a>
                     </h5>
                     <span className="time">{topHotel.time}</span>
                 </div>

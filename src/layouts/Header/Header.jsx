@@ -146,16 +146,17 @@ const Header = () => {
                                 {/* Main Menu End */}
                             </div>
                             {/* Auth Button */}
-                            <div onClick={handleAuthAppear}>
-                                <div className='auth-t'>
-                                    <div className='fal fa-user custom-fa-user'></div>
+                            <div className="auth-wrapper">
+                                <div onClick={handleAuthAppear}>
+                                    <div className='auth-t'>
+                                        <div className='fal fa-user custom-fa-user'></div>
 
-                                    <div className='auth-user'>
-                                        {user ? `Xin chào, ${user.name}` : 'Tài khoản'}
+                                        <div className='auth-user'>
+                                            {user ? `Xin chào, ${user.name}` : 'Tài khoản'}
+                                        </div>
+
+                                        <div className='fal fa-caret-down custom-fa-down'></div>
                                     </div>
-
-                                    <div className='fal fa-caret-down custom-fa-down'></div>
-                                </div>
 
                                 {isAuthAppear && (
                                     <div >
@@ -201,68 +202,77 @@ const Header = () => {
                                                             height={60}
                                                         />
 
-                                                        {/* Các tùy chọn giống trang booking */}
-                                                        <ul className="list-unstyled mb-2">
-                                                            <li>
-                                                                <button
-                                                                    className="btn btn-link text-dark p-0 w-100 text-start"
-                                                                    onClick={() => navigate('/profile')}
-                                                                >
-                                                                    👤 Hồ sơ của tôi
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button
-                                                                    className="btn btn-link text-dark p-0 w-100 text-start"
-                                                                    onClick={() => navigate('/my-bookings')}
-                                                                >
-                                                                    🧳 Đặt phòng của tôi
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button
-                                                                    className="btn btn-link text-dark p-0 w-100 text-start"
-                                                                    onClick={() => navigate('/saved-places')}
-                                                                >
-                                                                    💖 Địa điểm đã lưu
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button
-                                                                    className="btn btn-link text-dark p-0 w-100 text-start"
-                                                                    onClick={() => navigate('/privacy-settings')}
-                                                                >
-                                                                    ⚙️ Cài đặt quyền riêng tư
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button
-                                                                    className="btn btn-link text-dark p-0 w-100 text-start"
-                                                                    onClick={() => navigate('/help')}
-                                                                >
-                                                                    ❓ Trung tâm hỗ trợ
-                                                                </button>
-                                                            </li>
-                                                        </ul>
+                                                        <div className="py-2">
+                                                            <ul className="list-unstyled mb-0">
+                                                                <li>
+                                                                    <button
+                                                                        className="menu-item"
+                                                                        onClick={() => navigate('/profile')}
+                                                                    >
+                                                                        <span className="icon">👤</span>
+                                                                        Hồ sơ của tôi
+                                                                    </button>
+                                                                </li>
+                                                                <li>
+                                                                    <button
+                                                                        className="menu-item"
+                                                                        onClick={() => navigate('/my-bookings')}
+                                                                    >
+                                                                        <span className="icon">🧳</span>
+                                                                        Đặt phòng của tôi
+                                                                    </button>
+                                                                </li>
+                                                                <li>
+                                                                    <button
+                                                                        className="menu-item"
+                                                                        onClick={() => navigate('/saved-places')}
+                                                                    >
+                                                                        <span className="icon">💖</span>
+                                                                        Địa điểm đã lưu
+                                                                    </button>
+                                                                </li>
+                                                                <li>
+                                                                    <button
+                                                                        className="menu-item"
+                                                                        onClick={() => navigate('/privacy-settings')}
+                                                                    >
+                                                                        <span className="icon">⚙️</span>
+                                                                        Cài đặt quyền riêng tư
+                                                                    </button>
+                                                                </li>
+                                                                <li>
+                                                                    <button
+                                                                        className="menu-item"
+                                                                        onClick={() => navigate('/help')}
+                                                                    >
+                                                                        <span className="icon">❓</span>
+                                                                        Trung tâm hỗ trợ
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
 
-                                                        <hr className="my-2" />
-                                                        <button
-                                                            onClick={() => {
-                                                                logout();
-                                                                setIsAuthAppear(false);
-                                                            }}
-                                                            className='btn btn-danger btn-sm w-100'
-                                                        >
-                                                            🚪 Đăng xuất
-                                                        </button>
+                                                            <hr className="menu-divider" />
+
+                                                            <button
+                                                                onClick={() => {
+                                                                    logout();
+                                                                    setIsAuthAppear(false);
+                                                                }}
+                                                                className="logout-btn"
+                                                            >
+                                                                <span className="icon">🚪</span>
+                                                                Đăng xuất
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )}
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
 
+                                </div>
                             </div>
+
 
                         </div>
                     </div>
