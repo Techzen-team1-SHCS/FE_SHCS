@@ -17,9 +17,8 @@ const AdminLayout = () => {
         const pathToTitle = {
             "/admin/dashboard": "Dashboard",
             "/admin/booking-manage": "Bookings Management",
-            "/admin/reports": "Reports & Analytics",
-            "/admin/guests": "Guest Management",
-            "/admin/hotels": "Hotel Management", 
+            "/admin/rooms-manage": "Rooms Management",
+            "/admin/users-manage": "User Management",
             "/admin/settings": "Settings"
         };
         
