@@ -53,8 +53,8 @@ function App() {
           <Route element={<AdminLayout />}>
             <Route path='/admin/dashboard' element={<Dashboard />} />
             <Route path='/admin/booking-manage' element={<BookingManage />} />
-            <Route path='/admin/rooms-manage' element={<RoomManage />} />
-            <Route path='/admin/users-manage' element={<UserManage />} />
+            {/* <Route path='/admin/rooms-manage' element={<RoomManage />} />
+            <Route path='/admin/users-manage' element={<UserManage />} /> */}
           </Route>
           {/* Route KHÔNG dùng MainLayout */}
         </Routes>

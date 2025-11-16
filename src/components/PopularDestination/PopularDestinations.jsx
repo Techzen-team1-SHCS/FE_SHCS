@@ -2,6 +2,7 @@ import HotelCard2 from "../HotelCard/HotelCard2";
 import styles from "./PopularDestinations.module.css";
 import { hotelService } from "../../services/hotelService";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const PopularDestinations = () => {
   const {
@@ -13,7 +14,10 @@ const PopularDestinations = () => {
   
   const [popularHotels, setPopularHotels] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate();
+  const handleDestinationClick = (destination) => {
+    navigate(`/HotelList?destination=${encodeURIComponent(destination)}`);
+  };
   useEffect(() => {
     const fetchHotelsCount = async () => {
       try {
@@ -116,6 +120,7 @@ const PopularDestinations = () => {
                   PopularHotel={popularHotel} 
                   aosDelay={popularHotel.delay} 
                   index={index} 
+                  onClick={() => handleDestinationClick(popularHotel.title)}
                 />
               ))}
             </div>
