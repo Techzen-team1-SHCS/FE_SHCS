@@ -268,8 +268,31 @@
     background-size: 8px;
 }
 
+.statusSelect option {
+    padding: 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+/* Màu sắc cho từng option trong dropdown */
+.statusSelect option[value="Confirmed"] {
+    background-color: rgba(157, 243, 194, 0.8) !important;
+    color: black !important;
+}
 
+.statusSelect option[value="Checked-in"] {
+    background-color: rgba(98, 180, 245, 0.8) !important;
+    color: black !important;
+}
 
+.statusSelect option[value="Completed"] {
+    background-color: rgba(151, 71, 255, 0.5) !important;
+    color: black !important;
+}
+
+.statusSelect option[value="Canceled"] {
+    background-color: rgba(255, 115, 115, 0.8) !important;
+    color: black !important;
+}
 /* Select colors based on status */
 .statusSelect.statusConfirmed {
     background-color: rgba(157, 243, 194, 0.5);

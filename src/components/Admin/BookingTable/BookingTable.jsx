@@ -1,14 +1,21 @@
 import React from 'react';
 import styles from './BookingTable.module.css';
 
-const BookingTable = () => {
-    const bookingData = [
+const BookingTable = ({bookingData}) => {
+    const fallbackData = [
         { roomType: 'Deluxe', totalBookings: 45, occupancyRate: '92%', averageRating: 4.6 },
         { roomType: 'Standard', totalBookings: 32, occupancyRate: '88%', averageRating: 4.9 },
         { roomType: 'Classic', totalBookings: 20, occupancyRate: '63%', averageRating: 4.2 },
         { roomType: 'Poetic', totalBookings: 20, occupancyRate: '63%', averageRating: 4.2 },
     ];
+    const getTableData = () => {
+        if (bookingData && bookingData.length > 0) {
+            return bookingData;
+        }
+        return fallbackData;
+    };
 
+    const tableData = getTableData();
     return (
         <div className={styles.tableCard}>
             <div className={styles.header}>
@@ -26,7 +33,7 @@ const BookingTable = () => {
                         </tr>
                     </thead>
                     <tbody className={styles.tableBody}>
-                        {bookingData.map((room, index) => (
+                        {tableData.map((room, index) => (
                             <tr key={index} className={styles.tr}>
                                 <td className={styles.td}>
                                     <span className={styles.roomType}>{room.roomType}</span>

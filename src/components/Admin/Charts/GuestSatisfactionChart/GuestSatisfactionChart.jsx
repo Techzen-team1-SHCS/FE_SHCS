@@ -9,15 +9,14 @@ import {
 } from 'chart.js';
 import styles from './GuestSatisfactionChart.module.css';
 
-// Tạo instance ChartJS riêng
-const satisfactionChartJS = ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 // Plugin để hiển thị tổng ở giữa - CHỈ DÙNG CHO CHART NÀY
 const centerTextPlugin = {
     id: 'centerText',
     afterDraw(chart) {
         const { ctx, chartArea: { left, right, top, bottom, width, height } } = chart;
-
+        const total = chart.config._config.total || 4551;
         ctx.save();
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -30,25 +29,36 @@ const centerTextPlugin = {
         // Vẽ số tổng
         ctx.font = 'bold 24px Inter, sans-serif';
         ctx.fillStyle = '#2c3e50';
-        ctx.fillText('45,51', width / 2, height / 2 + 10);
+        ctx.fillText(total.toLocaleString(), width / 2, height / 2 + 10);
 
         ctx.restore();
     }
 };
 
-const GuestSatisfactionChart = () => {
+const GuestSatisfactionChart = ({ satisfactionData }) => {
     const {
         section,
         sectionTitle,
         satisfactionCard,
         chartContainer
     } = styles;
-
+    const fallbackData = {
+        data: [75, 20, 5], // Excellent, Good, Poor percentages
+        total: 4551, // Total reviews
+        labels: ['Excellent', 'Good', 'Poor']
+    };
+    const getChartDataConfig = () => {
+        if (satisfactionData) {
+            return satisfactionData;
+        }
+        return fallbackData;
+    };
+    const config = getChartDataConfig();
     const chartData = {
-        labels: ['Excellent', 'Good', 'Poor'],
+        labels: config.labels,
         datasets: [
             {
-                data: [75, 20, 5],
+                data: config.data,
                 backgroundColor: [
                     '#28a745', // Green for Excellent
                     '#ffc107', // Yellow for Good
@@ -97,7 +107,7 @@ const GuestSatisfactionChart = () => {
                     label: function (context) {
                         const label = context.label || '';
                         const value = context.parsed || 0;
-                        const total = 4551;
+                        const total = config.total;
                         const count = Math.round((value / 100) * total);
                         return `${label}: ${value}% (${count.toLocaleString()} reviews)`;
                     }
@@ -109,7 +119,8 @@ const GuestSatisfactionChart = () => {
                 borderWidth: 0,
                 borderAlign: 'center'
             }
-        }
+        },
+        total: config.total
     };
 
     return (

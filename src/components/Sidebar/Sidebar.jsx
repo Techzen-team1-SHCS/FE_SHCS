@@ -18,8 +18,8 @@ const Sidebar = () => {
     const menuItems = [
         { path: "/admin/dashboard", label: "Dashboard", icon: "📊" },
         { path: "/admin/booking-manage", label: "Bookings", icon: "📅" },
-        { path: "/admin/rooms", label: "Rooms", icon: "📈" },
-        { path: "/admin/guests", label: "Guests", icon: "👥" },
+        { path: "/admin/rooms-manage", label: "Rooms", icon: "📈" },
+        { path: "/admin/users-manage", label: "Users", icon: "👥" },
         { path: "/admin/messages", label: "Messages", icon: "🏨" },
         { path: "/admin/settings", label: "Settings", icon: "⚙️" },
         { path: "/admin/payment", label: "Payment", icon: "" },
