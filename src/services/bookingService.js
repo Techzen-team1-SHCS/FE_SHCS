@@ -2,30 +2,21 @@ import api from './api';
 
 export const bookingService={
    async createBooking(bookingData) {
-    try {
-      console.log('🛠️ [bookingService] Gọi API booking...');
-      
+    try {      
       // Lấy token từ localStorage hoặc context
-      const token = localStorage.getItem('token');
-      console.log('🔑 Token có tồn tại?:', !!token);
-      
+      const token = localStorage.getItem('token');      
       if (!token) {
         throw new Error('Authentication token not found');
       }
-
       const response = await api.post('auth/booking', bookingData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
+            return response.data;
       
-      console.log('✅ [bookingService] Booking thành công:', response.data);
-      return response.data;
-      
-    } catch (error) {
-      console.error('❌ [bookingService] Lỗi:', error);
-      
+    } catch (error) {      
       if (error.response?.status === 401) {
         throw new Error('Unauthorized - Vui lòng đăng nhập lại');
       } else if (error.response?.status === 422) {

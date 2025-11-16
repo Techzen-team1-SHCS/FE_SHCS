@@ -21,6 +21,7 @@ import Profile from './pages/Profile/Profile';
 import AdminLayout from './layouts/AdminLayout/AdminLayout'
 import Dashboard from './pages/Admin/Dashboard/Dashboard'
 import BookingManage from './pages/Admin/BookingManage/BookingManage';
+import WishList from './pages/WishList/WishList';
 // import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
             <Route path="/payment-result" element={<PaymentResult />} />
             <Route path="/my-bookings" element={<ManageBooking />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/wishList" element={<WishList />} />
             {/* có thể thêm các page khác cần layout */}
           </Route>
           {/* Route admin */}

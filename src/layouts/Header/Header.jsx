@@ -231,7 +231,7 @@ const Header = () => {
                                                                 <li>
                                                                     <button
                                                                         className="menu-item"
-                                                                        onClick={() => navigate('/saved-places')}
+                                                                        onClick={() => navigate('/wishlist')}
                                                                     >
                                                                         <span className="icon">💖</span>
                                                                         Địa điểm đã lưu

@@ -4,6 +4,7 @@ import { MdOutlineBedroomParent } from "react-icons/md";
 import { useBehavior } from "../../contexts/BehaviorContext";
 import { useContext, useState } from "react"
 import { AuthContext } from '../../contexts/AuthContext';
+import { wishListService } from '../../services/wishListService';
 
 const Hotel = ({
   image,
@@ -21,7 +22,7 @@ const Hotel = ({
   const { user } = useContext(AuthContext);
   const { logBehavior } = useBehavior();
   const [isZoomed, setIsZoomed] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleBookClick = () => {
     logBehavior("click_book_now", {
       userId: user?.id || null,
@@ -32,14 +33,40 @@ const Hotel = ({
     });
   };
 
-  const handleWishlist = () => {
-    logBehavior("wishlist", {
-      userId: user?.id || null,
-      hotelId: id,
-      hotelName: title,
-      price,
-      location,
-    });
+  const handleWishlist =async () => {
+    if (!user) {
+      alert('Vui lòng đăng nhập để thêm vào danh sách yêu thích');
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const wishlistData = {
+        hotel_id: id,
+        user_id: user?.id,
+      };
+
+      // Chỉ thêm vào wishlist, không có toggle
+      await wishListService.addToWishList(wishlistData);
+      
+      // Thông báo thành công
+      alert('Đã thêm vào danh sách yêu thích!');
+      
+      logBehavior("add_to_wishlist", {
+        userId: user?.id,
+        hotelId: id,
+        hotelName: title,
+        price,
+        location,
+      });
+      
+    } catch (error) {
+      console.error('Wishlist error:', error);
+      alert(error.message || 'Có lỗi xảy ra khi thêm vào danh sách yêu thích');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleZoomImage = () => {

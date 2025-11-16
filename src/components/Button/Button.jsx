@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Button = ({props}) => {
+const Button = ({props,onClick}) => {
   return (
     <StyledWrapper>
-      <button> {props}
+      <button onClick={onClick}> {props}
       </button>
     </StyledWrapper>
   );
@@ -16,7 +16,7 @@ const StyledWrapper = styled.div`
    border-radius: 4px;
    color: #fff;
    cursor: pointer;
-   padding: 15px 30px;
+   padding: 15px 20px;
    font-size: 18px;
    font-weight: bold;
    letter-spacing: 1px;

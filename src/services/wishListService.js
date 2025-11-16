@@ -1,0 +1,45 @@
+import api from './api';
+export const wishListService = {
+    async getWishList() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Authentication token not found');
+            }
+            const response=await api.get('auth/Mywishlist',{
+                headers:{ Authorization: `Bearer ${token}` }
+            });
+            return response.data;
+        } catch (error) {
+             throw new Error(error.response?.data?.message || 'Failed to fetch wish list');
+        }
+    },
+    async addToWishList(wishlistData) {
+       try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Authentication token not found');
+        }
+        const response = await api.post('auth/wishlist', wishlistData, {
+            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+        });
+        return response.data;
+       } catch (error) {
+         throw new Error(error.response?.data?.message || 'Failed to add to wish list');
+       }
+    },
+    async removeFromWishList(id) {
+      try {
+        const token = localStorage.getItem('token');
+        if(!token){
+          throw new Error('Authentication token not found');
+        }
+        const response = await api.delete(`auth/wishlist/${id}`, {
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+        });
+        return response.data;
+      } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to remove from wish list');
+      }
+    }
+};  
