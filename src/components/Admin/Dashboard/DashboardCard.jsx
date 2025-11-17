@@ -51,9 +51,9 @@ const DashboardCard = ({ cardData }) => {
 
         <div className='d-flex justify-content-between' style={{ width: '100%' }}>
           <div className={cardAmount}>{bookingCard?.amount || '$0'}</div>
-          {bookingGrowth?.growth && (
+          {bookingCard?.growth && (
             <div className={`${cardGrowth} ${bookingGrowth.className}`}>
-              {bookingCard?.arrow} {bookingGrowth?.text}
+              {bookingGrowth?.arrow} {bookingGrowth?.text}
             </div>
           )}
         </div>
