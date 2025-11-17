@@ -202,7 +202,7 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
                       onChange={(e) => handleQuantityChange(room.id, e.target.value)}
                       className="quantity-select"
                     >
-                      <option value="0">0</option>
+                      <option value="0">Chọn</option>
                       {[...Array(Math.min(room.quantity, 5))].map((_, i) => (
                         <option key={i + 1} value={i + 1}>
                           {i + 1}
