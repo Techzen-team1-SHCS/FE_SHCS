@@ -33,7 +33,7 @@ const BookingTable = ({bookingData}) => {
                         </tr>
                     </thead>
                     <tbody className={styles.tableBody}>
-                        {tableData.map((room, index) => (
+                        {tableData.slice(0,4).map((room, index) => (
                             <tr key={index} className={styles.tr}>
                                 <td className={styles.td}>
                                     <span className={styles.roomType}>{room.roomType}</span>

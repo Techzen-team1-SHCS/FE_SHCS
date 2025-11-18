@@ -8,10 +8,11 @@
 .sidebar{
     display: flex;
     flex-direction: column;
-    flex:0 0 20%;
+    flex:0 0 15%;
     background-color: white;
     border-right:1px solid rgba(232, 232, 232, 1) ;
     align-items: center;
+    padding: 20px;
 }
 .header{
     display: flex;
@@ -29,5 +30,9 @@
     flex-direction: column;
 }
 .mainContent{
-    flex:0 0 80%;
+    flex:0 0 85%;
+}
+.title{
+    font-size: 24px;
+    font-weight: 600;
 }

@@ -1,5 +1,5 @@
-/* GuestVisitsChart.module.css */
 .chartCard {
+    margin-top: 2px;
     background: white;
     padding: 24px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -25,33 +25,10 @@
     font-size: 18px;
     font-weight: 600;
     margin: 0;
-    flex: 0 0 20%;
+    flex: 0 0 40%;
     font-family: 'Inter', sans-serif;
 }
 
-.sortBy {
-    width: 20%;
-    cursor: pointer;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    padding: 8px 12px;
-    background: white;
-    color: #495057;
-    font-size: 14px;
-    font-family: 'Inter', sans-serif;
-    transition: all 0.2s ease;
-    outline: none;
-}
-
-.sortBy:hover {
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
-}
-
-.sortBy:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
-}
 
 .chartContainer {
     height: 300px;

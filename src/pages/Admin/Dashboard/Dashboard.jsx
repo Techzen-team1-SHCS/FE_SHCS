@@ -4,11 +4,17 @@ import styles from "./Dashboard.module.css"
 import GuestVisitsChart from '../../../components/Admin/Charts/GuestVisitsChart/GuestVisitsChart';
 import BookingTable from '../../../components/Admin/BookingTable/BookingTable';
 import RightPanel from '../../../components/Admin/RightPanel/RightPanel';
+import MostBookedChart from '../../../components/Admin/Charts/MostBookedChart/MostBookedChart';
+import RecentBookTable from '../../../components/Admin/RecentBookTable/RecentBookTable';
 const Dashboard = () => {
     const {
         left,
         container,
-        right
+        right,
+        mainData,
+        tableData,
+        tableLeft,
+        tableRight
     } = styles;
     // Dữ liệu giả cho dashboard
     const cardData = [
@@ -16,21 +22,21 @@ const Dashboard = () => {
             id: 1,
             logo: "/assets/images/logos/revenue.png",
             title: "Revenue",
-            amount: "$23,425",
+            amount: "23,425",
             growth: "+201"
         },
         {
             id: 2,
             logo: "/assets/images/logos/booking.png",
-            title: "New Booking", 
-            amount: "$1,925",
+            title: "New Booking",
+            amount: "1,925",
             growth: "+201"
         },
         {
             id: 3,
             logo: "/assets/images/logos/check-in.png",
             title: "New Check-in",
-            amount: "$1,537",
+            amount: "1,537",
             growth: "+201"
         }
     ];
@@ -58,21 +64,21 @@ const Dashboard = () => {
     ];
 
     const hotelStats = {
-        totalGuests: 4260,
-        totalRevenue: '32.1k',
+        occupancyRate: 4260,
+        pendingReservations: '32.1k',
         averageRating: 4.8
     };
 
     const upcomingReservations = [
-        { 
-            hotelName: 'Nurse hotels', 
-            guestInfo: 'Net Check: On Range, Visit Team',
+        {
+            hotel: 'Nurse hotels',
+            location: 'VN',
             checkIn: '14:00 am 16/09/2025',
             checkOut: '12:00 am 21/09/2025'
         },
-        { 
-            hotelName: 'Annual Inventory', 
-            guestInfo: 'Cost Gbps, No HKV, Visit Team',
+        {
+            hotel: 'Annual Inventory',
+            location: 'My',
             checkIn: '14:00 am 22/09/2025',
             checkOut: '12:00 am 24/09/2025'
         }
@@ -83,16 +89,75 @@ const Dashboard = () => {
         total: 4551,
         labels: ['Excellent', 'Good', 'Poor']
     };
+    const MostBookedData = {
+        labels: ['Hilton DaNang', 'Sheraton Hanoi', 'Intercontinental', 'Marriott', 'Sofitel'],
+        data: [45, 38, 32, 28, 25]
+    };
+    const recentBookData = [
+        {
+            id: 1,
+            hotelName: "Hilton DaNang",
+            roomNumber: "101",
+            roomType: "Deluxe",
+            capacity: 2,
+            price: 150,
+            status: "occupied",
+            currentBooking: {
+                guestName: "Nguyen Van A",
+                checkIn: "2024-01-15 14:00",
+            }
+        },
+        {
+            id: 2,
+            hotelName: "Sheraton Hanoi",
+            roomNumber: "205",
+            roomType: "Standard",
+            capacity: 2,
+            price: 100,
+            status: "available",
+            currentBooking: null
+        },
+        {
+            id: 3,
+            hotelName: "Intercontinental",
+            roomNumber: "301",
+            roomType: "Suite",
+            capacity: 4,
+            price: 300,
+            status: "maintenance",
+            currentBooking: null
+        },
+        {
+            id: 4,
+            hotelName: "Marriott",
+            roomNumber: "412",
+            roomType: "Deluxe",
+            capacity: 3,
+            price: 200,
+            status: "cleaning",
+            currentBooking: null
+        }
+    ];
 
     return (
         <div className={container}>
-            <div className={left}>
-                <DashboardCard cardData={cardData}/>
-                <GuestVisitsChart GuestVisitData={GuestVisitData}/>
-                <BookingTable bookingData={bookingData}/>
+            <div className={mainData}>
+                <div className={left}>
+                    <DashboardCard cardData={cardData} />
+                    <GuestVisitsChart GuestVisitData={GuestVisitData} />
+                    <MostBookedChart MostBookedData={MostBookedData} />
+                </div>
+                <div className={right}>
+                    <RightPanel hotelStats={hotelStats} upcomingReservations={upcomingReservations} satisfactionData={satisfactionData} />
+                </div>
             </div>
-            <div className={right}>
-                <RightPanel hotelStats={hotelStats} upcomingReservations={upcomingReservations} satisfactionData={satisfactionData}/>
+            <div className={tableData}>
+                <div className={tableLeft}>
+                    <BookingTable bookingData={bookingData} />
+                </div>
+                <div className={tableRight}>
+                    <RecentBookTable recentBookData={recentBookData}/>
+                </div>
             </div>
         </div>
     )

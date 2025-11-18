@@ -79,8 +79,8 @@ const GuestVisitsChart = ({GuestVisitData}) => {
                 {
                     label: 'Guest Visits',
                     data: config.data,
-                    backgroundColor: ctx ? createGradient(ctx) : 'rgba(0, 123, 255, 0.1)',
-                    borderColor: '#007bff',
+                    backgroundColor: ctx ? createGradient(ctx) : 'rgba(223, 161, 68, 0.8)',
+                    borderColor: 'rgba(223, 161, 68, 0.8)',
                     borderWidth: 3,
                     pointBackgroundColor: '#007bff',
                     pointBorderColor: '#ffffff',
