@@ -7,8 +7,8 @@ export const authService = {
     const response = await axios.post('/api/auth/login', { email, password });
 
     if (response.data.status === 200) {
-      const token = response.data.data.access_token;
-      const user = response.data.data.user;
+      const token = response.data.data?.access_token;
+      const user = response.data.data?.user;
 
       // ✅ Lưu token & user vào localStorage
       localStorage.setItem('token', token);

@@ -13,8 +13,8 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
         switch (status) {
             case "pending":
                 return "Booking confirm";
-            case "completed":
-                return "Completed booking";
+            case "confirmed":
+                return "Confirmed booking";
             case "cancelled":
                 return "Cancelled";
             default:
@@ -61,7 +61,7 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
         switch (status) {
             case "pending":
                 return "#41BC63";
-            case "completed":
+            case "confirmed":
                 return "#62B4F5";
             case "cancelled":
                 return "#dc3545";
@@ -114,7 +114,7 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
                                             />
                                             );
 
-                                        case "completed":
+                                        case "confirmed":
                                             return (
                                             <>
                                                 <ButtonCancel

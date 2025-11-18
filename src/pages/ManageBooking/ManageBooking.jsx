@@ -24,7 +24,7 @@ const ManageBooking = () => {
             case "active":
                 return booking.status === "pending" ;
             case "past":
-                return booking.status === "completed" ;
+                return booking.status === "confirmed" ;
             case "cancelled":
                 return booking.status === "cancelled";
             default:

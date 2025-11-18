@@ -82,62 +82,70 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
         return Object.keys(newErrors).length === 0;
     };
     const handleAuthSubmit = async (e) => {
-        e.preventDefault();
-        if (validateForm()) {
-            try {
-                if (isLogin) {
-                    const result = await authService.login(email, password);
-                    if (result.status === 200) {
-                        const userId = result.user.id;
-                        const token = result.token;
+    e.preventDefault();
+    if (validateForm()) {
+        try {
+            if (isLogin) {
+                const result = await authService.login(email, password);
 
-                        // 🔹 Gọi API lấy thông tin chi tiết user (có avatar_url)
-                        const userRes = await authService.getUserById(userId);
-                        const fullUser = userRes.user;
+                if (result.status === 200) {
+                    // 🔹 Lấy user và token đúng từ data
+                    const user = result.user; // authService.login() đã fix trả về data.user
+                    const token = result.token;
 
-                        // 🔹 Lưu vào context & localStorage
-                        login(fullUser, token);
-                        toast.success('Đăng nhập thành công!');
-                        setIsAuthVisible(false);
-                        navigate('/');
+                    if (!user || !token) {
+                        toast.error("Không lấy được dữ liệu người dùng. Vui lòng thử lại.");
+                        return;
                     }
-                } else {
-                    const result = await authService.register({
-                        name,
-                        email,
-                        password,
-                        password_confirmation: confirmPassword,
-                        phone
-                    });
-                    if (result.status === 'success') {
-                        toast.success('Đăng ký thành công!');
-                        setIsLogin(true);
-                        // Reset form
-                        setEmail('');
-                        setPassword('');
-                        setConfirmPassword('');
-                        setName('');
-                        setPhone('');
-                        setErrors({});
-                    }
+
+                    // 🔹 Nếu muốn gọi API chi tiết user (có avatar_url)
+                    const userRes = await authService.getUserById(user.id);
+                    const fullUser = userRes.user || user; // fallback nếu backend chưa có user chi tiết
+
+                    // 🔹 Lưu vào context & localStorage
+                    login(fullUser, token);
+                    toast.success('Đăng nhập thành công!');
+                    setIsAuthVisible(false);
+                    navigate('/');
                 }
-            } catch (error) {
-                console.error('Auth error:', error);
-                if (error.response?.data?.errors) {
-                    // Handle validation errors from API
-                    const apiErrors = error.response.data.errors;
-                    const newErrors = {};
-                    Object.keys(apiErrors).forEach(key => {
-                        newErrors[key] = Array.isArray(apiErrors[key]) ? apiErrors[key][0] : apiErrors[key];
-                    });
-                    setErrors(newErrors);
-                    toast.error('Vui lòng kiểm tra lại thông tin');
-                } else {
-                    toast.error(error.response?.data?.message || error.response?.data?.error || 'Có lỗi xảy ra');
+            } else {
+                const result = await authService.register({
+                    name,
+                    email,
+                    password,
+                    password_confirmation: confirmPassword,
+                    phone
+                });
+                if (result.status === 'success') {
+                    toast.success('Đăng ký thành công!');
+                    setIsLogin(true);
+                    // Reset form
+                    setEmail('');
+                    setPassword('');
+                    setConfirmPassword('');
+                    setName('');
+                    setPhone('');
+                    setErrors({});
                 }
             }
+        } catch (error) {
+            console.error('Auth error:', error);
+            if (error.response?.data?.errors) {
+                // Handle validation errors from API
+                const apiErrors = error.response.data.errors;
+                const newErrors = {};
+                Object.keys(apiErrors).forEach(key => {
+                    newErrors[key] = Array.isArray(apiErrors[key]) ? apiErrors[key][0] : apiErrors[key];
+                });
+                setErrors(newErrors);
+                toast.error('Vui lòng kiểm tra lại thông tin');
+            } else {
+                toast.error(error.response?.data?.message || error.response?.data?.error || 'Có lỗi xảy ra');
+            }
         }
-    };
+    }
+};
+
     const handleForgotPasswordSubmit = async (e) => {
         e.preventDefault();
         const newErrors = {};

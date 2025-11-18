@@ -5,6 +5,7 @@ import '../Header/index.css'
 import { useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 import PopUpButton from "../../components/PopupButton/PopUpButton"
+import { toast } from 'react-toastify';
 const Header = () => {
     const { user, logout } = useContext(AuthContext);
     const [isAuthVisible, setIsAuthVisible] = useState(false);
@@ -273,6 +274,7 @@ const Header = () => {
                                                             <button
                                                                 onClick={() => {
                                                                     logout();
+                                                                    toast.success('Đăng xuất thành công!');
                                                                     setIsAuthAppear(false);
                                                                 }}
                                                                 className="logout-btn"

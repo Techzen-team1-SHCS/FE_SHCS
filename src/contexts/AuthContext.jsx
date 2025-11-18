@@ -10,20 +10,29 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("token");
-    if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
+
+    // Chỉ parse khi storedUser là JSON hợp lệ
+    if (storedUser && storedUser !== "undefined") {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Lỗi parse JSON user:", error);
+        localStorage.removeItem("user"); // Xóa giá trị hỏng
+      }
+    }
+
+    if (storedToken && storedToken !== "undefined") {
       setToken(storedToken);
     }
   }, []);
 
-  // Hàm cập nhật user đồng bộ context + localStorage
   const updateUser = (newUser) => {
-  setUser(prev => {
-    const merged = { ...prev, ...newUser };
-    localStorage.setItem("user", JSON.stringify(merged));
-    return merged;
-  });
-};
+    setUser(prev => {
+      const merged = { ...prev, ...newUser };
+      localStorage.setItem("user", JSON.stringify(merged));
+      return merged;
+    });
+  };
 
   const login = (userData, accessToken) => {
     setUser(userData);
