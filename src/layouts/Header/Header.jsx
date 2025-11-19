@@ -6,6 +6,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 import PopUpButton from "../../components/PopupButton/PopUpButton"
 import { toast } from 'react-toastify';
+import Notification from '../../components/Notification/Notification';
 const Header = () => {
     const { user, logout } = useContext(AuthContext);
     const [isAuthVisible, setIsAuthVisible] = useState(false);
@@ -146,6 +147,9 @@ const Header = () => {
                                 </nav>
                                 {/* Main Menu End */}
                             </div>
+                            <div className='px-3'>
+                                <Notification />
+                            </div>
                             {/* Auth Button */}
                             <div className="auth-wrapper">
                                 <div onClick={handleAuthAppear}>
@@ -256,7 +260,7 @@ const Header = () => {
                                                                         Trung tâm hỗ trợ
                                                                     </button>
                                                                 </li>
-                                                                {user?.role==1 &&(
+                                                                {user?.role == 1 && (
                                                                     <li>
                                                                         <button
                                                                             className="menu-item"
