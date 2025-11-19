@@ -55,6 +55,7 @@
     align-items: center;
     padding: 12px;
     border-radius: 8px;
+    text-align: center;
 }
 
 .statLabel {

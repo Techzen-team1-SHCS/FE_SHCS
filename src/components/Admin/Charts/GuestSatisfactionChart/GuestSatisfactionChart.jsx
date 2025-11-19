@@ -82,18 +82,8 @@ const GuestSatisfactionChart = ({ satisfactionData }) => {
         cutout: '70%',
         plugins: {
             legend: {
-                position: 'bottom',
-                labels: {
-                    usePointStyle: true,
-                    padding: 20,
-                    color: '#6c757d',
-                    font: {
-                        size: 12,
-                        family: "'Inter', sans-serif"
-                    },
-                    boxWidth: 8,
-                    boxHeight: 8
-                }
+                display: false,
+
             },
             tooltip: {
                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -128,11 +118,23 @@ const GuestSatisfactionChart = ({ satisfactionData }) => {
             <h3 className={sectionTitle}>Guest Satisfaction</h3>
             <div className={satisfactionCard}>
                 <div className={chartContainer}>
-                    <Pie 
-                        data={chartData} 
+                    <Pie
+                        data={chartData}
                         options={chartOptions}
                         plugins={[centerTextPlugin]} // CHỈ ÁP DỤNG PLUGIN Ở ĐÂY
                     />
+                </div>
+                <div className={styles.customLegend}>
+                    {config.labels.map((label, index) => (
+                        <div key={label} className={styles.legendItem}>
+                            <div
+                                className={styles.legendColor}
+                                style={{ backgroundColor: chartData.datasets[0].backgroundColor[index] }}
+                            ></div>
+                            <span className={styles.legendLabel}>{label}</span>
+                            <span className={styles.legendValue}>{config.data[index]}%</span>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

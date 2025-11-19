@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./Sidebar.module.css";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const Sidebar = () => {
     const {
@@ -20,16 +20,22 @@ const Sidebar = () => {
         { path: "/admin/booking-manage", label: "Bookings", icon: "📅" },
         { path: "/admin/rooms-manage", label: "Rooms", icon: "📈" },
         { path: "/admin/users-manage", label: "Users", icon: "👥" },
-        { path: "/admin/messages", label: "Messages", icon: "🏨" },
+        { path: "/admin/notification", label: "Notification", icon: "🏨" },
         { path: "/admin/settings", label: "Settings", icon: "⚙️" },
         { path: "/admin/payment", label: "Payment", icon: "" },
-        { path: "/admin/log-out", label: "Log out", icon: "" },
+        { path: "/", label: "Log out", icon: "" },
     ];
 
     return (
         <div className={sidebar}>
             <div className={logo}>
-                <h2>SHCS Admin</h2>
+                <div className="logo-outer">
+                    <div className="logo">
+                        <Link to="/">
+                            <img src="/assets/images/logos/logo-two.png" alt="Logo" title="Logo" />
+                        </Link>
+                    </div>
+                </div>
             </div>
             <nav className={nav}>
                 <ul className={navList}>

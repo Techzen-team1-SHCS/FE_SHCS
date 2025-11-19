@@ -2,12 +2,13 @@
 .tableCard {
     width: 100%;
     background: white;
-    border-radius: 12px;
     padding: 24px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 24px;
     border: 1px solid #f1f3f4;
     transition: box-shadow 0.3s ease;
+     height: 100%;
+     display: flex;
+    flex-direction: column;
 }
 
 .tableCard:hover {
@@ -60,6 +61,7 @@
 }
 
 .tr {
+    text-align: center;
     transition: background-color 0.2s ease;
     border-bottom: 1px solid #e9ecef;
 }
@@ -74,15 +76,17 @@
 
 .td {
     padding: 16px;
-    color: #9E9E9E;
+    line-height: 2;
+    color: #495057;
     font-size: 14px;
     font-family: 'Inter', sans-serif;
-    text-align: center;
-    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .roomType {
-    font-weight: 500;
+    font-weight: 600;
     color: #2c3e50;
 }
 

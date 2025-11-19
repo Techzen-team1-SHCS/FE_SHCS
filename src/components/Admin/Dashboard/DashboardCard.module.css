@@ -1,17 +1,17 @@
 .container{
     display: flex;
-    gap: 20px;
+    gap: 10px;
     width: 100%;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     padding: auto;
 }
 
 .card{
-    flex: 0 0 30.5%;
+    flex: 0 0 32%;
     min-width: 200px;
     width: 100%;
     background-color: white;

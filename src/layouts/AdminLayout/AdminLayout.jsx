@@ -19,15 +19,16 @@ const AdminLayout = () => {
             "/admin/booking-manage": "Bookings Management",
             "/admin/rooms-manage": "Rooms Management",
             "/admin/users-manage": "User Management",
+            "/admin/notification": "Notification",
             "/admin/settings": "Settings"
         };
-        
+
         return pathToTitle[location.pathname] || "Admin Panel";
     };
     return (
         <div className={layout}>
             <div className={sidebar}>
-                <Sidebar/>
+                <Sidebar />
             </div>
             <div className={mainContent}>
                 <header className={header}>
@@ -36,11 +37,11 @@ const AdminLayout = () => {
                         <div>
                             <img></img>
                         </div>
-                        
+
                     </div>
                 </header>
                 <div className={contentArea}>
-                    <Outlet/>
+                    <Outlet />
                 </div>
             </div>
         </div>
