@@ -148,7 +148,7 @@ const Header = () => {
                                 {/* Main Menu End */}
                             </div>
                             <div className='px-3'>
-                                <Notification />
+                                <Notification userId={user ? user.id : null} />
                             </div>
                             {/* Auth Button */}
                             <div className="auth-wrapper">

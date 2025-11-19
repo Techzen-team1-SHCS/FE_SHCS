@@ -11,4 +11,10 @@ window.Echo = new Echo({
     wssPort: 8080,
     forceTLS: false,
     enabledTransports: ['ws', 'wss'],
+    auth: {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+    },
+    authEndpoint: 'http://127.0.0.1:8000/broadcasting/auth',
 });
