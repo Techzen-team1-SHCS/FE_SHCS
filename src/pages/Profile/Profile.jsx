@@ -8,10 +8,11 @@ import { authService } from '../../services/authService';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from '../../components/Loading/Loader';
+import UserPayment from './UserPayment';
 const Profile = () => {
     const [activeTab, setActiveTab] = useState('profile');
     const { user, updateUser } = useContext(AuthContext);
-    
+
     // State cho các trường đang edit
     const [editingField, setEditingField] = useState(null);
     const [formData, setFormData] = useState({
@@ -48,7 +49,7 @@ const Profile = () => {
             setAvatar(newAvatar);
         }
     }, [user]);
-    
+
 
     const tabs = [
         { id: 'profile', label: 'Profile', icon: '' },
@@ -59,27 +60,27 @@ const Profile = () => {
 
     // Hàm xử lý chọn file
     const handleFileSelect = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        if (!file.type.startsWith('image/')) {
-            toast.error('Please select an image file');
-            return;
-        }
+        const file = event.target.files[0];
+        if (file) {
+            if (!file.type.startsWith('image/')) {
+                toast.error('Please select an image file');
+                return;
+            }
 
-        if (file.size > 5 * 1024 * 1024) {
-            toast.error('File size should be less than 5MB');
-            return;
-        }
+            if (file.size > 5 * 1024 * 1024) {
+                toast.error('File size should be less than 5MB');
+                return;
+            }
 
-        setSelectedFile(file);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            setPreviewUrl(e.target.result);
-        };
-        reader.readAsDataURL(file);
-        setPreview(URL.createObjectURL(file));
-    }
-};
+            setSelectedFile(file);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setPreviewUrl(e.target.result);
+            };
+            reader.readAsDataURL(file);
+            setPreview(URL.createObjectURL(file));
+        }
+    };
 
     // Hàm mở modal edit avatar
     const handleEditAvatar = () => {
@@ -107,14 +108,14 @@ const Profile = () => {
             formData.append('avatar', selectedFile);
 
             console.log('🟡 Starting avatar upload...');
-            
+
             // 1. Gọi API update avatar
             await authService.updateProfile(user.id, formData, token);
 
             // 2. 🚀 QUAN TRỌNG: Gọi getUserById để lấy data mới nhất từ server
             console.log('🟡 Fetching updated user data...');
             const freshUserData = await authService.getUserById(user.id);
-            
+
             console.log('🟢 Fresh user data after avatar update:', freshUserData);
 
             if (!freshUserData) {
@@ -132,15 +133,15 @@ const Profile = () => {
 
             // 5. Cập nhật UI state - ƯU TIÊN 'image' field từ data mới
             const newAvatarUrl = freshUserData.image; // ← CHỈ dùng field 'image'
-            
-            
+
+
             if (newAvatarUrl) {
                 setAvatar(newAvatarUrl);
             } else {
                 // Fallback nếu không có image
                 setAvatar('assets/images/avatar/avatar_default.png');
             }
-            
+
             setPreview('');
             toast.success('Avatar updated successfully');
             closeAvatarModal();
@@ -166,7 +167,7 @@ const Profile = () => {
             name: user?.name || '',
             email: user?.email || '',
             phone: user?.phone || '',
-            gender: user?.gender ,
+            gender: user?.gender,
             birth: user?.birth || '',
             address: user?.address || ''
         });
@@ -174,45 +175,45 @@ const Profile = () => {
 
     // Hàm lưu thay đổi profile
     const saveChanges = async (field) => {
-    setLoading(true);
-    try {
-        const updateData = { [field]: formData[field] };
-        const token = localStorage.getItem('token');
+        setLoading(true);
+        try {
+            const updateData = { [field]: formData[field] };
+            const token = localStorage.getItem('token');
 
-        console.log('🟡 Updating profile field:', field, updateData);
+            console.log('🟡 Updating profile field:', field, updateData);
 
-        // 1. Gọi API update profile
-        await authService.updateProfile(user.id, updateData, token);
+            // 1. Gọi API update profile
+            await authService.updateProfile(user.id, updateData, token);
 
-        // 2. 🚀 QUAN TRỌNG: Gọi getUserById để lấy data mới nhất từ server
-        console.log('🟡 Fetching updated user data...');
-        const freshUserData = await authService.getUserById(user.id);
-        
-        console.log('🟢 Fresh user data after update:', freshUserData);
+            // 2. 🚀 QUAN TRỌNG: Gọi getUserById để lấy data mới nhất từ server
+            console.log('🟡 Fetching updated user data...');
+            const freshUserData = await authService.getUserById(user.id);
 
-        if (!freshUserData) {
-            toast.error("Update failed. No user data returned.");
-            return;
+            console.log('🟢 Fresh user data after update:', freshUserData);
+
+            if (!freshUserData) {
+                toast.error("Update failed. No user data returned.");
+                return;
+            }
+
+            // 3. Cập nhật context với data mới hoàn toàn
+            if (updateUser) {
+                updateUser(freshUserData);
+            }
+
+            // 4. Cập nhật localStorage
+            localStorage.setItem('user', JSON.stringify(freshUserData));
+
+            toast.success(`${field} updated successfully`);
+            setEditingField(null);
+
+        } catch (error) {
+            console.error(`Error updating ${field}:`, error);
+            toast.error(error?.response?.data?.message || `Error updating ${field}.`);
+        } finally {
+            setLoading(false);
         }
-
-        // 3. Cập nhật context với data mới hoàn toàn
-        if (updateUser) {
-            updateUser(freshUserData);
-        }
-
-        // 4. Cập nhật localStorage
-        localStorage.setItem('user', JSON.stringify(freshUserData));
-
-        toast.success(`${field} updated successfully`);
-        setEditingField(null);
-        
-    } catch (error) {
-        console.error(`Error updating ${field}:`, error);
-        toast.error(error?.response?.data?.message || `Error updating ${field}.`);
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
 
 
@@ -292,7 +293,7 @@ const Profile = () => {
             </button>
         </div>
     );
-    if(loading){
+    if (loading) {
         return <Loader></Loader>
     }
     return (
@@ -302,8 +303,8 @@ const Profile = () => {
                     <div className={styles.logo}>
                         <Link to="/">
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100px' }}>
-                            <img src="/assets/images/logos/logo.png" alt="Logo" title="Logo" style={{ width: '120px' }} />
-                            <h4 style={{ marginLeft: '-40px' }}>SHCS</h4>
+                                <img src="/assets/images/logos/logo.png" alt="Logo" title="Logo" style={{ width: '120px' }} />
+                                <h4 style={{ marginLeft: '-40px' }}>SHCS</h4>
                             </div>
                         </Link>
                     </div>
@@ -337,7 +338,11 @@ const Profile = () => {
                                         />
                                     </div>
                                 </div>
-                                <div className={styles.general}>General</div>
+                                <div className='d-flex' style={{ gap: "20px" }}>
+                                    <div className={styles.activeTab}>General</div>
+                                    <div className={styles.tab}>Payment</div>
+                                    <div className={styles.tab}>Security</div>
+                                </div>
                             </div>
                             <div className={styles.profileSection}>
                                 <div className={styles.contactInfo}>
@@ -454,6 +459,14 @@ const Profile = () => {
                             </div>
                         </div>
                     }
+                    {activeTab === 'payment' &&
+                        <UserPayment />
+                    }
+                    {activeTab === 'security' &&
+                        <div className={styles.placeholderContainer}>
+                            <h2>Security Settings</h2>
+                        </div>
+                    }
                 </div>
             </div>
 
@@ -501,7 +514,7 @@ const Profile = () => {
                                 <p className={styles.uploadHint}>
                                     Supported formats: JPG, PNG, GIF • Max size: 5MB
                                 </p>
-                                
+
                             </div>
                         </div>
 
@@ -532,6 +545,7 @@ const Profile = () => {
                     </div>
                 </div>
             )}
+
         </div>
     )
 }

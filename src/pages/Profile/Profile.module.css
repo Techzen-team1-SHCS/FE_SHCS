@@ -41,7 +41,7 @@
 .profileContainer{
     width: 100%;
 }
-.general{
+.activeTab{
     color: #DFA144;
     font-size: 21px;
     font-weight: 500;
@@ -50,6 +50,15 @@
     align-items: center;
     justify-content: left;
     border-bottom: 2px solid #DFA144;
+}
+.tab{
+    color: black;
+    font-size: 21px;
+    font-weight: 500;
+    width: min-content;
+    display: flex;
+    align-items: center;
+    justify-content: left;
 }
 /* Header */
 .headerContainer{
@@ -60,7 +69,7 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    max-height: 150px;
+    height: 50px;
 }
 .headerGroup{
     display: flex;
@@ -371,4 +380,27 @@
   -webkit-transition: all 0.25s;
   box-shadow: none;
   transform: scale(0.98);
+}
+.paymentInfo{
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.profileSection{
+    width: 100%;
+    height: 100vh;
+}   
+.paymentTitle{
+    font-size: 30px;
+    font-weight: bold;
+}
+.paymentDescription{
+    color: #989696;
+    font-size: 19px;
+    width: 50%;
+    text-align: center;
 }
