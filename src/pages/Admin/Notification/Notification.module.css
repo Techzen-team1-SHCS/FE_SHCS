@@ -1,0 +1,105 @@
+.pageContainer {
+  padding: 30px 40px;
+  background: #fafafa;
+  min-height: 100vh;
+}
+
+.tabContainer {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.tab,
+.activeTab {
+  padding: 8px 22px;
+  border: 1px solid #dcdcdc;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.activeTab {
+  background: black;
+  color: white;
+}
+
+.card {
+  width: 100%;
+  background: white;
+  border: 1px solid #e4e4e4;
+  padding: 20px 25px;
+  border-radius: 12px;
+  margin-bottom: 18px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.iconBox {
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconBox img {
+  width: 35px;
+  height: 35px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.description {
+  font-size: 15px;
+  margin-top: 4px;
+  color: #6d6d6d;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.date {
+  font-weight: 600;
+}
+
+.time {
+  font-size: 14px;
+  color: #696969;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  background: #a36b43;
+  border-radius: 50%;
+}
+.tab, .activeTab {
+  transition: 0.25s ease;
+}
+
+.tab:hover {
+  background: #f0f0f0;
+}
+
+.activeTab {
+  transform: scale(1.03);
+}
