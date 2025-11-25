@@ -27,7 +27,6 @@ export const BehaviorProvider = ({ children }) => {
   useEffect(() => {
     const interval = setInterval(async () => {
       if (behaviorsRef.current.length > 0) {
-        console.log("Sending logs:", behaviorsRef.current);
         try {
           await axios.post(
             "http://localhost:8000/api/auth/user-behaviors/batch",

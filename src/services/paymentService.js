@@ -31,6 +31,23 @@ class PaymentService {
       throw error;
     }
   }
+  async getMyPayments(){
+    try {
+      const token = localStorage.getItem('token');
+      if(!token){
+        throw new Error('Authentication token not found');
+      }
+      const response=await api.get('auth/payments',{
+        headers:{
+          Authorization:`Bearer ${token}`,
+        }
+      });
+      return response.data;   
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách thanh toán của tôi:', error);
+      throw error;
+    }
+  }
 }
 
 // Tạo instance và export

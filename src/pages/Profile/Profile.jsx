@@ -8,31 +8,46 @@ import { authService } from '../../services/authService';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from '../../components/Loading/Loader';
+import PaymentMethod from '../../components/Payment/PaymentMethod';
+import { useSearchParams } from "react-router-dom";
+
 const Profile = () => {
-    const [activeTab, setActiveTab] = useState('profile');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabFromUrl = searchParams.get("tab") || "profile";
+    const [activeTab, setActiveTab] = useState(tabFromUrl);
+    
     const { user, updateUser } = useContext(AuthContext);
     
     // State cho các trường đang edit
     const [editingField, setEditingField] = useState(null);
     const [formData, setFormData] = useState({
-        name: user?.name || '',
-        email: user?.email || '',
-        phone: user?.phone || '',
-        gender: user?.gender || '',
-        birth: user?.birth || '',
-        address: user?.address || ''
+        name: '',
+        email: '',
+        phone: '',
+        gender: '',
+        birth: '',
+        address: ''
     });
+    
     // State cho loading và thông báo
     const [loading, setLoading] = useState(false);
+    
     // State cho avatar
-    const [avatar, setAvatar] = useState(user?.image || user?.avatar_url || 'assets/images/avatar/avatar_default.png');
+    const [avatar, setAvatar] = useState('assets/images/avatar/avatar_default.png');
     const [showAvatarModal, setShowAvatarModal] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [preview, setPreview] = useState('');
     const [previewUrl, setPreviewUrl] = useState('');
     const fileInputRef = useRef(null);
 
-    // Sync avatar state khi user context thay đổi
+    // Hàm xử lý chuyển tab - CẬP NHẬT URL
+    const handleTabChange = (tabId) => {
+        setActiveTab(tabId);
+        // Cập nhật tham số tab trong URL
+        setSearchParams({ tab: tabId });
+    };
+
+    // Sync form data và avatar state khi user context thay đổi
     useEffect(() => {
         if (user) {
             setFormData({
@@ -43,12 +58,20 @@ const Profile = () => {
                 birth: user.birth || '',
                 address: user.address || ''
             });
-            // Avatar sync: prefer image (từ backend update) hoặc avatar_url
-            const newAvatar = user.image || 'assets/images/avatar/avatar_default.png';
+            
+            // Avatar sync: prefer image (từ backend update) hoặc avatar_url hoặc fallback
+            const newAvatar = user.image || user.avatar_url || 'assets/images/avatar/avatar_default.png';
             setAvatar(newAvatar);
         }
     }, [user]);
-    
+
+    // Đồng bộ activeTab với URL khi URL thay đổi từ bên ngoài
+    useEffect(() => {
+        const currentTab = searchParams.get("tab") || "profile";
+        if (currentTab !== activeTab) {
+            setActiveTab(currentTab);
+        }
+    }, [searchParams, activeTab]);
 
     const tabs = [
         { id: 'profile', label: 'Profile', icon: '' },
@@ -56,30 +79,29 @@ const Profile = () => {
         { id: 'security', label: 'Security', icon: '' },
     ];
 
-
     // Hàm xử lý chọn file
     const handleFileSelect = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        if (!file.type.startsWith('image/')) {
-            toast.error('Please select an image file');
-            return;
-        }
+        const file = event.target.files[0];
+        if (file) {
+            if (!file.type.startsWith('image/')) {
+                toast.error('Please select an image file');
+                return;
+            }
 
-        if (file.size > 5 * 1024 * 1024) {
-            toast.error('File size should be less than 5MB');
-            return;
-        }
+            if (file.size > 5 * 1024 * 1024) {
+                toast.error('File size should be less than 5MB');
+                return;
+            }
 
-        setSelectedFile(file);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            setPreviewUrl(e.target.result);
-        };
-        reader.readAsDataURL(file);
-        setPreview(URL.createObjectURL(file));
-    }
-};
+            setSelectedFile(file);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setPreviewUrl(e.target.result);
+            };
+            reader.readAsDataURL(file);
+            setPreview(URL.createObjectURL(file));
+        }
+    };
 
     // Hàm mở modal edit avatar
     const handleEditAvatar = () => {
@@ -133,7 +155,6 @@ const Profile = () => {
             // 5. Cập nhật UI state - ƯU TIÊN 'image' field từ data mới
             const newAvatarUrl = freshUserData.image; // ← CHỈ dùng field 'image'
             
-            
             if (newAvatarUrl) {
                 setAvatar(newAvatarUrl);
             } else {
@@ -153,7 +174,6 @@ const Profile = () => {
         }
     };
 
-
     // Hàm bắt đầu edit các trường
     const startEditing = (field) => {
         setEditingField(field);
@@ -166,7 +186,7 @@ const Profile = () => {
             name: user?.name || '',
             email: user?.email || '',
             phone: user?.phone || '',
-            gender: user?.gender ,
+            gender: user?.gender || '',
             birth: user?.birth || '',
             address: user?.address || ''
         });
@@ -174,47 +194,45 @@ const Profile = () => {
 
     // Hàm lưu thay đổi profile
     const saveChanges = async (field) => {
-    setLoading(true);
-    try {
-        const updateData = { [field]: formData[field] };
-        const token = localStorage.getItem('token');
+        setLoading(true);
+        try {
+            const updateData = { [field]: formData[field] };
+            const token = localStorage.getItem('token');
 
-        console.log('🟡 Updating profile field:', field, updateData);
+            console.log('🟡 Updating profile field:', field, updateData);
 
-        // 1. Gọi API update profile
-        await authService.updateProfile(user.id, updateData, token);
+            // 1. Gọi API update profile
+            await authService.updateProfile(user.id, updateData, token);
 
-        // 2. 🚀 QUAN TRỌNG: Gọi getUserById để lấy data mới nhất từ server
-        console.log('🟡 Fetching updated user data...');
-        const freshUserData = await authService.getUserById(user.id);
-        
-        console.log('🟢 Fresh user data after update:', freshUserData);
+            // 2. 🚀 QUAN TRỌNG: Gọi getUserById để lấy data mới nhất từ server
+            console.log('🟡 Fetching updated user data...');
+            const freshUserData = await authService.getUserById(user.id);
+            
+            console.log('🟢 Fresh user data after update:', freshUserData);
 
-        if (!freshUserData) {
-            toast.error("Update failed. No user data returned.");
-            return;
+            if (!freshUserData) {
+                toast.error("Update failed. No user data returned.");
+                return;
+            }
+
+            // 3. Cập nhật context với data mới hoàn toàn
+            if (updateUser) {
+                updateUser(freshUserData);
+            }
+
+            // 4. Cập nhật localStorage
+            localStorage.setItem('user', JSON.stringify(freshUserData));
+
+            toast.success(`${field} updated successfully`);
+            setEditingField(null);
+            
+        } catch (error) {
+            console.error(`Error updating ${field}:`, error);
+            toast.error(error?.response?.data?.message || `Error updating ${field}.`);
+        } finally {
+            setLoading(false);
         }
-
-        // 3. Cập nhật context với data mới hoàn toàn
-        if (updateUser) {
-            updateUser(freshUserData);
-        }
-
-        // 4. Cập nhật localStorage
-        localStorage.setItem('user', JSON.stringify(freshUserData));
-
-        toast.success(`${field} updated successfully`);
-        setEditingField(null);
-        
-    } catch (error) {
-        console.error(`Error updating ${field}:`, error);
-        toast.error(error?.response?.data?.message || `Error updating ${field}.`);
-    } finally {
-        setLoading(false);
-    }
-};
-
-
+    };
 
     // Hàm xử lý thay đổi input
     const handleInputChange = (field, value) => {
@@ -242,6 +260,7 @@ const Profile = () => {
                     onChange={(e) => handleInputChange(field, e.target.value)}
                     disabled={loading}
                 >
+                    <option value="">Select gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
@@ -284,7 +303,7 @@ const Profile = () => {
                 {loading ? 'Saving...' : 'Save'}
             </button>
             <button
-                className={styles.saveBtn}
+                className={styles.cancelBtn}
                 onClick={cancelEditing}
                 disabled={loading}
             >
@@ -292,9 +311,11 @@ const Profile = () => {
             </button>
         </div>
     );
+
     if(loading){
         return <Loader></Loader>
     }
+    
     return (
         <div className='page-wrapper'>
             <div className={styles.layoutContainer}>
@@ -312,7 +333,7 @@ const Profile = () => {
                             <div
                                 key={tab.id}
                                 className={`${styles.navButton} ${activeTab === tab.id ? styles.active : ''}`}
-                                onClick={() => setActiveTab(tab.id)}
+                                onClick={() => handleTabChange(tab.id)}
                             >
                                 <span className={styles.tabIcon}>{tab.icon}</span>
                                 {tab.label}
@@ -337,7 +358,11 @@ const Profile = () => {
                                         />
                                     </div>
                                 </div>
-                                <div className={styles.general}>General</div>
+                                <div className={styles.headerType}>
+                                    <div className={styles.general}>General</div>
+                                    <div>Balance</div>
+                                    <div>Security</div>
+                                </div>
                             </div>
                             <div className={styles.profileSection}>
                                 <div className={styles.contactInfo}>
@@ -453,6 +478,15 @@ const Profile = () => {
                                 </div>
                             </div>
                         </div>
+                    }
+                    {activeTab === 'payment' &&
+                       <PaymentMethod user={user} />
+                    }
+                    {activeTab === 'security' &&
+                       <div className={styles.securityContainer}>
+                           <h2>Security Settings</h2>
+                           <p>Change password and security preferences will be here.</p>
+                       </div>
                     }
                 </div>
             </div>

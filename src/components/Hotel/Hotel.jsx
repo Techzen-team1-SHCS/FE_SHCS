@@ -5,6 +5,7 @@ import { useBehavior } from "../../contexts/BehaviorContext";
 import { useContext, useState } from "react"
 import { AuthContext } from '../../contexts/AuthContext';
 import { wishListService } from '../../services/wishListService';
+import { toast } from 'react-toastify';
 
 const Hotel = ({
   image,
@@ -24,7 +25,7 @@ const Hotel = ({
   const [isZoomed, setIsZoomed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const handleBookClick = () => {
-    logBehavior("click_book_now", {
+    logBehavior("click", {
       userId: user?.id || null,
       hotelId: id,
       hotelName: title,
@@ -51,9 +52,9 @@ const Hotel = ({
       await wishListService.addToWishList(wishlistData);
       
       // Thông báo thành công
-      alert('Đã thêm vào danh sách yêu thích!');
+      toast.success('Đã thêm vào danh sách yêu thích!');
       
-      logBehavior("add_to_wishlist", {
+      logBehavior("like", {
         userId: user?.id,
         hotelId: id,
         hotelName: title,
@@ -63,7 +64,7 @@ const Hotel = ({
       
     } catch (error) {
       console.error('Wishlist error:', error);
-      alert(error.message || 'Có lỗi xảy ra khi thêm vào danh sách yêu thích');
+      toast.error(error.message || 'Đã được thêm vào danh sách yêu thích');
     } finally {
       setIsLoading(false);
     }

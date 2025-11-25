@@ -1,0 +1,177 @@
+.profileContainer{
+    width: 100%;
+}
+.general{
+    color: #DFA144;
+    font-size: 21px;
+    font-weight: 500;
+    width: min-content;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    border-bottom: 2px solid #DFA144;
+}
+/* Header */
+.headerContainer{
+    padding: 40px 40px 0 40px;
+    border-bottom: 1px solid #D9D9D9;
+}
+.profileHeader{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    max-height: 150px;
+}
+.headerGroup{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.headerTitle{
+    font-size: 30px;
+    font-weight: bold;
+}
+.helpBtn{
+    border-radius: 1000px;
+    width: 50px;
+    height: 50px;
+}
+.headerType{
+    width: 100%;
+    display: flex;
+    gap: 50px;
+}
+.profileSection{
+    display: flex;
+    justify-content: space-between;
+    width: 95%;
+    margin :20px auto;
+}
+.title_left{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.title_right{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+.image_vnpay{
+    align-items: center;
+    display: flex;
+    gap: 30px;
+}
+.content{
+    display: flex;
+    width: 95%;
+    margin: 0 auto;
+    gap: 20px;     
+}   
+.contentLeft{
+    width: 65%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.contentRight{
+    width: 33%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+}
+.total_wallet{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    border: 1px solid #a4a4a4;
+    border-radius: 10px;
+}
+.transaction{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 1px solid #a4a4a4;
+    border-radius: 10px;
+}
+.header_transaction{
+    width: 100%;
+    display: flex;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1px solid #D9D9D9;
+    padding: 10px;
+}
+.content_transaction{
+    padding: 10px;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+.content_transaction_left{
+    display: flex;
+    gap: 10px;
+}
+.header_refund{
+    width: 100%;
+    display: flex;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1px solid #D9D9D9;
+    padding: 10px;
+}
+.image_refund{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+.content_refund{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+.amount_refund{
+    font-weight: 600;
+}
+.transaction_information{
+    display: flex;  
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+.content_transaction_information {
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: 120px 1fr; /* 2 cột */
+}
+
+.info_Asset,
+.info_note {
+    display: contents; /* Cho phép grid chia đúng từng item */
+}
+
+.info_Asset > div:first-child,
+.info_note > div:first-child {
+    padding: 15px 10px;
+    border-bottom: 1px solid #d9d9d9;
+}
+
+.info_Asset > div:last-child,
+.info_note > div:last-child {
+    padding: 15px 10px;
+    display: flex;
+    gap: 10px;
+    border-bottom: 1px solid #d9d9d9;
+}
+.info_note > div:first-child,
+.info_note > div:last-child {
+    border-bottom: none !important;
+}
+.footer_transaction{
+    padding: 10px;
+}

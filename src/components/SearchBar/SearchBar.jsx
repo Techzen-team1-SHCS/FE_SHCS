@@ -332,7 +332,7 @@ function SearchBar() {
                         style={{ marginLeft: '20px', height: '50px', marginTop: '10px' }}
                         onClick={handleSearch}
                     >
-                        <span data-hover="Tìm kiếm">Tìm kiếm</span>
+                        <span data-hover="Tìm kiếm" style={{fontSize:'15px'}}>Tìm kiếm</span>
                         <i className="far fa-search"></i>
                     </button>
                 </div>

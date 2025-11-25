@@ -3,7 +3,11 @@
   min-height: 100vh;
 
 }
-
+.headerType{
+    width: 100%;
+    display: flex;
+    gap: 50px;
+}
 .sidebar { 
   width: 20%;
   border-right: 1px solid #d9d9d9;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './Notification.module.css';
 import '../../config/echo';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const Notification = ({ userId }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -9,7 +10,7 @@ const Notification = ({ userId }) => {
     const [error, setError] = useState(null);
     const dropdownRef = useRef(null);
     const listRef = useRef(null);
-
+    const navigate = useNavigate();
     // Click outside to close
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -101,9 +102,31 @@ const Notification = ({ userId }) => {
     };
 
     const handleClickNotification = (n) => {
-        if (!n.is_read) markAsRead(n.id);
-        if (n.bookingId) window.location.href = `/bookings/${n.bookingId}`;
-    };
+    // Mark read
+    if (!n.is_read) markAsRead(n.id);
+
+    // Parse JSON data nếu có
+    let parsedData = null;
+    try {
+        parsedData = n.data ? JSON.parse(n.data) : null;
+    } catch (e) {
+        console.error("Invalid JSON in notification.data");
+    }
+
+    // Điều hướng theo loại
+    if (n.type === 'booking' && parsedData?.booking_id) {
+        navigate(`/booking/${parsedData.booking_id}`);
+    }
+
+    if (n.type === 'payment') {
+        navigate('/profile?tab=payment');
+    }
+
+    if (n.type === 'discount') {
+        navigate('/discount');
+    }
+};
+
 
     const formatTime = (timeString) => {
         if (!timeString) return '';
@@ -144,7 +167,7 @@ const Notification = ({ userId }) => {
                 )}
             </button>
 
-            <div className={`${styles.dropdown} ${isOpen ? styles.show : ''}`}>
+            <div className={`${styles.dropdown} ${isOpen ? styles.show : ''}`} >
                 <div className={styles.dropdownHeader}>
                     <h3>Thông báo</h3>
                     {unreadCount > 0 && (
@@ -187,7 +210,11 @@ const Notification = ({ userId }) => {
                                     </div>
                                     <div className={styles.notificationTime}>
                                         {formatTime(notification.created_at)}
+                                        <p className={styles.statusText}>
+                                            {isUnread ? "Chưa đọc" : "Đã đọc"}
+                                        </p>
                                     </div>
+                                     
                                 </div>
                             </div>
                         );
@@ -197,5 +224,4 @@ const Notification = ({ userId }) => {
         </div>
     );
 };
-
 export default Notification;

@@ -124,7 +124,7 @@ const WishList = () => {
                 <div className={rating}>
                   <i className="fas fa-star"></i> {(item.hotel.hotel_class / 10).toFixed(1)}
                 </div>
-                <img src={item.hotel.images[1].url} alt={item.title} />
+                <img src={item.hotel?.images[1]?.url} alt={item.title} />
               </div>
 
               <div className={contentCard}>
@@ -138,7 +138,13 @@ const WishList = () => {
                   </span>
 
                   <div className={btn}>
-                    <Button onClick={() => handleRemove(item.id)} props="Xóa Khách sạn" />
+                    <Button 
+                      onClick={(e) => {
+                        e.stopPropagation(); // <--- chặn event nổi lên div
+                        handleRemove(item.id);
+                      }} 
+                      props="Xóa Khách sạn" 
+                    />
                   </div>
                 </div>
               </div>

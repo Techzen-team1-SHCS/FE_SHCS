@@ -4,6 +4,7 @@
 }
 
 .notificationButton {
+    
     position: relative;
     background: none;
     border: none;
@@ -16,8 +17,13 @@
 .notificationButton:hover {
     background-color: #f5f5f5;
 }
-
+.notificationTime{
+    height: 16px;
+    display: flex;
+    justify-content: space-between;
+}
 .notificationBadge {
+    padding: 9px;
     position: absolute;
     top: 0;
     right: 0;
@@ -31,10 +37,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid white;
 }
 
 .dropdown {
+    
     position: absolute;
     top: 100%;
     right: 0;
@@ -63,6 +69,7 @@
 }
 
 .dropdownHeader {
+    border-radius: 10px;
     padding: 12px 16px;
     border-bottom: 1px solid #e0e0e0;
     background-color: #fafafa;
@@ -89,6 +96,7 @@
 }
 
 .notificationList {
+    
     max-height: 300px;
     overflow-y: auto;
     scroll-behavior: smooth;
