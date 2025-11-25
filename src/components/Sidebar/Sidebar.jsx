@@ -18,14 +18,14 @@ const Sidebar = () => {
     const menuItems = [
         { path: "/admin/dashboard", label: "Dashboard", icon: "📊" },
         { path: "/admin/booking-manage", label: "Bookings", icon: "📅" },
-        { path: "/admin/rooms-manage", label: "Rooms", icon: "📈" },
+        { path: "/admin/hotels-manage", label: "Hotels", icon: "📈" },
         { path: "/admin/users-manage", label: "Users", icon: "👥" },
         { path: "/admin/notification", label: "Notification", icon: "🏨" },
         { path: "/admin/settings", label: "Settings", icon: "⚙️" },
         { path: "/admin/payment", label: "Payment", icon: "" },
         { path: "/", label: "Log out", icon: "" },
     ];
-
+    
     return (
         <div className={sidebar}>
             <div className={logo}>

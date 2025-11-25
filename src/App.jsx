@@ -23,7 +23,7 @@ import Dashboard from './pages/Admin/Dashboard/Dashboard'
 import BookingManage from './pages/Admin/BookingManage/BookingManage';
 import WishList from './pages/WishList/WishList';
 import Notification from './pages/Admin/Notification/Notification';
-import RoomManage from './pages/Admin/RoomManage/RoomManage';
+import HotelManage from './pages/Admin/HotelManage/HotelManage';
 import UserManage from './pages/Admin/UserManage/UserManage';
 // import { AuthProvider } from './contexts/AuthContext';
 
@@ -57,7 +57,7 @@ function App() {
             <Route path='/admin/dashboard' element={<Dashboard />} />
             <Route path='/admin/booking-manage' element={<BookingManage />} />
             <Route path='/admin/notification' element={<Notification />} />
-            <Route path='/admin/rooms-manage' element={<RoomManage />} />
+            <Route path='/admin/hotels-manage' element={<HotelManage />} />
             <Route path='/admin/users-manage' element={<UserManage />} />
           </Route>
           {/* Route KHÔNG dùng MainLayout */}
