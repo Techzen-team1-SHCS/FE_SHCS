@@ -6,12 +6,13 @@ import AboutUs from '../../components/AboutUs/AboutUs'
 import Features from '../../components/Features/Features'
 import HotelSection from '../../components/HotelSection/HotelSection'
 import HotelRecommendationSlider from '../../components/HotelRecommendationSlider/HotelRecommendationSlider'
+import Discount from '../../components/Discount/Discount'
 
 const Home = () => {
     return (
         <div className="page-wrapper">
             <HeroSection />
-            <Destinations />
+            <Discount />
             <HotelRecommendationSlider/>
             <AboutUs />
             <PopularDestinations />

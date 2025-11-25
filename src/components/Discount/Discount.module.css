@@ -1,0 +1,26 @@
+.discountCard{
+    width: 320px;
+    height: 280px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.discountCard:hover img{
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+.discountCard img{
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.swiper-slide {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: auto !important;
+}
