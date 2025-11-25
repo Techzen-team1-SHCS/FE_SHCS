@@ -77,19 +77,21 @@ export const hotelService = {
     const response = await api.get("/auth/hotel");
     return response.data.data;
   },
-  async getRecommendedHotels(userId) {
-    const token = localStorage.getItem("token");
-    const headers = {};
+  async getRecommendedHotels() {
+  try {
+      const token = localStorage.getItem("token");
 
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+      const headers = token
+        ? { Authorization: `Bearer ${token}` }
+        : {}; // không có token → guest
+
+      const response = await api.get("/auth/recommendations", { headers });
+
+      return response.data.data || [];
+    } catch (error) {
+      console.error("Error fetching recommended hotels:", error);
+      return []; // không throw → FE vẫn hoạt động
     }
-
-    const response = await api.get(`/auth/recommendations/${userId}`, {
-      headers,
-    });
-
-    return response.data.data || [];
-  },
+  }
 };
 

@@ -23,8 +23,6 @@ export const usePageTracking = (pageName) => {
       logBehavior("filter_change", { page: pageName, filters });
     }
 
-    if (page > 1) {
-      logBehavior("page_change", { page: pageName, pageNumber: page });
-    }
+  
   }, [location.search, pageName]);
 };

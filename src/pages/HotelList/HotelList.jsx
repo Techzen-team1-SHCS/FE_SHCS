@@ -99,7 +99,6 @@ function HotelList() {
 
   // Pagination
   const handlePageChange = (page) => {
-    logBehavior("page_change", { page });
     const filters = getFiltersFromQuery();
     filters.page = page;
     loadHotels(filters);

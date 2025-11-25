@@ -1,0 +1,12 @@
+.container_fluid {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.content_recommend {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 40px;
+    justify-content: center;
+}
