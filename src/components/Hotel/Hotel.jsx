@@ -64,7 +64,7 @@ const Hotel = ({
       
     } catch (error) {
       console.error('Wishlist error:', error);
-      toast.error(error.message || 'Đã được thêm vào danh sách yêu thích');
+      toast.warn(error.message || 'Đã được thêm vào danh sách yêu thích');
     } finally {
       setIsLoading(false);
     }

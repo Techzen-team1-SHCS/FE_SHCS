@@ -25,7 +25,7 @@ export const wishListService = {
         });
         return response.data;
        } catch (error) {
-         throw new Error(error.response?.data?.message || 'Failed to add to wish list');
+         throw new Error(error.response?.data?.message || 'Đã có trong danh sách yêu thích');
        }
     },
     async removeFromWishList(id) {
