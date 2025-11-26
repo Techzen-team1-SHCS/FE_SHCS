@@ -49,13 +49,7 @@ export const authService = {
   getUserById: async (id) => {
     try {
         const response = await api.get(`/auth/user/${id}`);
-        
-        console.log('🔵 RAW getUserById RESPONSE:', response.data);
-        
-        // Backend trả về data trong field 'data'
         const userData = response.data.data || response.data;
-        
-        console.log('🟢 Extracted user data:', userData);
         return userData;
         
     } catch (error) {
