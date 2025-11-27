@@ -1,30 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import paymentService from '../../services/paymentService';
-
+import LoaderButton from '../Loading/LoaderButton';
+import { toast } from 'react-toastify';
+import styles from './Payment.module.css';
 
 const PaymentButtonVnPay = ({ bookingId, amount }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const handlePayment = async () => {
+    setIsLoading(true);
     try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
       await paymentService.createPayment(bookingId);
     } catch (error) {
       console.error(error);
-      alert('Không thể tạo thanh toán VNPay. Vui lòng thử lại.');
+      toast.warning('Không thể tạo thanh toán VNPay. Vui lòng thử lại.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <button
       onClick={handlePayment}
-      style={{
-        backgroundColor: '#0a7cff',
-        color: '#fff',
-        padding: '10px 20px',
-        borderRadius: '8px',
-        border: 'none',
-        cursor: 'pointer',
-      }}
+      disabled={isLoading}
+      className={styles.slice}
+      style={{width:"30%",fontSize:"16px", marginBottom:"20px"}}
     >
-      Thanh toán qua VNPay
+      <span className={styles.text}>
+        {isLoading ? <LoaderButton color='black'/> : 'Thanh toán qua VNPay'}
+      </span>
     </button>
   );
 };

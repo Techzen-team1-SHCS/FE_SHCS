@@ -4,6 +4,7 @@ import { bookingService } from '../../services/bookingService';
 import { AuthContext } from '../../contexts/AuthContext';
 import '../../config/echo';
 import { toast } from 'react-toastify';
+import LoaderButton from '../Loading/LoaderButton';
 const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
   const [selectedRooms, setSelectedRooms] = useState({});
  const [loading, setLoading] = useState({});
@@ -214,9 +215,9 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
                     <button
                       className={`select-btn ${quantity > 0 ? 'active' : ''}`}
                       onClick={() => handleSelectRoom(room)}
-                      disabled={!quantity || quantity === 0}
+                      disabled={!quantity || quantity === 0 || loading[room.id]}
                     >
-                      Chọn
+                      {loading[room.id] ? <LoaderButton /> : 'Chọn'}
                     </button>
                   </td>
                 </tr>

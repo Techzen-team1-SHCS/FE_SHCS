@@ -14,6 +14,7 @@ import HotelReviewSubmit from '../../components/HotelReviewSubmit/HotelReviewSub
 import HotelReviewsList from '../../components/HotelReviewsList/HotelReviewsList.jsx';
 import { commentService } from '../../services/commentService';
 import HotelReviewStats from '../../components/HotelReviewStats/HotelReviewStats.jsx';
+import Loader from '../../components/Loading/Loader.jsx';
 
 const HotelDetail = () => {
   const { hotelId } = useParams();
@@ -136,8 +137,10 @@ const HotelDetail = () => {
     if (hotelId) fetchHotelData();
   }, [hotelId]);
   console.log(hotelData);
-  if (loading) return <div className="page-wrapper">Loading...</div>;
-  if (error) return <div className="page-wrapper">Error: {error}</div>;
+  if (loading) return <div className="page-wrapper"><Loader/></div>;
+  if (error) {
+    navigate('/404'); 
+  };
   if (!hotelData) return <div className="page-wrapper">No data found</div>;
 
   
