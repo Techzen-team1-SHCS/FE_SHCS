@@ -1,0 +1,9 @@
+.time {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.date {
+  font-size: 14px;
+  opacity: 0.8;
+}

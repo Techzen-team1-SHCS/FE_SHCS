@@ -92,10 +92,14 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                     // 🔹 Lấy user và token đúng từ data
                     const user = result.user; // authService.login() đã fix trả về data.user
                     const token = result.token;
-
+                    
                     if (!user || !token) {
                         toast.error("Không lấy được dữ liệu người dùng. Vui lòng thử lại.");
                         return;
+                    }
+                    if (user.role !== 0) {
+                        toast.error('Tài khoản không có quyền truy cập trang này');
+                        return
                     }
 
                     // 🔹 Nếu muốn gọi API chi tiết user (có avatar_url)

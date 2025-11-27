@@ -47,7 +47,7 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
                 cancelButtonText:"Không",
             });
             if(!confirm.isConfirmed) return;
-            const result=await bookingService.cancelBooking(booking.id);
+            const result=await bookingService.cancelBooking(booking?.id);
             await Swal.fire("Thành công",result.message,"success");
             if (typeof onCancelSuccess === "function") {
             onCancelSuccess();
