@@ -31,14 +31,16 @@
 }
 .mainContent{
     flex:0 0 85%;
+    background-color: lightgray;
+
 }
 .title{
     font-size: 24px;
     font-weight: 600;
 }
 .userInfo {
+     margin-left: auto; 
     display: flex;
-    padding-left: 1100px;
     gap: 4px;
 }
 

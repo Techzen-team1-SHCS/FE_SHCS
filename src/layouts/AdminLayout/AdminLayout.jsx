@@ -24,7 +24,7 @@ const AdminLayout = () => {
         const pathToTitle = {
             "/admin/dashboard": "Dashboard",
             "/admin/booking-manage": "Quản lý đặt phòng",
-            "/admin/rooms-manage": "Quản lý phòng",
+            "/admin/hotels-manage": "Quản lý khách sạn",
             "/admin/users-manage": "Quản lý người dùng",
             "/admin/notification": "Thông báo",
             "/admin/settings": "Cài đặt"
