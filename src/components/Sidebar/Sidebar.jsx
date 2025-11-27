@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import styles from "./Sidebar.module.css";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { AuthContext } from '../../contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 const Sidebar = () => {
     const {
@@ -12,8 +14,18 @@ const Sidebar = () => {
         active,
         icon,
         notActive,
-        navLink
+        navLink,
+        logoutButton
     } = styles;
+
+    const { logout } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        toast.success('Đăng xuất thành công!');
+        navigate('/admin/login');
+    };
 
     const menuItems = [
         { path: "/admin/dashboard", label: "Dashboard", icon: "📊" },
@@ -23,7 +35,6 @@ const Sidebar = () => {
         { path: "/admin/notification", label: "Notification", icon: "🏨" },
         { path: "/admin/settings", label: "Settings", icon: "⚙️" },
         { path: "/admin/payment", label: "Payment", icon: "" },
-        { path: "/", label: "Log out", icon: "" },
     ];
 
     return (
@@ -53,6 +64,17 @@ const Sidebar = () => {
                             </NavLink>
                         </li>
                     ))}
+                    
+                    {/* Logout Button */}
+                    <li className={navItem}>
+                        <button 
+                            className={`${navLink} ${logoutButton}`}
+                            onClick={handleLogout}
+                        >
+                            <span className={icon}>🚪</span>
+                            <span>Log out</span>
+                        </button>
+                    </li>
                 </ul>
             </nav>
         </div>

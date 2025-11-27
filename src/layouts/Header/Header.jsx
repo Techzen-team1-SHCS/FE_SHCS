@@ -260,17 +260,6 @@ const Header = () => {
                                                                         Trung tâm hỗ trợ
                                                                     </button>
                                                                 </li>
-                                                                {user?.role == 1 && (
-                                                                    <li>
-                                                                        <button
-                                                                            className="menu-item"
-                                                                            onClick={() => navigate('/admin/dashboard')}
-                                                                        >
-                                                                            <span className="icon">🛠️</span>
-                                                                            Quản trị viên
-                                                                        </button>
-                                                                    </li>
-                                                                )}
                                                             </ul>
 
                                                             <hr className="menu-divider" />

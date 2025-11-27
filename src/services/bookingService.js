@@ -1,6 +1,14 @@
 import api from './api';
 
 export const bookingService={
+   async getAllBookings() {
+    try {
+      const response=await api.get('auth/booking');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch bookings');
+    }
+   },
    async createBooking(bookingData) {
     try {      
       // Lấy token từ localStorage hoặc context

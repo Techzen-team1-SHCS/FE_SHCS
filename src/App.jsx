@@ -25,6 +25,8 @@ import WishList from './pages/WishList/WishList';
 import Notification from './pages/Admin/Notification/Notification';
 import RoomManage from './pages/Admin/RoomManage/RoomManage';
 import UserManage from './pages/Admin/UserManage/UserManage';
+import LoginPage from './pages/Admin/LoginPage/LoginPage';
+import AdminPrivateRoute from './routes/AdminPrivateRoute';
 // import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -53,12 +55,17 @@ function App() {
             {/* có thể thêm các page khác cần layout */}
           </Route>
           {/* Route admin */}
-          <Route element={<AdminLayout />}>
-            <Route path='/admin/dashboard' element={<Dashboard />} />
-            <Route path='/admin/booking-manage' element={<BookingManage />} />
-            <Route path='/admin/notification' element={<Notification />} />
-            <Route path='/admin/rooms-manage' element={<RoomManage />} />
-            <Route path='/admin/users-manage' element={<UserManage />} />
+          <Route path='/admin/login' element={<LoginPage />} />
+          <Route element={
+            <AdminPrivateRoute>
+              <AdminLayout />
+            </AdminPrivateRoute>
+          }>
+            <Route path="/admin/dashboard" element={<Dashboard />} />
+            <Route path="/admin/booking-manage" element={<BookingManage />} />
+            <Route path="/admin/notification" element={<Notification />} />
+            <Route path="/admin/rooms-manage" element={<RoomManage />} />
+            <Route path="/admin/users-manage" element={<UserManage />} />
           </Route>
           {/* Route KHÔNG dùng MainLayout */}
         </Routes>

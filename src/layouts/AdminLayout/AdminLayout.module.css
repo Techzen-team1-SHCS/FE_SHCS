@@ -36,3 +36,22 @@
     font-size: 24px;
     font-weight: 600;
 }
+.userInfo {
+    display: flex;
+    padding-left: 1100px;
+    gap: 4px;
+}
+
+.userName {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 0.95rem;
+}
+
+.userRole {
+    font-size: 0.8rem;
+    color: #718096;
+    background: #f7fafc;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
