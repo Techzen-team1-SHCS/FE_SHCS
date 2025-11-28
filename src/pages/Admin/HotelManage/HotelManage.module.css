@@ -1,0 +1,234 @@
+.container {
+    background: white;
+}
+
+.tableContainer {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    min-width: 1000px;
+}
+
+.tableHeader {
+    background: #f8f9fa;
+}
+
+.th {
+    padding: 16px;
+    text-align: center;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #e9ecef;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+}
+
+/* Điều chỉnh chiều rộng từng cột cho bảng mới */
+.th:nth-child(1), .td:nth-child(1) { /* Hotel ID */
+    width: 80px;
+    min-width: 80px;
+}
+
+.th:nth-child(2), .td:nth-child(2) { /* Hotel Name */
+    width: 150px;
+    min-width: 150px;
+}
+
+.th:nth-child(3), .td:nth-child(3) { /* Phone */
+    width: 130px;
+    min-width: 130px;
+}
+
+.th:nth-child(4), .td:nth-child(4) { /* Email */
+    width: 180px;
+    min-width: 180px;
+}
+
+.th:nth-child(5), .td:nth-child(5) { /* Address */
+    width: 200px;
+    min-width: 200px;
+}
+
+.th:nth-child(6), .td:nth-child(6) { /* Room Occupied */
+    width: 120px;
+    min-width: 120px;
+}
+
+.th:nth-child(7), .td:nth-child(7) { /* Revenue */
+    width: 140px;
+    min-width: 140px;
+}
+
+.th:nth-child(8), .td:nth-child(8) { /* Star */
+    width: 80px;
+    min-width: 80px;
+}
+
+.th:nth-child(9), .td:nth-child(9) { /* Actions */
+    width: 80px;
+    min-width: 80px;
+}
+
+.tableBody {
+    background: white;
+}
+
+.tr {
+    text-align: center;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tr:hover {
+    background-color: #f8f9fa;
+}
+
+.tr:last-child {
+    border-bottom: none;
+}
+
+.td {
+    padding: 16px;
+    color: #495057;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Căn chỉnh nội dung cho các cột số */
+.td:nth-child(1), /* Hotel ID */
+.td:nth-child(6), /* Room Occupied */
+.td:nth-child(7), /* Revenue */
+.td:nth-child(8) { /* Star */
+    text-align: center;
+}
+
+/* Căn trái cho các cột text */
+.td:nth-child(2), /* Hotel Name */
+.td:nth-child(3), /* Phone */
+.td:nth-child(4), /* Email */
+.td:nth-child(5) { /* Address */
+    text-align: left;
+}
+
+
+
+/* Xóa các style không cần thiết cho bảng mới */
+.statusAvailable,
+.statusOccupied,
+.statusMaintenance,
+.statusCleaning,
+.statusSelect {
+    display: none;
+}
+
+/* Delete Button */
+.deleteButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.deleteButton:hover {
+    background-color: #f8d7da;
+    transform: scale(1.1);
+}
+
+.deleteButton:active {
+    transform: scale(0.95);
+}
+
+.deleteIcon {
+    width: 20px;
+    height: 20px;
+    color: #dc3545;
+    transition: color 0.2s ease;
+}
+
+.deleteButton:hover .deleteIcon {
+    color: #c82333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .th:nth-child(4), .td:nth-child(4) { /* Email */
+        width: 150px;
+        min-width: 150px;
+    }
+    
+    .th:nth-child(5), .td:nth-child(5) { /* Address */
+        width: 160px;
+        min-width: 160px;
+    }
+    
+    .th:nth-child(9), .td:nth-child(9) { /* Actions column */
+        width: 60px;
+        min-width: 60px;
+    }
+    
+    .deleteIcon {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .deleteButton {
+        padding: 6px;
+    }
+    
+    .container {
+        padding: 16px;
+        margin: 16px 0;
+    }
+    
+    .th, .td {
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+    
+    .table {
+        min-width: 1000px;
+    }
+    
+    /* Điều chỉnh lại chiều rộng cho mobile */
+    .th:nth-child(1), .td:nth-child(1) { width: 70px; min-width: 70px; }
+    .th:nth-child(2), .td:nth-child(2) { width: 130px; min-width: 130px; }
+    .th:nth-child(3), .td:nth-child(3) { width: 110px; min-width: 110px; }
+    .th:nth-child(4), .td:nth-child(4) { width: 150px; min-width: 150px; }
+    .th:nth-child(5), .td:nth-child(5) { width: 160px; min-width: 160px; }
+    .th:nth-child(6), .td:nth-child(6) { width: 100px; min-width: 100px; }
+    .th:nth-child(7), .td:nth-child(7) { width: 120px; min-width: 120px; }
+    .th:nth-child(8), .td:nth-child(8) { width: 70px; min-width: 70px; }
+    .th:nth-child(9), .td:nth-child(9) { width: 60px; min-width: 60px; }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    animation: fadeIn 0.5s ease-out;
+}

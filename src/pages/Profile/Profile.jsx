@@ -43,8 +43,28 @@ const Profile = () => {
     // Hàm xử lý chuyển tab - CẬP NHẬT URL
     const handleTabChange = (tabId) => {
         setActiveTab(tabId);
-        // Cập nhật tham số tab trong URL
         setSearchParams({ tab: tabId });
+    };
+
+    // Hàm xử lý chuyển tab cho header (General, Balance, Security)
+    const handleHeaderTabChange = (tabType) => {
+        switch(tabType) {
+            case 'general':
+                setActiveTab('profile');
+                setSearchParams({ tab: 'profile' });
+                break;
+            case 'balance':
+                setActiveTab('payment');
+                setSearchParams({ tab: 'payment' });
+                break;
+            case 'security':
+                setActiveTab('security');
+                setSearchParams({ tab: 'security' });
+                break;
+            default:
+                setActiveTab('profile');
+                setSearchParams({ tab: 'profile' });
+        }
     };
 
     // Sync form data và avatar state khi user context thay đổi
@@ -59,7 +79,6 @@ const Profile = () => {
                 address: user.address || ''
             });
             
-            // Avatar sync: prefer image (từ backend update) hoặc avatar_url hoặc fallback
             const newAvatar = user.image || user.avatar_url || 'assets/images/avatar/avatar_default.png';
             setAvatar(newAvatar);
         }
@@ -74,9 +93,9 @@ const Profile = () => {
     }, [searchParams, activeTab]);
 
     const tabs = [
-        { id: 'profile', label: 'Profile', icon: '' },
-        { id: 'payment', label: 'Payment method', icon: '' },
-        { id: 'security', label: 'Security', icon: '' },
+        { id: 'profile', label: 'Profile', icon: '👤' },
+        { id: 'payment', label: 'Payments', icon: '💳' },
+        { id: 'security', label: 'Security', icon: '🔒' },
     ];
 
     // Hàm xử lý chọn file
@@ -105,7 +124,6 @@ const Profile = () => {
 
     // Hàm mở modal edit avatar
     const handleEditAvatar = () => {
-        console.log("🟢 Clicked Edit Avatar!");
         setShowAvatarModal(true);
     };
 
@@ -128,37 +146,24 @@ const Profile = () => {
             const formData = new FormData();
             formData.append('avatar', selectedFile);
 
-            console.log('🟡 Starting avatar upload...');
-            
-            // 1. Gọi API update avatar
             await authService.updateProfile(user.id, formData, token);
-
-            // 2. 🚀 QUAN TRỌNG: Gọi getUserById để lấy data mới nhất từ server
-            console.log('🟡 Fetching updated user data...');
             const freshUserData = await authService.getUserById(user.id);
-            
-            console.log('🟢 Fresh user data after avatar update:', freshUserData);
 
             if (!freshUserData) {
                 toast.error("Avatar update failed. No user data returned.");
                 return;
             }
 
-            // 3. Cập nhật context với data mới hoàn toàn - DÙNG field 'image'
             if (updateUser) {
                 updateUser(freshUserData);
             }
 
-            // 4. Cập nhật localStorage
             localStorage.setItem('user', JSON.stringify(freshUserData));
-
-            // 5. Cập nhật UI state - ƯU TIÊN 'image' field từ data mới
-            const newAvatarUrl = freshUserData.image; // ← CHỈ dùng field 'image'
+            const newAvatarUrl = freshUserData.image;
             
             if (newAvatarUrl) {
                 setAvatar(newAvatarUrl);
             } else {
-                // Fallback nếu không có image
                 setAvatar('assets/images/avatar/avatar_default.png');
             }
             
@@ -199,30 +204,19 @@ const Profile = () => {
             const updateData = { [field]: formData[field] };
             const token = localStorage.getItem('token');
 
-            console.log('🟡 Updating profile field:', field, updateData);
-
-            // 1. Gọi API update profile
             await authService.updateProfile(user.id, updateData, token);
-
-            // 2. 🚀 QUAN TRỌNG: Gọi getUserById để lấy data mới nhất từ server
-            console.log('🟡 Fetching updated user data...');
             const freshUserData = await authService.getUserById(user.id);
-            
-            console.log('🟢 Fresh user data after update:', freshUserData);
 
             if (!freshUserData) {
                 toast.error("Update failed. No user data returned.");
                 return;
             }
 
-            // 3. Cập nhật context với data mới hoàn toàn
             if (updateUser) {
                 updateUser(freshUserData);
             }
 
-            // 4. Cập nhật localStorage
             localStorage.setItem('user', JSON.stringify(freshUserData));
-
             toast.success(`${field} updated successfully`);
             setEditingField(null);
             
@@ -317,14 +311,15 @@ const Profile = () => {
     }
     
     return (
-        <div className='page-wrapper'>
+        <div className={styles.pageWrapper}>
             <div className={styles.layoutContainer}>
+                {/* Sidebar */}
                 <div className={styles.sidebar}>
                     <div className={styles.logo}>
                         <Link to="/">
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100px' }}>
-                            <img src="/assets/images/logos/logo.png" alt="Logo" title="Logo" style={{ width: '120px' }} />
-                            <h4 style={{ marginLeft: '-40px' }}>SHCS</h4>
+                            <div className={styles.logoContainer}>
+                                <img src="/assets/images/logos/logo.png" alt="Logo" className={styles.logoImage} />
+                                <h4 className={styles.logoText}>SHCS</h4>
                             </div>
                         </Link>
                     </div>
@@ -336,167 +331,247 @@ const Profile = () => {
                                 onClick={() => handleTabChange(tab.id)}
                             >
                                 <span className={styles.tabIcon}>{tab.icon}</span>
-                                {tab.label}
+                                <span className={styles.tabLabel}>{tab.label}</span>
                             </div>
                         ))}
                     </nav>
                 </div>
+
+                {/* Main Content */}
                 <div className={styles.content}>
-                    {activeTab === 'profile' &&
+                    {activeTab === 'profile' && (
                         <div className={styles.profileContainer}>
-                            <div className={styles.headerContainer}>
-                                <div className={styles.profileHeader}>
-                                    <div className={styles.headerTitle}>Profile</div>
-                                    <div className={styles.headerGroup}>
-                                        <button className={styles.helpBtn}>?</button>
-                                        <img
-                                            src={preview || avatar}
-                                            alt="avatar"
-                                            className="rounded-circle"
-                                            width={60}
-                                            height={60}
-                                        />
+                            {/* Header */}
+                            <div className={styles.headerSection}>
+                                <div className={styles.headerContent}>
+                                    <div className={styles.headerText}>
+                                        <h1 className={styles.headerTitle}>Profile Settings</h1>
+                                        <p className={styles.headerSubtitle}>Manage your personal information and preferences</p>
+                                    </div>
+                                    <div className={styles.headerActions}>
+                                        <button className={styles.helpBtn}>
+                                            <span>?</span>
+                                            <span className={styles.tooltip}>Need help?</span>
+                                        </button>
+                                        <div className={styles.userAvatar}>
+                                            <img
+                                                src={preview || avatar}
+                                                alt="avatar"
+                                                className={styles.avatarImg}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                                <div className={styles.headerType}>
-                                    <div className={styles.general}>General</div>
-                                    <div>Balance</div>
-                                    <div>Security</div>
+                                
+                                <div className={styles.headerTabs}>
+                                    <div 
+                                        className={`${styles.headerTab} ${activeTab === 'profile' ? styles.activeHeaderTab : ''}`}
+                                        onClick={() => handleHeaderTabChange('general')}
+                                    >
+                                        <span className={styles.tabDot}></span>
+                                        General
+                                    </div>
+                                    <div 
+                                        className={`${styles.headerTab} ${activeTab === 'payment' ? styles.activeHeaderTab : ''}`}
+                                        onClick={() => handleHeaderTabChange('balance')}
+                                    >
+                                        <span className={styles.tabDot}></span>
+                                        Balance
+                                    </div>
+                                    <div 
+                                        className={`${styles.headerTab} ${activeTab === 'security' ? styles.activeHeaderTab : ''}`}
+                                        onClick={() => handleHeaderTabChange('security')}
+                                    >
+                                        <span className={styles.tabDot}></span>
+                                        Security
+                                    </div>
                                 </div>
                             </div>
-                            <div className={styles.profileSection}>
-                                <div className={styles.contactInfo}>
-                                    {/* Avatar Section */}
-                                    <div className={styles.avatarSection}>
-                                        <div className={styles.avatarcontainer}>
-                                            <div className={styles.avatarGroup}>
-                                                <img src={preview || avatar}
-                                                    alt="avatar"
-                                                    className="rounded-circle"
-                                                    width={80}
-                                                    height={80}
+
+                            {/* Profile Content */}
+                            <div className={styles.profileContent}>
+                                {/* Avatar Section */}
+                                <div className={styles.avatarSection}>
+                                    <div className={styles.avatarCard}>
+                                        <div className={styles.avatarContent}>
+                                            <div className={styles.avatarImageContainer}>
+                                                <img 
+                                                    src={preview || avatar} 
+                                                    alt="avatar" 
+                                                    className={styles.avatarLarge}
                                                 />
-                                                <div className={styles.userNamegroup}>
-                                                    <div className={styles.userName}>{formData.name}</div>
-                                                    <div>{formData.email}</div>
+                                                <div className={styles.avatarOverlay} onClick={handleEditAvatar}>
+                                                    <span>📷</span>
                                                 </div>
                                             </div>
-                                            <EditButton onClick={handleEditAvatar} />
-                                        </div>
-                                    </div>
-
-                                    {/* Contact Info Section */}
-                                    <div className={styles.userInfo}>
-                                        <div className={styles.sectionHeader}>
-                                            <h3 className={styles.sectionTitle}>Contact info</h3>
-                                        </div>
-                                        <div className={styles.infoGroup}>
-                                            <div className={styles.infoItem}>
-                                                <div className={styles.infoContent}>
-                                                    <label className={styles.infoLabel}>Name</label>
-                                                    {renderEditField('name', 'name')}
-                                                </div>
-                                                {editingField === 'name' ? (
-                                                    <EditActions field="name" />
-                                                ) : (
-                                                    <EditButton onClick={() => startEditing('name')} />
-                                                )}
-                                            </div>
-
-                                            <div className={styles.infoItem}>
-                                                <div className={styles.infoContent}>
-                                                    <label className={styles.infoLabel}>Email address</label>
-                                                    {renderEditField('email', 'email', 'email')}
-                                                </div>
-                                                {editingField === 'email' ? (
-                                                    <EditActions field="email" />
-                                                ) : (
-                                                    <EditButton onClick={() => startEditing('email')} />
-                                                )}
-                                            </div>
-
-                                            <div className={styles.infoItem}>
-                                                <div className={styles.infoContent}>
-                                                    <label className={styles.infoLabel}>Phone number</label>
-                                                    {renderEditField('phone', 'phone number', 'tel')}
-                                                </div>
-                                                {editingField === 'phone' ? (
-                                                    <EditActions field="phone" />
-                                                ) : (
-                                                    <EditButton onClick={() => startEditing('phone')} />
-                                                )}
+                                            <div className={styles.userInfo}>
+                                                <h2 className={styles.userName}>{formData.name}</h2>
+                                                <p className={styles.userEmail}>{formData.email}</p>
+                                                <p className={styles.userSince}>Member since 2024</p>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div className={styles.infoRow}>
-                                        <div className={styles.infoItem}>
-                                            <div className={styles.infoContent}>
-                                                <label className={styles.infoLabel}>Gender</label>
-                                                {renderEditField('gender', 'gender', 'select')}
-                                            </div>
-                                            {editingField === 'gender' ? (
-                                                <EditActions field="gender" />
-                                            ) : (
-                                                <EditButton onClick={() => startEditing('gender')} />
-                                            )}
-                                        </div>
-
-                                        <div className={styles.infoItem}>
-                                            <div className={styles.infoContent}>
-                                                <label className={styles.infoLabel}>Date of birth</label>
-                                                {renderEditField('birth', 'date of birth', 'date')}
-                                            </div>
-                                            {editingField === 'birth' ? (
-                                                <EditActions field="birth" />
-                                            ) : (
-                                                <EditButton onClick={() => startEditing('birth')} />
-                                            )}
-                                        </div>
+                                        <button className={styles.editAvatarBtn} onClick={handleEditAvatar}>
+                                            Edit Photo
+                                        </button>
                                     </div>
                                 </div>
 
-                                <div className={styles.divider}></div>
-
-                                <div className={styles.addressInfo}>
-                                    <div className={styles.sectionHeader}>
-                                        <h3 className={styles.sectionTitle}>Address</h3>
-                                    </div>
-                                    <div className={styles.infoGroup}>
-                                        <div className={styles.infoItem}>
-                                            <div className={styles.infoContent}>
-                                                <label className={styles.infoLabel}>Residential address</label>
-                                                {renderEditField('address', 'address')}
+                                {/* Profile Details */}
+                                <div className={styles.detailsGrid}>
+                                    {/* Personal Information */}
+                                    <div className={styles.detailSection}>
+                                        <div className={styles.sectionHeader}>
+                                            <div className={styles.sectionIcon}>👤</div>
+                                            <h3 className={styles.sectionTitle}>Personal Information</h3>
+                                        </div>
+                                        <div className={styles.sectionContent}>
+                                            <div className={styles.formGroup}>
+                                                <label className={styles.formLabel}>Full Name</label>
+                                                <div className={styles.formField}>
+                                                    {renderEditField('name', 'name')}
+                                                    {editingField === 'name' ? (
+                                                        <EditActions field="name" />
+                                                    ) : (
+                                                        <EditButton onClick={() => startEditing('name')} />
+                                                    )}
+                                                </div>
                                             </div>
-                                            {editingField === 'address' ? (
-                                                <EditActions field="address" />
-                                            ) : (
-                                                <EditButton onClick={() => startEditing('address')} />
-                                            )}
+
+                                            <div className={styles.formGroup}>
+                                                <label className={styles.formLabel}>Email Address</label>
+                                                <div className={styles.formField}>
+                                                    {renderEditField('email', 'email', 'email')}
+                                                    {editingField === 'email' ? (
+                                                        <EditActions field="email" />
+                                                    ) : (
+                                                        <EditButton onClick={() => startEditing('email')} />
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className={styles.formGroup}>
+                                                <label className={styles.formLabel}>Phone Number</label>
+                                                <div className={styles.formField}>
+                                                    {renderEditField('phone', 'phone number', 'tel')}
+                                                    {editingField === 'phone' ? (
+                                                        <EditActions field="phone" />
+                                                    ) : (
+                                                        <EditButton onClick={() => startEditing('phone')} />
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Additional Information */}
+                                    <div className={styles.detailSection}>
+                                        <div className={styles.sectionHeader}>
+                                            <div className={styles.sectionIcon}>📅</div>
+                                            <h3 className={styles.sectionTitle}>Additional Information</h3>
+                                        </div>
+                                        <div className={styles.sectionContent}>
+                                            <div className={styles.formRow}>
+                                                <div className={styles.formGroup}>
+                                                    <label className={styles.formLabel}>Gender</label>
+                                                    <div className={styles.formField}>
+                                                        {renderEditField('gender', 'gender', 'select')}
+                                                        {editingField === 'gender' ? (
+                                                            <EditActions field="gender" />
+                                                        ) : (
+                                                            <EditButton onClick={() => startEditing('gender')} />
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className={styles.formGroup}>
+                                                    <label className={styles.formLabel}>Date of Birth</label>
+                                                    <div className={styles.formField}>
+                                                        {renderEditField('birth', 'date of birth', 'date')}
+                                                        {editingField === 'birth' ? (
+                                                            <EditActions field="birth" />
+                                                        ) : (
+                                                            <EditButton onClick={() => startEditing('birth')} />
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Address Information */}
+                                    <div className={styles.detailSection}>
+                                        <div className={styles.sectionHeader}>
+                                            <div className={styles.sectionIcon}>🏠</div>
+                                            <h3 className={styles.sectionTitle}>Address Information</h3>
+                                        </div>
+                                        <div className={styles.sectionContent}>
+                                            <div className={styles.formGroup}>
+                                                <label className={styles.formLabel}>Residential Address</label>
+                                                <div className={styles.formField}>
+                                                    {renderEditField('address', 'address')}
+                                                    {editingField === 'address' ? (
+                                                        <EditActions field="address" />
+                                                    ) : (
+                                                        <EditButton onClick={() => startEditing('address')} />
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    }
-                    {activeTab === 'payment' &&
+                    )}
+
+                    {activeTab === 'payment' && (
                        <PaymentMethod user={user} />
-                    }
-                    {activeTab === 'security' &&
+                    )}
+
+                    {activeTab === 'security' && (
                        <div className={styles.securityContainer}>
-                           <h2>Security Settings</h2>
-                           <p>Change password and security preferences will be here.</p>
+                           <div className={styles.securityHeader}>
+                               <h1>Security Settings</h1>
+                               <p>Manage your password and security preferences</p>
+                           </div>
+                           <div className={styles.securityContent}>
+                               <div className={styles.securityCard}>
+                                   <div className={styles.securityIcon}>🔐</div>
+                                   <div className={styles.securityInfo}>
+                                       <h3>Password</h3>
+                                       <p>Last changed 2 days ago</p>
+                                   </div>
+                                   <button className={styles.securityBtn}>Change Password</button>
+                               </div>
+                               
+                               <div className={styles.securityCard}>
+                                   <div className={styles.securityIcon}>📱</div>
+                                   <div className={styles.securityInfo}>
+                                       <h3>Two-Factor Authentication</h3>
+                                       <p>Add an extra layer of security</p>
+                                   </div>
+                                   <button className={styles.securityBtn}>Enable 2FA</button>
+                               </div>
+                               
+                               <div className={styles.securityCard}>
+                                   <div className={styles.securityIcon}>🔔</div>
+                                   <div className={styles.securityInfo}>
+                                       <h3>Login Alerts</h3>
+                                       <p>Get notified of new sign-ins</p>
+                                   </div>
+                                   <button className={styles.securityBtn}>Manage Alerts</button>
+                               </div>
+                           </div>
                        </div>
-                    }
+                    )}
                 </div>
             </div>
 
-            {/* Modal Edit Avatar */}
+            {/* Avatar Modal */}
             {showAvatarModal && (
                 <div className={styles.modalOverlay}>
-                    <div className={styles.avatarModal}>
+                    <div className={styles.modal}>
                         <div className={styles.modalHeader}>
-                            <h3>Edit Profile Photo</h3>
+                            <h3>Update Profile Photo</h3>
                             <button
                                 className={styles.closeButton}
                                 onClick={closeAvatarModal}
@@ -530,12 +605,11 @@ const Profile = () => {
                                     onClick={() => fileInputRef.current?.click()}
                                     disabled={loading}
                                 >
-                                    {loading ? 'Uploading...' : 'Choose Photo'}
+                                    {loading ? 'Uploading...' : 'Choose New Photo'}
                                 </button>
                                 <p className={styles.uploadHint}>
                                     Supported formats: JPG, PNG, GIF • Max size: 5MB
                                 </p>
-                                
                             </div>
                         </div>
 
@@ -544,22 +618,22 @@ const Profile = () => {
                                 className={styles.removeBtn}
                                 disabled={loading || avatar === 'assets/images/avatar/avatar_default.png'}
                             >
-                                {loading ? 'Removing...' : 'Remove Photo'}
+                                Remove Current Photo
                             </button>
                             <div className={styles.actionButtons}>
                                 <button
-                                    className={styles.cancelModalBtn}
+                                    className={styles.cancelBtn}
                                     onClick={closeAvatarModal}
                                     disabled={loading}
                                 >
                                     Cancel
                                 </button>
                                 <button
-                                    className={styles.saveModalBtn}
+                                    className={styles.saveBtn}
                                     onClick={saveAvatar}
-                                    disabled={loading || (!selectedFile && previewUrl === '')}
+                                    disabled={loading || !selectedFile}
                                 >
-                                    {loading ? 'Saving...' : 'Save'}
+                                    {loading ? 'Saving...' : 'Save Changes'}
                                 </button>
                             </div>
                         </div>

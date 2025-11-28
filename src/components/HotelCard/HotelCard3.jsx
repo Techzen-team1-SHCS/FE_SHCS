@@ -71,7 +71,10 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                                 style={{ 
                                     color: 'inherit', 
                                     textDecoration: 'none',
-                                    transition: 'color 0.3s ease'
+                                    transition: 'color 0.3s ease',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical'
                                 }}
                                 onMouseOver={(e) => e.target.style.color = '#ffd700'}
                                 onMouseOut={(e) => e.target.style.color = '#ffffff'}
@@ -87,10 +90,9 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                                 lineHeight: '1.6',
                                 color: 'rgba(255,255,255,0.8)',
                                 fontSize: '14px',
-                                maxHeight: '4.8em',
-                                overflow: 'hidden',
+                                    
                                 display: '-webkit-box',
-                                WebkitLineClamp: 3,
+                                WebkitLineClamp: 2,
                                 WebkitBoxOrient: 'vertical'
                             }}
                         >
@@ -299,7 +301,10 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                                 style={{ 
                                     color: 'inherit', 
                                     textDecoration: 'none',
-                                    transition: 'color 0.3s ease'
+                                    transition: 'color 0.3s ease',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical'
                                 }}
                                 onMouseOver={(e) => e.target.style.color = '#ffd700'}
                                 onMouseOut={(e) => e.target.style.color = '#ffffff'}
@@ -315,10 +320,8 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                                 lineHeight: '1.6',
                                 color: 'rgba(255,255,255,0.8)',
                                 fontSize: '14px',
-                                maxHeight: '4.8em',
-                                overflow: 'hidden',
                                 display: '-webkit-box',
-                                WebkitLineClamp: 3,
+                                WebkitLineClamp: 2,
                                 WebkitBoxOrient: 'vertical'
                             }}
                         >

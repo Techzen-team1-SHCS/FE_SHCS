@@ -107,15 +107,19 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                 if (isLogin) {
                     const result = await authService.login(email, password);
 
-                    if (result.status === 200) {
-                        // 🔹 Lấy user và token đúng từ data
-                        const user = result.user; // authService.login() đã fix trả về data.user
-                        const token = result.token;
-
-                        if (!user || !token) {
-                            toast.error("Không lấy được dữ liệu người dùng. Vui lòng thử lại.");
-                            return;
-                        }
+                if (result.status === 200) {
+                    // 🔹 Lấy user và token đúng từ data
+                    const user = result.user; // authService.login() đã fix trả về data.user
+                    const token = result.token;
+                    
+                    if (!user || !token) {
+                        toast.error("Không lấy được dữ liệu người dùng. Vui lòng thử lại.");
+                        return;
+                    }
+                    if (user.role !== 0) {
+                        toast.error('Tài khoản không có quyền truy cập trang này');
+                        return
+                    }
 
                         // 🔹 Nếu muốn gọi API chi tiết user (có avatar_url)
                         const userRes = await authService.getUserById(user.id);
