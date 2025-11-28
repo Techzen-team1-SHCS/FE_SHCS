@@ -60,7 +60,7 @@ const Booking = () => {
                     <div key={hotel.id}>
                         <section
                             className="page-banner-area pt-50 pb-35 rel z-1 bgs-cover"
-                            style={{ backgroundImage: `url(${hotel.room.hotel.images?.[0]?.url})` }}
+                            style={{ backgroundImage: `url(${hotel?.room?.hotel?.images?.[0]?.url})` }}
                         >
                         <div className="container">
                             <div className="banner-inner text-white mb-50">
@@ -71,7 +71,7 @@ const Booking = () => {
                         <NavigationTabs hotelId={bookingId} currentStep={currentStep} />
                         <div className={styles.bookingContainer}>
                             <div className={styles.bookingLeft}>
-                                <img className={styles.bookingHotelImage} src={hotel.room.hotel.images?.[1]?.url}
+                                <img className={styles.bookingHotelImage} src={hotel?.room?.hotel?.images?.[1]?.url}
                                     alt={hotelData.name}></img>
                                 <div className={styles.bookingDatePicker}>
   {/* --- Chi tiết đặt phòng --- */}
@@ -94,8 +94,8 @@ const Booking = () => {
                                     {/* --- Tóm tắt giá --- */}
                                     <div className={styles.card}>
                                         <h4 className={styles.cardTitle}>Tóm tắt giá</h4>
-                                        <div className={styles.roomType}>{hotel.room.room_type}</div>
-                                        <div className={styles.price}>{Number(hotel.total_price).toLocaleString('vi-VN')} VND</div>
+                                        <div className={styles.roomType}>{hotel?.room?.room_type}</div>
+                                        <div className={styles.price}>{Number(hotel?.total_price).toLocaleString('vi-VN')} VND</div>
                                         <div className={styles.note}>Đã bao gồm thuế và phí</div>
                                     </div>
 

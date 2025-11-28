@@ -3,6 +3,7 @@ import styles from './HotelReviewsList.module.css';
 import { commentService } from '../../services/commentService';
 import { AuthContext } from '../../contexts/AuthContext'; // ← THÊM IMPORT
 import { toast } from 'react-toastify';
+import LoaderButton from '../Loading/LoaderButton';
 
 const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) => {
     const [replyTo, setReplyTo] = useState(null);
@@ -10,7 +11,7 @@ const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) =
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingContent, setEditingContent] = useState('');
-    
+    const [deletingCommentId, setDeletingCommentId] = useState(null);
     // 🎯 THÊM: Lấy user từ context để có data mới nhất
     const { user: currentUser } = useContext(AuthContext);
 
@@ -67,10 +68,10 @@ const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) =
         }
         setIsSubmitting(true);
         try {
-            const response = await commentService.postComment({ 
-                comment: newComment.trim(), 
-                parent_id: replyTo, 
-                maHotel: hotelId 
+            const response = await commentService.postComment({
+                comment: newComment.trim(),
+                parent_id: replyTo,
+                maHotel: hotelId
             });
             toast.success('Đã đăng bình luận thành công');
             setNewComment('');
@@ -117,6 +118,7 @@ const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) =
     const handleDeleteClick = async (commentId) => {
         const ok = window.confirm('Bạn có chắc muốn xóa bình luận này?');
         if (!ok) return;
+        setDeletingCommentId(commentId);
         setIsSubmitting(true);
         try {
             await commentService.deleteComment(commentId);
@@ -127,6 +129,7 @@ const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) =
             toast.error(err?.response?.data?.message || 'Xóa thất bại');
         } finally {
             setIsSubmitting(false);
+            setDeletingCommentId(null);
         }
     };
 
@@ -158,16 +161,16 @@ const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) =
                 {comments.map(comment => {
                     // 🎯 LẤY AVATAR MỚI NHẤT
                     const currentAvatar = getCurrentUserAvatar(comment.userId, comment.userAvatar);
-                    
+
                     return (
                         <div key={comment.id} className={reviewICard} style={{ marginBottom: 12, padding: 12, background: level === 0 ? '#fff' : '#f8f9fa', borderRadius: 8 }}>
                             <div className={reviewHeader} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                 <div style={{ display: 'flex', gap: 12 }}>
                                     {/* 🎯 SỬ DỤNG AVATAR MỚI NHẤT */}
-                                    <img 
-                                        src={currentAvatar} 
-                                        alt={comment.userName} 
-                                        className={userAvatar} 
+                                    <img
+                                        src={currentAvatar}
+                                        alt={comment.userName}
+                                        className={userAvatar}
                                         onError={(e) => {
                                             e.target.src = '/assets/images/avatar/avatar_default.png';
                                         }}
@@ -187,7 +190,12 @@ const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) =
                                 {currentUser && comment.userId === currentUser.id && (
                                     <div style={{ display: 'flex', gap: 8 }}>
                                         <button onClick={() => handleEditClick(comment)} style={{ background: 'none', border: 'none', color: '#007bff', cursor: 'pointer' }}>Sửa</button>
-                                        <button onClick={() => handleDeleteClick(comment.id)} style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer' }}>Xóa</button>
+                                        <button onClick={() => handleDeleteClick(comment.id)} style={{
+                                            background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                            minWidth: '40px'
+                                        }} disabled={deletingCommentId === comment.id}>{deletingCommentId === comment.id ? <LoaderButton /> : 'Xóa'}</button>
                                     </div>
                                 )}
                             </div>
