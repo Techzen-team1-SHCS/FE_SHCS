@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
+import { useBehavior } from "../../contexts/BehaviorContext";
 
 const HotelCard3 = ({ hotel, aosDelay, index }) => {
+    const {user}=useContext(AuthContext);
+    const { logBehavior } = useBehavior();
     const isContentFirst = index < 2;
     
     // Tính rating từ hotel_class (chia 10 và làm tròn 1 chữ số thập phân)
@@ -14,7 +18,12 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
     
     // Lấy styles
     const hotelStyles = hotel.styles ? hotel.styles.map(style => style.style) : [];
-
+    const handleBookClick=()=>{
+        logBehavior("book",{
+            userId:user?.id || null,
+            hotelId:hotel?.id
+        })
+    }
     // Format description - giới hạn 3 dòng
     const formatDescription = (desc) => {
         if (!desc) return "";
@@ -22,7 +31,7 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
         const shortDesc = lines.slice(0, 3).join('. ');
         return lines.length > 3 ? `${shortDesc}...` : shortDesc;
     };
-
+   
     return (
         <div className="col-xxl-6 col-xl-8 col-lg-10">
             <div
@@ -171,6 +180,7 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                                 <span style={{ color: '#ffd700' }}>{hotel.price_formatted} VND</span>/per night
                             </span>
                             <a 
+                                onClick={handleBookClick}
                                 href={`/booking/${hotel.id}`} 
                                 className="read-more"
                                 style={{
@@ -399,7 +409,7 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                             >
                                 <span style={{ color: '#ffd700' }}>{hotel.price_formatted} VND</span>/per night
                             </span>
-                            <a 
+                            <a  onClick={handleBookClick}
                                 href={`/booking/${hotel.id}`} 
                                 className="read-more"
                                 style={{

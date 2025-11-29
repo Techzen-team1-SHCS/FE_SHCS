@@ -317,9 +317,8 @@ const Profile = () => {
                 <div className={styles.sidebar}>
                     <div className={styles.logo}>
                         <Link to="/">
-                            <div className={styles.logoContainer}>
-                                <img src="/assets/images/logos/logo.png" alt="Logo" className={styles.logoImage} />
-                                <h4 className={styles.logoText}>SHCS</h4>
+                            <div className={styles.logoContainer}  style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}}>
+                                <img src="/assets/images/logos/logo.png" alt="Logo" className={styles.logoImage} style={{marginTop:'30px'}}/>
                             </div>
                         </Link>
                     </div>

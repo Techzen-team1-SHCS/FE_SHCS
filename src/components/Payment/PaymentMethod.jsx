@@ -32,10 +32,7 @@ const PaymentMethod = ({ user }) => {
                 
                 // Fetch user data
                 if (user?.id) {
-                    console.log('🔍 Fetching user with ID:', user.id);
                     const userResponse = await authService.getUserById(user.id);
-                    console.log('👤 User response:', userResponse);
-                    
                     setUserData(userResponse);
                 }
                 
@@ -48,7 +45,7 @@ const PaymentMethod = ({ user }) => {
         
         fetchPayment();
     }, [user?.id]);
-
+    
     // Filter payments based on active filter
     const filteredPayments = payments.filter(payment => {
         if (activeFilter === 'all') return true;

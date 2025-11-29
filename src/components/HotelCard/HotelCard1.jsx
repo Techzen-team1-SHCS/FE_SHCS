@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './Style.css'
 const HotelCard1 = ({ topHotel, aosDelay }) => {
     const navigate=useNavigate();
@@ -35,9 +35,9 @@ const HotelCard1 = ({ topHotel, aosDelay }) => {
                     <span className="price">
                         <span>{topHotel.price}</span>/per person
                     </span>
-                    <a href="/HotelDetail" className="read-more">
+                    <Link to={`/HotelDetail/${topHotel.id}`} className="read-more">
                         Book Now <i className="fal fa-angle-right"></i>
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>

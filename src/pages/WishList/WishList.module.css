@@ -1,125 +1,574 @@
-.container{
-    width: 100%;
-    height: auto;
-}
-.banner{
-    width: 100%;
-    height: 400px;
-}
-.content{
-    width: 1200px;
-    margin: 0 auto;
-    padding: 20px 0;
-}
-.content1{
-    display: flex;
-    gap: 20px;
-    flex-direction: column;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 50px;
-}
-.TabOption {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  flex-wrap: wrap;
-  background-color: #ddd;
-  border-radius: 20px;
+.container {
+  min-height: 100vh;
+  background: #f8fafc;
 }
 
-.option {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 8px 16px;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background-color: #f8f9fa;
-  margin: 10px;
-}
-
-.option:hover {
-  background-color: #e9ecef;
-}
-
-.active {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-.content2{
-  width: 100%;
-  height: auto;
-  display: grid;
-  gap: 20px;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-}
-.card{
-    border: 1px solid rgb(247, 243, 243);
-    width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-}
-.img{
+/* Hero Banner */
+.heroBanner {
   position: relative;
   width: 100%;
-  height: auto;
-  
+  height: 400px;
+  overflow: hidden;
 }
-.img img{
+
+.bannerImage {
   width: 100%;
-  height: 250px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  height: 100%;
   object-fit: cover;
 }
-.rating {
+
+.heroOverlay {
   position: absolute;
-  top: 10px;       /* cách trên 10px */
-  right: 10px;     /* cách phải 10px */
-  background-color: rgba(0,0,0,0.6); /* nền mờ để nổi bật */
-  color: yellow;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(99, 102, 241, 0.8) 100%);
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  text-align: center;
+  color: white;
 }
-.contentCard{
-  width: 90%;
-  padding: 10px 0;
+
+.heroContent {
+  max-width: 600px;
+  padding: 2rem;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.heroSubtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.wishlistStats {
+  display: flex;
+  justify-content: center;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+}
+
+.statIcon {
+  color: #F472B6;
+}
+
+.statNumber {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* Main Content */
+.mainContent {
+  max-width: 1200px;
   margin: 0 auto;
-} 
-.footerCard{
-  margin-top: 20px;
-  width: 100%;
+  padding: 2rem;
+}
+
+/* Content Header */
+.contentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.headerText h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.headerText p {
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+.filterToggle {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.filterToggle:hover {
+  background: #2563eb;
+}
+
+/* Filter Section */
+.filterSection {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.filterHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  margin-bottom: 1.5rem;
 }
-.price{
-  font-size: 20px;
+
+.filterHeader h3 {
+  font-size: 1.25rem;
   font-weight: 600;
-  flex: 1;
+  color: #1e293b;
 }
-.btn{
-  flex: 1.3;
+
+.selectedCount {
+  background: #3b82f6;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
-.description{
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;  
+
+.filterOptions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+.filterOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.filterOption:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.filterOptionActive {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.optionContent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.optionStar {
+  font-size: 0.875rem;
+}
+
+.optionLabel {
+  font-size: 0.9rem;
+}
+
+.optionPlus {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Hotels Grid */
+.hotelsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.loaderContainer {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+/* Empty State */
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.emptyHeart {
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+}
+
+.emptyState h3 {
+  font-size: 1.5rem;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+.emptyState p {
+  color: #64748b;
+  margin-bottom: 2rem;
+}
+
+.exploreButton {
+  background: #3b82f6;
+  color: white;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.exploreButton:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+}
+
+/* Hotel Card */
+.hotelCard {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.hotelCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Image */
+.cardImage {
+  position: relative;
+  height: 200px;
   overflow: hidden;
 }
-h3{
+
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.hotelCard:hover .cardImage img {
+  transform: scale(1.1);
+}
+
+.cardOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem;
+}
+
+.ratingBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  backdrop-filter: blur(10px);
+}
+
+.ratingStar {
+  font-size: 0.75rem;
+}
+
+.removeButton {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.removeButton:hover {
+  background: #ef4444;
+  transform: scale(1.1);
+}
+
+.removeIcon {
+  color: #ef4444;
+  transition: color 0.3s ease;
+}
+
+.removeButton:hover .removeIcon {
+  color: white;
+}
+
+.ratingText {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Card Content */
+.cardContent {
+  padding: 1.5rem;
+}
+
+.hotelName {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.locationIcon {
+  color: #ef4444;
+  font-size: 0.875rem;
+}
+
+.description {
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
   display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;  
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Card Footer */
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.priceSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.priceLabel {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #3b82f6;
+  line-height: 1;
+}
+
+.priceNote {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.detailButton {
+  background: #10b981;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.detailButton:hover {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+/* Quick Actions */
+.quickActions {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.quickActions h3 {
+  font-size: 1.25rem;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.quickAction {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #475569;
+  font-weight: 500;
+}
+
+.quickAction:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  transform: translateY(-2px);
+}
+
+.actionIcon {
+  font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 2rem;
+  }
+  
+  .mainContent {
+    padding: 1rem;
+  }
+  
+  .contentHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .filterToggle {
+    display: flex;
+  }
+  
+  .filterSection {
+    display: none;
+  }
+  
+  .filterSectionOpen {
+    display: block;
+  }
+  
+  .hotelsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .filterOptions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+  }
+  
+  .cardFooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .actionButtons {
+    width: 100%;
+  }
+  
+  .detailButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroBanner {
+    height: 300px;
+  }
+  
+  .heroTitle {
+    font-size: 1.75rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+  
+  .filterOptions {
+    grid-template-columns: 1fr;
+  }
 }

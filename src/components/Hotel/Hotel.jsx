@@ -25,7 +25,7 @@ const Hotel = ({
   const [isZoomed, setIsZoomed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const handleBookClick = () => {
-    logBehavior("click", {
+    logBehavior("book", {
       userId: user?.id || null,
       hotelId: id,
       hotelName: title,
@@ -73,7 +73,7 @@ const Hotel = ({
   const handleZoomImage = () => {
     setIsZoomed(!isZoomed);
     
-    logBehavior("zoom_image", {
+    logBehavior("click", {
       userId: user?.id || null,
       hotelId: id,
       hotelName: title,
@@ -85,6 +85,12 @@ const Hotel = ({
     if (e.target.classList.contains('image-zoom-overlay')) {
       setIsZoomed(false);
     }
+    logBehavior("click", {
+      userId: user?.id || null,
+      hotelId: id,
+      hotelName: title,
+      action: isZoomed ? "zoom_out" : "zoom_in"
+    });
   };
 
   return (

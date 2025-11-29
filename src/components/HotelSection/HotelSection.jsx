@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import HotelCard from "../HotelCard/HotelCard1";
 import HotelCard3 from "../HotelCard/HotelCard3";
 import { hotelService } from "../../services/hotelService";
 
@@ -103,11 +102,11 @@ const HotelSection = () => {
                 <span className="count-text plus" data-speed="3000" data-stop="34500">
                   0
                 </span>{" "}
-                most popular experience you'll remember
+                most popular experience your will remember
               </p>
             </div>
           </div>
-        </div>
+        </div> 
 
         <div className="row justify-content-center">
           {hotelsWithDelay.map((hotel, index) => (
@@ -130,6 +129,7 @@ const HotelSection = () => {
               <span data-hover="Explore More Hotel">Explore More Hotel</span>
               <i className="fal fa-arrow-right"></i>
             </button>
+
           </div>
         )}
       </div>

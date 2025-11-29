@@ -27,7 +27,7 @@ const ManageBooking = () => {
             case "active":
                 return booking.status === "pending";
             case "past":
-                return booking.status === "confirmed";
+                return booking.status === "completed";
             case "cancelled":
                 return booking.status === "cancelled";
             default:
@@ -38,7 +38,7 @@ const ManageBooking = () => {
     // Tính toán stats
     useEffect(() => {
         const activeCount = allBookings.filter(b => b.status === "pending").length;
-        const pastCount = allBookings.filter(b => b.status === "confirmed").length;
+        const pastCount = allBookings.filter(b => b.status === "completed").length;
         const cancelledCount = allBookings.filter(b => b.status === "cancelled").length;
         
         setStats({
@@ -99,6 +99,47 @@ const ManageBooking = () => {
         }
     };
 
+    const getStatusConfig = (status) => {
+        switch (status) {
+            case "pending":
+                return {
+                    label: "Đang chờ xác nhận",
+                    icon: "⏳",
+                    color: "#FFA500",
+                    bgColor: "#FFF9E6",
+                    borderColor: "#FFD700",
+                    badgeStyle: styles.pendingBadge
+                };
+            case "completed":
+                return {
+                    label: "Đã hoàn thành",
+                    icon: "✅",
+                    color: "#10B981",
+                    bgColor: "#ECFDF5",
+                    borderColor: "#34D399",
+                    badgeStyle: styles.completedBadge
+                };
+            case "cancelled":
+                return {
+                    label: "Đã hủy",
+                    icon: "❌",
+                    color: "#EF4444",
+                    bgColor: "#FEF2F2",
+                    borderColor: "#FCA5A5",
+                    badgeStyle: styles.cancelledBadge
+                };
+            default:
+                return {
+                    label: "Không xác định",
+                    icon: "❓",
+                    color: "#6B7280",
+                    bgColor: "#F3F4F6",
+                    borderColor: "#D1D5DB",
+                    badgeStyle: styles.unknownBadge
+                };
+        }
+    };
+
     useEffect(() => {
         fetchAllBookings();
     }, [user]);
@@ -110,25 +151,18 @@ const ManageBooking = () => {
     return (
         <div className={styles.pageWrapper}>
             {/* Header Section */}
-            <div >
-                <img style={{width:'100%', height:'500px', overflow:'hidden',objectFit:'center'}} src="assets/images/destinations/destination-details4.jpg" alt="Booking Header" />
-            </div>
-            <div className={styles.headerSection}>
-                <div className={styles.headerContent}>
-                    <div className={styles.headerText}>
-                        <h1 className={styles.headerTitle}>Quản lý Đặt phòng</h1>
-                        <p className={styles.headerSubtitle}>
+            <div className={styles.heroBanner}>
+                <img 
+                    src="assets/images/destinations/destination-details4.jpg" 
+                    alt="Booking Header" 
+                    className={styles.heroImage}
+                />
+                <div className={styles.heroOverlay}>
+                    <div className={styles.heroContent}>
+                        <h1 className={styles.heroTitle}>Quản lý Đặt phòng</h1>
+                        <p className={styles.heroSubtitle}>
                             Theo dõi và quản lý tất cả các đặt phòng của bạn tại một nơi
                         </p>
-                    </div>
-                    <div className={styles.headerStats}>
-                        <div className={styles.statItem}>
-                            <div className={styles.statIcon}>📊</div>
-                            <div className={styles.statInfo}>
-                                <div className={styles.statNumber}>{allBookings.length}</div>
-                                <div className={styles.statLabel}>Tổng đặt phòng</div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -142,14 +176,14 @@ const ManageBooking = () => {
                         onClick={() => setActiveTab("active")}
                     >
                         <div className={styles.statCardContent}>
-                            <div className={styles.statCardIcon}>⏳</div>
+                            <div className={styles.statCardIcon} style={{background: '#FFF9E6', color: '#FFA500'}}>⏳</div>
                             <div className={styles.statCardInfo}>
                                 <div className={styles.statCardNumber}>{stats.active}</div>
                                 <div className={styles.statCardLabel}>Đang chờ</div>
                             </div>
-                            <div className={styles.statCardBadge}>
-                                {stats.active > 0 && <span className={styles.liveDot}></span>}
-                            </div>
+                            {stats.active > 0 && (
+                                <div className={styles.pulseIndicator}></div>
+                            )}
                         </div>
                     </div>
 
@@ -158,7 +192,7 @@ const ManageBooking = () => {
                         onClick={() => setActiveTab("past")}
                     >
                         <div className={styles.statCardContent}>
-                            <div className={styles.statCardIcon}>✅</div>
+                            <div className={styles.statCardIcon} style={{background: '#ECFDF5', color: '#10B981'}}>✅</div>
                             <div className={styles.statCardInfo}>
                                 <div className={styles.statCardNumber}>{stats.past}</div>
                                 <div className={styles.statCardLabel}>Hoàn thành</div>
@@ -171,7 +205,7 @@ const ManageBooking = () => {
                         onClick={() => setActiveTab("cancelled")}
                     >
                         <div className={styles.statCardContent}>
-                            <div className={styles.statCardIcon}>❌</div>
+                            <div className={styles.statCardIcon} style={{background: '#FEF2F2', color: '#EF4444'}}>❌</div>
                             <div className={styles.statCardInfo}>
                                 <div className={styles.statCardNumber}>{stats.cancelled}</div>
                                 <div className={styles.statCardLabel}>Đã hủy</div>
@@ -198,6 +232,36 @@ const ManageBooking = () => {
                                 </span>
                             </button>
                         ))}
+                    </div>
+                </div>
+
+                {/* Status Header */}
+                <div className={styles.statusHeader}>
+                    <div className={styles.statusInfo}>
+                        {(() => {
+                            const config = getStatusConfig(activeTab === "active" ? "pending" : 
+                                                         activeTab === "past" ? "completed" : "cancelled");
+                            return (
+                                <>
+                                    <div 
+                                        className={styles.statusIndicator}
+                                        style={{
+                                            backgroundColor: config.bgColor,
+                                            borderColor: config.borderColor,
+                                            color: config.color
+                                        }}
+                                    >
+                                        <span className={styles.statusIcon}>{config.icon}</span>
+                                        <span className={styles.statusLabel}>{config.label}</span>
+                                    </div>
+                                    <div className={styles.statusDescription}>
+                                        {activeTab === "active" && "Các đặt phòng đang chờ xác nhận từ khách sạn"}
+                                        {activeTab === "past" && "Các đặt phòng đã được hoàn thành"}
+                                        {activeTab === "cancelled" && "Các đặt phòng đã bị hủy"}
+                                    </div>
+                                </>
+                            );
+                        })()}
                     </div>
                 </div>
 
@@ -228,7 +292,7 @@ const ManageBooking = () => {
                             <div className={styles.emptyStateAction}>
                                 <button 
                                     className={styles.exploreButton}
-                                    onClick={() => navigate('/hotels')}
+                                    onClick={() => navigate('/HotelList')}
                                 >
                                     Khám phá khách sạn
                                 </button>
@@ -236,15 +300,38 @@ const ManageBooking = () => {
                         </div>
                     ) : (
                         <div className={styles.bookingsGrid}>
-                            {filteredBookings.map((booking) => (
-                                <ManageBookingCard
-                                    key={booking.id}
-                                    booking={booking}
-                                    onViewDetails={handleViewDetails}
-                                    onReBook={handleReBook}
-                                    onCancelSuccess={fetchAllBookings}
-                                />
-                            ))}
+                            {filteredBookings.map((booking) => {
+                                const statusConfig = getStatusConfig(booking.status);
+                                return (
+                                    <div 
+                                        key={booking.id} 
+                                        className={styles.bookingCardWrapper}
+                                        style={{
+                                            borderLeft: `4px solid ${statusConfig.borderColor}`,
+                                            backgroundColor: statusConfig.bgColor
+                                        }}
+                                    >
+                                        <div className={styles.bookingStatusHeader}>
+                                            <div className={`${styles.statusBadge} ${statusConfig.badgeStyle}`}>
+                                                <span className={styles.badgeIcon}>{statusConfig.icon}</span>
+                                                <span className={styles.badgeText}>{statusConfig.label}</span>
+                                            </div>
+                                            <div className={styles.bookingDate}>
+                                                {new Date(new Date(booking.check_out).setDate(
+                                                    new Date(booking.check_out).getDate() + 1
+                                                )).toLocaleDateString('vi-VN')}
+                                            </div>
+                                        </div>
+                                        <ManageBookingCard
+                                            booking={booking}
+                                            onViewDetails={handleViewDetails}
+                                            onReBook={handleReBook}
+                                            onCancelSuccess={fetchAllBookings}
+                                            statusConfig={statusConfig}
+                                        />
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
                 </div>

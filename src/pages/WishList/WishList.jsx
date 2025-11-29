@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styles from './WishList.module.css';
-import { FaStar } from 'react-icons/fa';
+import { FaStar, FaMapMarkerAlt, FaHeart, FaRegHeart, FaFilter } from 'react-icons/fa';
 import Button from '../../components/Button/Button';
 import { wishListService } from '../../services/wishListService';
 import Loader from '../../components/Loading/Loader';
@@ -12,26 +12,26 @@ const WishList = () => {
   const [wishList, setWishList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
   const navigate = useNavigate();
+  
   const options = [
-  { label: 'Tất cả', value: 0, exact: false },
-  { label: '5.0', value: 5.0, exact: true },
-  { label: '4.5+', value: 4.5, exact: false },
-  { label: '4.0', value: 4.0, exact: true },
-  { label: '3.5', value: 3.5, exact: true },
-  { label: '3.0', value: 3.0, exact: true },
-];
+    { label: 'Tất cả', value: 0, exact: false },
+    { label: '5.0', value: 5.0, exact: true },
+    { label: '4.5+', value: 4.5, exact: false },
+    { label: '4.0+', value: 4.0, exact: false },
+    { label: '3.5+', value: 3.5, exact: false },
+    { label: '3.0+', value: 3.0, exact: false },
+  ];
 
-  const handleRemove = async (wishListId) => {
+  const handleRemove = async (wishListId, e) => {
+    e.stopPropagation();
     try {
       await wishListService.removeFromWishList(wishListId);
-
-      // cập nhật danh sách sau khi xóa
       const updated = wishList.filter(item => item.id !== wishListId);
       setWishList(updated);
       setFilteredList(updated);
-
-      toast.success('Xóa thành công');
+      toast.success('Đã xóa khỏi danh sách yêu thích');
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'Xóa thất bại');
@@ -40,28 +40,27 @@ const WishList = () => {
 
   const handleClick = (value) => {
     setSelected(value);
+    setShowFilter(false);
   };
 
   // Lọc theo rating
   useEffect(() => {
-  if (selected === 0) {
-    setFilteredList(wishList);
-  } else {
-    const optionSelected = options.find(opt => opt.value === selected);
-
-    setFilteredList(
-      wishList.filter(item => {
-        const rating = item.hotel.hotel_class / 10;
-        if (optionSelected.exact) {
-          return rating === selected; // đúng giá trị
-        } else {
-          return rating >= selected; // >= giá trị
-        }
-      })
-    );
-  }
-}, [selected, wishList]);
-
+    if (selected === 0) {
+      setFilteredList(wishList);
+    } else {
+      const optionSelected = options.find(opt => opt.value === selected);
+      setFilteredList(
+        wishList.filter(item => {
+          const rating = item.hotel.hotel_class / 10;
+          if (optionSelected.exact) {
+            return rating === selected;
+          } else {
+            return rating >= selected;
+          }
+        })
+      );
+    }
+  }, [selected, wishList]);
 
   // Lấy wishlist từ API
   useEffect(() => {
@@ -70,7 +69,7 @@ const WishList = () => {
       try {
         const response = await wishListService.getWishList();
         setWishList(response.data);
-        setFilteredList(response.data); // cần thiết
+        setFilteredList(response.data);
       } catch (error) {
         console.error('Failed to fetch wish list:', error);
       } finally {
@@ -81,77 +80,226 @@ const WishList = () => {
     fetchWishList();
   }, []);
 
-  const { container, banner, content, content1, TabOption, option, active,
-    content2, card, img, contentCard, footerCard, price, btn, description, rating 
-  } = styles;
+  const getRatingColor = (rating) => {
+    if (rating >= 4.5) return '#10B981';
+    if (rating >= 4.0) return '#F59E0B';
+    if (rating >= 3.5) return '#EF4444';
+    return '#6B7280';
+  };
+
+  const getRatingText = (rating) => {
+    if (rating >= 4.5) return 'Xuất sắc';
+    if (rating >= 4.0) return 'Tốt';
+    if (rating >= 3.5) return 'Khá';
+    return 'Trung bình';
+  };
 
   return (
-    <div className={container}>
-      <div className={banner}>
+    <div className={styles.container}>
+      {/* Hero Banner */}
+      <div className={styles.heroBanner}>
         <img
           src="https://cdn6.agoda.net/images/WebCampaign/20251103_ss_doubleday1111/home_banner_web/vi-vn.png"
-          alt=""
-          style={{ width: '100%', objectFit: 'cover', height: '400px', marginBottom: '50px' }}
+          alt="Wishlist Banner"
+          className={styles.bannerImage}
         />
+        <div className={styles.heroOverlay}>
+          <div className={styles.heroContent}>
+            <h1 className={styles.heroTitle}>Danh sách yêu thích</h1>
+            <p className={styles.heroSubtitle}>
+              Khám phá những khách sạn bạn đã lưu lại cho chuyến đi sắp tới
+            </p>
+            <div className={styles.wishlistStats}>
+              <div className={styles.statItem}>
+                <FaHeart className={styles.statIcon} />
+                <span className={styles.statNumber}>{wishList.length}</span>
+                <span className={styles.statLabel}>khách sạn đã lưu</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className={content}>
-        <div className={content1}>
-          <h3>Khách sạn yêu thích của bạn</h3>
-          <p>Danh sách các khách sạn yêu thích</p>
+      {/* Main Content */}
+      <div className={styles.mainContent}>
+        {/* Header Section */}
+        <div className={styles.contentHeader}>
+          <div className={styles.headerText}>
+            <h2>Khách sạn yêu thích của bạn</h2>
+            <p>Danh sách các khách sạn bạn đã lưu lại để tham khảo sau</p>
+          </div>
+          
+          {/* Filter Toggle for Mobile */}
+          <button 
+            className={styles.filterToggle}
+            onClick={() => setShowFilter(!showFilter)}
+          >
+            <FaFilter />
+            Lọc theo rating
+          </button>
+        </div>
 
-          <div className={TabOption}>
+        {/* Filter Options */}
+        <div className={`${styles.filterSection} ${showFilter ? styles.filterSectionOpen : ''}`}>
+          <div className={styles.filterHeader}>
+            <h3>Lọc theo đánh giá</h3>
+            <span className={styles.selectedCount}>
+              {filteredList.length} khách sạn
+            </span>
+          </div>
+          
+          <div className={styles.filterOptions}>
             {options.map((opt) => (
-              <div
+              <button
                 key={opt.value}
-                className={`${option} ${selected === opt.value ? active : ''}`}
+                className={`${styles.filterOption} ${selected === opt.value ? styles.filterOptionActive : ''}`}
                 onClick={() => handleClick(opt.value)}
               >
-                {opt.label !== 'Tất cả' && <FaStar size={14} />}
-                {opt.label}
-              </div>
+                <div className={styles.optionContent}>
+                  {opt.label !== 'Tất cả' && (
+                    <FaStar 
+                      className={styles.optionStar} 
+                      color={selected === opt.value ? '#FFFFFF' : '#F59E0B'} 
+                    />
+                  )}
+                  <span className={styles.optionLabel}>{opt.label}</span>
+                </div>
+                {opt.label !== 'Tất cả' && !opt.exact && (
+                  <span className={styles.optionPlus}>+</span>
+                )}
+              </button>
             ))}
           </div>
         </div>
 
-        <div className={content2}>
-          {loading && <Loader />}
-          {!loading && filteredList.length === 0 && <a href='/HotelList'>Chưa có khách sạn yêu thích</a>}
-
-          {!loading && filteredList.map((item) => (
-            <div key={item.id} className={card} onClick={()=>navigate(`/hotel/${item.hotel.id}`)} style={{cursor:'pointer'}}>
-              <div className={img}>
-                <div className={rating}>
-                  <i className="fas fa-star"></i> {(item.hotel.hotel_class / 10).toFixed(1)}
-                </div>
-                <img src={item.hotel?.images[1]?.url} alt={item.title} />
+        {/* Hotel Cards Grid */}
+        <div className={styles.hotelsGrid}>
+          {loading && (
+            <div className={styles.loaderContainer}>
+              <Loader />
+            </div>
+          )}
+          
+          {!loading && filteredList.length === 0 && (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyHeart}>
+                <FaRegHeart size={64} />
               </div>
+              <h3>Chưa có khách sạn yêu thích</h3>
+              <p>Hãy khám phá và lưu lại những khách sạn bạn yêu thích</p>
+              <Button 
+                onClick={() => navigate('/HotelList')}
+                props="Khám phá khách sạn ngay"
+                className={styles.exploreButton}
+              />
+            </div>
+          )}
 
-              <div className={contentCard}>
-                <h3>{item.hotel.name}</h3>
-                <p className="fal fa-map-marker-alt"> {item.hotel.province}</p>
-                <span className={description}>{item.hotel.text}</span>
+          {!loading && filteredList.map((item) => {
+            const rating = item.hotel.hotel_class / 10;
+            const ratingColor = getRatingColor(rating);
+            const ratingText = getRatingText(rating);
+            
+            return (
+              <div 
+                key={item.id} 
+                className={styles.hotelCard}
+                onClick={() => navigate(`/hotel/${item.hotel.id}`)}
+              >
+                {/* Card Image */}
+                <div className={styles.cardImage}>
+                  <img 
+                    src={item.hotel?.images[1]?.url || item.hotel?.images[0]?.url} 
+                    alt={item.hotel.name} 
+                  />
+                  <div className={styles.cardOverlay}>
+                    {/* Rating Badge */}
+                    <div 
+                      className={styles.ratingBadge}
+                      style={{ backgroundColor: ratingColor }}
+                    >
+                      <FaStar className={styles.ratingStar} />
+                      <span className={styles.ratingValue}>{rating.toFixed(1)}</span>
+                    </div>
+                    
+                    {/* Remove Button */}
+                    <button 
+                      className={styles.removeButton}
+                      onClick={(e) => handleRemove(item.id, e)}
+                      title="Xóa khỏi danh sách yêu thích"
+                    >
+                      <FaHeart className={styles.removeIcon} />
+                    </button>
+                  </div>
+                  
+                  {/* Rating Text */}
+                  <div className={styles.ratingText}>
+                    {ratingText}
+                  </div>
+                </div>
 
-                <div className={footerCard}>
-                  <span className={price}>
-                    {Number(item.hotel.price).toLocaleString('vi-VN')} ₫
-                  </span>
+                {/* Card Content */}
+                <div className={styles.cardContent}>
+                  <h3 className={styles.hotelName}>{item.hotel.name}</h3>
+                  
+                  <div className={styles.location}>
+                    <FaMapMarkerAlt className={styles.locationIcon} />
+                    <span>{item.hotel.province}</span>
+                  </div>
+                  
+                  <p className={styles.description}>
+                    {item.hotel.text || 'Khách sạn tiện nghi với đầy đủ dịch vụ hiện đại'}
+                  </p>
 
-                  <div className={btn}>
-                    <Button 
-                      onClick={(e) => {
-                        e.stopPropagation(); // <--- chặn event nổi lên div
-                        handleRemove(item.id);
-                      }} 
-                      props="Xóa Khách sạn" 
-                    />
+                  {/* Price & Action */}
+                  <div className={styles.cardFooter}>
+                    <div className={styles.priceSection}>
+                      <span className={styles.priceLabel}>Giá chỉ từ</span>
+                      <span className={styles.price}>
+                        {Number(item.hotel.price).toLocaleString('vi-VN')} ₫
+                      </span>
+                      <span className={styles.priceNote}>/đêm</span>
+                    </div>
+                    
+                    <div className={styles.actionButtons}>
+                      <Button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/hotel/${item.hotel.id}`);
+                        }}
+                        props="Xem chi tiết"
+                        className={styles.detailButton}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-
-            </div>
-          ))}
+            );
+          })}
         </div>
+
+        {/* Quick Actions */}
+        {!loading && filteredList.length > 0 && (
+          <div className={styles.quickActions}>
+            <h3>Thao tác nhanh</h3>
+            <div className={styles.actionButtons}>
+              <button 
+                className={styles.quickAction}
+                onClick={() => navigate('/HotelList')}
+              >
+                <FaHeart className={styles.actionIcon} />
+                <span>Thêm khách sạn yêu thích</span>
+              </button>
+              <button 
+                className={styles.quickAction}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                <FaStar className={styles.actionIcon} />
+                <span>Lên đầu trang</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
