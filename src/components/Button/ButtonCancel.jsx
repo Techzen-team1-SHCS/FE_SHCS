@@ -37,7 +37,7 @@ const StyledWrapper = styled.div`
 
   button .icon {
    position: absolute;
-   border-left: 1px solid #c41b1b;
+   border-left: 1px solid #fff;
    transform: translateX(110px);
    height: 40px;
    width: 40px;

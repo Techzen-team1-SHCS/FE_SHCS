@@ -27,6 +27,7 @@ import HotelManage from './pages/Admin/HotelManage/HotelManage';
 import UserManage from './pages/Admin/UserManage/UserManage';
 import LoginPage from './pages/Admin/LoginPage/LoginPage';
 import AdminPrivateRoute from './routes/AdminPrivateRoute';
+import Help from './pages/Help/Help';
 // import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -52,6 +53,8 @@ function App() {
             <Route path="/my-bookings" element={<ManageBooking />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/wishList" element={<WishList />} />
+            <Route path="/help" element={<Help />} />
+            
             {/* có thể thêm các page khác cần layout */}
           </Route>
           {/* Route admin */}

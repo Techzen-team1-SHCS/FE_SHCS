@@ -26,7 +26,8 @@ const Profile = () => {
         phone: '',
         gender: '',
         birth: '',
-        address: ''
+        address: '',
+        password: ''
     });
     
     // State cho loading và thông báo
@@ -76,7 +77,8 @@ const Profile = () => {
                 phone: user.phone || '',
                 gender: user.gender || '',
                 birth: user.birth || '',
-                address: user.address || ''
+                address: user.address || '',
+                password: user.password || ''
             });
             
             const newAvatar = user.image || user.avatar_url || 'assets/images/avatar/avatar_default.png';
@@ -193,7 +195,8 @@ const Profile = () => {
             phone: user?.phone || '',
             gender: user?.gender || '',
             birth: user?.birth || '',
-            address: user?.address || ''
+            address: user?.address || '',
+            password: user?.password || ''
         });
     };
 
@@ -534,13 +537,79 @@ const Profile = () => {
                            </div>
                            <div className={styles.securityContent}>
                                <div className={styles.securityCard}>
-                                   <div className={styles.securityIcon}>🔐</div>
-                                   <div className={styles.securityInfo}>
-                                       <h3>Password</h3>
-                                       <p>Last changed 2 days ago</p>
-                                   </div>
-                                   <button className={styles.securityBtn}>Change Password</button>
-                               </div>
+                                <div className={styles.securityIcon}>🔐</div>
+                                <div className={styles.securityInfo}>
+                                    <h3>Password</h3>
+                                    <p>Last changed 2 days ago</p>
+                                </div>
+                                
+                                {/* Hiển thị button Change Password khi KHÔNG đang edit */}
+                                {editingField !== 'password' ? (
+                                    <button 
+                                        className={styles.securityBtn}
+                                        onClick={() => startEditing('password')}
+                                    >
+                                        Change Password
+                                    </button>
+                                ) : (
+                                    /* Hiển thị form change password khi ĐANG edit */
+                                    <div className={styles.passwordForm}>
+                                        <div className={styles.formField}>
+                                            <label>Current Password</label>
+                                            <input
+                                                type="password"
+                                                placeholder="Enter current password"
+                                                value={formData.currentPassword || ''}
+                                                onChange={(e) => setFormData({
+                                                    ...formData,
+                                                    currentPassword: e.target.value
+                                                })}
+                                            />
+                                        </div>
+                                        
+                                        <div className={styles.formField}>
+                                            <label>New Password</label>
+                                            <input
+                                                type="password"
+                                                placeholder="Enter new password"
+                                                value={formData.newPassword || ''}
+                                                onChange={(e) => setFormData({
+                                                    ...formData,
+                                                    newPassword: e.target.value
+                                                })}
+                                            />
+                                        </div>
+                                        
+                                        <div className={styles.formField}>
+                                            <label>Confirm New Password</label>
+                                            <input
+                                                type="password"
+                                                placeholder="Confirm new password"
+                                                value={formData.confirmPassword || ''}
+                                                onChange={(e) => setFormData({
+                                                    ...formData,
+                                                    confirmPassword: e.target.value
+                                                })}
+                                            />
+                                        </div>
+                                        
+                                        {/* Action buttons */}
+                                        <div className={styles.formActions}>
+                                            <button 
+                                                className={styles.saveBtn}
+                                                onClick={() => saveChanges('password')}
+                                            >
+                                                Update Password
+                                            </button>
+                                            <button 
+                                                className={styles.cancelBtn}
+                                                onClick={cancelEditing}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}</div>
                                
                                <div className={styles.securityCard}>
                                    <div className={styles.securityIcon}>📱</div>

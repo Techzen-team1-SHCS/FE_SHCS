@@ -13,8 +13,8 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
         switch (status) {
             case "pending":
                 return "Booking confirm";
-            case "confirmed":
-                return "Confirmed booking";
+            case "completed":
+                return "Completed booking";
             case "cancelled":
                 return "Cancelled";
             default:
@@ -47,7 +47,7 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
                 cancelButtonText:"Không",
             });
             if(!confirm.isConfirmed) return;
-            const result=await bookingService.cancelBooking(booking?.id);
+            const result=await bookingService.cancelBooking(bookingId);
             await Swal.fire("Thành công",result.message,"success");
             if (typeof onCancelSuccess === "function") {
             onCancelSuccess();
@@ -61,7 +61,7 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
         switch (status) {
             case "pending":
                 return "#41BC63";
-            case "confirmed":
+            case "completed":
                 return "#62B4F5";
             case "cancelled":
                 return "#dc3545";
@@ -69,6 +69,7 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
                 return "#6c757d";
         }
     };
+    console.log(booking.id);
     const cancelPolicy = getCancelPolicy(booking);
     return (
         <div className={card} >
@@ -90,7 +91,7 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
                                 currency: 'VND'
                             }).format(booking.total_price)}
                         </div>
-                        {(booking.status === "pending" || booking.status === "confirmed" || booking.status === "cancelled") && (
+                        {(booking.status === "pending" || booking.status === "completed" || booking.status === "cancelled") && (
                             <div>
                                 <div>
                                     <span className={status} style={{ color: getStatusColor(booking.status) }}>{getBookContent(booking.status)}
@@ -114,13 +115,13 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook,onCancelSuccess  }
                                             />
                                             );
 
-                                        case "confirmed":
+                                        case "completed":
                                             return (
                                             <>
                                                 <ButtonCancel
-                                                text={isExpiredCheckOut ? "Đã Hoàn Thành" : "Hủy Phòng"}
-                                                color={isExpiredCheckOut ? "gray" : "red"}
-                                                onClick={!isExpiredCheckOut ? () => handleCancelBooking(booking.id) : undefined}
+                                                text={isExpiredCheckOut ? "Hoàn Thành" : "Hủy Phòng"}
+                                                color={isExpiredCheckOut ? "green" : "red"}
+                                                onClick={!isExpiredCheckOut ? () => handleCancelBooking(booking?.id) : undefined}
                                                 disabled={isExpiredCheckOut}
                                                 />
                                                 <div className={styles.card}>

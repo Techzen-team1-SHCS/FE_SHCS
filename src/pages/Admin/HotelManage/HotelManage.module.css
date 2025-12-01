@@ -1,5 +1,23 @@
 .container {
     background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
 }
 
 .tableContainer {
@@ -12,68 +30,22 @@
     width: 100%;
     border-collapse: collapse;
     background: white;
-    min-width: 1000px;
+    min-width: 800px;
 }
 
 .tableHeader {
-    background: #f8f9fa;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .th {
-    padding: 16px;
-    text-align: center;
+    padding: 16px 12px;
+    text-align: left;
     font-weight: 600;
-    color: #2c3e50;
-    border-bottom: 2px solid #e9ecef;
+    color: white;
+    border-bottom: none;
     font-size: 14px;
     font-family: 'Inter', sans-serif;
     white-space: nowrap;
-}
-
-/* Điều chỉnh chiều rộng từng cột cho bảng mới */
-.th:nth-child(1), .td:nth-child(1) { /* Hotel ID */
-    width: 80px;
-    min-width: 80px;
-}
-
-.th:nth-child(2), .td:nth-child(2) { /* Hotel Name */
-    width: 150px;
-    min-width: 150px;
-}
-
-.th:nth-child(3), .td:nth-child(3) { /* Phone */
-    width: 130px;
-    min-width: 130px;
-}
-
-.th:nth-child(4), .td:nth-child(4) { /* Email */
-    width: 180px;
-    min-width: 180px;
-}
-
-.th:nth-child(5), .td:nth-child(5) { /* Address */
-    width: 200px;
-    min-width: 200px;
-}
-
-.th:nth-child(6), .td:nth-child(6) { /* Room Occupied */
-    width: 120px;
-    min-width: 120px;
-}
-
-.th:nth-child(7), .td:nth-child(7) { /* Revenue */
-    width: 140px;
-    min-width: 140px;
-}
-
-.th:nth-child(8), .td:nth-child(8) { /* Star */
-    width: 80px;
-    min-width: 80px;
-}
-
-.th:nth-child(9), .td:nth-child(9) { /* Actions */
-    width: 80px;
-    min-width: 80px;
 }
 
 .tableBody {
@@ -81,13 +53,14 @@
 }
 
 .tr {
-    text-align: center;
-    transition: background-color 0.2s ease;
+    transition: all 0.3s ease;
     border-bottom: 1px solid #e9ecef;
 }
 
 .tr:hover {
     background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .tr:last-child {
@@ -95,105 +68,159 @@
 }
 
 .td {
-    padding: 16px;
+    padding: 16px 12px;
     color: #495057;
     font-size: 14px;
     font-family: 'Inter', sans-serif;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    vertical-align: middle;
 }
 
-/* Căn chỉnh nội dung cho các cột số */
-.td:nth-child(1), /* Hotel ID */
-.td:nth-child(6), /* Room Occupied */
-.td:nth-child(7), /* Revenue */
-.td:nth-child(8) { /* Star */
+/* Hotel Info Styles */
+.hotelInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.imageContainer {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.hotelImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hotelName {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.hotelLocation {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+/* Stats Container */
+.statsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.statItem {
     text-align: center;
 }
 
-/* Căn trái cho các cột text */
-.td:nth-child(2), /* Hotel Name */
-.td:nth-child(3), /* Phone */
-.td:nth-child(4), /* Email */
-.td:nth-child(5) { /* Address */
-    text-align: left;
+.statValue {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 14px;
 }
 
-
-
-/* Xóa các style không cần thiết cho bảng mới */
-.statusAvailable,
-.statusOccupied,
-.statusMaintenance,
-.statusCleaning,
-.statusSelect {
-    display: none;
+.statLabel {
+    font-size: 11px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* Delete Button */
-.deleteButton {
-    background: none;
-    border: none;
-    cursor: pointer;
+/* Status Badges */
+.statusBadge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.statusAvailable {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.statusOccupied {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f1b0b7;
+}
+
+/* Action Buttons */
+.actionCell {
+    text-align: center;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+
+.actionButton {
     padding: 8px;
+    border: none;
     border-radius: 6px;
-    transition: all 0.2s ease;
+    cursor: pointer;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto;
+    width: 32px;
+    height: 32px;
 }
 
-.deleteButton:hover {
-    background-color: #f8d7da;
+.viewButton {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.viewButton:hover {
+    background-color: #bbdefb;
     transform: scale(1.1);
 }
 
-.deleteButton:active {
-    transform: scale(0.95);
+.editButton {
+    background-color: #fff3e0;
+    color: #f57c00;
 }
 
-.deleteIcon {
-    width: 20px;
-    height: 20px;
-    color: #dc3545;
-    transition: color 0.2s ease;
+.editButton:hover {
+    background-color: #ffe0b2;
+    transform: scale(1.1);
 }
 
-.deleteButton:hover .deleteIcon {
-    color: #c82333;
+.deleteButton {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.deleteButton:hover {
+    background-color: #ffcdd2;
+    transform: scale(1.1);
+}
+
+.buttonIcon {
+    font-size: 14px;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .th:nth-child(4), .td:nth-child(4) { /* Email */
-        width: 150px;
-        min-width: 150px;
-    }
-    
-    .th:nth-child(5), .td:nth-child(5) { /* Address */
-        width: 160px;
-        min-width: 160px;
-    }
-    
-    .th:nth-child(9), .td:nth-child(9) { /* Actions column */
-        width: 60px;
-        min-width: 60px;
-    }
-    
-    .deleteIcon {
-        width: 18px;
-        height: 18px;
-    }
-    
-    .deleteButton {
-        padding: 6px;
-    }
-    
     .container {
         padding: 16px;
         margin: 16px 0;
+    }
+    
+    .title {
+        font-size: 20px;
     }
     
     .th, .td {
@@ -201,20 +228,28 @@
         font-size: 13px;
     }
     
-    .table {
-        min-width: 1000px;
+    .hotelInfo {
+        gap: 8px;
     }
     
-    /* Điều chỉnh lại chiều rộng cho mobile */
-    .th:nth-child(1), .td:nth-child(1) { width: 70px; min-width: 70px; }
-    .th:nth-child(2), .td:nth-child(2) { width: 130px; min-width: 130px; }
-    .th:nth-child(3), .td:nth-child(3) { width: 110px; min-width: 110px; }
-    .th:nth-child(4), .td:nth-child(4) { width: 150px; min-width: 150px; }
-    .th:nth-child(5), .td:nth-child(5) { width: 160px; min-width: 160px; }
-    .th:nth-child(6), .td:nth-child(6) { width: 100px; min-width: 100px; }
-    .th:nth-child(7), .td:nth-child(7) { width: 120px; min-width: 120px; }
-    .th:nth-child(8), .td:nth-child(8) { width: 70px; min-width: 70px; }
-    .th:nth-child(9), .td:nth-child(9) { width: 60px; min-width: 60px; }
+    .imageContainer {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .buttonGroup {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .actionButton {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .buttonIcon {
+        font-size: 12px;
+    }
 }
 
 /* Animation */
@@ -229,6 +264,21 @@
     }
 }
 
-.container {
-    animation: fadeIn 0.5s ease-out;
+/* Custom scrollbar for table */
+.tableContainer::-webkit-scrollbar {
+    height: 6px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }

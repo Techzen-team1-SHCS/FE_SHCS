@@ -13,7 +13,7 @@ const PaymentButtonVnPay = ({ bookingId, amount }) => {
       await paymentService.createPayment(bookingId);
     } catch (error) {
       console.error(error);
-      toast.warning('Không thể tạo thanh toán VNPay. Vui lòng thử lại.');
+      toast.warning('Không thể tạo thanh toán VNPay. Phòng này đã được đặt.');
     } finally {
       setIsLoading(false);
     }

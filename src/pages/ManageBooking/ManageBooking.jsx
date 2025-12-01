@@ -159,7 +159,7 @@ const ManageBooking = () => {
                 />
                 <div className={styles.heroOverlay}>
                     <div className={styles.heroContent}>
-                        <h1 className={styles.heroTitle}>Quản lý Đặt phòng</h1>
+                        <h1 className={styles.heroTitle} style={{color:'wheat'}}>Quản lý Đặt phòng</h1>
                         <p className={styles.heroSubtitle}>
                             Theo dõi và quản lý tất cả các đặt phòng của bạn tại một nơi
                         </p>
@@ -343,7 +343,7 @@ const ManageBooking = () => {
                         <div className={styles.quickActionsGrid}>
                             <button 
                                 className={styles.quickAction}
-                                onClick={() => navigate('/hotels')}
+                                onClick={() => navigate('/HotelList')}
                             >
                                 <span className={styles.quickActionIcon}>🏨</span>
                                 <span className={styles.quickActionText}>Đặt thêm phòng</span>

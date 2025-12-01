@@ -141,6 +141,9 @@ export const authService = {
   getUserProfile: async (userId) => {
     const response = await api.get(`/auth/user/${userId}/profile`);
     return response.data;
+  },
+  getAllUsers: async () => {
+  const response=await api.get('/auth/user');
+  return response.data.data;
   }
-
 };

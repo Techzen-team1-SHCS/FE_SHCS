@@ -245,15 +245,6 @@ const Header = () => {
                                                                 <li>
                                                                     <button
                                                                         className="menu-item"
-                                                                        onClick={() => navigate('/privacy-settings')}
-                                                                    >
-                                                                        <span className="icon">⚙️</span>
-                                                                        Cài đặt quyền riêng tư
-                                                                    </button>
-                                                                </li>
-                                                                <li>
-                                                                    <button
-                                                                        className="menu-item"
                                                                         onClick={() => navigate('/help')}
                                                                     >
                                                                         <span className="icon">❓</span>
