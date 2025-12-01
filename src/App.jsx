@@ -28,6 +28,8 @@ import UserManage from './pages/Admin/UserManage/UserManage';
 import LoginPage from './pages/Admin/LoginPage/LoginPage';
 import AdminPrivateRoute from './routes/AdminPrivateRoute';
 import Help from './pages/Help/Help';
+import DiscountList from './pages/Discount/DiscountList';
+import DiscountDetail from './pages/Discount/DiscountDetail';
 // import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -54,7 +56,8 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/wishList" element={<WishList />} />
             <Route path="/help" element={<Help />} />
-            
+            <Route path="/discounts" element={<DiscountList />} />
+            <Route path="/discount/:id" element={<DiscountDetail />} />
             {/* có thể thêm các page khác cần layout */}
           </Route>
           {/* Route admin */}
