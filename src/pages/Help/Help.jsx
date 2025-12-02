@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './Help.module.css';
+import styles from './Helpp.module.css';
 import { supportService } from '../../services/supportService';
 
 const Help = () => {

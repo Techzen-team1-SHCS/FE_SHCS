@@ -32,11 +32,29 @@ const HotelManage = () => {
         statsContainer,
         statItem,
         statValue,
-        statLabel
+        statLabel,
+        // Thêm các style mới
+        sidebar,
+        sidebarOpen,
+        sidebarOverlay,
+        sidebarHeader,
+        sidebarTitle,
+        closeButton,
+        sidebarContent,
+        image2Container,
+        detailSection,
+        detailTitle,
+        detailGrid,
+        detailItem,
+        detailLabel,
+        detailValue,
+        amenitiesList,
+        amenityItem,
+        textContent,
+        timestamp
     } = styles;
 
     const [hotelsData, setHotelsData] = useState([]);
-    
     useEffect(() => {
         const fetchHotels = async () => {
             try {
@@ -49,12 +67,37 @@ const HotelManage = () => {
         }
         fetchHotels();
     }, []);
+    // Thêm state cho sidebar
+    const [selectedHotel, setSelectedHotel] = useState(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+    const handleView = (hotelId) => {
+        const hotel = hotelsData.find(h => h.id === hotelId);
+        setSelectedHotel(hotel);
+        setIsSidebarOpen(true);
+    };
+
+    const handleCloseSidebar = () => {
+        setIsSidebarOpen(false);
+        setSelectedHotel(null);
+    };
+
+    // Các hàm hỗ trợ
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('vi-VN', {
             style: 'currency',
             currency: 'VND'
         }).format(amount);
+    };
+
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString('vi-VN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+minute: '2-digit'
+        });
     };
 
     const getStatusBadge = (hotel) => {
@@ -75,26 +118,9 @@ const HotelManage = () => {
         return "Còn phòng";
     };
 
-    const handleView = (hotelId) => {
-        console.log('View hotel:', hotelId);
-        // Xử lý xem chi tiết
-    };
-
-    const handleEdit = (hotelId) => {
-        console.log('Edit hotel:', hotelId);
-        // Xử lý chỉnh sửa
-    };
-
-    const handleDelete = (hotelId) => {
-        console.log('Delete hotel:', hotelId);
-        if (window.confirm('Bạn có chắc chắn muốn xóa khách sạn này?')) {
-            // Xử lý xóa
-        }
-    };
-
     const renderStars = (rating) => {
         const stars = [];
-        const starRating = rating / 10;
+        const starRating = rating / 10; // 40 -> 4 sao
         for (let i = 1; i <= 5; i++) {
             stars.push(
                 <span key={i} style={{ color: i <= starRating ? '#ffc107' : '#e4e5e9' }}>
@@ -103,6 +129,14 @@ const HotelManage = () => {
             );
         }
         return stars;
+    };
+
+    const getRoomStats = (hotel) => {
+        const totalRooms = hotel?.rooms?.reduce((total, room) => total + (room.quantity || 0), 0) || 0;
+        const occupiedRooms = hotel?.rooms?.reduce((total, room) => total + (room.occupied || 0), 0) || 0;
+        const availableRooms = totalRooms - occupiedRooms;
+        
+        return { totalRooms, occupiedRooms, availableRooms };
     };
 
     return (
@@ -130,8 +164,8 @@ const HotelManage = () => {
                                     <div className={hotelInfo}>
                                         <div className={imageContainer}>
                                             <img 
-                                                src={hotel?.images[0]?.url || '/default-hotel.jpg'} 
-                                                alt={hotel.name}
+                                                src={hotel?.images?.[0]?.url || '/default-hotel.jpg'} 
+alt={hotel.name}
                                                 className={hotelImage}
                                                 onError={(e) => {
                                                     e.target.src = '/default-hotel.jpg';
@@ -156,7 +190,7 @@ const HotelManage = () => {
                                     <div className={statsContainer}>
                                         <div className={statItem}>
                                             <div className={statValue}>
-                                                {hotel?.rooms?.reduce((total, room) => total + (room.quantity || 0), 0) || 0}
+                                                {getRoomStats(hotel).totalRooms}
                                             </div>
                                             <div className={statLabel}>Tổng phòng</div>
                                         </div>
@@ -178,7 +212,7 @@ const HotelManage = () => {
                                         <div style={{ fontSize: '16px', marginBottom: '4px' }}>
                                             {renderStars(hotel?.hotel_class)}
                                         </div>
-                                        <div style={{ fontSize: '12px', color: '#666' }}>
+<div style={{ fontSize: '12px', color: '#666' }}>
                                             {hotel?.hotel_class / 10}/5
                                         </div>
                                     </div>
@@ -215,6 +249,150 @@ const HotelManage = () => {
                     </tbody>
                 </table>
             </div>
+
+            {/* Sidebar chi tiết */}
+            {isSidebarOpen && (
+                <>
+                    <div 
+                        className={sidebarOverlay}
+                        onClick={handleCloseSidebar}
+                    />
+                    <div className={`${sidebar} ${isSidebarOpen ? sidebarOpen : ''}`}>
+                        <div className={sidebarHeader}>
+                            <h2 className={sidebarTitle}>Chi tiết khách sạn</h2>
+                            <button 
+                                className={closeButton}
+                                onClick={handleCloseSidebar}
+                            >
+                                ×
+                            </button>
+                        </div>
+                        
+<div className={sidebarContent}>
+                            {selectedHotel && (
+                                <>
+                                    {/* Ảnh chính */}
+                                    <div className={image2Container}>
+                                        <img 
+                                            src={selectedHotel?.images?.[0]?.url || '/default-hotel.jpg'} 
+                                            alt={selectedHotel.name}
+                                            className={hotelImage}
+                                        />
+                                    </div>
+
+                                    {/* Thông tin cơ bản */}
+                                    <div className={detailSection}>
+                                        <h3 className={detailTitle}>Thông tin chung</h3>
+                                        <div className={detailGrid}>
+                                            <div className={detailItem}>
+                                                <div className={detailLabel}>ID</div>
+                                                <div className={detailValue}>{selectedHotel.id}</div>
+                                            </div>
+                                            <div className={detailItem}>
+                                                <div className={detailLabel}>Tên khách sạn</div>
+                                                <div className={detailValue}>{selectedHotel.name}</div>
+                                            </div>
+                                            <div className={detailItem}>
+                                                <div className={detailLabel}>Tỉnh/Thành phố</div>
+                                                <div className={detailValue}>{selectedHotel.province}</div>
+                                            </div>
+                                            <div className={detailItem}>
+                                                <div className={detailLabel}>Địa điểm gần</div>
+                                                <div className={detailValue}>{selectedHotel.name_nearby_place}</div>
+                                            </div>
+                                            <div className={detailItem}>
+                                                <div className={detailLabel}>Hạng sao</div>
+                                                <div className={detailValue}>
+                                                    {renderStars(selectedHotel.hotel_class)} 
+                                                    ({selectedHotel.hotel_class / 10}/5)
+                                                </div>
+                                            </div>
+                                            <div className={detailItem}>
+                                                <div className={detailLabel}>Giá từ</div>
+<div className={detailValue}>{formatCurrency(selectedHotel.price)}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Mô tả ngắn */}
+                                    <div className={detailSection}>
+                                        <h3 className={detailTitle}>Mô tả ngắn</h3>
+                                        <div className={textContent}>
+                                            {selectedHotel.description}
+                                        </div>
+                                    </div>
+
+                                    {/* Mô tả chi tiết */}
+                                    <div className={detailSection}>
+                                        <h3 className={detailTitle}>Thông tin chi tiết</h3>
+                                        <div className={textContent}>
+                                            {selectedHotel.text}
+                                        </div>
+                                    </div>
+
+                                    {/* Tiện nghi */}
+                                    <div className={detailSection}>
+                                        <h3 className={detailTitle}>Tiện nghi</h3>
+                                        <div className={amenitiesList}>
+                                            {selectedHotel.amenities?.map((amenity, index) => (
+                                                <div key={index} className={amenityItem}>
+                                                    {amenity}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Thống kê phòng */}
+                                    <div className={detailSection}>
+                                        <h3 className={detailTitle}>Thống kê phòng</h3>
+                                        <div className={detailGrid}>
+                                            <div className={detailItem}>
+                                                <div className={detailLabel}>Tổng số phòng</div>
+                                                <div className={detailValue}>{getRoomStats(selectedHotel).totalRooms}</div>
+                                            </div>
+                                            <div className={detailItem}>
+                                                <div className={detailLabel}>Phòng trống</div>
+                                                <div className={detailValue}>{getRoomStats(selectedHotel).availableRooms}</div>
+                                            </div>
+                                            <div className={detailItem}>
+                                                <div className={detailLabel}>Phòng đã đặt</div>
+<div className={detailValue}>{getRoomStats(selectedHotel).occupiedRooms}</div>
+                                            </div>
+                                            <div className={detailItem}>
+                                                <div className={detailLabel}>Trạng thái</div>
+                                                <div className={detailValue}>
+                                                    <span className={`${statusBadge} ${getStatusBadge(selectedHotel)}`}>
+                                                        {getStatusText(selectedHotel)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Thời gian */}
+                                    <div className={detailSection}>
+                                        <h3 className={detailTitle}>Thời gian</h3>
+                                        <div className={detailGrid}>
+                                            <div className={detailItem}>
+                                                <div className={detailLabel}>Ngày tạo</div>
+                                                <div className={timestamp}>
+                                                    {formatDate(selectedHotel.created_at)}
+                                                </div>
+                                            </div>
+                                            <div className={detailItem}>
+                                                <div className={detailLabel}>Cập nhật lần cuối</div>
+                                                <div className={timestamp}>
+                                                    {formatDate(selectedHotel.updated_at)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 };
