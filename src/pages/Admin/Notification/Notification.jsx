@@ -1,156 +1,230 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Notification.module.css";
+import { notificationService } from "../../../services/notificationService";
+
 const NOTIFICATION_TYPES = {
   booking: {
     icon: "/assets/images/icons/book.png",
     bg: "#E5EEFF",
+    color: "#2E5AAC",
   },
-  hotel: {
-    icon: "/assets/images/icons/new-hotel.png",
+  Registration_Successful: {
+    icon: "/assets/images/avatar/user-add-line.png",
     bg: "#FFE7D6",
+    color: "#E67E22",
   },
-  warning: {
+  cancel_booking: {
     icon: "/assets/images/icons/report.png",
     bg: "#FFE4E4",
+    color: "#E74C3C",
   },
   payment: {
     icon: "/assets/images/icons/payment.png",
     bg: "#E5F8FF",
+    color: "#1ABC9C",
   },
   system: {
     icon: "/assets/images/icons/update.png",
     bg: "#ECE3FF",
+    color: "#9B59B6",
   },
 };
 
 const Notification = () => {
   const {
     pageContainer,
-    tabContainer,
-    tab,
-    activeTab,
-    card,
-    left,
-    iconBox,
-    title,
-    description,
-    right,
-    date,
-    time,
-    dot,
+    header,
+    headerTitle,
+    headerSubtitle,
+    notificationList,
+    notificationCard,
+    unreadCard,
+    cardLeft,
+    iconContainer,
+    contentContainer,
+    notificationTitle,
+    notificationDescription,
+    notificationMeta,
+    cardRight,
+    notificationDate,
+    notificationTime,
+    readStatus,
+    unreadDot,
+    emptyState,
+    emptyIcon,
+    emptyText,
+    actionsContainer,
+    markAllReadBtn,
+    refreshBtn,
+    notificationHeader,
+    typeBadge,
   } = styles;
 
-  // ----------------------------
-  // 1. State quản lý tab
-  // ----------------------------
-  const [currentTab, setCurrentTab] = useState("All");
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // ----------------------------
-  // 2. Notifications + trạng thái đọc
-  // ----------------------------
-  const notifications = [
-    {
-      type: "booking",
-      title: "New Booking Received",
-      desc: "Hotel Hilton Da Nang just received an order from user Minh Quan",
-      date: "17/11/2025",
-      time: "10 minutes ago",
-      read: false,
-    },
-    {
-      type: "hotel",
-      title: "New Hotel Registered",
-      desc: "Hotel Hilton Da Nang is Registered",
-      date: "17/11/2025",
-      time: "10 minutes ago",
-      read: true,
-    },
-    {
-      type: "warning",
-      title: "New Review Reported",
-      desc: "Review has been reported bad by user Minh Quan",
-      date: "17/11/2025",
-      time: "10 minutes ago",
-      read: false,
-    },
-    {
-      type: "payment",
-      title: "Payment Received",
-      desc: "order payment #1234 was successful",
-      date: "17/11/2025",
-      time: "10 minutes ago",
-      read: true,
-    },
-    {
-      type: "system",
-      title: "System Update",
-      desc: "The system will be down for maintenance today",
-      date: "17/11/2025",
-      time: "10 minutes ago",
-      read: false,
-    },
-  ];
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
 
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+      const response = await notificationService.getNotifications();
+      setNotifications(response.data || []);
+    } catch (error) {
+      console.error("Fetch notifications error:", error);
+      setNotifications([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // ----------------------------
-  // 3. Lọc theo tab
-  // ----------------------------
-  const filtered = notifications.filter(n => {
-    if (currentTab === "All") return true;
-    if (currentTab === "Read") return n.read === true;
-    if (currentTab === "Unread") return n.read === false;
-    return true;
-  });
+  const markAsRead = async (id) => {
+    try {
+      await notificationService.markAsRead(id);
+      setNotifications(prev =>
+        prev.map(n => n.id === id ? { ...n, read: true } : n)
+      );
+    } catch (error) {
+      console.error("Mark as read error:", error);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      await notificationService.markAllAsRead();
+      setNotifications(prev =>
+        prev.map(n => ({ ...n, read: true }))
+      );
+    } catch (error) {
+      console.error("Mark all as read error:", error);
+    }
+  };
+
+  const formatTimeAgo = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className={pageContainer}>
+        <div className={header}>
+          <h1 className={headerTitle}>Notifications</h1>
+          <p className={headerSubtitle}>Loading your notifications...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={pageContainer}>
-      {/* Tabs */}
-      <div className={tabContainer}>
-
-        <button
-          className={currentTab === "All" ? activeTab : tab}
-          onClick={() => setCurrentTab("All")}
-        >
-          All
-        </button>
-
-        <button
-          className={currentTab === "Read" ? activeTab : tab}
-          onClick={() => setCurrentTab("Read")}
-        >
-          Read
-        </button>
-
-        <button
-          className={currentTab === "Unread" ? activeTab : tab}
-          onClick={() => setCurrentTab("Unread")}
-        >
-          Unread
-        </button>
-
+      {/* Header */}
+      <div className={header}>
+        <div>
+          <h1 className={headerTitle}>Notifications</h1>
+          <p className={headerSubtitle}>
+            {notifications.length} total notifications
+          </p>
+        </div>
+        
+        {notifications.length > 0 && (
+          <div className={actionsContainer}>
+            <button 
+              className={refreshBtn}
+              onClick={fetchNotifications}
+            >
+              Refresh
+            </button>
+            <button 
+              className={markAllReadBtn}
+              onClick={markAllAsRead}
+              disabled={notifications.every(n => n.read)}
+            >
+              Mark all as read
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Notification items */}
-      {filtered.map((n, i) => (
-        <div className={card} key={i}>
-          <div className={left}>
-            <div className={iconBox} style={{ background: NOTIFICATION_TYPES[n.type].bg }}>
-              <img src={NOTIFICATION_TYPES[n.type].icon} alt="icon" />
-            </div>
-            <div>
-              <div className={title}>{n.title}</div>
-              <div className={description}>{n.desc}</div>
-            </div>
+      {/* Notification List */}
+      <div className={notificationList}>
+        {notifications.length === 0 ? (
+          <div className={emptyState}>
+            <div className={emptyIcon}>📭</div>
+            <h3 className={emptyText}>No notifications yet</h3>
+            <p>We'll notify you when something arrives</p>
           </div>
+        ) : (
+          notifications.map((notification) => (
+            <div
+              className={`${notificationCard} ${
+                !notification.read ? unreadCard : ""
+              }`}
+              key={notification.id || notification._id}
+              onClick={() => !notification.read && markAsRead(notification.id)}
+              style={{ cursor: !notification.read ? "pointer" : "default" }}
+            >
+              <div className={cardLeft}>
+                <div
+                  className={iconContainer}
+                  style={{
+                    backgroundColor: NOTIFICATION_TYPES[notification.type]?.bg,
+                    color: NOTIFICATION_TYPES[notification.type]?.color,
+                  }}
+                >
+                  <img
+                    src={NOTIFICATION_TYPES[notification.type]?.icon}
+                    alt={notification.type}
+                  />
+                </div>
+                
+                <div className={contentContainer}>
+                  <div className={notificationHeader}>
+                    <h3 className={notificationTitle}>{notification.title}</h3>
+                    <span className={typeBadge}>
+                      {notification.type}
+                    </span>
+                  </div>
+                  <p className={notificationDescription}>
+                    {notification.desc || notification.description}
+                  </p>
+                  <div className={notificationMeta}>
+                    <span className={notificationDate}>
+                      {formatTimeAgo(notification.created_at || notification.date)}
+                    </span>
+                    {notification.time && (
+                      <span className={notificationTime}> • {notification.time}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
 
-          <div className={right}>
-            <div className={date}>{n.date}</div>
-            <div className={time}>{n.time}</div>
-            {/* dot chỉ hiện với unread */}
-            {!n.read && <div className={dot}></div>}
-          </div>
-        </div>
-      ))}
+              <div className={cardRight}>
+                {!notification.read && <div className={unreadDot}></div>}
+                <div className={readStatus}>
+                  {notification.read ? "Read" : "Unread"}
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };

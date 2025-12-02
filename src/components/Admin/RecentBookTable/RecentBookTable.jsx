@@ -21,51 +21,7 @@ const RecentBookTable = ({ recentBookData }) => {
     } = styles;
 
     // Sử dụng prop recentBookData nếu có, nếu không dùng dữ liệu mẫu
-    const [roomsData, setRoomsData] = useState(recentBookData || [
-        {
-            id: 1,
-            hotelName: "Hilton DaNang",
-            roomNumber: "101",
-            roomType: "Deluxe",
-            capacity: 2,
-            price: 150,
-            status: "occupied",
-            currentBooking: {
-                guestName: "Nguyen Van A",
-                checkIn: "2024-01-15 14:00",
-            }
-        },
-        {
-            id: 2,
-            hotelName: "Hilton DaNang",
-            roomNumber: "102",
-            roomType: "Standard",
-            capacity: 2,
-            price: 100,
-            status: "available",
-            currentBooking: null
-        },
-        {
-            id: 3,
-            hotelName: "Hilton DaNang",
-            roomNumber: "103",
-            roomType: "Standard",
-            capacity: 2,
-            price: 100,
-            status: "maintenance",
-            currentBooking: null
-        },
-        {
-            id: 4,
-            hotelName: "Hilton DaNang",
-            roomNumber: "104",
-            roomType: "Standard",
-            capacity: 2,
-            price: 100,
-            status: "cleaning",
-            currentBooking: null
-        }
-    ]);
+    const [roomsData, setRoomsData] = useState(recentBookData || []);
 
     const getStatusClass = (status) => {
         switch (status) {

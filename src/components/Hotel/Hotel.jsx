@@ -25,7 +25,7 @@ const Hotel = ({
   const [isZoomed, setIsZoomed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const handleBookClick = () => {
-    logBehavior("book", {
+    logBehavior("booking", {
       userId: user?.id || null,
       hotelId: id,
       hotelName: title,

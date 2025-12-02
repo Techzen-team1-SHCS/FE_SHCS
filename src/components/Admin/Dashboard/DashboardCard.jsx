@@ -1,8 +1,51 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from "./DashboardCard.module.css";
-
-const DashboardCard = ({ cardData }) => {
+import { dashboardService } from '../../../services/dashBoardService';
+import { formatVND } from '../../../utils/dateUtils';
+import { authService } from '../../../services/authService';
+const DashboardCard = () => {
   const { container, card, cardTitle, cardAmount, cardGrowth, cardLogo, positive, negative } = styles;
+  const [revenue,setRevenue] = useState(0);
+  const [month,setMonth]=useState(0);
+  const [userData,setUserData]=useState(0);
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const revenueData = await dashboardService.getDashboardRevenue();
+      setRevenue(revenueData);
+      const getByMonth=await dashboardService.getBookingsByMonth();
+      setMonth(getByMonth);
+      const getUserActive=await authService.getAllUsers();
+      setUserData(getUserActive);
+    } catch (error) {
+      console.error(error.response?.data?.message || 'Failed to fetch dashboard revenue');
+    }
+  };
+  fetchData();
+}, []);
+  const cardData = [
+        {
+            id: 1,
+            logo: "/assets/images/logos/revenue.png",
+            title: "Revenue",
+            amount: revenue,
+            growth: "+201"
+        },
+        {
+            id: 2,
+            logo: "/assets/images/logos/booking.png",
+            title: "New Booking",
+            amount: month,
+            growth: "+201"
+        },
+        {
+            id: 3,
+            logo: "/assets/images/logos/check-in.png",
+            title: "User Active",
+            amount: userData.length,
+            growth: "+201"
+        }
+    ];
   const formatGrowth = (growth) => {
     const number = parseInt(growth);
     if (number >= 0) {
@@ -35,7 +78,7 @@ const DashboardCard = ({ cardData }) => {
         </div>
 
         <div className='d-flex justify-content-between' style={{ width: '100%' }}>
-          <div className={cardAmount}>${revenueCard.amount || '$0'}</div>
+          <div className={cardAmount}>{formatVND(revenueCard.amount) || 0}</div>
           {revenueCard.growth && (
             <div className={`${cardGrowth} ${revenueGrowth.className}`}>
               {revenueGrowth.arrow} {revenueGrowth.text}
@@ -61,9 +104,8 @@ const DashboardCard = ({ cardData }) => {
       <div className={card}>
         <div>
           <div className={cardLogo}><img src={"/assets/images/logos/check-in.png"} alt="check-in" /></div>
-          <div className={cardTitle}>New Check-in</div>
+          <div className={cardTitle}>User Active</div>
         </div>
-
         <div className='d-flex justify-content-between' style={{ width: '100%' }}>
           <div className={cardAmount}>{checkinCard?.amount || '0'}</div>
           {checkinCard.growth && (

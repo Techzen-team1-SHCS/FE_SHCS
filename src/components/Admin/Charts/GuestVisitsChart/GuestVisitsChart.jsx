@@ -12,6 +12,7 @@ import {
     Legend,
 } from 'chart.js';
 import styles from "./GuestVisitsChart.module.css";
+import { dashboardService } from '../../../../services/dashBoardService';
 
 // Tạo instance riêng cho Line chart - KHÔNG CÓ centerTextPlugin
 ChartJS.register(
@@ -24,7 +25,7 @@ ChartJS.register(
     Legend
 );
 
-const GuestVisitsChart = ({GuestVisitData}) => {
+const GuestVisitsChart = () => {
     const {
         chartCard,
         header,
@@ -34,23 +35,28 @@ const GuestVisitsChart = ({GuestVisitData}) => {
     } = styles;
 
     const [selectedPeriod, setSelectedPeriod] = useState('monthly');
+    const [chartData,setChartData]=useState({
+        labels:[],
+        data:[]
+    });
     const chartRef = useRef(null);
 
-    // Dữ liệu cho các period khác nhau
-    const fallbackData = {
-        monthly: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            data: [180, 220, 190, 250, 280, 320, 300, 350, 380, 340, 290, 260]
-        },
-        weekly: {
-            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-            data: [320, 280, 350, 380]
-        },
-        daily: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            data: [45, 52, 38, 60, 75, 85, 65]
-        }
-    };
+    const fetchChartData=async()=>{
+       try {
+        const res=await dashboardService.getBookingCharts(selectedPeriod);
+        setChartData({
+         labels:res.labels,
+         data:res.data
+        })
+       } catch (error) {
+        console.log("Chart load failed",error);
+       }
+    }
+    useEffect(() => {
+    fetchChartData();
+  }, [selectedPeriod]);
+
+    
 
     // Tạo gradient cho line chart
     const createGradient = (ctx) => {
@@ -60,25 +66,15 @@ const GuestVisitsChart = ({GuestVisitData}) => {
         gradient.addColorStop(1, 'rgba(0, 123, 255, 0.05)');
         return gradient;
     };
-    const getChartDataConfig = () => {
-        // Nếu có data từ API và có period tương ứng
-        if (GuestVisitData && GuestVisitData[selectedPeriod]) {
-            return GuestVisitData[selectedPeriod];
-        }
-        
-        // Fallback về mock data
-        return fallbackData[selectedPeriod];
-    };
     const getChartData = () => {
-        const config = getChartDataConfig();
         const ctx = chartRef.current?.ctx;
 
         return {
-            labels: config.labels,
+            labels: chartData.labels,
             datasets: [
                 {
                     label: 'Guest Visits',
-                    data: config.data,
+                    data: chartData.data,
                     backgroundColor: ctx ? createGradient(ctx) : 'rgba(223, 161, 68, 0.8)',
                     borderColor: 'rgba(223, 161, 68, 0.8)',
                     borderWidth: 3,
@@ -98,13 +94,12 @@ const GuestVisitsChart = ({GuestVisitData}) => {
     };
     // CHỈNH: Tự động tính max value dựa trên data thực
     const getMaxValue = () => {
-        const config = getChartDataConfig();
-        const data = config.data || [];
+        const data = chartData.data || [];
         
         if (data.length === 0) return 400;
         
         const maxDataValue = Math.max(...data);
-        return Math.ceil(maxDataValue / 100) * 100 + 100;
+        return Math.ceil(maxDataValue / 10) * 10 + 10;
     };
 
     // CHỈNH: Tự động tính step size
@@ -137,7 +132,7 @@ const GuestVisitsChart = ({GuestVisitData}) => {
                 displayColors: false,
                 callbacks: {
                     label: function(context) {
-                        return `Visits: ${context.parsed.y}`;
+                        return `Booking: ${context.parsed.y}`;
                     },
                     title: function(tooltipItems) {
                         return tooltipItems[0].label;
@@ -211,7 +206,7 @@ const GuestVisitsChart = ({GuestVisitData}) => {
     return (
         <div className={chartCard}>
             <div className={header}>
-                <h3 className={title}>Guest Visits</h3>
+                <h3 className={title}></h3>
                 <select 
                     className={sortBy} 
                     value={selectedPeriod} 

@@ -6,6 +6,7 @@ import BookingTable from '../../../components/Admin/BookingTable/BookingTable';
 import RightPanel from '../../../components/Admin/RightPanel/RightPanel';
 import MostBookedChart from '../../../components/Admin/Charts/MostBookedChart/MostBookedChart';
 import RecentBookTable from '../../../components/Admin/RecentBookTable/RecentBookTable';
+import { use } from 'react';
 const Dashboard = () => {
     const {
         left,
@@ -16,30 +17,8 @@ const Dashboard = () => {
         tableLeft,
         tableRight
     } = styles;
-    // Dữ liệu giả cho dashboard
-    const cardData = [
-        {
-            id: 1,
-            logo: "/assets/images/logos/revenue.png",
-            title: "Revenue",
-            amount: "23,425",
-            growth: "+201"
-        },
-        {
-            id: 2,
-            logo: "/assets/images/logos/booking.png",
-            title: "New Booking",
-            amount: "1,925",
-            growth: "+201"
-        },
-        {
-            id: 3,
-            logo: "/assets/images/logos/check-in.png",
-            title: "New Check-in",
-            amount: "1,537",
-            growth: "+201"
-        }
-    ];
+    
+    // Dữ liệu giả cho dashboar
 
     const GuestVisitData = {
         monthly: {
@@ -143,9 +122,9 @@ const Dashboard = () => {
         <div className={container}>
             <div className={mainData}>
                 <div className={left}>
-                    <DashboardCard cardData={cardData} />
-                    <GuestVisitsChart GuestVisitData={GuestVisitData} />
-                    <MostBookedChart MostBookedData={MostBookedData} />
+                    <DashboardCard />
+                    <GuestVisitsChart />
+                    <MostBookedChart />
                 </div>
                 <div className={right}>
                     <RightPanel hotelStats={hotelStats} upcomingReservations={upcomingReservations} satisfactionData={satisfactionData} />
