@@ -42,12 +42,12 @@ const Discount = () => {
                             data-aos-offset="50"
                         >
                             <h1>Discount Coupons</h1>
-                            {/* <div className="hotel-more-btn text-center mt-40">
-                                <a className="theme-btn style-four" href='/HotelsRecommend' style={{ cursor: "pointer" }}>
-                                    <span data-hover="Explore More Hotel">Explore More Hotel</span>
+                            <div className="hotel-more-btn text-center mt-40">
+                                <a className="theme-btn style-four" href='/discounts' style={{ cursor: "pointer" }}>
+                                    <span data-hover="Explore More Discount">Explore More Discount</span>
                                     <i className="fal fa-arrow-right"></i>
                                 </a>
-                            </div> */}
+                            </div>
                         </div>
                     </div>
                 </div>
