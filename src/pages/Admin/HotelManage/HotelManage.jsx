@@ -363,7 +363,7 @@ const HotelManage = () => {
         const totalRooms = hotel.rooms.reduce((total, room) => total + (room.quantity || 0), 0) || 0;
         const occupiedRooms = hotel.rooms.reduce((total, room) => total + (room.occupied || 0), 0) || 0;
         const availableRooms = totalRooms - occupiedRooms;
-        
+
         return { totalRooms, occupiedRooms, availableRooms };
     };
 
@@ -372,7 +372,7 @@ const HotelManage = () => {
             <div className={header}>
                 <h1 className={title}>Quản lý khách sạn</h1>
             </div>
-            
+
             <div className={tableContainer}>
                 <table className={table}>
                     <thead className={tableHeader}>
