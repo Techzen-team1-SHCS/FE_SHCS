@@ -61,5 +61,48 @@ export const dashboardService = {
         } catch (error) {
             throw new Error(error.response?.data?.message || 'Failed to fetch bookings');
         }
+    },
+    async getHotelBookingToday(){
+        try {
+            const token=localStorage.getItem('token');
+            if(!token){
+                throw new Error('Authentication token not found')
+            }
+            const response=await api.get('auth/dashboard/todayBooking',{
+                headers:{Authorization:`Bearer ${token}`},
+            })
+            return response.data.data;
+        } catch (error) {
+            throw new Error(error.response?.data?.message || 'Failed to fetch bookings');
+        }
+    },
+    async getRoomData(){
+       try {
+        const token=localStorage.getItem('token');
+        if(!token){
+            throw new Error('Authentication token not found')
+        }
+        const response=await api.get('auth/dashboard/getRoom',{
+            headers:{Authorization:`Bearer ${token}`},
+        })
+        return response.data;        
+       } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch bookings');
+
+       }
+    },
+    async getBookingStats(){
+        try {
+            const token=localStorage.getItem('token');
+            if(!token){
+                throw new Error('Authentication token not found');
+            }
+            const response=await api.get('auth/dashboard/getStats',{
+                headers:{Authorization:`Bearer ${token}`},
+            })
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data?.message || 'Failed to fetch bookings');
+        }
     }
 };

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styles from './UserManage.module.css';
 import { authService } from '../../../services/authService';
-
+import { toast } from 'react-toastify';
+import Swal from "sweetalert2";
 const UserManage = () => {
     const {
         container,
@@ -40,17 +41,18 @@ const UserManage = () => {
 
     const [usersData, setUsersData] = useState([]);
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const response = await authService.getAllUsers();
-                setUsersData(response || []);
-            } catch (error) {
-                console.error('Fetch users error:', error);
-                setUsersData([]);
-            }
+    const fetchUsers = async () => {  // ⬅ đưa ra ngoài để nơi khác gọi được
+        try {
+            const response = await authService.getAllUsers();
+            setUsersData(response || []);
+        } catch (error) {
+            console.error('Fetch users error:', error);
+            setUsersData([]);
         }
-        fetchUsers();
+    };
+
+    useEffect(() => {
+        fetchUsers(); // gọi khi load trang
     }, []);
 
     const formatDate = (dateString) => {
@@ -97,13 +99,48 @@ const UserManage = () => {
         }
     };
 
-    const handleToggleBan = (user) => {
-        const action = user.isBanned ? 'bỏ chặn' : 'chặn';
-        if (window.confirm(`Bạn có chắc chắn muốn ${action} người dùng này?`)) {
-            console.log(`${action} user:`, user.id);
-            // Xử lý chặn/bỏ chặn
+    const handleToggleBan = async (user) => {
+        const isUnban = user.isBanned;
+        const actionText = isUnban ? "bỏ chặn" : "chặn";
+        const actionColor = isUnban ? "#3085d6" : "#d33";
+
+        const result = await Swal.fire({
+            title: `Xác nhận ${actionText}?`,
+            text: `Bạn có chắc chắn muốn ${actionText} người dùng này?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: actionColor,
+            cancelButtonColor: "#aaa",
+            confirmButtonText: `Có, ${actionText}`,
+            cancelButtonText: "Hủy"
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            if (isUnban) {
+                await authService.unblockUser(user.id);
+            } else {
+                await authService.blockUser(user.id);
+            }
+
+            await Swal.fire({
+                icon: "success",
+                title: `Đã ${actionText} thành công!`,
+                showConfirmButton: false,
+                timer: 1500
+            });
+
+            fetchUsers(); // reload lại danh sách
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi!",
+                text: error.message || "Có lỗi xảy ra"
+            });
         }
     };
+
 
     const getInitials = (name) => {
         if (!name) return 'U';
