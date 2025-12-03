@@ -94,5 +94,34 @@ export const bookingService={
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to cancel booking');
     }
+  },
+  async DeleteBooking(id){
+    try {
+      const token=localStorage.getItem('token');
+      if(!token){
+        throw new Error('Authentication no token not found')
+      }
+      const response=await api.delete(`/auth/booking/${id}`,{
+        headers:{Authorization:`Bearer ${token}`}
+      });
+      return response.data;
+    } catch (error) {
+      console.log('Không thể xóa người dùng');
+    }
+  },
+  async updateBooking(id,data){
+    try {
+      const token=localStorage.getItem('token');
+      if(!token){
+        throw new Error('Authentication no token not found')
+      }
+      const response=await api.put(`auth/booking/${id}`,data,{
+        headers:{Authorization:`Bearer ${token}`}
+      });
+      return response.data;
+    } catch (error) {
+      console.log('Không thể cập nhật khách sạn');
+    }
   }
+  
 }

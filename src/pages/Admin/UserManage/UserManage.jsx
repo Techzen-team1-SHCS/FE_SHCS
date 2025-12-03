@@ -82,23 +82,23 @@ const UserManage = () => {
         }
     };
 
-    const handleView = (userId) => {
-        const user = usersData.find(u => u.id === userId);
-        setSelectedUser(user);
-        setIsSidebarOpen(true);
-    };
+    // const handleView = (userId) => {
+    //     const user = usersData.find(u => u.id === userId);
+    //     setSelectedUser(user);
+    //     setIsSidebarOpen(true);
+    // };
 
-    const handleEdit = (userId) => {
-        console.log('Edit user:', userId);
-        // Xử lý chỉnh sửa
-    };
+    // const handleEdit = (userId) => {
+    //     console.log('Edit user:', userId);
+    //     // Xử lý chỉnh sửa
+    // };
 
-    const handleDelete = (userId) => {
-        console.log('Delete user:', userId);
-        if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
-            // Xử lý xóa
-        }
-    };
+    // const handleDelete = (userId) => {
+    //     console.log('Delete user:', userId);
+    //     if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+    //         // Xử lý xóa
+    //     }
+    // };
 
     const handleToggleBan = async (user) => {
         const isUnban = user.isBanned;
@@ -294,14 +294,7 @@ const UserManage = () => {
                     </tbody>
                 </table>
             </div>
-            <DetailSidebar
-                isOpen={isSidebarOpen}
-                onClose={handleCloseSidebar}
-                title="Chi tiết người dùng"
-                type="user"
-            >
-                {selectedUser && <UserSidebarContent user={selectedUser} />}
-            </DetailSidebar>
+            
         </div>
     );
 };
