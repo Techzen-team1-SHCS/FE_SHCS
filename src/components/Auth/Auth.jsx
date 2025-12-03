@@ -105,33 +105,31 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
             setIsLoading(true);
             try {
                 if (isLogin) {
-                    const result = await authService.login(email, password);
+                const result = await authService.login(email, password);
 
-                if (result.status === 200) {
-                    // 🔹 Lấy user và token đúng từ data
-                    const user = result.user; // authService.login() đã fix trả về data.user
-                    const token = result.token;
-                    
-                    if (!user || !token) {
-                        toast.error("Không lấy được dữ liệu người dùng. Vui lòng thử lại.");
-                        return;
-                    }
-                    if (user.role !== 0) {
-                        toast.error('Tài khoản không có quyền truy cập trang này');
-                        return
-                    }
+                // 🚨 Check lỗi trước khi xử lý dữ liệu
+                if (result.status !== 200) {
+                    toast.error(result.data?.message || "Đăng nhập thất bại!");
+                    return;
+                }
 
-                        // 🔹 Nếu muốn gọi API chi tiết user (có avatar_url)
-                        const userRes = await authService.getUserById(user.id);
-                        const fullUser = userRes.user || user; // fallback nếu backend chưa có user chi tiết
+                const user = result.data.user;
+                const token = result.data.access_token;
 
-                        // 🔹 Lưu vào context & localStorage
-                        login(fullUser, token);
-                        toast.success('Đăng nhập thành công!');
-                        setIsAuthVisible(false);
-                        navigate('/');
-                    }
-                } else {
+                if (!user || !token) {
+                    toast.error("Không lấy được dữ liệu người dùng. Vui lòng thử lại.");
+                    return;
+                }
+
+                // Nếu muốn fetch thêm thông tin user: avatar,...
+                const userRes = await authService.getUserById(user.id);
+                const fullUser = userRes.data?.user || user;
+
+                login(fullUser, token);
+                toast.success('Đăng nhập thành công!');
+                setIsAuthVisible(false);
+                navigate('/');
+            } else {
                     const result = await authService.register({
                         name,
                         email,
@@ -152,7 +150,10 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                     }
                 }
             } catch (error) {
-                console.error('Auth error:', error);
+                if (error.response?.status === 403) {
+                    toast.warn(error.response.data.message || "Tài khoản bị chặn");
+                    return;
+                }
                 if (error.response?.data?.errors) {
                     // Handle validation errors from API
                     const apiErrors = error.response.data.errors;

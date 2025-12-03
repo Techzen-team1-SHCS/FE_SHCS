@@ -127,15 +127,15 @@ const Dashboard = () => {
                     <MostBookedChart />
                 </div>
                 <div className={right}>
-                    <RightPanel hotelStats={hotelStats} upcomingReservations={upcomingReservations} satisfactionData={satisfactionData} />
+                    <RightPanel />
                 </div>
             </div>
             <div className={tableData}>
                 <div className={tableLeft}>
-                    <BookingTable bookingData={bookingData} />
+                    <BookingTable/>
                 </div>
                 <div className={tableRight}>
-                    <RecentBookTable recentBookData={recentBookData}/>
+                    <RecentBookTable />
                 </div>
             </div>
         </div>

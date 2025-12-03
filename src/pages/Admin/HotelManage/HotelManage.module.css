@@ -210,6 +210,138 @@
 .buttonIcon {
     font-size: 14px;
 }
+/* Thêm các style sau vào file CSS */
+
+/* Form styles */
+.formContainer {
+    padding: 20px;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.formLabel {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.formControl {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.formControl:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.formTextarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+
+.formTextarea:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.formActions {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btnPrimary {
+    padding: 10px 24px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    flex: 1;
+}
+
+.btnPrimary:hover {
+    background-color: #218838;
+}
+
+.btnSecondary {
+    padding: 10px 24px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    flex: 1;
+}
+
+.btnSecondary:hover {
+    background-color: #5a6268;
+}
+
+.btnDanger {
+    padding: 10px 24px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    flex: 1;
+}
+
+.btnDanger:hover {
+    background-color: #c82333;
+}
+
+/* Sidebar modes */
+.editMode {
+    width: 600px;
+}
+
+.viewMode {
+    width: 500px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .editMode,
+    .viewMode {
+        width: 90%;
+        max-width: 500px;
+    }
+    
+    .formActions {
+        flex-direction: column;
+    }
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {

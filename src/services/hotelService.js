@@ -92,6 +92,34 @@ export const hotelService = {
       console.error("Error fetching recommended hotels:", error);
       return []; // không throw → FE vẫn hoạt động
     }
+  },
+  async getDeleteHotel(id){
+    try {
+      const token=localStorage.getItem('token');
+      if(!token){
+        throw new Error('Authentication no token not found')
+      }
+      const response=await api.delete(`/auth/hotel/${id}`,{
+        headers:{Authorization:`Bearer ${token}`}
+      });
+      return response.data;
+    } catch (error) {
+      console.log('Không thể xóa người dùng');
+    }
+  },
+  async updateHotel(id,data){
+    try {
+      const token=localStorage.getItem('token');
+      if(!token){
+        throw new Error('Authentication no token not found')
+      }
+      const response=await api.put(`auth/hotel/${id}`,data,{
+        headers:{Authorization:`Bearer ${token}`}
+      });
+      return response.data;
+    } catch (error) {
+      console.log('Không thể cập nhật khách sạn');
+    }
   }
 };
 

@@ -145,5 +145,41 @@ export const authService = {
   getAllUsers: async () => {
   const response=await api.get('/auth/user');
   return response.data.data;
+  },
+  async blockUser(id){
+    try {
+      const token=localStorage.getItem('token');
+      if(!token){
+        throw new Error('Authentication no token not found')
+      }
+      const response=await api.post(`/auth/users/${id}/block`,{},
+        {
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error.response?.data?.message || "Failed to block user");
+    }
+  },
+  async unblockUser(id){
+    try {
+      const token=localStorage.getItem('token');
+      if(!token){
+        throw new Error('Authentication no token not found')
+      }
+      const response=await api.post(`/auth/users/${id}/unblock`,{},
+        {
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error.response?.data?.message || "Failed to block user");
+    }
   }
 };
