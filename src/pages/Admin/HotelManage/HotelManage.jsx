@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styles from './HotelManage.module.css';
 import { hotelService } from '../../../services/hotelService';
-
+import DetailSidebar from '../../../components/Admin/DetailSidebar/DetailSidebar.jsx'; // Import Sidebar chung
+import HotelSidebarContent from '../../../components/Admin/DetailSidebar/HotelSidebarContent.jsx'; // Import nội dung sidebar cụ thể
 const HotelManage = () => {
     const {
         container,
@@ -33,28 +34,11 @@ const HotelManage = () => {
         statItem,
         statValue,
         statLabel,
-        // Thêm các style mới
-        sidebar,
-        sidebarOpen,
-        sidebarOverlay,
-        sidebarHeader,
-        sidebarTitle,
-        closeButton,
-        sidebarContent,
-        image2Container,
-        detailSection,
-        detailTitle,
-        detailGrid,
-        detailItem,
-        detailLabel,
-        detailValue,
-        amenitiesList,
-        amenityItem,
-        textContent,
-        timestamp
+        
     } = styles;
 
     const [hotelsData, setHotelsData] = useState([]);
+
     useEffect(() => {
         const fetchHotels = async () => {
             try {
@@ -96,14 +80,14 @@ const HotelManage = () => {
             month: 'long',
             day: 'numeric',
             hour: '2-digit',
-minute: '2-digit'
+            minute: '2-digit'
         });
     };
 
     const getStatusBadge = (hotel) => {
         const totalRooms = hotel?.rooms?.reduce((total, room) => total + (room.quantity || 0), 0) || 0;
         const occupiedRooms = hotel?.rooms?.reduce((total, room) => total + (room.occupied || 0), 0) || 0;
-        
+
         if (occupiedRooms === 0) return statusAvailable;
         if (occupiedRooms === totalRooms) return statusOccupied;
         return statusAvailable;
@@ -112,7 +96,7 @@ minute: '2-digit'
     const getStatusText = (hotel) => {
         const totalRooms = hotel?.rooms?.reduce((total, room) => total + (room.quantity || 0), 0) || 0;
         const occupiedRooms = hotel?.rooms?.reduce((total, room) => total + (room.occupied || 0), 0) || 0;
-        
+
         if (occupiedRooms === 0) return "Trống";
         if (occupiedRooms === totalRooms) return "Hết phòng";
         return "Còn phòng";
@@ -135,7 +119,7 @@ minute: '2-digit'
         const totalRooms = hotel?.rooms?.reduce((total, room) => total + (room.quantity || 0), 0) || 0;
         const occupiedRooms = hotel?.rooms?.reduce((total, room) => total + (room.occupied || 0), 0) || 0;
         const availableRooms = totalRooms - occupiedRooms;
-        
+
         return { totalRooms, occupiedRooms, availableRooms };
     };
 
@@ -144,7 +128,7 @@ minute: '2-digit'
             <div className={header}>
                 <h1 className={title}>Quản lý khách sạn</h1>
             </div>
-            
+
             <div className={tableContainer}>
                 <table className={table}>
                     <thead className={tableHeader}>
@@ -163,9 +147,9 @@ minute: '2-digit'
                                 <td className={td}>
                                     <div className={hotelInfo}>
                                         <div className={imageContainer}>
-                                            <img 
-                                                src={hotel?.images?.[0]?.url || '/default-hotel.jpg'} 
-alt={hotel.name}
+                                            <img
+                                                src={hotel?.images?.[0]?.url || '/default-hotel.jpg'}
+                                                alt={hotel.name}
                                                 className={hotelImage}
                                                 onError={(e) => {
                                                     e.target.src = '/default-hotel.jpg';
@@ -212,7 +196,7 @@ alt={hotel.name}
                                         <div style={{ fontSize: '16px', marginBottom: '4px' }}>
                                             {renderStars(hotel?.hotel_class)}
                                         </div>
-<div style={{ fontSize: '12px', color: '#666' }}>
+                                        <div style={{ fontSize: '12px', color: '#666' }}>
                                             {hotel?.hotel_class / 10}/5
                                         </div>
                                     </div>
@@ -220,21 +204,21 @@ alt={hotel.name}
                                 <td className={td}>
                                     <div className={actionCell}>
                                         <div className={buttonGroup}>
-                                            <button 
+                                            <button
                                                 className={`${actionButton} ${viewButton}`}
                                                 onClick={() => handleView(hotel.id)}
                                                 title="Xem chi tiết"
                                             >
                                                 <span className={buttonIcon}>👁️</span>
                                             </button>
-                                            <button 
+                                            <button
                                                 className={`${actionButton} ${editButton}`}
                                                 onClick={() => handleEdit(hotel.id)}
                                                 title="Chỉnh sửa"
                                             >
                                                 <span className={buttonIcon}>✏️</span>
                                             </button>
-                                            <button 
+                                            <button
                                                 className={`${actionButton} ${deleteButton}`}
                                                 onClick={() => handleDelete(hotel.id)}
                                                 title="Xóa"
@@ -251,148 +235,15 @@ alt={hotel.name}
             </div>
 
             {/* Sidebar chi tiết */}
-            {isSidebarOpen && (
-                <>
-                    <div 
-                        className={sidebarOverlay}
-                        onClick={handleCloseSidebar}
-                    />
-                    <div className={`${sidebar} ${isSidebarOpen ? sidebarOpen : ''}`}>
-                        <div className={sidebarHeader}>
-                            <h2 className={sidebarTitle}>Chi tiết khách sạn</h2>
-                            <button 
-                                className={closeButton}
-                                onClick={handleCloseSidebar}
-                            >
-                                ×
-                            </button>
-                        </div>
-                        
-<div className={sidebarContent}>
-                            {selectedHotel && (
-                                <>
-                                    {/* Ảnh chính */}
-                                    <div className={image2Container}>
-                                        <img 
-                                            src={selectedHotel?.images?.[0]?.url || '/default-hotel.jpg'} 
-                                            alt={selectedHotel.name}
-                                            className={hotelImage}
-                                        />
-                                    </div>
-
-                                    {/* Thông tin cơ bản */}
-                                    <div className={detailSection}>
-                                        <h3 className={detailTitle}>Thông tin chung</h3>
-                                        <div className={detailGrid}>
-                                            <div className={detailItem}>
-                                                <div className={detailLabel}>ID</div>
-                                                <div className={detailValue}>{selectedHotel.id}</div>
-                                            </div>
-                                            <div className={detailItem}>
-                                                <div className={detailLabel}>Tên khách sạn</div>
-                                                <div className={detailValue}>{selectedHotel.name}</div>
-                                            </div>
-                                            <div className={detailItem}>
-                                                <div className={detailLabel}>Tỉnh/Thành phố</div>
-                                                <div className={detailValue}>{selectedHotel.province}</div>
-                                            </div>
-                                            <div className={detailItem}>
-                                                <div className={detailLabel}>Địa điểm gần</div>
-                                                <div className={detailValue}>{selectedHotel.name_nearby_place}</div>
-                                            </div>
-                                            <div className={detailItem}>
-                                                <div className={detailLabel}>Hạng sao</div>
-                                                <div className={detailValue}>
-                                                    {renderStars(selectedHotel.hotel_class)} 
-                                                    ({selectedHotel.hotel_class / 10}/5)
-                                                </div>
-                                            </div>
-                                            <div className={detailItem}>
-                                                <div className={detailLabel}>Giá từ</div>
-<div className={detailValue}>{formatCurrency(selectedHotel.price)}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Mô tả ngắn */}
-                                    <div className={detailSection}>
-                                        <h3 className={detailTitle}>Mô tả ngắn</h3>
-                                        <div className={textContent}>
-                                            {selectedHotel.description}
-                                        </div>
-                                    </div>
-
-                                    {/* Mô tả chi tiết */}
-                                    <div className={detailSection}>
-                                        <h3 className={detailTitle}>Thông tin chi tiết</h3>
-                                        <div className={textContent}>
-                                            {selectedHotel.text}
-                                        </div>
-                                    </div>
-
-                                    {/* Tiện nghi */}
-                                    <div className={detailSection}>
-                                        <h3 className={detailTitle}>Tiện nghi</h3>
-                                        <div className={amenitiesList}>
-                                            {selectedHotel.amenities?.map((amenity, index) => (
-                                                <div key={index} className={amenityItem}>
-                                                    {amenity}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Thống kê phòng */}
-                                    <div className={detailSection}>
-                                        <h3 className={detailTitle}>Thống kê phòng</h3>
-                                        <div className={detailGrid}>
-                                            <div className={detailItem}>
-                                                <div className={detailLabel}>Tổng số phòng</div>
-                                                <div className={detailValue}>{getRoomStats(selectedHotel).totalRooms}</div>
-                                            </div>
-                                            <div className={detailItem}>
-                                                <div className={detailLabel}>Phòng trống</div>
-                                                <div className={detailValue}>{getRoomStats(selectedHotel).availableRooms}</div>
-                                            </div>
-                                            <div className={detailItem}>
-                                                <div className={detailLabel}>Phòng đã đặt</div>
-<div className={detailValue}>{getRoomStats(selectedHotel).occupiedRooms}</div>
-                                            </div>
-                                            <div className={detailItem}>
-                                                <div className={detailLabel}>Trạng thái</div>
-                                                <div className={detailValue}>
-                                                    <span className={`${statusBadge} ${getStatusBadge(selectedHotel)}`}>
-                                                        {getStatusText(selectedHotel)}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Thời gian */}
-                                    <div className={detailSection}>
-                                        <h3 className={detailTitle}>Thời gian</h3>
-                                        <div className={detailGrid}>
-                                            <div className={detailItem}>
-                                                <div className={detailLabel}>Ngày tạo</div>
-                                                <div className={timestamp}>
-                                                    {formatDate(selectedHotel.created_at)}
-                                                </div>
-                                            </div>
-                                            <div className={detailItem}>
-                                                <div className={detailLabel}>Cập nhật lần cuối</div>
-                                                <div className={timestamp}>
-                                                    {formatDate(selectedHotel.updated_at)}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </>
-            )}
+            {/* Sử dụng Sidebar chung */}
+            <DetailSidebar
+                isOpen={isSidebarOpen}
+                onClose={handleCloseSidebar}
+                title="Chi tiết khách sạn"
+                type="hotel"
+            >
+                {selectedHotel && <HotelSidebarContent hotel={selectedHotel} />}
+            </DetailSidebar>
         </div>
     );
 };

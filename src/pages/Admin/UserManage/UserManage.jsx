@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styles from './UserManage.module.css';
 import { authService } from '../../../services/authService';
+import DetailSidebar from '../../../components/Admin/DetailSidebar/DetailSidebar';
+import UserSidebarContent from '../../../components/Admin/DetailSidebar/UserSidebarContent';
 
 const UserManage = () => {
     const {
@@ -39,7 +41,12 @@ const UserManage = () => {
     } = styles;
 
     const [usersData, setUsersData] = useState([]);
-
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const handleCloseSidebar = () => {
+        setIsSidebarOpen(false);
+        setSelectedUser(null);
+    };
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -70,7 +77,7 @@ const UserManage = () => {
         // Giả sử status dựa trên trường isActive hoặc tương tự
         // Nếu không có trường status, mặc định là active
         const isActive = user.isActive !== false;
-        
+
         if (user.isBanned) {
             return { text: 'Bị chặn', class: statusSuspended };
         } else if (!isActive) {
@@ -81,8 +88,9 @@ const UserManage = () => {
     };
 
     const handleView = (userId) => {
-        console.log('View user:', userId);
-        // Xử lý xem chi tiết
+        const user = usersData.find(u => u.id === userId);
+        setSelectedUser(user);
+        setIsSidebarOpen(true);
     };
 
     const handleEdit = (userId) => {
@@ -138,7 +146,7 @@ const UserManage = () => {
                     </div>
                 </div>
             </div>
-            
+
             <div className={tableContainer}>
                 <table className={table}>
                     <thead className={tableHeader}>
@@ -159,8 +167,8 @@ const UserManage = () => {
                                         <div className={userInfo}>
                                             <div className={avatarContainer}>
                                                 {user.image ? (
-                                                    <img 
-                                                        src={user.image} 
+                                                    <img
+                                                        src={user.image}
                                                         alt={user.name}
                                                         className={userAvatar}
                                                         onError={(e) => {
@@ -169,7 +177,7 @@ const UserManage = () => {
                                                         }}
                                                     />
                                                 ) : null}
-                                                <div 
+                                                <div
                                                     className={styles.avatarPlaceholder}
                                                     style={{ display: user.image ? 'none' : 'flex' }}
                                                 >
@@ -198,7 +206,7 @@ const UserManage = () => {
                                             </div>
                                             {user.address && (
                                                 <div className={styles.detailItem}>
-                                                    <strong>📍</strong> 
+                                                    <strong>📍</strong>
                                                     <span className={styles.address}>{user.address.substring(0, 30)}...</span>
                                                 </div>
                                             )}
@@ -217,30 +225,30 @@ const UserManage = () => {
                                     <td className={td}>
                                         <div className={actionCell}>
                                             <div className={buttonGroup}>
-                                                <button 
+                                                <button
                                                     className={`${actionButton} ${viewButton}`}
                                                     onClick={() => handleView(user.id)}
                                                     title="Xem chi tiết"
                                                 >
                                                     <span className={buttonIcon}>👁️</span>
                                                 </button>
-                                                <button 
+                                                <button
                                                     className={`${actionButton} ${editButton}`}
                                                     onClick={() => handleEdit(user.id)}
                                                     title="Chỉnh sửa"
                                                 >
                                                     <span className={buttonIcon}>✏️</span>
                                                 </button>
-                                                <button 
+                                                <button
                                                     className={`${actionButton} ${user.isBanned ? unbanButton : banButton}`}
                                                     onClick={() => handleToggleBan(user)}
-                                                    title={user.isBanned ? "Bỏ chặn" : "Chặn người dùng"}
+                                                    title={user?.isBanned ? "Bỏ chặn" : "Chặn người dùng"}
                                                 >
                                                     <span className={buttonIcon}>
-                                                        {user.isBanned ? '🔓' : '🚫'}
+                                                        {user?.isBanned ? '🔓' : '🚫'}
                                                     </span>
                                                 </button>
-                                                <button 
+                                                <button
                                                     className={`${actionButton} ${deleteButton}`}
                                                     onClick={() => handleDelete(user.id)}
                                                     title="Xóa"
@@ -256,6 +264,14 @@ const UserManage = () => {
                     </tbody>
                 </table>
             </div>
+            <DetailSidebar
+                isOpen={isSidebarOpen}
+                onClose={handleCloseSidebar}
+                title="Chi tiết người dùng"
+                type="user"
+            >
+                {selectedUser && <UserSidebarContent user={selectedUser} />}
+            </DetailSidebar>
         </div>
     );
 };
