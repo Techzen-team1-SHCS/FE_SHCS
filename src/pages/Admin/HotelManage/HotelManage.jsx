@@ -79,9 +79,10 @@ const HotelManage = () => {
         hotel_class: '',
         description: '',
         text: '',
-        amenities: '',
+        amenities: [],
         name_nearby_place: ''
     });
+    const [newAmenity, setNewAmenity] = useState('');
 
     // Fetch hotels
     const fetchHotels = async () => {
@@ -100,7 +101,7 @@ const HotelManage = () => {
     }, []);
 
     // Handle View
-    const handleView = async (hotelId) => {
+    const handleView = async (hotelId, shouldEdit = false) => {
         try {
             setIsLoading(true);
             const hotel = await hotelService.getHotelById(hotelId);
@@ -112,7 +113,27 @@ const HotelManage = () => {
             
             setSelectedHotel(hotel);
             setIsSidebarOpen(true);
-            setIsEditMode(false); // Đảm bảo không ở chế độ edit khi view
+            
+            // Nếu là edit mode, load dữ liệu vào form
+            if (shouldEdit) {
+                setTimeout(() => {
+                    const amenitiesArray = Array.isArray(hotel.amenities) ? hotel.amenities : [];
+                    setEditForm({
+                        name: hotel.name || '',
+                        province: hotel.province || '',
+                        price: hotel.price || '',
+                        hotel_class: hotel.hotel_class ? (hotel.hotel_class / 10).toString() : '',
+                        description: hotel.description || '',
+                        text: hotel.text || '',
+                        amenities: amenitiesArray,
+                        name_nearby_place: hotel.name_nearby_place || ''
+                    });
+                    setNewAmenity('');
+                    setIsEditMode(true);
+                }, 100);
+            } else {
+                setIsEditMode(false);
+            }
         } catch (error) {
             console.error("Hotel detail error:", error);
             toast.error(error.response?.data?.message || "Lỗi tải thông tin khách sạn!");
@@ -123,33 +144,24 @@ const HotelManage = () => {
 
     // Handle Edit
     const handleEdit = (hotelId) => {
-        handleView(hotelId); // Mở sidebar trước
-        // Sau khi mở sidebar, kích hoạt edit mode
-        setTimeout(() => {
-            startEditMode();
-        }, 100);
+        handleView(hotelId, true);
     };
 
     // Bắt đầu chế độ chỉnh sửa
     const startEditMode = () => {
         if (!selectedHotel) return;
         
-        // Chuyển amenities từ array sang string
-        const amenitiesString = Array.isArray(selectedHotel.amenities) 
-            ? selectedHotel.amenities.join(', ') 
-            : selectedHotel.amenities || '';
-        
         setEditForm({
             name: selectedHotel.name || '',
             province: selectedHotel.province || '',
             price: selectedHotel.price || '',
-            hotel_class: selectedHotel.hotel_class ? (selectedHotel.hotel_class / 10).toString() : '', // Chia 10 để hiển thị 1-5
+            hotel_class: selectedHotel.hotel_class ? (selectedHotel.hotel_class / 10).toString() : '',
             description: selectedHotel.description || '',
             text: selectedHotel.text || '',
-            amenities: amenitiesString,
+            amenities: Array.isArray(selectedHotel.amenities) ? selectedHotel.amenities : [],
             name_nearby_place: selectedHotel.name_nearby_place || ''
         });
-        
+        setNewAmenity('');
         setIsEditMode(true);
     };
 
@@ -209,6 +221,34 @@ const HotelManage = () => {
         }));
     };
 
+    // Thêm tiện nghi mới
+    const handleAddAmenity = () => {
+        const trimmed = newAmenity.trim();
+        if (!trimmed) {
+            toast.error("Vui lòng nhập tiện nghi");
+            return;
+        }
+        
+        if (editForm.amenities.includes(trimmed)) {
+            toast.error("Tiện nghi này đã tồn tại");
+            return;
+        }
+        
+        setEditForm(prev => ({
+            ...prev,
+            amenities: [...prev.amenities, trimmed]
+        }));
+        setNewAmenity('');
+    };
+
+    // Xóa tiện nghi
+    const handleRemoveAmenity = (index) => {
+        setEditForm(prev => ({
+            ...prev,
+            amenities: prev.amenities.filter((_, i) => i !== index)
+        }));
+    };
+
     // Handle Update
     const handleUpdate = async () => {
         try {
@@ -230,13 +270,11 @@ const HotelManage = () => {
                 name: editForm.name,
                 province: editForm.province,
                 price: Number(editForm.price),
-                hotel_class: Math.round(Number(editForm.hotel_class) * 10), // Nhân 10 để lưu theo thang 100
+                hotel_class: Math.round(Number(editForm.hotel_class) * 10),
                 description: editForm.description,
                 text: editForm.text,
                 name_nearby_place: editForm.name_nearby_place,
-                amenities: editForm.amenities 
-                    ? editForm.amenities.split(',').map(item => item.trim()).filter(item => item)
-                    : []
+                amenities: editForm.amenities // Giữ dưới dạng array
             };
 
             // Show loading
@@ -290,6 +328,15 @@ const HotelManage = () => {
             });
         }
     };
+    const amenities = Array.isArray(selectedHotel?.amenities)
+    ? selectedHotel.amenities
+    : (() => {
+        try {
+            return JSON.parse(selectedHotel?.amenities || "[]");
+        } catch (e) {
+            return [];
+        }
+    })();
 
     // Handle Cancel Edit
     const handleCancelEdit = () => {
@@ -329,7 +376,7 @@ const HotelManage = () => {
         const occupiedRooms = hotel.rooms.reduce((total, room) => total + (room.occupied || 0), 0) || 0;
         
         if (occupiedRooms === 0) return statusAvailable;
-        if (occupiedRooms === totalRooms) return statusOccupied;
+        if (30-totalRooms===0) return statusOccupied;
         return statusAvailable;
     };
 
@@ -340,7 +387,7 @@ const HotelManage = () => {
         const occupiedRooms = hotel.rooms.reduce((total, room) => total + (room.occupied || 0), 0) || 0;
         
         if (occupiedRooms === 0) return "Trống";
-        if (occupiedRooms === totalRooms) return "Hết phòng";
+        if (30-totalRooms===0) return "Hết phòng";
         return "Còn phòng";
     };
 
@@ -417,17 +464,17 @@ const HotelManage = () => {
                                     </td>
                                     <td className={td}>
                                         <div className={statsContainer}>
-                                            <div className={statItem}>
-                                                <div className={statValue}>
-                                                    {getRoomStats(hotel).totalRooms}
-                                                </div>
+                                            <div className={statItem}>                                               
                                                 <div className={statLabel}>Tổng phòng</div>
+                                                <div className={statValue}>
+                                                    30
+                                                </div>
                                             </div>
                                             <div className={statItem}>
+                                                <div className={statLabel}>Giá từ</div>
                                                 <div className={statValue}>
                                                     {formatCurrency(hotel?.price)}
                                                 </div>
-                                                <div className={statLabel}>Giá từ</div>
                                             </div>
                                         </div>
                                     </td>
@@ -599,15 +646,82 @@ const HotelManage = () => {
                                     </div>
                                     
                                     <div className={formGroup}>
-                                        <label className={formLabel}>Tiện nghi (phân cách bằng dấu phẩy)</label>
-                                        <textarea
-                                            name="amenities"
-                                            value={editForm.amenities}
-                                            onChange={handleInputChange}
-                                            className={formTextarea}
-                                            placeholder="Ví dụ: Wifi, Hồ bơi, Gym, ..."
-                                            rows="3"
-                                        />
+                                        <label className={formLabel}>Tiện nghi</label>
+                                        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                                            <input
+                                                type="text"
+                                                value={newAmenity}
+                                                onChange={(e) => setNewAmenity(e.target.value)}
+                                                onKeyPress={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        e.preventDefault();
+                                                        handleAddAmenity();
+                                                    }
+                                                }}
+                                                className={formControl}
+                                                placeholder="Nhập tiện nghi rồi nhấn Enter hoặc click Thêm"
+                                                style={{ flex: 1 }}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={handleAddAmenity}
+                                                className={btnPrimary}
+                                                style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}
+                                            >
+                                                Thêm
+                                            </button>
+                                        </div>
+                                        
+                                        {/* Danh sách tiện nghi */}
+                                        <div style={{ 
+                                            display: 'flex', 
+                                            flexWrap: 'wrap', 
+                                            gap: '8px',
+                                            padding: '8px',
+                                            backgroundColor: '#f5f5f5',
+                                            borderRadius: '4px',
+                                            minHeight: '40px'
+                                        }}>
+                                            {editForm.amenities.length > 0 ? (
+                                                editForm.amenities.map((amenity, index) => (
+                                                    <div
+                                                        key={index}
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '6px',
+                                                            backgroundColor: '#e3f2fd',
+                                                            padding: '6px 12px',
+                                                            borderRadius: '4px',
+                                                            fontSize: '14px'
+                                                        }}
+                                                    >
+                                                        <span>{amenity}</span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleRemoveAmenity(index)}
+                                                            style={{
+                                                                background: 'none',
+                                                                border: 'none',
+                                                                color: '#d32f2f',
+                                                                cursor: 'pointer',
+                                                                fontSize: '16px',
+                                                                padding: '0',
+                                                                display: 'flex',
+                                                                alignItems: 'center'
+                                                            }}
+                                                            title="Xóa"
+                                                        >
+                                                            ✕
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span style={{ color: '#999', fontSize: '14px' }}>
+                                                    Chưa có tiện nghi nào. Thêm tiện nghi ở trên.
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                     
                                     <div className={formActions}>
@@ -688,18 +802,16 @@ const HotelManage = () => {
                                     </div>
 
                                     {/* Tiện nghi */}
-                                    {selectedHotel.amenities && selectedHotel.amenities.length > 0 && (
+                                    {amenities.length > 0 && (
                                         <div className={detailSection}>
                                             <h3 className={detailTitle}>Tiện nghi</h3>
+
                                             <div className={amenitiesList}>
-                                                {Array.isArray(selectedHotel.amenities) 
-                                                    ? selectedHotel.amenities.map((amenity, index) => (
-                                                        <div key={index} className={amenityItem}>
-                                                            {amenity}
-                                                        </div>
-                                                    ))
-                                                    : <div className={textContent}>{selectedHotel.amenities}</div>
-                                                }
+                                                {amenities.map((amenity, index) => (
+                                                    <div key={index} className={amenityItem}>
+                                                        {amenity}
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
                                     )}
@@ -710,21 +822,21 @@ const HotelManage = () => {
                                         <div className={detailGrid}>
                                             <div className={detailItem}>
                                                 <div className={detailLabel}>Tổng số phòng</div>
-                                                <div className={detailValue}>{getRoomStats(selectedHotel).totalRooms}</div>
+                                                <div className={detailValue}>30</div>
                                             </div>
                                             <div className={detailItem}>
                                                 <div className={detailLabel}>Phòng trống</div>
-                                                <div className={detailValue}>{getRoomStats(selectedHotel).availableRooms}</div>
+                                                <div className={detailValue}>{getRoomStats(selectedHotel).totalRooms}</div>
                                             </div>
                                             <div className={detailItem}>
                                                 <div className={detailLabel}>Phòng đã đặt</div>
-                                                <div className={detailValue}>{getRoomStats(selectedHotel).occupiedRooms}</div>
+                                                <div className={detailValue}>{30 - getRoomStats(selectedHotel).totalRooms}</div>
                                             </div>
                                             <div className={detailItem}>
                                                 <div className={detailLabel}>Trạng thái</div>
                                                 <div className={detailValue}>
                                                     <span className={`${statusBadge} ${getStatusBadge(selectedHotel)}`}>
-                                                        {getStatusText(selectedHotel)}
+                                                        {30 - getRoomStats(selectedHotel).totalRooms === 0 ? "Hết phòng" : getStatusText(selectedHotel)}
                                                     </span>
                                                 </div>
                                             </div>

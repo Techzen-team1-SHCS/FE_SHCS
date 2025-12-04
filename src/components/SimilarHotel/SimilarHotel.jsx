@@ -35,7 +35,7 @@ function SimilarHotel({currentHotelId}) {
           <div className='maincontent' key={hotel.id}>
             <div className='container'>
                 <div className='similar-hotels-img'>
-                  <img src={hotel.images?.[0]?.url}/> 
+                  <img src={hotel.images?.[0]?.url || '/default-hotel.jpg'}/> 
                 </div>
                 <div className='content1'>
                 <span>{hotel.name}</span>

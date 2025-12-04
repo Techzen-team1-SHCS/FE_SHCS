@@ -169,7 +169,7 @@ function HotelList() {
                     return (
                       <Hotel
                         key={hotel.id}
-                        image={hotel.images?.[0]?.url || "/assets/images/default-hotel.jpg"}
+                        image={hotel.images?.[0]?.url || "/default-hotel.jpg"}
                         title={hotel.name}
                         description={hotel.description}
                         location={hotel.province}

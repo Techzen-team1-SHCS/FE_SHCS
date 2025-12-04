@@ -50,7 +50,7 @@ const TopHotelSlider = () => {
               <SwiperSlide key={hotel.id}>
                 <div className={styles.hotelCard}>
                   <div className={styles.hotelImage}>
-                    <img src={hotel.images?.[0]?.url || "/assets/images/default-hotel.jpg"} alt={hotel.name} />
+                    <img src={hotel.images?.[0]?.url || "/default-hotel.jpg"} alt={hotel.name} />
                     <div className={styles.hotelOverlay}>
                       <button className={styles.bookNowBtn}>Book Now</button>
                     </div>

@@ -361,7 +361,7 @@ const HotelsRecommend = () => {
                         </div>
                         
                         <HotelCardRecommendation
-                          image={hotel.images?.[0]?.url || hotel.images}
+                          image={hotel.images?.[0]?.url || 'default-hotel.jpg'}
                           title={hotel.name}
                           location={hotel.province}
                           description={hotel.description}
