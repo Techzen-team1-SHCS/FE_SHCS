@@ -11,6 +11,7 @@ export const BehaviorProvider = ({ children }) => {
   const behaviorsRef = useRef([]);
   
   const logBehavior = (action, metadata = {}) => {
+    console.log("🔵 logBehavior:", { action, metadata, user_id: user?.id, hotel_id: metadata.hotelId });
     const behavior = {
       user_id: user?.id,
       hotel_id: metadata.hotelId || null,
@@ -19,7 +20,8 @@ export const BehaviorProvider = ({ children }) => {
     };
     setBehaviors((prev) => {
       const newArr = [...prev, behavior];
-      behaviorsRef.current = newArr; // cập nhật ref
+      behaviorsRef.current = newArr;
+      console.log("🟢 Added to queue:", newArr);
       return newArr;
     });
   };
