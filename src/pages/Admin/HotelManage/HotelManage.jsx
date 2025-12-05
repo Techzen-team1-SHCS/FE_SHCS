@@ -7,8 +7,7 @@ import Swal from 'sweetalert2';
 const HotelManage = () => {
     const {
         container,
-        header,
-        title,
+
         tableContainer,
         table,
         tableHeader,
@@ -416,9 +415,7 @@ const HotelManage = () => {
 
     return (
         <div className={container}>
-            <div className={header}>
-                <h1 className={title}>Quản lý khách sạn</h1>
-            </div>
+            
 
             <div className={tableContainer}>
                 <table className={table}>

@@ -11,13 +11,6 @@
     border-bottom: 1px solid #e9ecef;
 }
 
-.title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0 0 16px 0;
-    font-family: 'Inter', sans-serif;
-}
 
 .headerStats {
     display: flex;

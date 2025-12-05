@@ -198,19 +198,6 @@
 
 /* ================= END SIDEBAR STYLES ================= */
 
-.header {
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-}
 
 .tableContainer {
     overflow-x: auto;

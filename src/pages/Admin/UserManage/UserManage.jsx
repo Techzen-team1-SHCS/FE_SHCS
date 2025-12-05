@@ -8,7 +8,6 @@ const UserManage = () => {
     const {
         container,
         header,
-        title,
         tableContainer,
         table,
         tableHeader,
@@ -209,7 +208,6 @@ const UserManage = () => {
     return (
         <div className={container}>
             <div className={header}>
-                <h1 className={title}>Quản lý người dùng</h1>
                 <div className={styles.headerStats}>
                     <div className={styles.stat}>
                         <span className={styles.statNumber}>{usersData.length}</span>
