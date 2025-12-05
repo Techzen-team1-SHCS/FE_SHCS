@@ -32,21 +32,19 @@ const About = () => {
     },
     {
       id: 4,
-      name: "Phạm Thùy Linh",
-      position: "UI/UX Designer",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-      instagram: "#",
-      facebook: "#",
-      skills: ["Figma", "Adobe XD", "User Research", "Wireframing"]
+      name: "Nguyễn Thiên Tú",
+      position: "AI developer ",
+      image:'/tu.jpg',
+      facebook: "https://www.facebook.com/tu.nguyenthien.35",
+      skills: ["MySQL", "php", "Marchine learning"]
     },
     {
       id: 5,
-      name: "Hoàng Văn Tùng",
-      position: "DevOps Engineer",
-      image: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-      instagram: "#",
-      facebook: "#",
-      skills: ["AWS", "Docker", "CI/CD", "Kubernetes"]
+      name: "Nguyễn Thành Nhân",
+      position: "AI developer ",
+      image:"/nhan.jpg",
+      facebook: "https://www.facebook.com/share/1AX2YpUXyD/",
+      skills: ["Python", "Java", "Sorfware Achitectural Designer"]
     }
   ];
 
