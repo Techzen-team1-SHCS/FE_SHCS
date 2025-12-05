@@ -30,6 +30,7 @@ import AdminPrivateRoute from './routes/AdminPrivateRoute';
 import Help from './pages/Help/Help';
 import DiscountList from './pages/Discount/DiscountList';
 import DiscountDetail from './pages/Discount/DiscountDetail';
+import SettingPage from './pages/Admin/Setting/SettingPage';
 // import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -72,6 +73,7 @@ function App() {
             <Route path="/admin/notification" element={<Notification />} />
             <Route path="/admin/hotels-manage" element={<HotelManage />} />
             <Route path="/admin/users-manage" element={<UserManage />} />
+            <Route path="/admin/settings" element={<SettingPage />} />
           </Route>
           {/* Route KHÔNG dùng MainLayout */}
         </Routes>

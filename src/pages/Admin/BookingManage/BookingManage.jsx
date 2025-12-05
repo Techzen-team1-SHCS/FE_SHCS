@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { formatDateTime, formatVND } from '../../../utils/dateUtils';
 import DetailSidebar from '../../../components/Admin/DetailSidebar/DetailSidebar';
 import BookingSidebarContent from '../../../components/Admin/DetailSidebar/BookingSidebarContent'; // Tạo component mới cho edit modal
+import Swal from "sweetalert2";
 
 const BookingManage = () => {
     const {
@@ -135,22 +136,50 @@ const BookingManage = () => {
 
     // Handle booking deletion
     const handleDelete = async (bookingId) => {
-        if (window.confirm('Bạn có chắc chắn muốn xóa đặt phòng này?')) {
-            try {
-                setIsDeleting(true);
-                await bookingService.deleteBooking(bookingId);
-                toast.success('Xóa đặt phòng thành công');
-                
-                // Remove from local state
-                setBookingData(prevData => prevData.filter(booking => booking.id !== bookingId));
-            } catch (error) {
-                toast.error(error?.response?.data?.message || 'Không thể xóa đặt phòng');
-                console.error('Delete error:', error);
-            } finally {
-                setIsDeleting(false);
-            }
+    const confirm = await Swal.fire({
+        title: "Bạn có chắc chắn?",
+        text: "Bạn có chắc chắn muốn xóa đặt phòng này?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Xóa",
+        cancelButtonText: "Hủy",
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6"
+    });
+
+    if (confirm.isConfirmed) {
+        try {
+            setIsDeleting(true);
+
+            await bookingService.DeleteBooking(bookingId);
+
+            Swal.fire({
+                icon: "success",
+                title: "Thành công",
+                text: "Xóa đặt phòng thành công",
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            // Cập nhật lại danh sách sau khi xóa
+            setBookingData(prevData =>
+                prevData.filter((booking) => booking.id !== bookingId)
+            );
+
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi",
+                text: error?.response?.data?.message || "Không thể xóa đặt phòng"
+            });
+
+            console.error("Delete error:", error);
+        } finally {
+            setIsDeleting(false);
         }
-    };
+    }
+};
+
 
     // Handle status change
     const handleStatusChange = async (id, newStatus) => {

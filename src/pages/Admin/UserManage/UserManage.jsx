@@ -3,6 +3,7 @@ import styles from './UserManage.module.css';
 import { authService } from '../../../services/authService';
 import { toast } from 'react-toastify';
 import Swal from "sweetalert2";
+
 const UserManage = () => {
     const {
         container,
@@ -40,6 +41,8 @@ const UserManage = () => {
     } = styles;
 
     const [usersData, setUsersData] = useState([]);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
     const fetchUsers = async () => {  // ⬅ đưa ra ngoài để nơi khác gọi được
         try {
@@ -69,14 +72,9 @@ const UserManage = () => {
     };
 
     const getStatusInfo = (user) => {
-        // Giả sử status dựa trên trường isActive hoặc tương tự
-        // Nếu không có trường status, mặc định là active
-        const isActive = user.isActive !== false;
-
-        if (user.isBanned) {
+        // Check is_blocked (0 = không bị chặn, 1 = đang bị chặn)
+        if (user.is_blocked === 1) {
             return { text: 'Bị chặn', class: statusSuspended };
-        } else if (!isActive) {
-            return { text: 'Không hoạt động', class: statusInactive };
         } else {
             return { text: 'Hoạt động', class: statusActive };
         }
@@ -100,8 +98,63 @@ const UserManage = () => {
     //     }
     // };
 
+    const handleView = (userId) => {
+        const user = usersData.find(u => u.id === userId);
+        setSelectedUser(user);
+        setIsDetailModalOpen(true);
+    };
+
+    const handleEdit = (userId) => {
+        const user = usersData.find(u => u.id === userId);
+        if (!user) return;
+
+        Swal.fire({
+            title: 'Chỉnh sửa thông tin người dùng',
+            html: `
+                <div style="text-align: left;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Tên:</label>
+                        <input id="editName" type="text" class="swal2-input" value="${user.name || ''}" placeholder="Tên người dùng">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email:</label>
+                        <input id="editEmail" type="email" class="swal2-input" value="${user.email || ''}" placeholder="Email">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Điện thoại:</label>
+                        <input id="editPhone" type="text" class="swal2-input" value="${user.phone || ''}" placeholder="Điện thoại">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Địa chỉ:</label>
+                        <input id="editAddress" type="text" class="swal2-input" value="${user.address || ''}" placeholder="Địa chỉ">
+                    </div>
+                </div>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Lưu',
+            cancelButtonText: 'Hủy',
+            preConfirm: async () => {
+                const updatedData = {
+                    name: document.getElementById('editName').value,
+                    email: document.getElementById('editEmail').value,
+                    phone: document.getElementById('editPhone').value,
+                    address: document.getElementById('editAddress').value
+                };
+
+                try {
+                    await authService.updateUser(userId, updatedData);
+                    toast.success('Cập nhật thông tin thành công!');
+                    fetchUsers();
+                } catch (error) {
+                    toast.error('Cập nhật thất bại: ' + error.message);
+                }
+            }
+        });
+    };
+
     const handleToggleBan = async (user) => {
-        const isUnban = user.isBanned;
+        const isUnban = user.is_blocked === 1;  // 1 = đang bị chặn, cần bỏ chặn
         const actionText = isUnban ? "bỏ chặn" : "chặn";
         const actionColor = isUnban ? "#3085d6" : "#d33";
 
@@ -270,20 +323,13 @@ const UserManage = () => {
                                                     <span className={buttonIcon}>✏️</span>
                                                 </button>
                                                 <button
-                                                    className={`${actionButton} ${user.isBanned ? unbanButton : banButton}`}
+                                                    className={`${actionButton} ${user.is_blocked === 1 ? unbanButton : banButton}`}
                                                     onClick={() => handleToggleBan(user)}
-                                                    title={user?.isBanned ? "Bỏ chặn" : "Chặn người dùng"}
+                                                    title={user?.is_blocked === 1 ? "Bỏ chặn" : "Chặn người dùng"}
                                                 >
                                                     <span className={buttonIcon}>
-                                                        {user?.isBanned ? '🔓' : '🚫'}
+                                                        {user?.is_blocked === 1 ? '🔓' : '🚫'}
                                                     </span>
-                                                </button>
-                                                <button
-                                                    className={`${actionButton} ${deleteButton}`}
-                                                    onClick={() => handleDelete(user.id)}
-                                                    title="Xóa"
-                                                >
-                                                    <span className={buttonIcon}>🗑️</span>
                                                 </button>
                                             </div>
                                         </div>
@@ -294,7 +340,93 @@ const UserManage = () => {
                     </tbody>
                 </table>
             </div>
-            
+
+            {/* Modal xem chi tiết */}
+            {isDetailModalOpen && selectedUser && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        borderRadius: '8px',
+                        padding: '30px',
+                        maxWidth: '500px',
+                        width: '90%',
+                        maxHeight: '80vh',
+                        overflowY: 'auto'
+                    }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <h2>Chi tiết người dùng</h2>
+                            <button
+                                onClick={() => setIsDetailModalOpen(false)}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    fontSize: '24px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <div style={{ marginBottom: '20px' }}>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Tên:</strong> {selectedUser.name || 'N/A'}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Email:</strong> {selectedUser.email}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Điện thoại:</strong> {selectedUser.phone || 'N/A'}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Giới tính:</strong> {selectedUser.gender === 'Male' ? 'Nam' : selectedUser.gender === 'Female' ? 'Nữ' : 'N/A'}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Ngày sinh:</strong> {formatDate(selectedUser.birth)}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Địa chỉ:</strong> {selectedUser.address || 'N/A'}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Vai trò:</strong> {getRoleText(selectedUser.role)}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Trạng thái:</strong> {getStatusInfo(selectedUser).text}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Ngày tạo:</strong> {formatDate(selectedUser.createdAt)}
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setIsDetailModalOpen(false)}
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                backgroundColor: '#3085d6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '16px'
+                            }}
+                        >
+                            Đóng
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

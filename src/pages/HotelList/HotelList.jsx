@@ -104,7 +104,7 @@ function HotelList() {
     loadHotels(filters);
   };
 
-  const destination = getFiltersFromQuery().destination || "Hanoi";
+  const destination = getFiltersFromQuery().destination || "Tổng khách sạn";
 
   return (
     <div className="page-wrapper">

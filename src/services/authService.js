@@ -181,5 +181,24 @@ export const authService = {
     } catch (error) {
       console.error(error.response?.data?.message || "Failed to block user");
     }
+  },
+  async updateUser(id, userData){
+    try {
+      const token=localStorage.getItem('token');
+      if(!token){
+        throw new Error('Authentication no token not found')
+      }
+      const response=await api.post(`/auth/user/update/${id}`, userData,
+        {
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Update user error:', error.response?.data);
+      throw new Error(error.response?.data?.message || "Failed to update user");
+    }
   }
 };
