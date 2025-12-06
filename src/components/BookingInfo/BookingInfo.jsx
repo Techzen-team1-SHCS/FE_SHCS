@@ -1,13 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './BookingInfo.module.css';
 import { getAmenityImage } from '../../utils/amenityImage';
 import PaymentButtonVnPay from '../Payment/PaymentButtonVnPay';
+import { discountService } from '../../services/discountService';
+import { toast } from 'react-toastify';
 
-const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm }) => {
+const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, onPriceChange }) => {
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    
+    // FIX: Sử dụng final_price từ API nếu có
+    const [finalPrice, setFinalPrice] = useState(hotelData?.final_price || hotelData?.total_price || 0);
+    // FIX: Sử dụng discount_amount từ API nếu có
+    const [discountAmount, setDiscountAmount] = useState(hotelData?.discount_amount || 0);
+    const [discountError, setDiscountError] = useState('');
+    const [isApplying, setIsApplying] = useState(false);
+    const [appliedCoupon, setAppliedCoupon] = useState(hotelData?.discount_code || '');
+
     const {
         container,
         section,
@@ -19,8 +28,6 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm }) 
         divider,
         noServices,
         reviewSection,
-        reviewInfo,
-        reviewRow,
         taxSection,
         taxItem,
         paymentSection,
@@ -38,12 +45,27 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm }) 
         infoGrid,
         infoItem,
         infoLabel,
-        infoValue
+        infoValue,
+        priceSummary,
+        originalPrice,
+        discountText,
+        finalPriceText,
+        paymentAmount,
+        discountSuccess
     } = styles;
 
     useEffect(() => {
         setIsSubmitted(currentStep === 2);
     }, [currentStep]);
+
+    // FIX: Khởi tạo với giá từ API
+    useEffect(() => {
+        if (hotelData) {
+            setFinalPrice(hotelData.final_price || hotelData.total_price);
+            setDiscountAmount(hotelData.discount_amount || 0);
+            setAppliedCoupon(hotelData.discount_code || '');
+        }
+    }, [hotelData]);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -54,7 +76,7 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm }) 
         city: '',
         request: '',
         arrival: '',
-        coupon: ''
+        coupon: hotelData?.discount_code || '' // Pre-fill coupon nếu đã có
     });
 
     useEffect(() => {
@@ -79,6 +101,61 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm }) 
         }
     }, [hotelData]);
 
+    const applyDiscount = async () => {
+        if (!formData.coupon.trim()) {
+            setDiscountError('Vui lòng nhập mã giảm giá');
+            return;
+        }
+
+        try {
+            setIsApplying(true);
+            setDiscountError('');
+
+            const res = await discountService.applyDiscount(
+                hotelData?.id,
+                formData.coupon
+            );
+
+            console.log('Discount response:', res); // Debug log
+
+            if (res.success || res.message === "Áp mã giảm giá thành công!") {
+                // FIX: Sử dụng giá từ response data
+                const newFinalPrice = res.final_price || res.data?.final_price;
+                const newDiscountAmount = res.discount_amount || res.data?.discount_amount;
+                
+                if (!newFinalPrice || !newDiscountAmount) {
+                    throw new Error('Không nhận được dữ liệu giảm giá');
+                }
+                
+                setFinalPrice(newFinalPrice);
+                setDiscountAmount(newDiscountAmount);
+                setAppliedCoupon(formData.coupon);
+                
+                // Thông báo thành công
+                toast.success(`Áp dụng mã ${formData.coupon} thành công! Giảm ${newDiscountAmount.toLocaleString('vi-VN')} VND`);
+                
+                // FIX: Gọi callback với giá đúng từ API
+                if (onPriceChange) {
+                    onPriceChange({
+                        finalPrice: newFinalPrice,
+                        discountAmount: newDiscountAmount,
+                        originalPrice: hotelData?.total_price
+                    });
+                }
+            } else {
+                setDiscountError(res.message || 'Mã giảm giá không hợp lệ');
+                toast.error('Mã giảm giá không hợp lệ');
+            }
+        } catch (err) {
+            console.error('Discount error:', err);
+            const errorMsg = err.message || 'Mã giảm giá không hợp lệ hoặc đã hết hạn';
+            setDiscountError(errorMsg);
+            toast.error(errorMsg);
+        } finally {
+            setIsApplying(false);
+        }
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -102,6 +179,11 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm }) 
         }
     };
 
+    // FIX: Tính toán giá hiển thị
+    const displayOriginalPrice = Number(hotelData?.total_price || 0);
+    const displayDiscountAmount = Number(discountAmount || 0);
+    const displayFinalPrice = Number(finalPrice || displayOriginalPrice);
+
     if (loading) {
         return (
             <div className={container}>
@@ -109,7 +191,7 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm }) 
             </div>
         );
     }
-
+    
     return (
         <div className={container}>
             {/* Extra Services Section */}
@@ -180,15 +262,61 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm }) 
                         </div>
                         <div className={infoItem}>
                             <div className={infoLabel}>Mã giảm giá</div>
-                            <div className={infoValue}>{formData.coupon || 'Không sử dụng'}</div>
+                            <div className={infoValue}>
+                                {appliedCoupon || formData.coupon || 'Không sử dụng'}
+                                {appliedCoupon && (
+                                    <span style={{ 
+                                        color: '#51cf66', 
+                                        marginLeft: '8px', 
+                                        fontSize: '12px',
+                                        fontWeight: 'bold'
+                                    }}>
+                                        ✓ Đã áp dụng
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Tax Information */}
+                    {/* Tax Information with Price Summary */}
                     <div className={taxSection}>
-                        <h4 className={sectionTitle}>Thuế và phí:</h4>
-                        <div className={taxItem}>• Đã bao gồm 3$ Thuế thành phố</div>
-                        <div className={taxItem}>• Đã bao gồm 22% VAT</div>
+                        <h4 className={sectionTitle}>Chi tiết thanh toán:</h4>
+                        
+                        <div className={priceSummary}>
+                            {/* Giá gốc */}
+                            <div className={originalPrice}>
+                                <span>Giá gốc:</span>
+                                <span>{displayOriginalPrice.toLocaleString('vi-VN')} VND</span>
+                            </div>
+                            
+                            {/* Thuế */}
+                            <div className={taxItem}>
+                                <span>Thuế thành phố:</span>
+                                <span>Đã bao gồm 3$</span>
+                            </div>
+                            <div className={taxItem}>
+                                <span>VAT:</span>
+                                <span>Đã bao gồm 22%</span>
+                            </div>
+                            
+                            {/* Giảm giá nếu có */}
+                            {displayDiscountAmount > 0 && (
+                                <div className={discountText}>
+                                    <span>Giảm giá ({appliedCoupon}):</span>
+                                    <span style={{ color: '#ff6b6b', fontWeight: 'bold' }}>
+                                        -{displayDiscountAmount.toLocaleString('vi-VN')} VND
+                                    </span>
+                                </div>
+                            )}
+                            
+                            {/* Tổng cuối */}
+                            <div className={finalPriceText}>
+                                <span>Tổng thanh toán:</span>
+                                <span style={{ color: '#51cf66', fontWeight: 'bold', fontSize: '18px' }}>
+                                    {displayFinalPrice.toLocaleString('vi-VN')} VND
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
                     <hr className={divider} />
@@ -196,10 +324,35 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm }) 
                     {/* Payment Options */}
                     <div className={paymentSection}>
                         <h4 className={sectionTitle}>Phương thức thanh toán:</h4>
+                        
+                        {/* Hiển thị số tiền cần thanh toán */}
+                        <div className={paymentAmount}>
+                            <span style={{ fontSize: '14px', opacity: 0.9 }}>Số tiền thanh toán:</span>
+                            <div style={{ 
+                                fontSize: '24px', 
+                                fontWeight: 'bold',
+                                marginTop: '5px'
+                            }}>
+                                {displayFinalPrice.toLocaleString('vi-VN')} VND
+                            </div>
+                        </div>
+                        
                         <PaymentButtonVnPay
                             bookingId={hotelData?.id}
-                            amount={Number(hotelData?.total_price)}
+                            amount={displayFinalPrice} // FIX: Truyền giá đã giảm
                         />
+                        
+                        {displayDiscountAmount > 0 && (
+                            <div className={discountSuccess}>
+                                <span style={{ color: '#51cf66', fontSize: '18px' }}>✓</span>
+                                <div>
+                                    <div style={{ fontWeight: 'bold' }}>Áp dụng mã giảm giá thành công!</div>
+                                    <div style={{ fontSize: '13px', marginTop: '4px' }}>
+                                        Bạn đã tiết kiệm được {displayDiscountAmount.toLocaleString('vi-VN')} VND với mã "{appliedCoupon}"
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className={buttonGroup}>
@@ -325,14 +478,110 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm }) 
                         <div className={formGroup}>
                             <label className={label}>Mã giảm giá</label>
                             <div className={inputGroup}>
-                                <input
-                                    className={formStyle}
-                                    type="text"
-                                    name="coupon"
-                                    value={formData.coupon}
-                                    onChange={handleInputChange}
-                                    placeholder="Nhập mã giảm giá"
-                                />
+                                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                    <input
+                                        className={formStyle}
+                                        type="text"
+                                        name="coupon"
+                                        value={formData.coupon}
+                                        onChange={handleInputChange}
+                                        placeholder="Nhập mã giảm giá"
+                                        style={{ flex: 1 }}
+                                    />
+
+                                    <button
+                                        type="button"
+                                        onClick={applyDiscount}
+                                        disabled={isApplying}
+                                        style={{
+                                            padding: "10px 20px",
+                                            background: "#007bff",
+                                            color: "#fff",
+                                            borderRadius: "6px",
+                                            border: "none",
+                                            cursor: "pointer",
+                                            fontWeight: "bold",
+                                            whiteSpace: "nowrap"
+                                        }}
+                                    >
+                                        {isApplying ? "Đang áp dụng..." : "Áp dụng"}
+                                    </button>
+                                </div>
+                                
+                                {/* Thông báo lỗi */}
+                                {discountError && (
+                                    <div style={{ 
+                                        color: 'red', 
+                                        fontSize: '12px', 
+                                        marginTop: '4px',
+                                        padding: '5px',
+                                        background: '#ffeaea',
+                                        borderRadius: '4px'
+                                    }}>
+                                        {discountError}
+                                    </div>
+                                )}
+                                
+                                {/* Thông báo thành công */}
+                                {appliedCoupon && displayDiscountAmount > 0 && (
+                                    <div style={{ 
+                                        color: '#51cf66', 
+                                        fontSize: '13px', 
+                                        marginTop: '4px',
+                                        padding: '8px',
+                                        background: '#ebfbee',
+                                        borderRadius: '4px',
+                                        fontWeight: 'bold',
+                                        border: '1px solid #51cf66'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <span style={{ fontSize: '16px' }}>✓</span>
+                                            <div>
+                                                <div>Đã áp dụng mã "{appliedCoupon}"</div>
+                                                <div style={{ fontSize: '12px', marginTop: '2px' }}>
+                                                    Giảm {displayDiscountAmount.toLocaleString('vi-VN')} VND
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                {/* Hiển thị tổng giá */}
+                                <div style={{ 
+                                    marginTop: '10px', 
+                                    padding: '10px',
+                                    background: '#f8f9fa',
+                                    borderRadius: '6px',
+                                    fontSize: '14px'
+                                }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span>Giá gốc:</span>
+                                        <span>{displayOriginalPrice.toLocaleString('vi-VN')} VND</span>
+                                    </div>
+                                    {displayDiscountAmount > 0 && (
+                                        <>
+                                            <div style={{ 
+                                                display: 'flex', 
+                                                justifyContent: 'space-between',
+                                                marginTop: '5px',
+                                                color: '#ff6b6b'
+                                            }}>
+                                                <span>Giảm giá:</span>
+                                                <span>-{displayDiscountAmount.toLocaleString('vi-VN')} VND</span>
+                                            </div>
+                                            <div style={{ 
+                                                display: 'flex', 
+                                                justifyContent: 'space-between',
+                                                marginTop: '5px',
+                                                fontWeight: 'bold',
+                                                color: '#51cf66'
+                                            }}>
+                                                <span>Tổng cần thanh toán:</span>
+                                                <span>{displayFinalPrice.toLocaleString('vi-VN')} VND</span>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
