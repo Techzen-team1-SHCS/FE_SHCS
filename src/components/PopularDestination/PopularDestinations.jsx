@@ -11,7 +11,16 @@ const PopularDestinations = () => {
     sectionTitle,
     counterTextWrap,
   } = styles;
-  
+  const provinceImages = {
+  "Hà nội": "assets/images/destinations/haNoi.jpg",
+  "Đà nẵng": "assets/images/destinations/daNang.jpg",
+  "Hồ chí minh": "assets/images/destinations/hoChiMinh.jpg",
+  "Nha trang": "assets/images/destinations/nhaTrang.jpg",
+  "Huế": "assets/images/destinations/hue.jpg",
+  "Hải phòng": "assets/images/destinations/haiPhong.jpg",
+  "Đà Lạt":"assets/images/destinations/dalat.jpg",
+  "Phú Quốc":"assets/images/destinations/phuquoc.jpg"
+};
   const [popularHotels, setPopularHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -19,56 +28,36 @@ const PopularDestinations = () => {
     navigate(`/HotelList?destination=${encodeURIComponent(destination)}`);
   };
   useEffect(() => {
-    const fetchHotelsCount = async () => {
-      try {
-        setLoading(true);
-        
-        // Danh sách các địa điểm phổ biến với ảnh từ frontend
-        const destinations = [
-          { id: 1, title: "Hà nội", delay: 0, img: "assets/images/destinations/haNoi.jpg" },
-          { id: 2, title: "Đà nẵng", delay: 100, img: "assets/images/destinations/daNang.jpg" },
-          { id: 3, title: "Hồ chí minh", delay: 200, img: "assets/images/destinations/hoChiMinh.jpg" },
-          { id: 4, title: "Nha trang", delay: 0, img: "assets/images/destinations/nhaTrang.jpg" },
-          { id: 5, title: "Huế", delay: 100, img: "assets/images/destinations/hue.jpg" },
-          { id: 6, title: "Hải phòng", delay: 200, img: "assets/images/destinations/haiPhong.jpg" },
-        ];
+  const fetchHotelsCount = async () => {
+  try {
+    setLoading(true);
 
-        // Fetch số lượng hotels cho từng địa điểm
-        const destinationsWithCount = await Promise.all(
-          destinations.map(async (destination) => {
-            try {
-              const response = await hotelService.searchHotels({
-                destination: destination.title,
-                per_page: 1, // Chỉ cần lấy tổng số lượng
-                page: 1
-              });
-              
-              return {
-                ...destination,
-                hotels: `${response.total || 0} hotels`,
-                hotelCount: response.total || 0
-              };
-            } catch (error) {
-              console.error(`Error fetching hotels for ${destination.title}:`, error);
-              return {
-                ...destination,
-                hotels: "0 hotels",
-                hotelCount: 0
-              };
-            }
-          })
-        );
+    const response = await hotelService.getDestinationsCount();
+    // Nếu API trả trực tiếp mảng:
+    const data = response?.data || response; // fallback nếu response.data undefined
 
-        setPopularHotels(destinationsWithCount);
-      } catch (error) {
-        console.error("Error fetching popular destinations:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const destinationsWithImg = data.map((item, index) => ({
+      id: index + 1,
+      title: item.province,
+      hotels: `${item.count} hotels`,
+      hotelCount: item.count,
+      img: provinceImages[item.province] || "assets/images/destinations/default.jpg",
+      delay: index * 100,
+    }));
 
-    fetchHotelsCount();
-  }, []);
+    setPopularHotels(destinationsWithImg);
+
+  } catch (error) {
+    console.error("Error fetching popular destinations:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  fetchHotelsCount();
+}, []);
+
 
   // Tính tổng số hotels
   const totalHotels = popularHotels.reduce((sum, hotel) => sum + hotel.hotelCount, 0);

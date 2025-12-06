@@ -12,7 +12,7 @@ const HotelCard2 = ({ PopularHotel, aosDelay, index,onClick }) => {
         more,
     } = styles;
 
-    const colClass = index === 2 || index === 3 ? "col-md-6" : "col-xl-3 col-md-6";
+    const colClass = index === 2 || index === 3 ||index ===6 || index === 7 ? "col-md-6" : "col-xl-3 col-md-6";
 
     return (
         <div className={colClass}>
@@ -29,7 +29,7 @@ const HotelCard2 = ({ PopularHotel, aosDelay, index,onClick }) => {
                     <a className={heart}>
                         <i className="fas fa-heart"></i>
                     </a>
-                    <img src={PopularHotel.img} alt={PopularHotel.title} />
+                    <img style={{objectFit:'cover'}} src={PopularHotel.img} alt={PopularHotel.title} />
                 </div>
                 <div className={content}>
                     <h6>{PopularHotel.title}</h6>

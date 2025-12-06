@@ -34,7 +34,9 @@ export const hotelService = {
 
     return { hotels: [], pagination: {}, total: 0 };
   },
-
+  async getDestinationsCount() {
+    return api.get('auth/destinations/count').then(res => res.data);
+  },
   async getTopHotel() {
     const response = await api.get("/auth/tophotels");
     return response.data.data;
