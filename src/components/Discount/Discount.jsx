@@ -26,7 +26,7 @@ const Discount = () => {
         {
             id: 5,
             image: "assets/images/discount/discount-5.jpg"
-        }
+        },
     ];
 
     const { discountCard } = styles

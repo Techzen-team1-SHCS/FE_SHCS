@@ -64,7 +64,7 @@ const DiscountDetail = () => {
             description: "Giảm 15% cho đặt phòng cuối tuần",
             detailedDescription: "Thư giãn cuối tuần với ưu đãi đặc biệt giảm 15% cho các đặt phòng từ thứ 6 đến chủ nhật.",
             image: "/assets/images/discount/discount-2.jpg",
-            expiryDate: "2024-12-31",
+            xpiryDate: "2025-12-31",
             isActive: true,
             minOrder: 1500000,
             maxDiscount: 500000,
@@ -77,7 +77,74 @@ const DiscountDetail = () => {
                 "Áp dụng cho check-in từ thứ 6 đến chủ nhật",
                 "Có thể áp dụng với một số chương trình khuyến mãi khác"
             ]
+        },
+        {
+            "id": 3,
+            "title": "Khách hàng thân thiết",
+            "code": "LOYALTY25",
+            "value": "30%",
+            "description": "Dành cho khách hàng đã từng đặt phòng",
+            "detailedDescription": "Tri ân khách hàng thân thiết với ưu đãi giảm 30% cho các đặt phòng trước đây của bạn. Áp dụng cho khách hàng đã từng đặt phòng ít nhất 1 lần.",
+            "minOrder": 3000000,
+            "maxDiscount": 1500000,
+            "image": "/assets/images/discount/discount-3.jpg",
+            "isActive": true,
+            "expiryDate": "2025-11-11",
+            "applicableHotels": ["Tất cả khách sạn"],
+            "category": "loyalty",
+            "terms": [
+                "Áp dụng cho khách hàng đã từng đặt phòng ít nhất 1 lần",
+                "Giảm tối đa 1,500,000 VND",
+                "Đơn hàng tối thiểu 3,000,000 VND",
+                "Không áp dụng đồng thời với các chương trình khuyến mãi khác",
+                "Chỉ áp dụng cho đặt phòng trong khoảng thời gian ưu đãi"
+            ]
+        },
+        {
+            "id": 4,
+            "title": "Đặt sớm giảm sâu",
+            "code": "EARLYBIRD30",
+            "value": "25%",
+            "description": "Giảm 25% khi đặt phòng trước 30 ngày",
+            "detailedDescription": "Ưu đãi đặc biệt cho khách hàng đặt phòng sớm: giảm 25% nếu đặt trước ít nhất 30 ngày so với ngày check-in.",
+            "minOrder": 2500000,
+            "maxDiscount": 1200000,
+            "image": "/assets/images/discount/discount-4.jpg",
+            "isActive": true,
+            "expiryDate": "2026-02-01",
+            "applicableHotels": ["Tất cả khách sạn"],
+            "category": "earlybird",
+            "terms": [
+                "Áp dụng khi đặt phòng trước ít nhất 30 ngày",
+                "Giảm tối đa 1,200,000 VND",
+                "Đơn hàng tối thiểu 2,500,000 VND",
+                "Không áp dụng đồng thời với các chương trình khuyến mãi khác",
+                "Chỉ áp dụng cho các khách sạn tham gia chương trình"
+            ],
+        },
+        {
+            "id": 5,
+            "title": "Combo gia đình",
+            "code": "FAMILY20",
+            "value": "20%",
+            "description": "Ưu đãi đặc biệt cho gói gia đình",
+            "detailedDescription": "Dành cho các gia đình: giảm 20% khi đặt các gói phòng gia đình, giúp cả nhà có kỳ nghỉ tiết kiệm và thoải mái.",
+            "minOrder": 3500000,
+            "maxDiscount": 800000,
+            "image": "/assets/images/discount/discount-5.jpg",
+            "isActive": true,
+            "expiryDate": "2026-12-31",
+            "applicableHotels": ["Tất cả khách sạn"],
+            "category": "family",
+            "terms": [
+                "Áp dụng cho đặt phòng theo gói gia đình",
+                "Giảm tối đa 800,000 VND",
+                "Đơn hàng tối thiểu 3,500,000 VND",
+                "Không áp dụng đồng thời với các chương trình khuyến mãi khác",
+                "Áp dụng cho khách sạn tham gia chương trình"
+            ],
         }
+
     ];
     const discount = discountData.find(item => item.id === parseInt(id));
 
