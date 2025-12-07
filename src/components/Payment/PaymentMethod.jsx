@@ -1,50 +1,37 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styles from './PaymentMethod.module.css'
 import { formatVND } from '../../utils/dateUtils';
 import paymentService from '../../services/paymentService';
 import { authService } from '../../services/authService';
 import CurrentTime from '../CurrentTime/CurrentTime';
+import { useQuery } from '@tanstack/react-query';
 
 const PaymentMethod = ({ user }) => {
-    const [payments, setPayments] = useState([]);
-    const [totalAmount, setTotalAmount] = useState(0);
-    const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState('all');
 
-    useEffect(() => {
-        const fetchPayment = async () => {
-            try {
-                setLoading(true);
-                
-                // Fetch payments
-                const paymentResponse = await paymentService.getMyPayments();
-                console.log('💰 Payment response:', paymentResponse);
-                
-                // Sửa ở đây - kiểm tra cấu trúc response
-                const paymentsData = paymentResponse.data || paymentResponse;
-                const paymentsArray = Array.isArray(paymentsData) ? paymentsData : [];
-                setPayments(paymentsArray);
-                
-                // Tính tổng tiền
-                const total = paymentsArray.reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
-                setTotalAmount(total);
-                
-                // Fetch user data
-                if (user?.id) {
-                    const userResponse = await authService.getUserById(user.id);
-                    setUserData(userResponse);
-                }
-                
-            } catch (error) {
-                console.error('Lỗi khi lấy dữ liệu:', error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        
-        fetchPayment();
-    }, [user?.id]);
+     const { data: payments = [], isLoading: loadingPayments } = useQuery({
+        queryKey: ["payments", user?.id],
+        queryFn: async () => {
+            const res = await paymentService.getMyPayments();
+            return Array.isArray(res.data) ? res.data : [];
+        },
+        staleTime: 1000 * 60 * 3, // 3 phút cache
+    });
+
+    // ⚡ Query 2: Get user info
+    const { data: userData, isLoading: loadingUser } = useQuery({
+        queryKey: ["user-info", user?.id],
+        queryFn: () => authService.getUserById(user.id),
+        enabled: !!user?.id,
+        staleTime: 1000 * 60 * 3,
+    });
+
+    const loading = loadingPayments || loadingUser;
+
+    // ⚡ Tính totalAmount cực nhanh
+    const totalAmount = useMemo(() => {
+        return payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
+    }, [payments]);
     
     // Filter payments based on active filter
     const filteredPayments = payments.filter(payment => {
@@ -97,7 +84,7 @@ const PaymentMethod = ({ user }) => {
                     <div className={styles.balanceCard}>
                         <div className={styles.cardHeader}>
                             <div className={styles.cardIcon}>
-                                <img src="assets/images/icons/wallet.png" alt="Wallet" />
+                                <img src="assets/images/icons/payment.png" alt="Wallet" />
                             </div>
                             <h3>Total Balance</h3>
                         </div>
@@ -108,7 +95,7 @@ const PaymentMethod = ({ user }) => {
                     <div className={styles.balanceCard}>
                         <div className={styles.cardHeader}>
                             <div className={styles.cardIcon}>
-                                <img src="assets/images/icons/payment.png" alt="Payments" />
+                                <img src="assets/images/icons/paid.png" alt="Payments" />
                             </div>
                             <h3>Total Paid</h3>
                         </div>

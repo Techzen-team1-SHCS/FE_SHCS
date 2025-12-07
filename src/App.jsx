@@ -32,11 +32,12 @@ import DiscountList from './pages/Discount/DiscountList';
 import DiscountDetail from './pages/Discount/DiscountDetail';
 import SettingPage from './pages/Admin/Setting/SettingPage';
 // import { AuthProvider } from './contexts/AuthContext';
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+const queryClient = new QueryClient();
 function App() {
-
   return (
-    <BehaviorProvider>
+    <QueryClientProvider client={queryClient}>
+      <BehaviorProvider>
       <Router>
         <Routes>
           {/* Routes có dùng MainLayout */}
@@ -91,6 +92,7 @@ function App() {
         />
       </Router>
     </BehaviorProvider>
+    </QueryClientProvider>
   )
 }
 

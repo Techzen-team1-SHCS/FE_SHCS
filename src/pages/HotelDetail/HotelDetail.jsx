@@ -251,7 +251,7 @@ const HotelDetail = () => {
                             {roomArray.map((item,index)=>(
                               item?.room_type&&(
                                 <div key={index} className='roomRender'>
-                                  <img  src={galleryImages[index+1]?.url} alt="Destination 1" />
+                                  <img  src={galleryImages[index+1]?.url || '/default-room.jpg'} alt="Destination 1" />
                                   <div className='info-room'>
                                     <span className='room_type'>{item.room_type}</span>
                                     <span className='price'>{item.price

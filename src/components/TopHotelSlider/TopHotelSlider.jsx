@@ -5,24 +5,10 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import styles from './TopHotelSlider.module.css';
-import { hotelService } from "../../services/hotelService";
-
+import { useTopHotelsQuery } from "../../queries/useTopHotelsQuery";
 const TopHotelSlider = () => {
-  const [topHotels, setTopHotels] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTopHotels = async () => {
-      setLoading(true);
-      const data = await hotelService.getTopHotel();
-      setTopHotels(data || []);
-      setLoading(false);
-    };
-
-    fetchTopHotels();
-  }, []);
-
-  if (loading) return <div>Loading top hotels...</div>;
+  const {data:topHotels=[],isLoading,isError}=useTopHotelsQuery();
+  if (isLoading) return <div>Loading top hotels...</div>;
 
   return (
     <section className={styles.topHotelsSlider}>
