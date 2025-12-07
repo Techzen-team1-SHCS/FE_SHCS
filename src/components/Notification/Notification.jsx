@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './Notification.module.css';
 import '../../config/echo';
 import { Navigate, useNavigate } from 'react-router-dom';
+import PartLoading from '../Loading/PartLoading';
 
 const Notification = ({ userId }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -178,7 +179,7 @@ const Notification = ({ userId }) => {
                 </div>
 
                 <div className={styles.notificationList} ref={listRef}>
-                    {loading && <div className={styles.loadingState}>Đang tải...</div>}
+                    {loading && <div className={styles.loadingState}><PartLoading /></div>}
                     {error && <div className={styles.errorState}>{error}</div>}
                     {!loading && notifications.length === 0 && (
                         <div className={styles.emptyState}>Không có thông báo</div>

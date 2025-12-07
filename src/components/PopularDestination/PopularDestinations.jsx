@@ -3,6 +3,7 @@ import styles from "./PopularDestinations.module.css";
 import { hotelService } from "../../services/hotelService";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import PartLoading from "../Loading/PartLoading";
 
 const PopularDestinations = () => {
   const {
@@ -67,7 +68,7 @@ const PopularDestinations = () => {
       <section className={`${popularDestinationsArea} rel z-1`}>
         <div className="container-fluid">
           <div className={`${popularDestinationsWrap} br-20 bgc-lighter pt-100 pb-70`}>
-            <div className="text-center py-5">Loading popular destinations...</div>
+            <div className="text-center py-5"><PartLoading /></div>
           </div>
         </div>
       </section>

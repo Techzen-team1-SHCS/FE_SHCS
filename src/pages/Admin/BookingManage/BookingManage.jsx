@@ -6,6 +6,7 @@ import { formatDateTime, formatVND } from '../../../utils/dateUtils';
 import DetailSidebar from '../../../components/Admin/DetailSidebar/DetailSidebar';
 import BookingSidebarContent from '../../../components/Admin/DetailSidebar/BookingSidebarContent'; // Tạo component mới cho edit modal
 import Swal from "sweetalert2";
+import PartLoading from '../../../components/Loading/PartLoading';
 
 const BookingManage = () => {
     const {
@@ -224,7 +225,7 @@ const BookingManage = () => {
     };
 
     if (loading) {
-        return <div className={container}>Đang tải...</div>;
+        return <div className='mt-40'><PartLoading /></div>;
     }
 
     return (

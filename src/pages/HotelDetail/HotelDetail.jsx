@@ -58,6 +58,7 @@ const HotelDetail = () => {
       if (!hotelId) return;
       setLoadingComments(true);
       try {
+        
         const res = await commentService.getComments({ maHotel: hotelId });
         // API trả về { status, data } nên lấy res.data
         setComments(res.data || []);
@@ -152,24 +153,24 @@ const HotelDetail = () => {
     <div className="page-wrapper">
       
       {hotelArray.map((hotel) => {
-        const galleryImages = hotel.images || [];
-        const amenitiesArray = hotel.amenities ? JSON.parse(hotel.amenities) : [];
-        const roomArray=hotel.rooms || [];
-        const styleArray=hotel.styles || [];
+        const galleryImages = hotel?.images || [];
+        const amenitiesArray = hotel?.amenities ? JSON.parse(hotel.amenities) : [];
+        const roomArray=hotel?.rooms || [];
+        const styleArray=hotel?.styles || [];
         console.log(amenitiesArray);
         console.log(galleryImages);
         return (
-          <div key={hotel.id}>
+          <div key={hotel?.id}>
             <img  src={galleryImages[0]?.url} alt="Destination 1" style={{height:'500px',width:'100%',objectFit:'cover'}} />
-            <NavigationTabs hotelId={hotel.id} />
+            <NavigationTabs hotelId={hotel?.id} />
             <section className="page-banner-two rel z-1 mt-20">
               <div className="container-fluid" style={{ width: '85%',alignItems: 'center', justifyContent: 'center'   }}>
                 <div className="container3">
                   <div className="banner-inner ">
-                    <h2 className="page-title">{hotel.name || 'Hotel Name'}</h2>
+                    <h2 className="page-title">{hotel?.name || 'Hotel Name'}</h2>
                   </div>
                   <span className="location d-inline-block mb-10">
-                    <i className="fal fa-map-marker-alt"></i> { hotel.description || 'Location'}
+                    <i className="fal fa-map-marker-alt"></i> { hotel?.description || 'Location'}
                   </span>
                 </div>
               </div>
@@ -225,7 +226,7 @@ const HotelDetail = () => {
                 <div className="tour-header-content mb-15">
                   <div className=" body-content pb-5">
                     <div className="description-content">
-                        <p>{hotel.text || 'Description'}</p>
+                        <p>{hotel?.text || 'Description'}</p>
                         {showAvailableRooms && (
                         <section id="available-rooms-section"  style={{ width: '100%', marginTop: '50px' }}>
                           
@@ -253,8 +254,8 @@ const HotelDetail = () => {
                                 <div key={index} className='roomRender'>
                                   <img  src={galleryImages[index+1]?.url} alt="Destination 1" />
                                   <div className='info-room'>
-                                    <span className='room_type'>{item.room_type}</span>
-                                    <span className='price'>{item.price
+                                    <span className='room_type'>{item?.room_type}</span>
+                                    <span className='price'>{item?.price
                                     ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)
                                     : "N/A"}
                                     </span>
@@ -275,7 +276,7 @@ const HotelDetail = () => {
                             item?.style && (
                               <div key={index} className='contentStyle'>
                                 <img src="/assets/images/about/pdf-gold.svg" alt="" />
-                                <p>Thể Loại {item.style}</p>
+                                <p>Thể Loại {item?.style}</p>
                               </div>
                             )
                           ))}
@@ -324,11 +325,11 @@ const HotelDetail = () => {
                </div>
                <hr className="mb-30" style={{height:'400px',width:'1px'}} />  
                <div className='branch-Hotel'>
-                <SameProvinceHotels currentHotelId={hotel.id}></SameProvinceHotels>
+                <SameProvinceHotels currentHotelId={hotel?.id}></SameProvinceHotels>
                </div>
                </div>
                <hr className="mb-30" />
-               <SimilarHotel currentHotelId={hotel.id}/>
+               <SimilarHotel currentHotelId={hotel?.id}/>
               </div>
                <hr className="mb-30" />
             </section>
