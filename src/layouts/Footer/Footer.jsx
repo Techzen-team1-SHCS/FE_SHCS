@@ -70,11 +70,11 @@ const Footer = () => {
     {
       title: "Destinations",
       links: [
-        { label: "African Safaris", path: "/destination-details" },
-        { label: "Alaska & Canada", path: "/destination-details" },
-        { label: "South America", path: "/destination-details" },
-        { label: "Middle East", path: "/destination-details" },
-        { label: "South America", path: "/destination-details" },
+        { label: "Huế", path: `/HotelList?destination=${encodeURIComponent("Huế")}` },
+        { label: "Đà nẵng", path: `/HotelList?destination=${encodeURIComponent("Đà nẵng")}` },
+        { label: "Hồ Chí Minh", path: `/HotelList?destination=${encodeURIComponent("Hồ Chí Minh")}` },
+        { label: "Nha trang", path: `/HotelList?destination=${encodeURIComponent("Nha trang")}` },
+        { label: "Hà nội", path: `/HotelList?destination=${encodeURIComponent("Hà nội")}` },
       ],
     },
     {
@@ -92,12 +92,12 @@ const Footer = () => {
   const contactInfo = [
     {
       icon: "fal fa-map-marked-alt",
-      text: "578 Level, D-block 45 Street Melbourne, Australia",
+      text: "Duy Tan University, Da Nang, Vietnam",
     },
     {
       icon: "fal fa-envelope",
-      text: "supportrevelo@gmail.com",
-      href: "mailto:supportrevelo@gmail.com",
+      text: "dtu@gmail.com",
+      href: "mailto:dtu@gmail.com",
     },
     {
       icon: "fal fa-clock",
@@ -105,8 +105,8 @@ const Footer = () => {
     },
     {
       icon: "fal fa-phone-volume",
-      text: "+880 (123) 345 88",
-      href: "callto:+88012334588",
+      text: "+84 0373234323",
+      href: "callto:+840373234323",
     },
   ];
 
@@ -302,7 +302,7 @@ const Footer = () => {
             <div className="col-lg-5">
               <div className="copyright-text text-center text-lg-start">
                 <p>
-                  @Copy 2024 <Link to="/">Ravelo</Link>, All rights reserved
+                  @Copy 2025 <Link to="/">Smart Hotel</Link>, All rights reserved
                 </p>
               </div>
             </div>

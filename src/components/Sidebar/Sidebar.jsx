@@ -34,7 +34,6 @@ const Sidebar = () => {
         { path: "/admin/users-manage", label: "Users", icon: "👥" },
         { path: "/admin/notification", label: "Notification", icon: "🏨" },
         { path: "/admin/settings", label: "Settings", icon: "⚙️" },
-        { path: "/admin/payment", label: "Payment", icon: "" },
     ];
 
     return (

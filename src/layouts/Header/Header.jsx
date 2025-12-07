@@ -7,7 +7,9 @@ import { AuthContext } from '../../contexts/AuthContext';
 import PopUpButton from "../../components/PopupButton/PopUpButton"
 import { toast } from 'react-toastify';
 import Notification from '../../components/Notification/Notification';
+import styles from './Header.module.css';
 const Header = () => {
+    const { navigation,authAppear, authWrapper, btnRegister, content, triangleUp, dangky, linkLogin, userMenu, userHeader, userAvatar, menuItem, menuDivider, logoutBtn, authT, customFaUser, customFaDown, authUser } = styles;
     const { user, logout } = useContext(AuthContext);
     const [isAuthVisible, setIsAuthVisible] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
@@ -45,28 +47,32 @@ const Header = () => {
         { label: "About", path: "/About", },
         {
             label: "Hotels",
-            path: "/Hotels",
+
             sub: [
                 { label: "Hotel List", path: "/HotelList" },
                 // { label: "Tour Grid", path: "/tour-grid" },
                 // { label: "Tour Sidebar", path: "/tour-sidebar" },
-                { label: "Hotel Details", path: "/HotelDetail" },
                 { label: "Hotel Recommendation", path: "/HotelsRecommend" },
                 // { label: "Tour Guide", path: "/tour-guide" },
             ],
         },
         {
             label: "Destinations",
-            path: "/destinations",
+
             sub: [
-                { label: "Destination 01", path: "/destination1" },
-                // { label: "Destination 02", path: "/destination2" },
-                // { label: "Destination Details", path: "/destination-details" },
+                { label: "Hà Nội", path: `/HotelList?destination=${encodeURIComponent("Hà Nội")}` },
+                { label: "Đà Nẵng", path: `/HotelList?destination=${encodeURIComponent("Đà Nẵng")}` },
+                { label: "Hồ Chí Minh", path: `/HotelList?destination=${encodeURIComponent("Hồ Chí Minh")}` },
+                { label: "Nha Trang", path: `/HotelList?destination=${encodeURIComponent("Nha Trang")}` },
+                { label: "Huế", path: `/HotelList?destination=${encodeURIComponent("Huế")}` },
+                { label: "Hải Phòng", path: `/HotelList?destination=${encodeURIComponent("Hải Phòng")}` },
+                { label: "Đà Lạt", path: `/HotelList?destination=${encodeURIComponent("Đà Lạt")}` },
+                { label: "Phú Quốc", path: `/HotelList?destination=${encodeURIComponent("Phú Quốc")}` },
             ],
         },
         {
             label: "Pages",
-            path: "/pages",
+
             sub: [
                 { label: "Contact Us", path: "/ContactUs" },
                 { label: "404 Error", path: "*" },
@@ -74,18 +80,18 @@ const Header = () => {
         },
         {
             label: "Blog",
-            path: "/blog",
+
             sub: [
                 { label: "Blog List", path: "/BlogList" },
             ],
         },
     ];
     const renderMenu = (items) => (
-        <ul className="navigation clearfix">
+        <ul className="navigation clearfix" >
             {items.map((item, idx) => (
                 <li key={idx} className={item.sub ? "dropdown" : ""}>
-                    <Link to={item.path}>{item.label}</Link>
-                    {item.sub && <ul>{renderSubMenu(item.sub)}</ul>}
+                    <Link to={item.path} style={{ textDecoration: 'none' }}>{item.label}</Link>
+                    {item.sub && <ul >{renderSubMenu(item.sub)}</ul>}
                 </li>
             ))}
         </ul>
@@ -94,7 +100,7 @@ const Header = () => {
         <>
             {items.map((subItem, idx) => (
                 <li key={idx} className={subItem.sub ? "dropdown" : ""}>
-                    <Link to={subItem.path}>{subItem.label}</Link>
+                    <Link to={subItem.path} style={{ textDecoration: 'none' }}>{subItem.label}</Link>
                     {subItem.sub && <ul>{renderSubMenu(subItem.sub)}</ul>}
                 </li>
             ))}
@@ -105,8 +111,9 @@ const Header = () => {
         <>
             {/* Preloader */}
             {/* Main Header */}
-            <header className={`main-header header-one white-menu menu-absolute ${isScrolled ? 'fixed-header' : ''}`}>
+            <header className={`main-header header-one white-menu menu-absolute fixed-header`}>
                 {/* Header-Upper */}
+                
                 <div className="header-upper py-30 rpy-0">
                     <div className="container-fluid clearfix">
                         <div className="header-inner rel d-flex align-items-center">
@@ -151,39 +158,38 @@ const Header = () => {
                                 <Notification userId={user ? user.id : null} />
                             </div>
                             {/* Auth Button */}
-                            <div className="auth-wrapper">
+                            <div className={authWrapper}>
                                 <div onClick={handleAuthAppear}>
-                                    <div className='auth-t'>
-                                        <div className='fal fa-user custom-fa-user'></div>
-
-                                        <div className='auth-user'>
+                                    <div className={authT}>
+                                        <div className={`fal fa-user ${customFaUser}`}></div>
+                                        <div className={authUser}>
                                             {user ? `Xin chào, ${user.name}` : 'Tài khoản'}
                                         </div>
 
-                                        <div className='fal fa-caret-down custom-fa-down'></div>
+                                        <div className={`fal fa-caret-down ${customFaDown}`}></div>
                                     </div>
 
                                     {isAuthAppear && (
                                         <div >
-                                            <div className='triangle-up position-absolute'></div>
-                                            <div className='position-absolute auth-appear show' style={{ minWidth: '220px' }}>
+                                            <div className={`${triangleUp} position-absolute`}></div>
+                                            <div className={`position-absolute ${authAppear} `} style={{ minWidth: '220px' }}>
                                                 {!user ? (
                                                     // Nếu chưa đăng nhập
-                                                    <div className="btnRegister">
-                                                        <div className="content">
+                                                    <div className={btnRegister}>
+                                                        <div className={content}>
                                                             <span
                                                                 onClick={() => {
                                                                     setIsLogin(false);
                                                                     setIsAuthVisible(true);
                                                                     setIsAuthAppear(false);
                                                                 }}
-                                                                className='dangky'
+                                                                className={dangky}
                                                             >
                                                                 Đăng ký
                                                             </span>
                                                             <span>Quý khách đã có tài khoản chưa?</span>
                                                             <a
-                                                                className='linkLogin'
+                                                                className={linkLogin}
                                                                 onClick={() => {
                                                                     setIsLogin(true);
                                                                     setIsAuthVisible(true);
@@ -196,12 +202,12 @@ const Header = () => {
                                                     </div>
                                                 ) : (
                                                     // Nếu đã đăng nhập
-                                                    <div className="user-menu p-0" >
-                                                        <div className="user-header">
+                                                    <div className={userMenu + " p-0"} >
+                                                        <div className={userHeader}>
                                                             <img
                                                                 src={user?.image || '/default-avatar.png'}
                                                                 alt="avatar"
-                                                                className="user-avatar rounded-circle"
+                                                                className={userAvatar + " rounded-circle"}
                                                                 width={80}
                                                                 height={80}
                                                             />
@@ -217,7 +223,7 @@ const Header = () => {
                                                             <ul className="list-unstyled mb-0">
                                                                 <li>
                                                                     <button
-                                                                        className="menu-item"
+                                                                        className={menuItem}
                                                                         onClick={() => navigate('/profile')}
                                                                     >
                                                                         <span className="icon">👤</span>
@@ -226,7 +232,7 @@ const Header = () => {
                                                                 </li>
                                                                 <li>
                                                                     <button
-                                                                        className="menu-item"
+                                                                        className={menuItem}
                                                                         onClick={() => navigate('/my-bookings')}
                                                                     >
                                                                         <span className="icon">🧳</span>
@@ -235,7 +241,7 @@ const Header = () => {
                                                                 </li>
                                                                 <li>
                                                                     <button
-                                                                        className="menu-item"
+                                                                        className={menuItem}
                                                                         onClick={() => navigate('/wishlist')}
                                                                     >
                                                                         <span className="icon">💖</span>
@@ -244,7 +250,7 @@ const Header = () => {
                                                                 </li>
                                                                 <li>
                                                                     <button
-                                                                        className="menu-item"
+                                                                        className={menuItem}
                                                                         onClick={() => navigate('/help')}
                                                                     >
                                                                         <span className="icon">❓</span>
@@ -253,7 +259,7 @@ const Header = () => {
                                                                 </li>
                                                             </ul>
 
-                                                            <hr className="menu-divider" />
+                                                            <hr className={menuDivider} />
 
                                                             <button
                                                                 onClick={() => {
@@ -261,7 +267,7 @@ const Header = () => {
                                                                     toast.success('Đăng xuất thành công!');
                                                                     setIsAuthAppear(false);
                                                                 }}
-                                                                className="logout-btn"
+                                                                className={logoutBtn}
                                                             >
                                                                 <span className="icon">🚪</span>
                                                                 Đăng xuất
