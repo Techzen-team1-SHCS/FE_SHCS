@@ -4547,6 +4547,7 @@ blockquote {
   -webkit-transition: all 500ms ease;
   -o-transition: all 500ms ease;
   transition: all 500ms ease;
+  overflow: hidden;
 }
 
 .main-header .header-upper {
@@ -4803,7 +4804,8 @@ blockquote {
   position: absolute;
   left: inherit;
   top: 100%;
-  min-width: 250px;
+  width: fit-content;
+  min-width: 180px;
   z-index: 100;
   display: none;
   background: white;
@@ -4956,6 +4958,61 @@ blockquote {
   .main-header.header-one.fixed-header .header-upper {
     padding-top: 10px;
     padding-bottom: 10px;
+  }
+}
+
+/* Enable pure-CSS hover dropdown for desktop (replaces JS hover) */
+@media only screen and (min-width: 992px) {
+  .main-menu .navbar-collapse li:hover > ul,
+  .main-menu .navbar-collapse li:hover > .megamenu {
+    /* show submenu with transition handled by opacity/transform */
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* ensure nested dropdowns are positioned correctly and animate nicely */
+  .main-menu .navbar-collapse li ul,
+  .main-menu .navbar-collapse li .megamenu {
+    display: block; /* keep in layout for desktop animations */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    pointer-events: none;
+    -webkit-transition: opacity 220ms ease, transform 220ms ease;
+    transition: opacity 220ms ease, transform 220ms ease;
+  }
+}
+
+/* Dropdown indicator using CSS (no extra DOM) */
+@media only screen and (min-width: 992px) {
+  .main-menu .navbar-collapse .navigation>li.dropdown > a {
+    position: relative;
+    padding-right: 12px; /* room for the arrow */
+  }
+
+  .main-menu .navbar-collapse .navigation>li.dropdown > a::after {
+    content: "";
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid currentColor;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: transform 0.25s ease;
+  }
+
+  /* Rotate arrow when submenu is visible (hover) */
+  .main-menu .navbar-collapse .navigation>li.dropdown:hover > a::after {
+    transform: translateY(-2px);
+  }
+
+  /* Hide legacy .dropdown-btn if still present */
+  .main-menu .navbar-collapse li.dropdown .dropdown-btn {
+    display: none !important;
   }
 }
 
@@ -11755,4 +11812,65 @@ blockquote .blockquote-footer:before {
 
 .footer-bottom-nav li {
   margin: 0 13px 5px;
+}
+/* Thêm vào file CSS chính hoặc Header.module.css */
+
+/* Hiệu ứng cho subMenu items */
+.navigation > li > ul > li > a {
+  position: relative;
+  overflow: hidden;
+}
+
+.navigation > li > ul > li > a:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 1px;
+  background: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.navigation > li > ul > li > a:hover:after {
+  width: 100%;
+}
+
+/* Gradient border cho subMenu */
+.navigation > li > ul {
+  background: linear-gradient(135deg, white 0%, #f8f9fa 100%);
+}
+
+/* Hiệu ứng shadow khi hover vào menu chính */
+.navigation > li:hover > a {
+  text-shadow: 0 0 8px rgba(var(--primary-rgb), 0.3);
+}
+
+/* Hiệu ứng ripple cho menu items */
+.navigation > li > ul > li > a:active {
+  transform: scale(0.98);
+}
+
+/* Custom scrollbar cho subMenu (nếu có nhiều items) */
+.navigation > li > ul {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.navigation > li > ul::-webkit-scrollbar {
+  width: 6px;
+}
+
+.navigation > li > ul::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.navigation > li > ul::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 3px;
+}
+
+.navigation > li > ul::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
 }
