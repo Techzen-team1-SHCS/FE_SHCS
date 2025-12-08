@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import HotelCard3 from "../HotelCard/HotelCard3";
 import { useTopHotelsQuery } from "../../queries/useTopHotelsQuery";
-import { hotelService } from "../../services/hotelService";
 import PartLoading from "../Loading/PartLoading";
 
 const HotelSection = () => {

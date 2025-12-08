@@ -1,68 +1,103 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { bookingService } from '../../services/bookingService';
 import { AuthContext } from '../../contexts/AuthContext';
 import '../../config/echo';
 import { toast } from 'react-toastify';
 import LoaderButton from '../Loading/LoaderButton';
+import { 
+  FaCheck, 
+  FaUsers, 
+  FaHotel, 
+  FaMoneyBillWave,
+  FaShoppingCart,
+  FaCalendarAlt,
+  FaArrowRight,
+  FaExclamationTriangle,
+  FaStar,
+  FaWifi,
+  FaCar,
+  FaSwimmingPool,
+  FaUtensils,
+  FaParking,
+  FaConciergeBell
+} from 'react-icons/fa';
+import './AvailableRooms.css'; // Tạo file CSS riêng
+
+
 const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
   const [selectedRooms, setSelectedRooms] = useState({});
- const [loading, setLoading] = useState({});
+  const [loading, setLoading] = useState({});
   const [roomQuantities, setRoomQuantities] = useState({});
-  const {user}=useContext(AuthContext)
+  const [lockedRoomId, setLockedRoomId] = useState(null);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  console.log(user.id);
-  // Handle room quantity change
+
+  // Tối ưu hóa với useMemo
+  const nights = useMemo(() => searchParams?.nights || 0, [searchParams?.nights]);
+  const userId = useMemo(() => user?.id, [user?.id]);
+  const roomsToDisplay = useMemo(() => {
+    return Array.isArray(availableRooms) ? availableRooms : [];
+  }, [availableRooms]);
+
+  // Amenities icons mapping
+  const amenityIcons = {
+    'WiFi': <FaWifi />,
+    'Parking': <FaParking />,
+    'Swimming pool': <FaSwimmingPool />,
+    'Restaurant': <FaUtensils />,
+    'Room service': <FaConciergeBell />,
+    '24h front desk': <FaConciergeBell />,
+    'Spa': <FaStar />,
+    'Fitness center': <FaStar />,
+    'Sea view': <FaStar />,
+    'Balcony': <FaStar />,
+  };
+
+  // WebSocket connection
   useEffect(() => {
-    console.log('🔄 Đang kết nối đến channel room-updates...');
-    
-    // Kiểm tra xem Echo có tồn tại không
     if (!window.Echo) {
       console.error('❌ Echo không tồn tại');
       return;
     }
 
-    // Kết nối đến channel
     const channel = window.Echo.channel('room-updates');
     
-    // Lắng nghe event - SỬA TÊN EVENT
     channel.listen('RoomQuantityUpdated', (e) => {
-      console.log('📡 Nhận realtime update:', e);
       setRoomQuantities(prev => ({
         ...prev,
         [e.roomId]: e.availableQuantity
       }));
     });
 
-    console.log('✅ Đã kết nối đến channel room-updates');
-
     return () => {
-      console.log('🔴 Rời khỏi channel room-updates');
       window.Echo.leaveChannel('room-updates');
     };
   }, []);
 
-  const handleQuantityChange = (roomId, quantity) => {
+  const handleQuantityChange = useCallback((roomId, quantity) => {
+    const qty=parseInt(quantity);
     setSelectedRooms(prev => ({
       ...prev,
       [roomId]: parseInt(quantity)
     }));
-  };
+    if (qty > 0) {
+      setLockedRoomId(roomId);   // 🔥 Khóa phòng khác
+    } else {
+      setLockedRoomId(null);     // 🔥 Mở khóa khi trả về 0
+    }
+  }, []);
 
-  // Sử dụng bookingService để tạo booking
-  const handleSelectRoom = async (room) => {
+  const handleSelectRoom = useCallback(async (room) => {
     const quantity = selectedRooms[room.id] || 0;
     
     if (quantity === 0) {
-      alert('Vui lòng chọn số lượng phòng');
+      toast.warn('Vui lòng chọn số lượng phòng');
       return;
     }
 
     try {
       setLoading(prev => ({ ...prev, [room.id]: true }));
-
-      // Lấy user info
-      const userId = user?.id;
 
       if (!userId) {
         toast.warn('Vui lòng đăng nhập để đặt phòng');
@@ -70,30 +105,24 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
         return;
       }
 
-      // Tạo booking data
       const bookingData = {
         user_id: userId,
         room_id: room.id,
-        check_in: searchParams.checkIn,    // ✅ Dùng check_in
+        check_in: searchParams.checkIn,
         check_out: searchParams.checkOut,
         quantity: quantity
       };
 
-      console.log('📤 Gửi booking data:', bookingData);
-
-      // GỌI QUA BOOKING SERVICE
       const result = await bookingService.createBooking(bookingData);
 
       if (result.success) {
         toast.success('🎉 Đặt phòng thành công!');
-         
-        // Cập nhật realtime quantity
+        
         setRoomQuantities(prev => ({
           ...prev,
           [room.id]: result.available_quantity
         }));
 
-        // Điều hướng đến trang xác nhận
         navigate(`/booking/${result.data.id}`);
         
       } else {
@@ -102,13 +131,13 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
 
     } catch (error) {
       console.error('Booking error:', error);
+      toast.error(error.message || 'Đặt phòng thất bại');
     } finally {
       setLoading(prev => ({ ...prev, [room.id]: false }));
     }
-  };
+  }, [selectedRooms, userId, searchParams, navigate]);
 
-  // Safe parse amenities
-  const getAmenities = (amenities) => {
+  const getAmenities = useCallback((amenities) => {
     if (!amenities) return [];
     
     try {
@@ -123,240 +152,219 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
       console.error('Error parsing amenities:', error);
       return [];
     }
+  }, []);
+
+  const formatPrice = useCallback((price) => {
+    return new Intl.NumberFormat('vi-VN', { 
+      style: 'currency', 
+      currency: 'VND' 
+    }).format(price);
+  }, []);
+
+  const getAmenityIcon = (amenity) => {
+    const foundKey = Object.keys(amenityIcons).find(key => 
+      amenity.toLowerCase().includes(key.toLowerCase())
+    );
+    return foundKey ? amenityIcons[foundKey] : <FaCheck />;
   };
+
+  const renderRoomCard = useCallback((room) => {
+    const amenities = getAmenities(room.amenities);
+    const quantity = selectedRooms[room.id] || 0;
+    const totalPrice = room.price * nights * quantity;
+    const availableQuantity = roomQuantities[room.id] || room.quantity;
+    const maxSelectable = Math.min(availableQuantity, 5);
+    const isLowStock = availableQuantity < 3 && availableQuantity > 0;
+    const isOutOfStock = availableQuantity === 0;
+
+    return (
+      <div key={room.id} className="room-card">
+        <div className="room-card-header">
+          <div className="room-type-info">
+            <h4 className="room-title">{room.room_type}</h4>
+            <div className="room-meta">
+              <span className="room-meta-item">
+                <FaUsers className="meta-icon" />
+                {room.max_guest} người
+              </span>
+              <span className="room-meta-item">
+                <FaHotel className="meta-icon" />
+                Còn <span className={`stock-count ${isLowStock ? 'low' : ''} ${isOutOfStock ? 'out' : ''}`}>
+                  {availableQuantity}
+                </span> phòng
+              </span>
+            </div>
+          </div>
+          <div className="room-price-section">
+            <div className="room-price">
+              <div className="price-per-night">
+                {formatPrice(room.price * nights)}
+                <span className="price-label">/{nights} đêm</span>
+              </div>
+              {quantity > 0 && (
+                <div className="selected-price">
+                  <FaMoneyBillWave className="total-icon" />
+                  <span className="total-amount">{formatPrice(totalPrice)}</span>
+                  <div className="price-breakdown">
+                    ({quantity} phòng × {nights} đêm)
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {amenities.length > 0 && (
+          <div className="room-amenities">
+            <div className="amenities-title">Tiện nghi:</div>
+            <div className="amenities-list">
+              {amenities.slice(0, 4).map((amenity, index) => (
+                <div key={index} className="amenity-item">
+                  {getAmenityIcon(amenity)}
+                  <span>{amenity}</span>
+                </div>
+              ))}
+              {amenities.length > 4 && (
+                <div className="amenity-more">
+                  +{amenities.length - 4} khác
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="room-card-footer">
+          <div className="quantity-selector">
+            <label className="quantity-label">Số lượng:</label>
+            <select
+              value={quantity}
+              onChange={(e) => handleQuantityChange(room.id, e.target.value)}
+              className="quantity-select"
+              disabled={
+                isOutOfStock ||
+                (lockedRoomId !== null && lockedRoomId !== room.id)  // 🔥 phòng khác bị khóa
+              }
+            >
+              <option value="0">Chọn</option>
+              {[...Array(maxSelectable)].map((_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1} phòng
+                </option>
+              ))}
+            </select>
+            {isLowStock && (
+              <div className="stock-warning">
+                <FaExclamationTriangle />
+                Chỉ còn {availableQuantity} phòng
+              </div>
+            )}
+            {isOutOfStock && (
+              <div className="stock-warning out">
+                <FaExclamationTriangle />
+                Đã hết phòng
+              </div>
+            )}
+          </div>
+
+          <button
+            className={`book-button ${quantity > 0 ? 'active' : ''}`}
+            onClick={() => handleSelectRoom(room)}
+            disabled={
+              !quantity ||
+              loading[room.id] ||
+              isOutOfStock ||
+              (lockedRoomId !== null && lockedRoomId !== room.id) // 🔥 khóa phòng khác
+            }
+          >
+            {loading[room.id] ? (
+              <LoaderButton />
+            ) : isOutOfStock ? (
+              <>
+                <FaExclamationTriangle />
+                Hết phòng
+              </>
+            ) : (
+              <>
+                <FaShoppingCart />
+                {quantity > 0 ? `Đặt ${quantity} phòng` : 'Chọn phòng'}
+                <FaArrowRight className="button-arrow" />
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    );
+  }, [selectedRooms, nights, roomQuantities, loading, handleQuantityChange, handleSelectRoom, getAmenities, formatPrice]);
+
+  // Render summary
+  const selectedCount = useMemo(() => {
+    return Object.values(selectedRooms).reduce((sum, qty) => sum + qty, 0);
+  }, [selectedRooms]);
 
   return (
     <div className="available-rooms-container">
-      <h3>Phòng Có Sẵn ({searchParams?.nights || 0} đêm)</h3>
-      
-      {availableRooms.length === 0 ? (
-        <div className="no-rooms">Không có phòng trống</div>
+      {/* Header Section */}
+      <div className="rooms-header">
+        <div className="header-left">
+          <h2 className="section-title">
+            <FaHotel className="title-icon" />
+            Phòng Có Sẵn
+          </h2>
+          <div className="booking-info">
+            <div className="info-item">
+              <FaCalendarAlt className="info-icon" />
+              <span>{nights} đêm</span>
+            </div>
+            <div className="info-item">
+              <FaHotel className="info-icon" />
+              <span>{roomsToDisplay.length} loại phòng</span>
+            </div>
+          </div>
+        </div>
+        
+        {selectedCount > 0 && (
+          <div className="selected-summary">
+            <div className="summary-badge">
+              <FaShoppingCart />
+              <span>Đã chọn {selectedCount} phòng</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Rooms List */}
+      {roomsToDisplay.length === 0 ? (
+        <div className="no-rooms-state">
+          <div className="no-rooms-icon">🏨</div>
+          <h3>Không có phòng trống</h3>
+          <p>Không tìm thấy phòng trống cho khoảng thời gian bạn chọn.</p>
+          <button 
+            className="change-dates-button"
+            onClick={() => navigate('/search')}
+          >
+            <FaCalendarAlt />
+            Thay đổi ngày
+          </button>
+        </div>
       ) : (
-        <table className="rooms-table">
-          <thead>
-            <tr>
-              <th>Loại phòng</th>
-              <th>Số khách</th>
-              <th>Số phòng còn</th>
-              <th>Giá ({searchParams?.nights || 0} đêm)</th>
-              <th>Chọn số lượng</th>
-              <th>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {availableRooms.map(room => {
-              const amenities = getAmenities(room.amenities);
-              const quantity = selectedRooms[room.id] || 0;
-              const nights = searchParams?.nights || 0;
-              
-              // Tính giá: room.price × số đêm × số lượng đã chọn
-              const totalPrice = room.price * nights * quantity;
-              
-              return (
-                <tr key={room.id} className="room-row">
-                  <td>
-                    <strong>{room.room_type}</strong>
-                    {amenities.length > 0 && (
-                      <div className="amenities">
-                        {amenities.slice(0, 3).map((amenity, index) => (
-                          <span key={index} className="amenity">✓ {amenity}</span>
-                        ))}
-                        {amenities.length > 3 && (
-                          <span className="amenity-more">+{amenities.length - 3} khác</span>
-                        )}
-                      </div>
-                    )}
-                  </td>
-                  <td>{room.max_guest} người</td>
-                  <td>{room.quantity} phòng</td>
-                  <td className="price">
-                    {quantity > 0 ? (
-                      <div>
-                        <div className="total-amount">
-                          {new Intl.NumberFormat('vi-VN', { 
-                            style: 'currency', 
-                            currency: 'VND' 
-                          }).format(totalPrice)}
-                        </div>
-                        <div className="price-breakdown">
-                          ({new Intl.NumberFormat('vi-VN', { 
-                            style: 'currency', 
-                            currency: 'VND' 
-                          }).format(room.price)} × {nights} đêm × {quantity} phòng)
-                        </div>
-                      </div>
-                    ) : (
-                      <div>
-                        <div className="base-price">
-                          {new Intl.NumberFormat('vi-VN', { 
-                            style: 'currency', 
-                            currency: 'VND' 
-                          }).format(room.price * nights)}
-                        </div>
-                        <div className="price-note">(1 phòng)</div>
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    <select
-                      value={quantity}
-                      onChange={(e) => handleQuantityChange(room.id, e.target.value)}
-                      className="quantity-select"
-                    >
-                      <option value="0">Chọn</option>
-                      {[...Array(Math.min(room.quantity, 5))].map((_, i) => (
-                        <option key={i + 1} value={i + 1}>
-                          {i + 1}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td>
-                    <button
-                      className={`select-btn ${quantity > 0 ? 'active' : ''}`}
-                      onClick={() => handleSelectRoom(room)}
-                      disabled={!quantity || quantity === 0 || loading[room.id]}
-                    >
-                      {loading[room.id] ? <LoaderButton /> : 'Chọn'}
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div className="rooms-grid">
+          {roomsToDisplay.map(renderRoomCard)}
+        </div>
       )}
 
-      <style jsx>{`
-        .available-rooms-container {
-          margin: 20px 0;
-        }
-
-        .available-rooms-container h3 {
-          margin-bottom: 15px;
-          color: #333;
-        }
-
-        .rooms-table {
-          width: 100%;
-          border-collapse: collapse;
-          background: white;
-          border-radius: 8px;
-          overflow: hidden;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .rooms-table th {
-          background: #f8f9fa;
-          padding: 12px;
-          text-align: left;
-          font-weight: 600;
-          color: #333;
-          border-bottom: 1px solid #dee2e6;
-        }
-
-        .rooms-table td {
-          padding: 12px;
-          border-bottom: 1px solid #dee2e6;
-        }
-
-        .room-row:hover {
-          background: #f8f9fa;
-        }
-
-        .amenities {
-          margin-top: 5px;
-        }
-
-        .amenity {
-          display: inline-block;
-          background: #e9ecef;
-          padding: 2px 6px;
-          border-radius: 4px;
-          font-size: 12px;
-          margin-right: 5px;
-          margin-bottom: 3px;
-        }
-
-        .amenity-more {
-          display: inline-block;
-          background: #007bff;
-          color: white;
-          padding: 2px 6px;
-          border-radius: 4px;
-          font-size: 12px;
-          margin-right: 5px;
-          margin-bottom: 3px;
-        }
-
-        .price {
-          font-weight: bold;
-          color: #e74c3c;
-        }
-
-        .total-amount {
-          font-size: 16px;
-          color: #e74c3c;
-        }
-
-        .price-breakdown {
-          font-size: 12px;
-          color: #666;
-          margin-top: 4px;
-        }
-
-        .base-price {
-          color: #e74c3c;
-        }
-
-        .price-note {
-          font-size: 12px;
-          color: #666;
-          margin-top: 2px;
-        }
-
-        .quantity-select {
-          padding: 6px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          width: 80px;
-        }
-
-        .select-btn {
-          padding: 8px 16px;
-          background: #6c757d;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 14px;
-        }
-
-        .select-btn.active {
-          background: #28a745;
-        }
-
-        .select-btn:disabled {
-          background: #6c757d;
-          cursor: not-allowed;
-          opacity: 0.6;
-        }
-
-        .select-btn.active:hover {
-          background: #218838;
-        }
-
-        .no-rooms {
-          text-align: center;
-          padding: 40px;
-          color: #666;
-          font-size: 16px;
-          background: #f8f9fa;
-          border-radius: 8px;
-        }
-      `}</style>
+      {/* Footer Tips */}
+      {roomsToDisplay.length > 0 && (
+        <div className="rooms-footer-tips">
+          <div className="tip-card">
+            <div className="tip-icon">💡</div>
+            <div className="tip-content">
+              <strong>Mẹo nhỏ:</strong> Đặt sớm để được giá tốt nhất và đảm bảo phòng ưng ý!
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default AvailableRooms;
+export default React.memo(AvailableRooms);

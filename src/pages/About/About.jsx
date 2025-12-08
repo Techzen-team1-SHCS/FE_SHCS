@@ -101,7 +101,7 @@ const About = () => {
               <span className="tech-tag">React.js</span>
               <span className="tech-tag">Node.js</span>
               <span className="tech-tag">Python AI/ML</span>
-              <span className="tech-tag">MongoDB</span>
+              <span className="tech-tag">MySQL</span>
               <span className="tech-tag">REST API</span>
               <span className="tech-tag">Payment Gateway</span>
             </div>

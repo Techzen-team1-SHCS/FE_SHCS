@@ -9,25 +9,6 @@ import { useTopHotelsQuery } from "../../queries/useTopHotelsQuery";
 const TopHotelSlider = () => {
   const {data:topHotels=[],isLoading,isError}=useTopHotelsQuery();
   if (isLoading) return <div>Loading top hotels...</div>;
-import { hotelService } from "../../services/hotelService";
-import PartLoading from "../Loading/PartLoading";
-
-const TopHotelSlider = () => {
-  const [topHotels, setTopHotels] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTopHotels = async () => {
-      setLoading(true);
-      const data = await hotelService.getTopHotel();
-      setTopHotels(data || []);
-      setLoading(false);
-    };
-
-    fetchTopHotels();
-  }, []);
-
-  if (loading) return <div><PartLoading/></div>;
 
   return (
     <section className={styles.topHotelsSlider}>

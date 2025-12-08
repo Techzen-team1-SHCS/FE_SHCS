@@ -209,7 +209,7 @@ const WishList = () => {
                 {/* Card Image */}
                 <div className={styles.cardImage}>
                   <img 
-                    src={item.hotel?.images[1]?.url || item.hotel?.images[0]?.url} 
+                    src={item.hotel?.images[1]?.url || '/default-hotel.jpg'} 
                     alt={item.hotel.name} 
                   />
                   <div className={styles.cardOverlay}>
