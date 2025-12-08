@@ -78,15 +78,14 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, on
         arrival: '',
         coupon: hotelData?.discount_code || '' // Pre-fill coupon nếu đã có
     });
-
+    
     useEffect(() => {
-        if (hotelData && hotelData.amenities) {
+        if (hotelData && hotelData?.room?.hotel?.amenities) {
             try {
-                const amenitiesArray = JSON.parse(hotelData.amenities);
+                const amenitiesArray = JSON.parse(hotelData?.room?.hotel?.amenities);
                 const servicesData = amenitiesArray.map((amenity, index) => ({
                     id: index + 1,
                     name: amenity,
-                    image: getAmenityImage(amenity)
                 }));
                 setServices(servicesData);
             } catch (error) {
@@ -100,7 +99,7 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, on
             setLoading(false);
         }
     }, [hotelData]);
-
+    console.log(hotelData?.hotel?.amenities);
     const applyDiscount = async () => {
         if (!formData.coupon.trim()) {
             setDiscountError('Vui lòng nhập mã giảm giá');
@@ -205,14 +204,6 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, on
                     ) : (
                         services.map(service => (
                             <div key={service.id} className={serviceItem}>
-                                <img
-                                    src={service.image}
-                                    alt={service.name}
-                                    className={serviceImage}
-                                    onError={(e) => {
-                                        e.target.src = '/assets/images/amenities/default.jpg';
-                                    }}
-                                />
                                 <span className={serviceName}>{service.name}</span>
                             </div>
                         ))

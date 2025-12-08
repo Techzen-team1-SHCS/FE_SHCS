@@ -38,11 +38,6 @@ const Header = () => {
         {
             label: "Home",
             path: "/",
-            // sub: [
-            //     { label: "Travel Agency", path: "/" },
-            //     { label: "City Tour", path: "/city-tour" },
-            //     { label: "Tour Package", path: "/tour-package" },
-            // ],
         },
         { label: "About", path: "/About", },
         {
@@ -50,10 +45,7 @@ const Header = () => {
 
             sub: [
                 { label: "Hotel List", path: "/HotelList" },
-                // { label: "Tour Grid", path: "/tour-grid" },
-                // { label: "Tour Sidebar", path: "/tour-sidebar" },
                 { label: "Hotel Recommendation", path: "/HotelsRecommend" },
-                // { label: "Tour Guide", path: "/tour-guide" },
             ],
         },
         {
@@ -74,7 +66,7 @@ const Header = () => {
             label: "Pages",
 
             sub: [
-                { label: "Contact Us", path: "/ContactUs" },
+                { label: "Contact Us", path: "/help" },
                 { label: "404 Error", path: "*" },
             ],
         },
