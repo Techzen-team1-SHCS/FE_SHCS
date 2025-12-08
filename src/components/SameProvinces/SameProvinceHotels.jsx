@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { hotelService } from '../../services/hotelService';
 import './style.css';
 import { useNavigate } from 'react-router-dom';
+import PartLoading from '../Loading/PartLoading';
 const SameProvinceHotels = ({ currentHotelId }) => {
   const [sameProvinceHotels, setSameProvinceHotels] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +28,7 @@ const SameProvinceHotels = ({ currentHotelId }) => {
     }
   }, [currentHotelId]);
 
-  if (loading) return <div>Đang tải...</div>;
+  if (loading) return <div><PartLoading /></div>;
   if (error) return <div>Lỗi: {error}</div>;
 
   return (

@@ -6,6 +6,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import styles from './TopHotelSlider.module.css';
 import { hotelService } from "../../services/hotelService";
+import PartLoading from "../Loading/PartLoading";
 
 const TopHotelSlider = () => {
   const [topHotels, setTopHotels] = useState([]);
@@ -22,7 +23,7 @@ const TopHotelSlider = () => {
     fetchTopHotels();
   }, []);
 
-  if (loading) return <div>Loading top hotels...</div>;
+  if (loading) return <div><PartLoading/></div>;
 
   return (
     <section className={styles.topHotelsSlider}>

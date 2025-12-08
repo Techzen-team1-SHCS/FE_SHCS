@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Notification.module.css";
 import { notificationService } from "../../../services/notificationService";
+import PartLoading from "../../../components/Loading/PartLoading";
 
 const NOTIFICATION_TYPES = {
   booking: {
@@ -70,6 +71,8 @@ const Notification = () => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
       const response = await notificationService.getNotifications();
       setNotifications(response.data || []);
     } catch (error) {
@@ -126,8 +129,8 @@ const Notification = () => {
       <div className={pageContainer}>
         <div className={header}>
           <h1 className={headerTitle}>Notifications</h1>
-          <p className={headerSubtitle}>Loading your notifications...</p>
         </div>
+        <p className={headerSubtitle}><PartLoading/></p>
       </div>
     );
   }

@@ -8,6 +8,7 @@ import { useBehavior } from "../../contexts/BehaviorContext";
 
 import './HotelList.css';
 import TopHotelSlider from "../../components/TopHotelSlider/TopHotelSlider";
+import PartLoading from "../../components/Loading/PartLoading";
 function HotelList() {
   const location = useLocation();
   const { logBehavior } = useBehavior();
@@ -150,7 +151,7 @@ function HotelList() {
             </div>
             <div className="col-lg-9">
               {loading ? (
-                <div>Loading...</div>
+                <div><PartLoading/></div>
               ) : (
                 <>
                   <h4 style={{ fontWeight: 700 }}>

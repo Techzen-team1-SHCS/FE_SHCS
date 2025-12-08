@@ -4,6 +4,7 @@ import { commentService } from '../../services/commentService';
 import { AuthContext } from '../../contexts/AuthContext'; // ← THÊM IMPORT
 import { toast } from 'react-toastify';
 import LoaderButton from '../Loading/LoaderButton';
+import PartLoading from '../Loading/PartLoading';
 
 const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) => {
     const [replyTo, setReplyTo] = useState(null);
@@ -51,7 +52,7 @@ const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) =
     if (loading) {
         return (
             <div className={reviewsList}>
-                <div className={loadingText}>Đang tải đánh giá...</div>
+                <div className={loadingText}><PartLoading /></div>
             </div>
         );
     }

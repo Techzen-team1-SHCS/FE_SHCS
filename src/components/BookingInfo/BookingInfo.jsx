@@ -4,6 +4,7 @@ import { getAmenityImage } from '../../utils/amenityImage';
 import PaymentButtonVnPay from '../Payment/PaymentButtonVnPay';
 import { discountService } from '../../services/discountService';
 import { toast } from 'react-toastify';
+import PartLoading from '../Loading/PartLoading';
 
 const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, onPriceChange }) => {
     const [services, setServices] = useState([]);
@@ -187,7 +188,7 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, on
     if (loading) {
         return (
             <div className={container}>
-                <div className={noServices}>Loading services...</div>
+                <div className={noServices}><PartLoading/></div>
             </div>
         );
     }
