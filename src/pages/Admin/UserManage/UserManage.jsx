@@ -3,6 +3,7 @@ import styles from './UserManage.module.css';
 import { authService } from '../../../services/authService';
 import { toast } from 'react-toastify';
 import Swal from "sweetalert2";
+import PartLoading from '../../../components/Loading/PartLoading';
 
 const UserManage = () => {
     const {
@@ -42,14 +43,17 @@ const UserManage = () => {
     const [usersData, setUsersData] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-
+    const [loading, setLoading] = useState(false);
     const fetchUsers = async () => {  // ⬅ đưa ra ngoài để nơi khác gọi được
         try {
+            setLoading(true);
             const response = await authService.getAllUsers();
             setUsersData(response || []);
         } catch (error) {
             console.error('Fetch users error:', error);
             setUsersData([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -204,6 +208,10 @@ const UserManage = () => {
             .toUpperCase()
             .slice(0, 2);
     };
+
+    if (loading) {
+        return <div className='mt-40'><PartLoading /></div>;
+    }
 
     return (
         <div className={container}>

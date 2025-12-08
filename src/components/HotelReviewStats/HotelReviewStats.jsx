@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './HotelReviewStats.module.css';
+import PartLoading from '../Loading/PartLoading';
 
 const HotelReviewStats = ({ statsData = null, loading = false }) => {
   const {
@@ -43,7 +44,7 @@ const HotelReviewStats = ({ statsData = null, loading = false }) => {
   if (loading) {
     return (
       <div className={reviewStats}>
-        <div className={loadingText}>Đang tải thống kê...</div>
+        <div className={loadingText}><PartLoading /></div>
       </div>
     );
   }

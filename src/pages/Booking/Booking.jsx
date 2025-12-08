@@ -6,6 +6,7 @@ import NavigationTabs from '../../components/NavigationTabs/NavigationTabs.jsx'
 import { bookingService } from '../../services/bookingService.js'
 import { toast } from 'react-toastify'
 import { formatDateTime, getNights, getCancelPolicy } from "../../utils/dateUtils.js";
+import Loader from '../../components/Loading/Loader.jsx'
 
 const Booking = () => {
     const { bookingId } = useParams();
@@ -68,7 +69,7 @@ const Booking = () => {
     if (loading) {
         return (
             <div className='page-wrapper'>
-                <div className={styles.loading}>Loading hotel data...</div>
+                <div className={styles.loading}><Loader/></div>
             </div>
         );
     }

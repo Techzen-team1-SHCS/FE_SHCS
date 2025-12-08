@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './PaymentResult.module.css';
+import PartLoading from '../../components/Loading/PartLoading';
 
 const PaymentResult = () => {
   const location = useLocation();
@@ -35,7 +36,7 @@ const PaymentResult = () => {
     setLoading(false);
   }, [location]);
 
-  if (loading) return <div className={styles.loading}>Đang xử lý...</div>;
+  if (loading) return <div className={styles.loading}><PartLoading/></div>;
 
   return (
     <div className={styles.pageWrapper}>

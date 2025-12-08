@@ -7,20 +7,20 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
     const { logBehavior } = useBehavior();
     const [isHovered, setIsHovered] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
-    
+
     // Tính rating
     const rating = (hotel.hotel_class / 10).toFixed(1);
-    
+
     // Lấy ảnh
     const mainImage = hotel.images?.[0]?.url || "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop";
     const secondaryImage = hotel.images?.[1]?.url || "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w-800&auto=format&fit=crop";
-    
+
     // Parse amenities
     const amenities = hotel.amenities ? JSON.parse(hotel.amenities).slice(0, 4) : [];
-    
+
     // Lấy styles
     const hotelStyles = hotel.styles ? hotel.styles.map(style => style.style).slice(0, 2) : [];
-    
+
     const handleBookClick = () => {
         logBehavior("booking", {
             userId: user?.id || null,
@@ -54,7 +54,7 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
         const stars = [];
         const fullStars = Math.floor(rating);
         const hasHalfStar = rating % 1 >= 0.5;
-        
+
         for (let i = 0; i < 5; i++) {
             if (i < fullStars) {
                 stars.push(<i key={i} className="fas fa-star" style={{ color: '#FFD700', fontSize: '12px' }}></i>);
@@ -68,12 +68,12 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
     };
 
     return (
-        <div 
-            className="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12"
+        <div
+            className="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12 mt-30"    
             data-aos="fade-up"
             data-aos-delay={aosDelay}
         >
-            <div 
+            <div
                 className="hotel-card-premium"
                 style={styles.card}
                 onMouseEnter={() => setIsHovered(true)}
@@ -86,15 +86,15 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                         transform: isHovered ? 'scale(1.05)' : 'scale(1)',
                         transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
                     }}>
-                        <img 
-                            src={mainImage} 
+                        <img
+                            src={mainImage}
                             alt={hotel.name}
                             style={styles.mainImage}
                         />
-                        
+
                         {/* Overlay gradient */}
                         <div style={styles.imageOverlay}></div>
-                        
+
                         {/* Secondary image on hover */}
                         <div style={{
                             ...styles.secondaryImage,
@@ -103,23 +103,23 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                         }}>
 
                         </div>
-                        
+
                         {/* Top badges */}
                         <div style={styles.topBadges}>
                             <div style={styles.ratingBadge}>
                                 <i className="fas fa-star" style={{ marginRight: '4px', fontSize: '10px' }}></i>
                                 <span style={{ fontWeight: '700' }}>{rating}</span>
                             </div>
-                            
+
                             {hotelStyles.length > 0 && (
                                 <div style={styles.styleBadge}>
                                     {hotelStyles[0]}
                                 </div>
                             )}
                         </div>
-                        
+
                         {/* Favorite button */}
-                        <button 
+                        <button
                             style={{
                                 ...styles.favoriteButton,
                                 background: isFavorite ? 'rgba(255, 77, 79, 0.9)' : 'rgba(0, 0, 0, 0.6)',
@@ -144,10 +144,10 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                             {renderStars(rating)}
                         </div>
                     </div>
-                    
+
                     {/* Hotel Name */}
                     <h3 style={styles.hotelName}>
-                        <Link 
+                        <Link
                             to={`/hotel/${hotel.id}`}
                             onClick={handleViewClick}
                             style={styles.hotelLink}
@@ -155,7 +155,7 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                             {hotel.name}
                         </Link>
                     </h3>
-                    
+
                     {/* Description */}
                     <div style={styles.description}>
                         <p style={{ margin: 0, lineHeight: '1.5', fontSize: '14px' }}>
@@ -163,7 +163,7 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                             {hotel.description?.length > 120 && "..."}
                         </p>
                     </div>
-                    
+
                     {/* Amenities */}
                     <div style={styles.amenities}>
                         <div style={styles.amenitiesTitle}>
@@ -181,10 +181,10 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                             ))}
                         </div>
                     </div>
-                    
+
                     {/* Divider */}
                     <div style={styles.divider}></div>
-                    
+
                     {/* Footer with Price and CTA */}
                     <div style={styles.footer}>
                         <div style={styles.priceSection}>
@@ -196,9 +196,9 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                             </div>
                             <div style={styles.taxInfo}>+ taxes & fees</div>
                         </div>
-                        
+
                         <div style={styles.actionButtons}>
-                            <Link 
+                            <Link
                                 to={`/hotel/${hotel.id}`}
                                 onClick={handleViewClick}
                                 style={styles.detailsButton}
@@ -206,15 +206,15 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                                 <span>Details</span>
                                 <i className="fas fa-arrow-right" style={{ marginLeft: '8px', fontSize: '12px' }}></i>
                             </Link>
-                            
-                            <Link 
+
+                            <Link
                                 to={`/booking/${hotel.id}`}
                                 onClick={handleBookClick}
                                 style={{
                                     ...styles.bookButton,
                                     transform: isHovered ? 'translateY(-2px)' : 'translateY(0)',
-                                    boxShadow: isHovered 
-                                        ? '0 10px 25px rgba(255, 107, 107, 0.4)' 
+                                    boxShadow: isHovered
+                                        ? '0 10px 25px rgba(255, 107, 107, 0.4)'
                                         : '0 5px 15px rgba(255, 107, 107, 0.3)'
                                 }}
                             >

@@ -3,6 +3,7 @@ import styles from './HotelManage.module.css';
 import { hotelService } from '../../../services/hotelService';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
+import PartLoading from '../../../components/Loading/PartLoading';
 
 const HotelManage = () => {
     const {
@@ -70,6 +71,7 @@ const HotelManage = () => {
     const [selectedHotel, setSelectedHotel] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [editForm, setEditForm] = useState({
         name: '',
@@ -86,12 +88,15 @@ const HotelManage = () => {
     // Fetch hotels
     const fetchHotels = async () => {
         try {
+            setLoading(true);
             const response = await hotelService.getAllHotels();
             setHotelsData(response || []);
         } catch (error) {
             console.error('Fetch hotels error:', error);
             toast.error('Không thể tải danh sách khách sạn');
             setHotelsData([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -412,6 +417,10 @@ const HotelManage = () => {
 
         return { totalRooms, occupiedRooms, availableRooms };
     };
+
+    if (loading) {
+        return <div className='mt-40'><PartLoading /></div>;
+    }
 
     return (
         <div className={container}>

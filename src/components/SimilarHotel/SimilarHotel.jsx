@@ -4,6 +4,7 @@ import './style.css';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Button from '../Button/Button';
+import PartLoading from '../Loading/PartLoading';
 function SimilarHotel({currentHotelId}) {
   const[similarHotel,setSimilarHotel]=useState([]);
   const[loading,setLoading]=useState(true);
@@ -26,7 +27,7 @@ function SimilarHotel({currentHotelId}) {
       fetchSimilarHotel();
     }
   },[currentHotelId]);
-  if (loading) return <div>Đang tải...</div>;
+  if (loading) return <div><PartLoading /></div>;
   if (error) return <div>Lỗi: {error}</div>;
   return (
     <div className='similar-hotels'>

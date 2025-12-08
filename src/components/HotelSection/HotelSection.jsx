@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import HotelCard3 from "../HotelCard/HotelCard3";
 import { useTopHotelsQuery } from "../../queries/useTopHotelsQuery";
+import { hotelService } from "../../services/hotelService";
+import PartLoading from "../Loading/PartLoading";
 
 const HotelSection = () => {
   const [showAll, setShowAll] = useState(false);
@@ -21,7 +23,7 @@ const HotelSection = () => {
           <div className="row justify-content-center">
             <div className="col-lg-12">
               <div className="section-title text-white text-center">
-                <p>Loading hotels...</p>
+                <p><PartLoading/></p>
               </div>
             </div>
           </div>
