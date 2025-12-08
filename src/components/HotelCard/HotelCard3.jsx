@@ -101,7 +101,7 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
                             opacity: isHovered ? 0.2 : 0,
                             transform: isHovered ? 'translateX(0)' : 'translateX(-20px)'
                         }}>
-                            <img src={secondaryImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+
                         </div>
 
                         {/* Top badges */}

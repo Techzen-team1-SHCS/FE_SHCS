@@ -5,6 +5,10 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import styles from './TopHotelSlider.module.css';
+import { useTopHotelsQuery } from "../../queries/useTopHotelsQuery";
+const TopHotelSlider = () => {
+  const {data:topHotels=[],isLoading,isError}=useTopHotelsQuery();
+  if (isLoading) return <div>Loading top hotels...</div>;
 import { hotelService } from "../../services/hotelService";
 import PartLoading from "../Loading/PartLoading";
 

@@ -1,44 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import HotelCard3 from "../HotelCard/HotelCard3";
+import { useTopHotelsQuery } from "../../queries/useTopHotelsQuery";
 import { hotelService } from "../../services/hotelService";
 import PartLoading from "../Loading/PartLoading";
 
 const HotelSection = () => {
   const [showAll, setShowAll] = useState(false);
-  const [hotelTop, setHotelTop] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchHotelTop = async () => {
-      try {
-        setLoading(true);
-        const data = await hotelService.getTopHotel();
-        setHotelTop(data);
-        setError(null);
-      } catch (error) {
-        console.error("Failed to fetch top hotels:", error);
-        setError("Failed to load hotels. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchHotelTop();
-  }, []);
+  const { data: hotelTop = [], isLoading, isError } = useTopHotelsQuery();
 
-  const handleLoadMore = () => {
-    setShowAll(true);
-  };
-
-  // Thêm delay cho animation dựa trên index
   const hotelsToShow = showAll ? hotelTop : hotelTop.slice(0, 4);
+
   const hotelsWithDelay = hotelsToShow.map((hotel, index) => ({
     ...hotel,
-    delay: (index % 4) * 100 // Thêm delay cho animation
+    delay: (index % 4) * 100
   }));
 
-  if (loading) {
+  if (isLoading) {
     return (
       <section className="hotel-area bgc-black py-100 rel z-1">
         <div className="container-fluid">
@@ -54,14 +32,14 @@ const HotelSection = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <section className="hotel-area bgc-black py-100 rel z-1">
         <div className="container-fluid">
           <div className="row justify-content-center">
             <div className="col-lg-12">
               <div className="section-title text-white text-center">
-                <p className="text-danger">{error}</p>
+                <p className="text-danger">Failed to load hotels. Please try again later.</p>
               </div>
             </div>
           </div>
@@ -107,30 +85,29 @@ const HotelSection = () => {
               </p>
             </div>
           </div>
-        </div> 
+        </div>
 
         <div className="row justify-content-center">
           {hotelsWithDelay.map((hotel, index) => (
-            <HotelCard3 
-              key={hotel.id || index} 
-              hotel={hotel} 
-              aosDelay={hotel.delay} 
-              index={index} 
+            <HotelCard3
+              key={hotel.id || index}
+              hotel={hotel}
+              aosDelay={hotel.delay}
+              index={index}
             />
           ))}
         </div>
 
         {!showAll && hotelTop.length > 4 && (
           <div className="hotel-more-btn text-center mt-40">
-            <button 
-              className="theme-btn style-four" 
-              onClick={handleLoadMore}
-              style={{cursor: "pointer", background: "none", border: "none"}}
+            <button
+              className="theme-btn style-four"
+              onClick={() => setShowAll(true)}
+              style={{ cursor: "pointer", background: "none", border: "none" }}
             >
               <span data-hover="Explore More Hotel">Explore More Hotel</span>
               <i className="fal fa-arrow-right"></i>
             </button>
-
           </div>
         )}
       </div>
