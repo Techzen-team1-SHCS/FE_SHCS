@@ -174,7 +174,6 @@ function HotelList() {
     if (mode === "pagination") {
       setCurrentPage(1);
     }
-    logBehavior("view_mode_change", { mode });
   };
 
   const renderPagination = () => {
