@@ -4804,8 +4804,7 @@ blockquote {
   position: absolute;
   left: inherit;
   top: 100%;
-  width: fit-content;
-  min-width: 180px;
+  min-width: 250px;
   z-index: 100;
   display: none;
   background: white;
