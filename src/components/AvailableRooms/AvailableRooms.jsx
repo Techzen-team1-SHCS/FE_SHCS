@@ -306,7 +306,7 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
       {/* Header Section */}
       <div className="rooms-header">
         <div className="header-left">
-          <h2 className="section-title">
+          <h2 className="section-title-available">
             <FaHotel className="title-icon" />
             Phòng Có Sẵn
           </h2>

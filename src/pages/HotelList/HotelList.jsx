@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { hotelService } from "../../services/hotelService";
 import SearchBar from "../../components/SearchBar/SearchBar";
@@ -19,6 +20,8 @@ import {
   FaChevronLeft,
   FaSpinner
 } from "react-icons/fa";
+import { behaviorService } from "../../services/behaviorService";
+import { AuthContext } from "../../contexts/AuthContext";
 
 function HotelList() {
   const [distanceToBottom, setDistanceToBottom] = useState(0);
@@ -27,6 +30,15 @@ function HotelList() {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [viewMode, setViewMode] = useState("infinite");
   const [currentPage, setCurrentPage] = useState(1);
+  const { user } = useContext(AuthContext);
+  useEffect(() => {
+  if (!user) return;
+
+  behaviorService.approveUser(user.id)
+    .then(() => console.log("Approve OK"))
+    .catch(err => console.error("Approve ERR:", err));
+
+}, [location.pathname]);
 
   // Ref cho Intersection Observer
   const loadMoreRef = useRef(null);
