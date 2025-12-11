@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import HotelCardRecommendation from '../../components/HotelCardRecommendation/HotelCardRecommendation'
 import { AuthContext } from '../../contexts/AuthContext';
 import TopHotelSlider from "../../components/TopHotelSlider/TopHotelSlider"
-import { FaRobot, FaMagic, FaBrain, FaStar, FaSyncAlt, FaHistory, FaHeart, FaSearch, FaArrowRight, FaInfoCircle } from 'react-icons/fa';
+import { FaRobot, FaMagic, FaBrain, FaStar, FaSyncAlt, FaSearch, FaArrowRight, FaInfoCircle } from 'react-icons/fa';
 import './style.css';
 import { Link } from 'react-router-dom';
 import { useRecommendedHotels } from '../../queries/useRecommendedHotels'; // Import hook

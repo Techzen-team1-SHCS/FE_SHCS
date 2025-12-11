@@ -34,41 +34,51 @@ const Hotel = ({
     });
   };
 
-  const handleWishlist =async () => {
-    if (!user) {
-      alert('Vui lòng đăng nhập để thêm vào danh sách yêu thích');
-      return;
-    }
+  const handleWishlist = async () => {
+  if (!user) {
+    alert('Vui lòng đăng nhập để thêm vào danh sách yêu thích');
+    return;
+  }
 
-    setIsLoading(true);
-    
+  setIsLoading(true);
+
+  try {
+    const wishlistData = {
+      hotel_id: id,
+      user_id: user?.id,
+    };
+
+    // 👉 THỬ THÊM WISHLIST
+    await wishListService.addToWishList(wishlistData);
+
+    toast.success("Đã thêm vào danh sách yêu thích!");
+
+    // 👉 Ghi log hành vi
+    logBehavior("like", {
+      userId: user?.id,
+      hotelId: id,
+      hotelName: title,
+      price,
+      location,
+    });
+
+  } catch (error) {
+    console.error("Wishlist error:", error);
+
+    toast.warn(error.message || "Đã được thêm vào danh sách yêu thích");
+
+    // 👉🔥 AUTO REMOVE NẾU LỖI (TRONG TRƯỜNG HỢP ĐÃ TỒN TẠI)
     try {
-      const wishlistData = {
-        hotel_id: id,
-        user_id: user?.id,
-      };
-
-      // Chỉ thêm vào wishlist, không có toggle
-      await wishListService.addToWishList(wishlistData);
-      
-      // Thông báo thành công
-      toast.success('Đã thêm vào danh sách yêu thích!');
-      
-      logBehavior("like", {
-        userId: user?.id,
-        hotelId: id,
-        hotelName: title,
-        price,
-        location,
-      });
-      
-    } catch (error) {
-      console.error('Wishlist error:', error);
-      toast.warn(error.message || 'Đã được thêm vào danh sách yêu thích');
-    } finally {
-      setIsLoading(false);
+      await wishListService.removeFromWishList(id, user?.id);
+      console.log("Tự động remove thành công!");
+    } catch (removeErr) {
+      console.error("Remove wishlist failed:", removeErr);
     }
-  };
+
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleZoomImage = () => {
     setIsZoomed(!isZoomed);

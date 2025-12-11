@@ -28,18 +28,31 @@ export const wishListService = {
          throw new Error(error.response?.data?.message || 'Đã có trong danh sách yêu thích');
        }
     },
-    async removeFromWishList(id) {
+    async removeFromWishList(hotelId, userId) {
       try {
         const token = localStorage.getItem('token');
-        if(!token){
+        if (!token) {
           throw new Error('Authentication token not found');
         }
-        const response = await api.delete(`auth/wishlist/${id}`, {
-          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+
+        const response = await api.delete(`auth/remove/like`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          data: {
+            hotel_id: hotelId,
+            user_id: userId
+          }
         });
+
         return response.data;
+
       } catch (error) {
         throw new Error(error.response?.data?.message || 'Failed to remove from wish list');
       }
     }
+    
+
+  
 };  
