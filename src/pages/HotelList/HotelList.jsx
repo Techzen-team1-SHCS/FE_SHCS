@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext,useRef } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { hotelService } from "../../services/hotelService";
 import SearchBar from "../../components/SearchBar/SearchBar";
@@ -31,13 +31,13 @@ function HotelList() {
   const [currentPage, setCurrentPage] = useState(1);
   const { user } = useContext(AuthContext);
   useEffect(() => {
-  if (!user) return;
+    if (!user) return;
 
-  behaviorService.approveUser(user.id)
-    .then(() => console.log("Approve OK"))
-    .catch(err => console.error("Approve ERR:", err));
+    behaviorService.approveUser(user.id)
+      .then(() => console.log("Approve OK"))
+      .catch(err => console.error("Approve ERR:", err));
 
-}, [location.pathname]);
+  }, [location.pathname]);
 
   // Ref cho Intersection Observer
   const loadMoreRef = useRef(null);
@@ -202,7 +202,7 @@ function HotelList() {
   }
 
   const destination = filtersFromQuery.destination || "Tổng khách sạn";
-    // Thêm useEffect để tính khoảng cách
+  // Thêm useEffect để tính khoảng cách
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
@@ -405,9 +405,15 @@ function HotelList() {
               {/* Header với view mode toggle */}
               <div className="hotel-list-header">
                 <div className="header-left">
-                  <h4 style={{ fontWeight: 700 }}>
-                    {destination}: tìm thấy {totalResults} chỗ nghỉ
-                  </h4>
+                  {!loading || hotels.length > 0 ? (
+                    <h4 style={{ fontWeight: 700 }}>
+                      {destination}: tìm thấy {totalResults} chỗ nghỉ
+                    </h4>
+                  ) : (
+                    <h4 style={{ fontWeight: 700 }}>
+                      {destination}: đang tìm kiếm...
+                    </h4>
+                  )}
                   <div className="view-mode-toggle">
                     <span className="toggle-label">Chế độ xem:</span>
                     <button
@@ -435,57 +441,16 @@ function HotelList() {
                   </div>
                 )}
               </div>
-
-              {/* Debug info cho testing */}
-              {process.env.NODE_ENV === 'development' && viewMode === 'infinite' && (
-                <div style={{
-                  background: '#f0f9ff',
-                  padding: '10px',
-                  borderRadius: '6px',
-                  marginBottom: '15px',
-                  fontSize: '14px',
-                  border: '1px solid #bae6fd'
-                }}>
-                  <strong>🛠️ Debug Mode:</strong>
-                  <span style={{ marginLeft: '10px' }}>Đã tải: {hotels.length} khách sạn</span>
-                  <span style={{ marginLeft: '10px' }}>Còn trang: {hasNextPage ? 'Có' : 'Không'}</span>
-                  <span style={{ marginLeft: '10px' }}>Sentinel: {loadMoreRef.current ? '✅' : '❌'}</span>
+              {/* =========== THÊM LOADING TRƯỚC KHI CÓ DỮ LIỆU =========== */}
+              {loading && hotels.length === 0 && (
+                <div className="initial-loading-container">
+                  <PartLoading />
                 </div>
               )}
 
               {/* Nội dung hotels */}
               {viewMode === "infinite" ? (
                 <>
-                  {/* THÊM HIỂN THỊ KHOẢNG CÁCH - CHỈ TRONG DEBUG MODE */}
-                  {process.env.NODE_ENV === 'development' && viewMode === 'infinite' && (
-                    <div style={{
-                      position: 'fixed',
-                      bottom: '20px',
-                      right: '20px',
-                      background: 'rgba(0, 0, 0, 0.8)',
-                      color: 'white',
-                      padding: '10px 15px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      zIndex: 1000,
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                      minWidth: '200px'
-                    }}>
-                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                        📏 Debug Scroll Info
-                      </div>
-                      <div>Khoảng cách đến cuối: <strong>{Math.round(distanceToBottom)}px</strong></div>
-                      <div>Hotels đã tải: <strong>{hotels.length}</strong></div>
-                      <div>Trạng thái: <strong style={{ color: hasNextPage ? '#4ade80' : '#f87171' }}>
-                        {hasNextPage ? 'Còn trang' : 'Đã hết'}
-                      </strong></div>
-                      {loadMoreRef.current && (
-                        <div style={{ marginTop: '5px', fontSize: '12px', color: '#94a3b8' }}>
-                          ✅ Sentinel đang hoạt động
-                        </div>
-                      )}
-                    </div>
-                  )}
                   <InfiniteScroll
                     dataLength={hotels.length}
                     next={fetchNextPage}
