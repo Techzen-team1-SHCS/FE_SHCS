@@ -20,20 +20,19 @@ import {
   FaSwimmingPool,
   FaUtensils,
   FaParking,
-  FaConciergeBell
+  FaConciergeBell,
+  FaInfoCircle
 } from 'react-icons/fa';
-import './AvailableRooms.css'; // Tạo file CSS riêng
-
+import './AvailableRooms.css';
 
 const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
   const [selectedRooms, setSelectedRooms] = useState({});
   const [loading, setLoading] = useState({});
   const [roomQuantities, setRoomQuantities] = useState({});
-  const [lockedRoomId, setLockedRoomId] = useState(null);
+  const [selectedRoomType, setSelectedRoomType] = useState(null); // Chỉ lưu loại phòng đang được chọn
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Tối ưu hóa với useMemo
   const nights = useMemo(() => searchParams?.nights || 0, [searchParams?.nights]);
   const userId = useMemo(() => user?.id, [user?.id]);
   const roomsToDisplay = useMemo(() => {
@@ -76,17 +75,36 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
   }, []);
 
   const handleQuantityChange = useCallback((roomId, quantity) => {
-    const qty=parseInt(quantity);
-    setSelectedRooms(prev => ({
-      ...prev,
-      [roomId]: parseInt(quantity)
-    }));
+    const qty = parseInt(quantity);
+    
+    // Nếu chọn số lượng > 0
     if (qty > 0) {
-      setLockedRoomId(roomId);   // 🔥 Khóa phòng khác
+      // Kiểm tra xem có đang chọn loại phòng khác không
+      if (selectedRoomType && selectedRoomType !== roomId) {
+        toast.info('📌 Mỗi đặt phòng chỉ được chọn một loại phòng. Vui lòng hủy chọn loại phòng hiện tại trước khi chọn loại khác.');
+        return;
+      }
+      
+      // Cập nhật số lượng và loại phòng đang chọn
+      setSelectedRooms(prev => ({
+        [roomId]: qty // Chỉ giữ phòng hiện tại
+      }));
+      setSelectedRoomType(roomId);
+      
+      // Hiển thị thông báo nhẹ
+      if (!selectedRoomType) {
+        toast.info('💡 Mẹo: Mỗi booking chỉ được chọn một loại phòng. Nếu muốn đổi loại phòng, hãy hủy chọn loại hiện tại.');
+      }
     } else {
-      setLockedRoomId(null);     // 🔥 Mở khóa khi trả về 0
+      // Nếu chọn về 0, xóa loại phòng đang chọn
+      setSelectedRooms(prev => {
+        const newRooms = { ...prev };
+        delete newRooms[roomId];
+        return newRooms;
+      });
+      setSelectedRoomType(null);
     }
-  }, []);
+  }, [selectedRoomType]);
 
   const handleSelectRoom = useCallback(async (room) => {
     const quantity = selectedRooms[room.id] || 0;
@@ -123,6 +141,10 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
           [room.id]: result.available_quantity
         }));
 
+        // Reset selection sau khi đặt thành công
+        setSelectedRooms({});
+        setSelectedRoomType(null);
+        
         navigate(`/booking/${result.data.id}`);
         
       } else {
@@ -136,6 +158,16 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
       setLoading(prev => ({ ...prev, [room.id]: false }));
     }
   }, [selectedRooms, userId, searchParams, navigate]);
+
+  const handleCancelSelection = useCallback((roomId) => {
+    setSelectedRooms(prev => {
+      const newRooms = { ...prev };
+      delete newRooms[roomId];
+      return newRooms;
+    });
+    setSelectedRoomType(null);
+    toast.info('Đã hủy chọn phòng. Bạn có thể chọn loại phòng khác.');
+  }, []);
 
   const getAmenities = useCallback((amenities) => {
     if (!amenities) return [];
@@ -176,9 +208,35 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
     const maxSelectable = Math.min(availableQuantity, 5);
     const isLowStock = availableQuantity < 3 && availableQuantity > 0;
     const isOutOfStock = availableQuantity === 0;
+    
+    // Kiểm tra xem phòng này có đang được chọn không
+    const isSelected = selectedRoomType === room.id;
+    // Kiểm tra xem có phòng khác đang được chọn không
+    const isOtherSelected = selectedRoomType && selectedRoomType !== room.id;
 
     return (
       <div key={room.id} className="room-card">
+        {/* Thông báo chọn một loại phòng */}
+        {isSelected && (
+          <div className="selected-room-badge">
+            <FaInfoCircle />
+            <span>Bạn đang chọn loại phòng này. Mỗi booking chỉ được chọn một loại phòng.</span>
+            <button 
+              className="cancel-selection-btn"
+              onClick={() => handleCancelSelection(room.id)}
+            >
+              Hủy chọn
+            </button>
+          </div>
+        )}
+        
+        {isOtherSelected && (
+          <div className="other-selected-notice">
+            <FaInfoCircle />
+            <span>Bạn đang chọn một loại phòng khác. Hủy chọn loại hiện tại để chọn loại này.</span>
+          </div>
+        )}
+
         <div className="room-card-header">
           <div className="room-type-info">
             <h4 className="room-title">{room.room_type}</h4>
@@ -240,10 +298,7 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
               value={quantity}
               onChange={(e) => handleQuantityChange(room.id, e.target.value)}
               className="quantity-select"
-              disabled={
-                isOutOfStock ||
-                (lockedRoomId !== null && lockedRoomId !== room.id)  // 🔥 phòng khác bị khóa
-              }
+              disabled={isOutOfStock}
             >
               <option value="0">Chọn</option>
               {[...Array(maxSelectable)].map((_, i) => (
@@ -252,7 +307,7 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
                 </option>
               ))}
             </select>
-            {isLowStock && (
+            {isLowStock && !isOutOfStock && (
               <div className="stock-warning">
                 <FaExclamationTriangle />
                 Chỉ còn {availableQuantity} phòng
@@ -270,11 +325,11 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
             className={`book-button ${quantity > 0 ? 'active' : ''}`}
             onClick={() => handleSelectRoom(room)}
             disabled={
-              !quantity ||
-              loading[room.id] ||
-              isOutOfStock ||
-              (lockedRoomId !== null && lockedRoomId !== room.id) // 🔥 khóa phòng khác
+              !quantity || // Chưa chọn số lượng
+              loading[room.id] || // Đang loading
+              isOutOfStock // Hết phòng
             }
+            title={isOutOfStock ? "Phòng này đã hết" : quantity === 0 ? "Vui lòng chọn số lượng phòng" : ""}
           >
             {loading[room.id] ? (
               <LoaderButton />
@@ -294,7 +349,65 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
         </div>
       </div>
     );
-  }, [selectedRooms, nights, roomQuantities, loading, handleQuantityChange, handleSelectRoom, getAmenities, formatPrice]);
+  }, [selectedRooms, nights, roomQuantities, loading, selectedRoomType, handleQuantityChange, handleSelectRoom, handleCancelSelection, getAmenities, formatPrice]);
+
+  // Thêm style inline cho các component mới (không thay đổi CSS file)
+  const inlineStyles = `
+    .selected-room-badge {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .selected-room-badge svg {
+      font-size: 16px;
+    }
+    
+    .cancel-selection-btn {
+      margin-left: auto;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .cancel-selection-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .other-selected-notice {
+      background: #f8f9fa;
+      border: 1px solid #e8e8e8;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #7f8c8d;
+    }
+    
+    .other-selected-notice svg {
+      color: #3498db;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  `;
 
   // Render summary
   const selectedCount = useMemo(() => {
@@ -303,6 +416,9 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
 
   return (
     <div className="available-rooms-container">
+      {/* Thêm style inline */}
+      <style>{inlineStyles}</style>
+      
       {/* Header Section */}
       <div className="rooms-header">
         <div className="header-left">
@@ -326,11 +442,19 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
           <div className="selected-summary">
             <div className="summary-badge">
               <FaShoppingCart />
-              <span>Đã chọn {selectedCount} phòng</span>
+              <span>Đã chọn {selectedCount} phòng ({selectedRoomType ? '1 loại phòng' : ''})</span>
             </div>
           </div>
         )}
       </div>
+
+      {/* Thông báo về việc chỉ chọn một loại phòng */}
+      {selectedRoomType && (
+        <div className="single-room-notice">
+          <FaInfoCircle />
+          <span><strong>Lưu ý:</strong> Mỗi đặt phòng chỉ được chọn một loại phòng. Nếu muốn đổi loại phòng, vui lòng hủy chọn loại hiện tại.</span>
+        </div>
+      )}
 
       {/* Rooms List */}
       {roomsToDisplay.length === 0 ? (
@@ -358,11 +482,52 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
           <div className="tip-card">
             <div className="tip-icon">💡</div>
             <div className="tip-content">
-              <strong>Mẹo nhỏ:</strong> Đặt sớm để được giá tốt nhất và đảm bảo phòng ưng ý!
+              <strong>Mẹo nhỏ:</strong> Mỗi booking chỉ chọn một loại phòng. Nếu cần nhiều loại, hãy tạo nhiều booking riêng!
             </div>
           </div>
         </div>
       )}
+
+      {/* Thêm style cho single-room-notice */}
+      <style>{`
+        .single-room-notice {
+          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+          color: white;
+          padding: 12px 20px;
+          border-radius: 10px;
+          margin-bottom: 20px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 14px;
+          box-shadow: 0 4px 12px rgba(245, 87, 108, 0.2);
+        }
+        
+        .single-room-notice svg {
+          font-size: 18px;
+          flex-shrink: 0;
+        }
+        
+        .single-room-notice strong {
+          font-weight: 700;
+        }
+        
+        .book-button:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+        
+        .book-button:disabled:hover {
+          transform: none;
+          box-shadow: none;
+        }
+        
+        .quantity-select:disabled {
+          background-color: #f5f5f5;
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+      `}</style>
     </div>
   );
 };

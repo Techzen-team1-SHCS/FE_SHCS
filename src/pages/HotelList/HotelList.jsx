@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext,useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { hotelService } from "../../services/hotelService";
 import SearchBar from "../../components/SearchBar/SearchBar";

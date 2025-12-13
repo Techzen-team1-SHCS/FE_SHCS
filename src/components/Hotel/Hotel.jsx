@@ -6,6 +6,7 @@ import { useContext, useState } from "react"
 import { AuthContext } from '../../contexts/AuthContext';
 import { wishListService } from '../../services/wishListService';
 import { toast } from 'react-toastify';
+import PartLoading from '../Loading/PartLoading';
 
 const Hotel = ({
   image,
@@ -33,6 +34,7 @@ const Hotel = ({
       location,
     });
   };
+  
 
   const handleWishlist = async () => {
   if (!user) {
@@ -102,10 +104,10 @@ const Hotel = ({
       action: isZoomed ? "zoom_out" : "zoom_in"
     });
   };
-
   return (
     <>
       <div className="destination-item style-three bgc-lighter">
+
         <div className="image">
           <div className="ratting">
             <i className="fas fa-star"></i> {rating}
