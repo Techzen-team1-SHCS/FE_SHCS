@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styles from './WishList.module.css';
-import { FaStar, FaMapMarkerAlt, FaHeart, FaRegHeart, FaFilter } from 'react-icons/fa';
+import { FaStar, FaMapMarkerAlt, FaHeart,FaTrash , FaRegHeart, FaFilter } from 'react-icons/fa';
 import Button from '../../components/Button/Button';
 import { wishListService } from '../../services/wishListService';
 import Loader from '../../components/Loading/Loader';
@@ -27,7 +27,7 @@ const WishList = () => {
   const handleRemove = async (wishListId, e) => {
     e.stopPropagation();
     try {
-      await wishListService.removeFromWishList(wishListId);
+      await wishListService.deleteWishList(wishListId);
       const updated = wishList.filter(item => item.id !== wishListId);
       setWishList(updated);
       setFilteredList(updated);
@@ -228,7 +228,7 @@ const WishList = () => {
                       onClick={(e) => handleRemove(item.id, e)}
                       title="Xóa khỏi danh sách yêu thích"
                     >
-                      <FaHeart className={styles.removeIcon} />
+                      <FaTrash className={styles.removeIcon} />
                     </button>
                   </div>
                   

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext,useRef } from "react";
+import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { hotelService } from "../../services/hotelService";
 import SearchBar from "../../components/SearchBar/SearchBar";
@@ -10,7 +10,6 @@ import TopHotelSlider from "../../components/TopHotelSlider/TopHotelSlider";
 import PartLoading from "../../components/Loading/PartLoading";
 
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import InfiniteScroll from "react-infinite-scroll-component";
 import {
   FaThList,
   FaSync,
@@ -23,13 +22,15 @@ import { behaviorService } from "../../services/behaviorService";
 import { AuthContext } from "../../contexts/AuthContext";
 
 function HotelList() {
-  const [distanceToBottom, setDistanceToBottom] = useState(0);
   const location = useLocation();
   const { logBehavior } = useBehavior();
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [viewMode, setViewMode] = useState("infinite");
   const [currentPage, setCurrentPage] = useState(1);
   const { user } = useContext(AuthContext);
+  
+  // 🚨 FIX 1: GỌI approveUser ĐÚNG CÁCH - chỉ gọi 1 lần khi user thay đổi
+  const hasApprovedRef = useRef(false);
   useEffect(() => {
   if (!user) return;
 
@@ -37,10 +38,11 @@ function HotelList() {
     .then(() => console.log("Approve OK"))
     .catch(err => console.error("Approve ERR:", err));
 
-}, [location.pathname]);
+}, [location.pathname]); // Chỉ phụ thuộc vào user, không phụ thuộc vào location.pathname
 
   // Ref cho Intersection Observer
   const loadMoreRef = useRef(null);
+  const observerRef = useRef(null);
 
   // Map tiện nghi
   const amenitiesMap = {
@@ -73,7 +75,7 @@ function HotelList() {
   };
 
   // Lấy filter từ URL
-  const getFiltersFromQuery = () => {
+  const getFiltersFromQuery = useCallback(() => {
     const searchParams = new URLSearchParams(location.search);
     return {
       destination: searchParams.get("destination") || "",
@@ -83,12 +85,24 @@ function HotelList() {
       guests: searchParams.get("guests") || "",
       searchTerm: searchParams.get("searchTerm") || "",
       sort: searchParams.get("sort") || "price_asc",
-      per_page: 10,
     };
-  };
+  }, [location.search]);
 
   const filtersFromQuery = getFiltersFromQuery();
   const mappedFilters = selectedFilters.map((f) => amenitiesMap[f] || f);
+
+  // 🚨 FIX 5: QueryKey không chứa object
+  const queryKeyBase = [
+    "hotels",
+    filtersFromQuery.destination,
+    filtersFromQuery.roomType,
+    filtersFromQuery.checkIn,
+    filtersFromQuery.checkOut,
+    filtersFromQuery.guests,
+    filtersFromQuery.searchTerm,
+    filtersFromQuery.sort,
+    JSON.stringify(mappedFilters) // Chuyển array thành string
+  ];
 
   // =========== INFINITE QUERY ===========
   const fetchHotelsInfinite = async ({ pageParam = 1 }) => {
@@ -108,8 +122,10 @@ function HotelList() {
     isFetchingNextPage,
     refetch: refetchInfinite,
     isLoading: infiniteLoading,
+    isFetching: infiniteFetching,
   } = useInfiniteQuery({
-    queryKey: ["hotels-infinite", { ...filtersFromQuery, selectedFilters: mappedFilters }],
+    // 🚨 FIX 5: Query key đơn giản hóa
+    queryKey: [...queryKeyBase, "infinite"],
     queryFn: fetchHotelsInfinite,
     getNextPageParam: (lastPage) => {
       if (!lastPage?.pagination) return undefined;
@@ -118,27 +134,33 @@ function HotelList() {
     },
     keepPreviousData: true,
     initialPageParam: 1,
+    staleTime: 60000, // 1 phút cache
   });
 
-  // =========== INTERSECTION OBSERVER ===========
+  // 🚨 FIX 2 & 3: Chỉ dùng IntersectionObserver, không dùng InfiniteScroll component
   useEffect(() => {
+    // Cleanup observer cũ
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
     // Chỉ chạy khi ở chế độ infinite và còn trang tiếp theo
     if (viewMode !== "infinite" || !hasNextPage || isFetchingNextPage) {
       return;
     }
 
-    const observer = new IntersectionObserver(
+    observerRef.current = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
         // Khi phần tử sentinel xuất hiện trong viewport
         if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          console.log("🚀 Loading more hotels...");
+          console.log("🚀 Loading more hotels via IntersectionObserver...");
           fetchNextPage();
         }
       },
       {
         root: null, // viewport
-        rootMargin: "1500px", // Load trước 500px
+        rootMargin: "300px", // Load trước 300px (giảm từ 1500px)
         threshold: 0.1,
       }
     );
@@ -146,13 +168,13 @@ function HotelList() {
     // Quan sát phần tử sentinel
     const currentRef = loadMoreRef.current;
     if (currentRef) {
-      observer.observe(currentRef);
+      observerRef.current.observe(currentRef);
     }
 
     // Cleanup
     return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
+      if (observerRef.current) {
+        observerRef.current.disconnect();
       }
     };
   }, [viewMode, hasNextPage, isFetchingNextPage, fetchNextPage]);
@@ -174,13 +196,11 @@ function HotelList() {
     isLoading: paginationLoading,
     isFetching: paginationFetching,
   } = useQuery({
-    queryKey: ["hotels-pagination", {
-      ...filtersFromQuery,
-      selectedFilters: mappedFilters,
-      page: currentPage
-    }],
+    // 🚨 FIX 5: Query key đơn giản hóa
+    queryKey: [...queryKeyBase, "pagination", currentPage],
     queryFn: fetchHotelsPagination,
     keepPreviousData: true,
+    staleTime: 60000, // 1 phút cache
   });
 
   // =========== DATA PROCESSING ===========
@@ -202,31 +222,22 @@ function HotelList() {
   }
 
   const destination = filtersFromQuery.destination || "Tổng khách sạn";
-    // Thêm useEffect để tính khoảng cách
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-      const distance = documentHeight - (scrollTop + windowHeight);
-      setDistanceToBottom(distance);
-    };
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Gọi ngay lần đầu
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [hotels]); // Chạy lại khi hotels thay đổi
   // =========== HANDLERS ===========
   const handleFilterChange = (newFilters) => {
     setSelectedFilters(newFilters);
-    logBehavior("filter_change", { filters: newFilters });
     setCurrentPage(1);
-    if (viewMode === "infinite") {
-      refetchInfinite();
-    } else {
-      refetchPagination();
-    }
+    // Reset approval flag khi filter thay đổi
+    hasApprovedRef.current = false;
+    
+    // Chỉ refetch khi cần
+    setTimeout(() => {
+      if (viewMode === "infinite") {
+        refetchInfinite();
+      } else {
+        refetchPagination();
+      }
+    }, 0);
   };
 
   const handlePageChange = (page) => {
@@ -239,6 +250,8 @@ function HotelList() {
     if (mode === "pagination") {
       setCurrentPage(1);
     }
+    // Reset approval flag khi đổi view mode
+    hasApprovedRef.current = false;
   };
 
   const renderPagination = () => {
@@ -437,7 +450,7 @@ function HotelList() {
               </div>
 
               {/* Debug info cho testing */}
-              {process.env.NODE_ENV === 'development' && viewMode === 'infinite' && (
+              {process.env.NODE_ENV === 'development' && (
                 <div style={{
                   background: '#f0f9ff',
                   padding: '10px',
@@ -449,114 +462,87 @@ function HotelList() {
                   <strong>🛠️ Debug Mode:</strong>
                   <span style={{ marginLeft: '10px' }}>Đã tải: {hotels.length} khách sạn</span>
                   <span style={{ marginLeft: '10px' }}>Còn trang: {hasNextPage ? 'Có' : 'Không'}</span>
-                  <span style={{ marginLeft: '10px' }}>Sentinel: {loadMoreRef.current ? '✅' : '❌'}</span>
+                  <span style={{ marginLeft: '10px' }}>View Mode: {viewMode}</span>
+                  {viewMode === 'infinite' && (
+                    <span style={{ marginLeft: '10px' }}>Sentinel: {loadMoreRef.current ? '✅' : '❌'}</span>
+                  )}
                 </div>
               )}
 
               {/* Nội dung hotels */}
               {viewMode === "infinite" ? (
                 <>
-                  {/* THÊM HIỂN THỊ KHOẢNG CÁCH - CHỈ TRONG DEBUG MODE */}
-                  {process.env.NODE_ENV === 'development' && viewMode === 'infinite' && (
-                    <div style={{
-                      position: 'fixed',
-                      bottom: '20px',
-                      right: '20px',
-                      background: 'rgba(0, 0, 0, 0.8)',
-                      color: 'white',
-                      padding: '10px 15px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      zIndex: 1000,
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                      minWidth: '200px'
-                    }}>
-                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                        📏 Debug Scroll Info
-                      </div>
-                      <div>Khoảng cách đến cuối: <strong>{Math.round(distanceToBottom)}px</strong></div>
-                      <div>Hotels đã tải: <strong>{hotels.length}</strong></div>
-                      <div>Trạng thái: <strong style={{ color: hasNextPage ? '#4ade80' : '#f87171' }}>
-                        {hasNextPage ? 'Còn trang' : 'Đã hết'}
-                      </strong></div>
-                      {loadMoreRef.current && (
-                        <div style={{ marginTop: '5px', fontSize: '12px', color: '#94a3b8' }}>
-                          ✅ Sentinel đang hoạt động
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <InfiniteScroll
-                    dataLength={hotels.length}
-                    next={fetchNextPage}
-                    hasMore={!!hasNextPage}
-                    loader={<PartLoading />}
-                    style={{ overflow: "visible" }}
-                    endMessage={
-                      hotels.length > 0 && (
-                        <div className="infinite-end-message">
-                          <p>Bạn đã xem hết tất cả {totalResults} khách sạn!</p>
-                          <button
-                            className="back-to-top"
-                            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                          >
-                            <FaArrowRight /> Lên đầu trang
-                          </button>
-                        </div>
-                      )
-                    }
-                  >
+                  {/* Danh sách hotels với infinite scroll thủ công */}
+                  <div className="hotel-list-infinite">
                     {hotels.map((hotel, index) => (
-                      <div key={hotel.id}>
+                      <div key={`${hotel.id}-${index}`}>
                         <HotelCard hotel={hotel} />
-                        {/* Thêm sentinel ở khách sạn thứ 5 từ cuối lên */}
-                        {index === hotels.length - 6 && hasNextPage && (
+                        
+                        {/* 🚨 FIX 3: Sentinel chỉ có một, ở cuối danh sách */}
+                        {index === hotels.length - 3 && hasNextPage && (
                           <div
                             ref={loadMoreRef}
                             className="load-more-sentinel"
                             style={{
-                              height: '20px',
+                              height: '1px',
                               background: 'transparent',
                               margin: '10px 0'
                             }}
-                          >
-                            {/* Có thể thêm loading indicator nhỏ ở đây */}
-                            {isFetchingNextPage && (
-                              <div style={{ textAlign: 'center', color: '#666' }}>
-                                <FaSpinner className="spinner" /> Đang tải...
-                              </div>
-                            )}
-                          </div>
+                          />
                         )}
                       </div>
                     ))}
-                    {isFetchingNextPage && <PartLoading />}
-                  </InfiniteScroll>
-
-                  {/* Thêm sentinel dự phòng ở cuối nếu chưa có */}
-                  {hasNextPage && !isFetchingNextPage && hotels.length > 0 && (
-                    <div
-                      ref={loadMoreRef}
-                      style={{
-                        height: '1px',
-                        background: 'transparent',
-                        margin: '20px 0'
-                      }}
-                    />
-                  )}
+                    
+                    {/* Loading indicator */}
+                    {(isFetchingNextPage || infiniteFetching) && (
+                      <div className="infinite-loading">
+                        <PartLoading />
+                        <div style={{ textAlign: 'center', color: '#666', marginTop: '10px' }}>
+                          <FaSpinner className="spinner" /> Đang tải thêm khách sạn...
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* End message */}
+                    {!hasNextPage && hotels.length > 0 && !infiniteFetching && (
+                      <div className="infinite-end-message">
+                        <p>🎉 Bạn đã xem hết tất cả {totalResults} khách sạn!</p>
+                        <button
+                          className="back-to-top"
+                          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                        >
+                          <FaArrowRight /> Lên đầu trang
+                        </button>
+                      </div>
+                    )}
+                    
+                    {/* Sentinel dự phòng ở cuối */}
+                    {hasNextPage && !loadMoreRef.current && (
+                      <div
+                        ref={loadMoreRef}
+                        style={{
+                          height: '1px',
+                          background: 'transparent'
+                        }}
+                      />
+                    )}
+                  </div>
                 </>
               ) : (
                 <>
-                  {hotels.map((hotel) => (
-                    <HotelCard key={hotel.id} hotel={hotel} />
-                  ))}
+                  {/* Pagination mode */}
+                  <div className="hotel-list-pagination">
+                    {hotels.map((hotel) => (
+                      <HotelCard key={hotel.id} hotel={hotel} />
+                    ))}
 
-                  {paginationFetching && (
-                    <div className="loading-overlay">
-                      <FaSpinner className="spinner" />
-                      <span>Đang tải trang {currentPage}...</span>
-                    </div>
-                  )}
+                    {paginationFetching && (
+                      <div className="loading-overlay">
+                        <FaSpinner className="spinner" />
+                        <span>Đang tải trang {currentPage}...</span>
+                      </div>
+                    )}
+                  </div>
                 </>
               )}
 
@@ -587,7 +573,7 @@ function HotelList() {
         </div>
       </section>
 
-      {/* CSS inline để không phải tạo file mới */}
+      {/* CSS inline */}
       <style jsx>{`
         .hotel-list-header {
           display: flex;
@@ -734,21 +720,14 @@ function HotelList() {
           z-index: 1000;
         }
 
-        .loading-info {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: #666;
-          font-size: 14px;
+        .infinite-loading {
+          padding: 20px 0;
+          text-align: center;
         }
 
         .spinner {
           animation: spin 1s linear infinite;
-        }
-
-        .spinner-small {
-          animation: spin 1s linear infinite;
-          font-size: 12px;
+          margin-right: 8px;
         }
 
         @keyframes spin {
@@ -758,10 +737,12 @@ function HotelList() {
 
         .infinite-end-message {
           text-align: center;
-          padding: 30px;
+          padding: 40px 20px;
           color: #666;
           border-top: 1px solid #eee;
           margin-top: 20px;
+          background: #f8f9fa;
+          border-radius: 8px;
         }
 
         .back-to-top {
@@ -775,16 +756,31 @@ function HotelList() {
           display: inline-flex;
           align-items: center;
           gap: 8px;
+          transition: all 0.3s;
+        }
+
+        .back-to-top:hover {
+          background: #0056b3;
+          transform: translateY(-2px);
         }
 
         .no-results {
           text-align: center;
           padding: 60px 20px;
+          background: #f8f9fa;
+          border-radius: 12px;
+          margin-top: 20px;
         }
 
         .no-results-icon {
-          font-size: 48px;
+          font-size: 64px;
           margin-bottom: 20px;
+          animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
         }
 
         .clear-filters-btn {
@@ -795,6 +791,12 @@ function HotelList() {
           border: none;
           border-radius: 6px;
           cursor: pointer;
+          transition: all 0.3s;
+        }
+
+        .clear-filters-btn:hover {
+          background: #c82333;
+          transform: translateY(-2px);
         }
 
         /* Responsive */
@@ -817,6 +819,10 @@ function HotelList() {
             padding: 6px 12px;
             min-width: 36px;
             font-size: 13px;
+          }
+          
+          .no-results {
+            padding: 40px 15px;
           }
         }
       `}</style>

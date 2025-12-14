@@ -29,9 +29,6 @@ const Hotel = ({
     logBehavior("booking", {
       userId: user?.id || null,
       hotelId: id,
-      hotelName: title,
-      price,
-      location,
     });
   };
   
@@ -59,9 +56,6 @@ const Hotel = ({
     logBehavior("like", {
       userId: user?.id,
       hotelId: id,
-      hotelName: title,
-      price,
-      location,
     });
 
   } catch (error) {
@@ -88,8 +82,6 @@ const Hotel = ({
     logBehavior("click", {
       userId: user?.id || null,
       hotelId: id,
-      hotelName: title,
-      action: isZoomed ? "zoom_out" : "zoom_in"
     });
   };
 
@@ -100,8 +92,6 @@ const Hotel = ({
     logBehavior("click", {
       userId: user?.id || null,
       hotelId: id,
-      hotelName: title,
-      action: isZoomed ? "zoom_out" : "zoom_in"
     });
   };
   return (

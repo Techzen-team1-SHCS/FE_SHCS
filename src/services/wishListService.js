@@ -51,6 +51,23 @@ export const wishListService = {
       } catch (error) {
         throw new Error(error.response?.data?.message || 'Failed to remove from wish list');
       }
+    },
+    async deleteWishList(id){
+      try {
+          const token=localStorage.getItem('token');
+          if(!token){
+            throw new Error('Authentication token not found ');
+          }
+          const response=await api.delete(`auth/wishlist/${id}`,{
+            headers:{Authorization:`Bearer ${token}`}
+          });
+          return response.data;
+      } catch (error) {
+         console.log('Error deleting wishlist:',error);
+         throw error;
+        
+      }
+
     }
     
 
