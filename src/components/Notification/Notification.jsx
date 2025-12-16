@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './Notification.module.css';
 import '../../config/echo';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PartLoading from '../Loading/PartLoading';
 
 const Notification = ({ userId }) => {
@@ -9,9 +9,22 @@ const Notification = ({ userId }) => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [hasFetched, setHasFetched] = useState(false); // 🚀 Track đã fetch chưa
+    const [isInitialDelayComplete, setIsInitialDelayComplete] = useState(false); // 🚀 Delay ban đầu
     const dropdownRef = useRef(null);
     const listRef = useRef(null);
     const navigate = useNavigate();
+    
+    // 🚀 DELAY BAN ĐẦU: Chờ 2 giây để search hotel có ưu tiên
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsInitialDelayComplete(true);
+            console.log("⏳ Notification component ready to fetch (after 2s delay)");
+        }, 2000); // Delay 2 giây cho search hotel
+        
+        return () => clearTimeout(timer);
+    }, []);
+    
     // Click outside to close
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -33,9 +46,12 @@ const Notification = ({ userId }) => {
         }
     }, [isOpen]);
 
-    // Fetch notifications
+    // 🚀 LAZY FETCH: Chỉ fetch khi user click vào notification icon VÀ đã hết delay ban đầu
     useEffect(() => {
+        if (!isOpen || !isInitialDelayComplete || hasFetched) return;
+        
         const fetchNotifications = async () => {
+            console.log("📨 Fetching notifications (lazy load)");
             setLoading(true);
             try {
                 const res = await fetch('/api/auth/notifications', {
@@ -47,6 +63,7 @@ const Notification = ({ userId }) => {
                 if (!res.ok) throw new Error('Failed to fetch notifications');
                 const data = await res.json();
                 setNotifications(data.notifications || []);
+                setHasFetched(true); // Đánh dấu đã fetch
             } catch (err) {
                 console.error(err);
                 setError('Failed to load notifications');
@@ -56,25 +73,38 @@ const Notification = ({ userId }) => {
         };
 
         fetchNotifications();
-    }, []);
+    }, [isOpen, isInitialDelayComplete, hasFetched]); // 🚀 Chỉ fetch khi mở dropdown
 
-    // Realtime notifications
+    // 🚀 Realtime notifications - CŨNG DELAY
     useEffect(() => {
-        if (!userId || !window.Echo) return;
+        // Chỉ kết nối realtime nếu đã fetch notifications ít nhất 1 lần
+        if (!hasFetched || !userId || !window.Echo) return;
 
+        console.log("📡 Connecting to realtime notification channel");
         const channel = window.Echo.private(`user.${userId}`);
+        
         channel.listen('NotificationSuccess', (data) => {
+            console.log("🔔 New realtime notification received");
             setNotifications(prev => [data, ...prev]);
         });
 
         return () => {
-            window.Echo.leave(`user.${userId}`);
+            if (channel) {
+                window.Echo.leave(`user.${userId}`);
+            }
         };
-    }, [userId]);
+    }, [userId, hasFetched]); // 🚀 Chỉ kết nối khi đã fetch lần đầu
 
     const unreadCount = notifications.filter(n => !n.is_read).length;
 
-    const toggleDropdown = () => setIsOpen(prev => !prev);
+    // 🚀 Toggle với lazy loading
+    const toggleDropdown = () => {
+        const newState = !isOpen;
+        setIsOpen(newState);
+        
+        // Nếu chưa fetch bao giờ và delay đã xong, sẽ trigger fetch trong useEffect
+        console.log(`🔔 Notification dropdown ${newState ? 'opened' : 'closed'}`);
+    };
 
     // Mark as read
     const markAsRead = async (id) => {
@@ -103,31 +133,30 @@ const Notification = ({ userId }) => {
     };
 
     const handleClickNotification = (n) => {
-    // Mark read
-    if (!n.is_read) markAsRead(n.id);
+        // Mark read
+        if (!n.is_read) markAsRead(n.id);
 
-    // Parse JSON data nếu có
-    let parsedData = null;
-    try {
-        parsedData = n.data ? JSON.parse(n.data) : null;
-    } catch (e) {
-        console.error("Invalid JSON in notification.data");
-    }
+        // Parse JSON data nếu có
+        let parsedData = null;
+        try {
+            parsedData = n.data ? JSON.parse(n.data) : null;
+        } catch (e) {
+            console.error("Invalid JSON in notification.data");
+        }
 
-    // Điều hướng theo loại
-    if (n.type === 'booking' && parsedData?.booking_id) {
-        navigate(`/booking/${parsedData.booking_id}`);
-    }
+        // Điều hướng theo loại
+        if (n.type === 'booking' && parsedData?.booking_id) {
+            navigate(`/booking/${parsedData.booking_id}`);
+        }
 
-    if (n.type === 'payment') {
-        navigate('/profile?tab=payment');
-    }
+        if (n.type === 'payment') {
+            navigate('/profile?tab=payment');
+        }
 
-    if (n.type === 'discount') {
-        navigate('/discount');
-    }
-};
-
+        if (n.type === 'discount') {
+            navigate('/discount');
+        }
+    };
 
     const formatTime = (timeString) => {
         if (!timeString) return '';
@@ -159,7 +188,11 @@ const Notification = ({ userId }) => {
 
     return (
         <div className={styles.notificationContainer} ref={dropdownRef}>
-            <button onClick={toggleDropdown} className={styles.notificationButton}>
+            <button 
+                onClick={toggleDropdown} 
+                className={styles.notificationButton}
+                title="Thông báo"
+            >
                 🔔
                 {unreadCount > 0 && (
                     <span className={styles.notificationBadge}>
@@ -168,24 +201,48 @@ const Notification = ({ userId }) => {
                 )}
             </button>
 
-            <div className={`${styles.dropdown} ${isOpen ? styles.show : ''}`} >
+            <div className={`${styles.dropdown} ${isOpen ? styles.show : ''}`}>
                 <div className={styles.dropdownHeader}>
                     <h3>Thông báo</h3>
                     {unreadCount > 0 && (
-                        <button className={styles.markAllReadButton} onClick={markAllAsRead}>
+                        <button 
+                            className={styles.markAllReadButton} 
+                            onClick={markAllAsRead}
+                            disabled={loading}
+                        >
                             Đánh dấu đã đọc tất cả
                         </button>
                     )}
                 </div>
 
                 <div className={styles.notificationList} ref={listRef}>
-                    {loading && <div className={styles.loadingState}><PartLoading /></div>}
+                    {/* 🚀 Hiển thị trạng thái loading */}
+                    {loading && (
+                        <div className={styles.loadingState}>
+                            <PartLoading />
+                            <p style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
+                                Đang tải thông báo...
+                            </p>
+                        </div>
+                    )}
+                    
                     {error && <div className={styles.errorState}>{error}</div>}
-                    {!loading && notifications.length === 0 && (
+                    
+                    {/* 🚀 Hiển thị placeholder nếu chưa fetch lần nào */}
+                    {!loading && !hasFetched && isOpen && (
+                        <div className={styles.emptyState}>
+                            <p>Nhấn để tải thông báo</p>
+                            <small style={{ color: '#999' }}>
+                                (Tự động tải sau 2 giây để ưu tiên tìm kiếm)
+                            </small>
+                        </div>
+                    )}
+                    
+                    {!loading && hasFetched && notifications.length === 0 && (
                         <div className={styles.emptyState}>Không có thông báo</div>
                     )}
 
-                    {notifications.map(notification => {
+                    {hasFetched && notifications.map(notification => {
                         const type = getNotificationType(notification);
                         const isUnread = !notification.is_read;
                         
@@ -215,7 +272,6 @@ const Notification = ({ userId }) => {
                                             {isUnread ? "Chưa đọc" : "Đã đọc"}
                                         </p>
                                     </div>
-                                     
                                 </div>
                             </div>
                         );
@@ -225,4 +281,5 @@ const Notification = ({ userId }) => {
         </div>
     );
 };
+
 export default Notification;

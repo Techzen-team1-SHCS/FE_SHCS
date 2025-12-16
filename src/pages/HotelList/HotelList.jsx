@@ -29,20 +29,31 @@ function HotelList() {
   const [currentPage, setCurrentPage] = useState(1);
   const { user } = useContext(AuthContext);
   
-  // 🚨 FIX 1: GỌI approveUser ĐÚNG CÁCH - chỉ gọi 1 lần khi user thay đổi
-  const hasApprovedRef = useRef(false);
+  // Approve user
+  const userRef = useRef(null);
+  const hasSentRef = useRef(false);
+
   useEffect(() => {
-  if (!user) return;
+    userRef.current = user;
+  }, [user]);
 
-  behaviorService.approveUser(user.id)
-    .then(() => console.log("Approve OK"))
-    .catch(err => console.error("Approve ERR:", err));
+  useEffect(() => {
+    return () => {
+      if (!userRef.current || hasSentRef.current) return;
 
-}, [location.pathname]); // Chỉ phụ thuộc vào user, không phụ thuộc vào location.pathname
+      hasSentRef.current = true;
 
-  // Ref cho Intersection Observer
+      behaviorService.approveUser(userRef.current.id);
+    };
+  }, []);
+
+
+  // Refs
   const loadMoreRef = useRef(null);
   const observerRef = useRef(null);
+  const lastLoadTimeRef = useRef(0);
+  const isInitialMountRef = useRef(true);
+  const sentinelTriggeredRef = useRef(false);
 
   // Map tiện nghi
   const amenitiesMap = {
@@ -91,7 +102,7 @@ function HotelList() {
   const filtersFromQuery = getFiltersFromQuery();
   const mappedFilters = selectedFilters.map((f) => amenitiesMap[f] || f);
 
-  // 🚨 FIX 5: QueryKey không chứa object
+  // Query key
   const queryKeyBase = [
     "hotels",
     filtersFromQuery.destination,
@@ -101,11 +112,12 @@ function HotelList() {
     filtersFromQuery.guests,
     filtersFromQuery.searchTerm,
     filtersFromQuery.sort,
-    JSON.stringify(mappedFilters) // Chuyển array thành string
+    JSON.stringify(mappedFilters)
   ];
 
   // =========== INFINITE QUERY ===========
   const fetchHotelsInfinite = async ({ pageParam = 1 }) => {
+    console.log(`🔍 Fetching page ${pageParam}...`);
     const response = await hotelService.searchHotels({
       ...filtersFromQuery,
       selectedFilters: mappedFilters,
@@ -123,8 +135,9 @@ function HotelList() {
     refetch: refetchInfinite,
     isLoading: infiniteLoading,
     isFetching: infiniteFetching,
+    isError: infiniteError,
+    error: infiniteErrorData
   } = useInfiniteQuery({
-    // 🚨 FIX 5: Query key đơn giản hóa
     queryKey: [...queryKeyBase, "infinite"],
     queryFn: fetchHotelsInfinite,
     getNextPageParam: (lastPage) => {
@@ -134,53 +147,28 @@ function HotelList() {
     },
     keepPreviousData: true,
     initialPageParam: 1,
-    staleTime: 60000, // 1 phút cache
-  });
-
-  // 🚨 FIX 2 & 3: Chỉ dùng IntersectionObserver, không dùng InfiniteScroll component
-  useEffect(() => {
-    // Cleanup observer cũ
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-
-    // Chỉ chạy khi ở chế độ infinite và còn trang tiếp theo
-    if (viewMode !== "infinite" || !hasNextPage || isFetchingNextPage) {
-      return;
-    }
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        // Khi phần tử sentinel xuất hiện trong viewport
-        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          console.log("🚀 Loading more hotels via IntersectionObserver...");
-          fetchNextPage();
+    staleTime: 60000,
+    // 🚀 LOAD NGAY TỪ ĐẦU
+    onSuccess: (data) => {
+      if (isInitialMountRef.current && data?.pages?.[0]?.hotels?.length > 0) {
+        isInitialMountRef.current = false;
+        
+        const hasMore = data.pages[0].pagination?.current_page < data.pages[0].pagination?.last_page;
+        if (hasMore && !isFetchingNextPage && !sentinelTriggeredRef.current) {
+          setTimeout(() => {
+            console.log("⚡ Auto-loading page 2 on initial mount");
+            fetchNextPage();
+            sentinelTriggeredRef.current = true;
+          }, 300);
         }
-      },
-      {
-        root: null, // viewport
-        rootMargin: "300px", // Load trước 300px (giảm từ 1500px)
-        threshold: 0.1,
       }
-    );
-
-    // Quan sát phần tử sentinel
-    const currentRef = loadMoreRef.current;
-    if (currentRef) {
-      observerRef.current.observe(currentRef);
-    }
-
-    // Cleanup
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [viewMode, hasNextPage, isFetchingNextPage, fetchNextPage]);
+    },
+    enabled: viewMode === "infinite",
+  });
 
   // =========== PAGINATION QUERY ===========
   const fetchHotelsPagination = async () => {
+    console.log(`🔍 Fetching page ${currentPage} (pagination)...`);
     const response = await hotelService.searchHotels({
       ...filtersFromQuery,
       selectedFilters: mappedFilters,
@@ -195,31 +183,124 @@ function HotelList() {
     refetch: refetchPagination,
     isLoading: paginationLoading,
     isFetching: paginationFetching,
+    isError: paginationError,
+    error: paginationErrorData
   } = useQuery({
-    // 🚨 FIX 5: Query key đơn giản hóa
     queryKey: [...queryKeyBase, "pagination", currentPage],
     queryFn: fetchHotelsPagination,
     keepPreviousData: true,
-    staleTime: 60000, // 1 phút cache
+    staleTime: 60000,
+    enabled: viewMode === "pagination",
   });
+
+  // =========== INTERSECTION OBSERVER VỚI SENTINEL Ở GIỮA ===========
+  useEffect(() => {
+    // Cleanup observer cũ
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+      observerRef.current = null;
+    }
+
+    // Reset sentinel flag
+    sentinelTriggeredRef.current = false;
+
+    // Chỉ chạy khi ở chế độ infinite và có trang tiếp theo
+    if (viewMode !== "infinite" || !hasNextPage || isFetchingNextPage) {
+      return;
+    }
+
+    console.log("🔄 Setting up EARLY Intersection Observer (mid-list)");
+
+    const options = {
+      root: null,
+      rootMargin: "0px 0px 0px 0px", // 🚀 Trigger ngay khi vừa thấy
+      threshold: 0.01, // Rất nhạy
+    };
+
+    const handleIntersection = (entries) => {
+      const [entry] = entries;
+      const now = Date.now();
+      
+      // Throttle
+      if (now - lastLoadTimeRef.current < 500) {
+        return;
+      }
+
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage && !sentinelTriggeredRef.current) {
+        console.log("⚡ MID-LIST Sentinel detected! Loading next page...");
+        lastLoadTimeRef.current = now;
+        sentinelTriggeredRef.current = true;
+        fetchNextPage();
+      }
+    };
+
+    observerRef.current = new IntersectionObserver(handleIntersection, options);
+
+    // QUAN TRỌNG: Đặt sentinel ở vị trí giữa danh sách
+    setTimeout(() => {
+      const sentinelElement = document.querySelector('.mid-list-sentinel');
+      if (sentinelElement && observerRef.current) {
+        observerRef.current.observe(sentinelElement);
+        console.log("👁️ Observer attached to MID-LIST sentinel");
+        
+        // Kiểm tra xem sentinel có đang trong viewport không
+        const checkSentinelVisibility = () => {
+          if (sentinelElement) {
+            const rect = sentinelElement.getBoundingClientRect();
+            const isVisible = rect.top <= window.innerHeight;
+            
+            if (isVisible && hasNextPage && !isFetchingNextPage && !sentinelTriggeredRef.current) {
+              console.log("🎯 Sentinel is already visible! Triggering immediate load...");
+              sentinelTriggeredRef.current = true;
+              fetchNextPage();
+            }
+          }
+        };
+        
+        setTimeout(checkSentinelVisibility, 100);
+      }
+    }, 100);
+
+    // Cleanup
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
+    };
+  }, [viewMode, hasNextPage, isFetchingNextPage, fetchNextPage, infiniteData?.pages?.length]);
 
   // =========== DATA PROCESSING ===========
   let hotels = [];
   let totalResults = 0;
   let paginationInfo = null;
   let loading = false;
+  let isError = false;
+  let error = null;
 
   if (viewMode === "infinite") {
     hotels = infiniteData?.pages.flatMap((page) => page.hotels || []) || [];
     totalResults = infiniteData?.pages?.[0]?.total || 0;
     paginationInfo = infiniteData?.pages?.[0]?.pagination;
     loading = infiniteLoading;
+    isError = infiniteError;
+    error = infiniteErrorData;
   } else {
     hotels = paginationData?.hotels || [];
     totalResults = paginationData?.total || 0;
     paginationInfo = paginationData?.pagination;
     loading = paginationLoading;
+    isError = paginationError;
+    error = paginationErrorData;
   }
+
+  // Tính vị trí đặt sentinel (ở giữa danh sách)
+  const getSentinelPosition = () => {
+    if (hotels.length <= 5) return Math.floor(hotels.length / 2); // Giữa danh sách
+    return 5; // Sau hotel thứ 5
+  };
+
+  const sentinelPosition = getSentinelPosition();
 
   const destination = filtersFromQuery.destination || "Tổng khách sạn";
 
@@ -227,10 +308,10 @@ function HotelList() {
   const handleFilterChange = (newFilters) => {
     setSelectedFilters(newFilters);
     setCurrentPage(1);
-    // Reset approval flag khi filter thay đổi
-    hasApprovedRef.current = false;
+    isInitialMountRef.current = true;
+    sentinelTriggeredRef.current = false;
+    lastLoadTimeRef.current = 0;
     
-    // Chỉ refetch khi cần
     setTimeout(() => {
       if (viewMode === "infinite") {
         refetchInfinite();
@@ -250,8 +331,9 @@ function HotelList() {
     if (mode === "pagination") {
       setCurrentPage(1);
     }
-    // Reset approval flag khi đổi view mode
-    hasApprovedRef.current = false;
+    isInitialMountRef.current = true;
+    sentinelTriggeredRef.current = false;
+    lastLoadTimeRef.current = 0;
   };
 
   const renderPagination = () => {
@@ -426,21 +508,38 @@ function HotelList() {
                     <button
                       className={`mode-btn ${viewMode === "infinite" ? "active" : ""}`}
                       onClick={() => handleViewModeChange("infinite")}
-                      title="Cuộn vô tận"
+                      title="Cuộn vô tận - load cực sớm"
                     >
-                      <FaSync /> Cuộn vô tận
+                      <FaSync /> Cuộn vô tận (LOAD SỚM)
                     </button>
                     <button
                       className={`mode-btn ${viewMode === "pagination" ? "active" : ""}`}
                       onClick={() => handleViewModeChange("pagination")}
-                      title="Phân trang"
+                      title="Phân trang truyền thống"
                     >
                       <FaThList /> Phân trang
                     </button>
                   </div>
                 </div>
 
-                {paginationInfo && viewMode === "pagination" && (
+                {viewMode === "infinite" && hotels.length > 0 && (
+                  <div className="header-right">
+                    <div className="page-info">
+                      <span style={{ color: '#dc3545', fontWeight: 'bold' }}>
+                        ⚡ LOAD TRƯỚC
+                      </span>
+                      <span style={{ marginLeft: '10px' }}>
+                        Đã tải: {hotels.length}/{totalResults} khách sạn
+                      </span>
+                      {hasNextPage && hotels.length > sentinelPosition && (
+                        <span style={{ marginLeft: '10px', fontSize: '12px', color: '#28a745' }}>
+                          (Sẽ load tiếp khi xem tới hotel thứ {sentinelPosition + 1})
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+                {viewMode === "pagination" && paginationInfo && (
                   <div className="header-right">
                     <div className="page-info">
                       Trang {paginationInfo.current_page} / {paginationInfo.last_page}
@@ -449,101 +548,129 @@ function HotelList() {
                 )}
               </div>
 
-              {/* Debug info cho testing */}
-              {process.env.NODE_ENV === 'development' && (
+              {/* Error message */}
+              {isError && (
                 <div style={{
-                  background: '#f0f9ff',
-                  padding: '10px',
-                  borderRadius: '6px',
-                  marginBottom: '15px',
-                  fontSize: '14px',
-                  border: '1px solid #bae6fd'
+                  background: '#fee',
+                  padding: '15px',
+                  borderRadius: '8px',
+                  marginBottom: '20px',
+                  border: '1px solid #fcc'
                 }}>
-                  <strong>🛠️ Debug Mode:</strong>
-                  <span style={{ marginLeft: '10px' }}>Đã tải: {hotels.length} khách sạn</span>
-                  <span style={{ marginLeft: '10px' }}>Còn trang: {hasNextPage ? 'Có' : 'Không'}</span>
-                  <span style={{ marginLeft: '10px' }}>View Mode: {viewMode}</span>
-                  {viewMode === 'infinite' && (
-                    <span style={{ marginLeft: '10px' }}>Sentinel: {loadMoreRef.current ? '✅' : '❌'}</span>
+                  <strong>❌ Lỗi tải dữ liệu:</strong> {error?.message}
+                  <button
+                    onClick={() => viewMode === "infinite" ? refetchInfinite() : refetchPagination()}
+                    style={{
+                      marginLeft: '10px',
+                      padding: '5px 10px',
+                      background: '#dc3545',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Thử lại
+                  </button>
+                </div>
+              )}
+
+              {/* Nội dung hotels - INFINITE MODE */}
+              {viewMode === "infinite" && (
+                <div className="hotel-list-infinite">
+                  {/* Danh sách hotels */}
+                  {hotels.map((hotel, index) => (
+                    <div key={`${hotel.id}-${index}`}>
+                      <HotelCard hotel={hotel} index={index} />
+                      
+                      {/* 🚀🚀 SENTINEL ĐẶT Ở GIỮA DANH SÁCH */}
+                      {index === sentinelPosition && hasNextPage && !isFetchingNextPage && !sentinelTriggeredRef.current && (
+                        <div
+                          ref={loadMoreRef}
+                          className="mid-list-sentinel"
+                          style={{
+                            height: '1px',
+                            width: '100%',
+                            background: 'transparent',
+                            position: 'relative',
+                            margin: '10px 0'
+                          }}
+                        >
+                          {/* Visual indicator */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '-20px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            background: 'linear-gradient(90deg, #ff6b6b, #4ecdc4)',
+                            color: 'white',
+                            padding: '4px 12px',
+                            borderRadius: '15px',
+                            fontSize: '11px',
+                            fontWeight: 'bold',
+                            whiteSpace: 'nowrap',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                            zIndex: 10,
+                            opacity: 0.7
+                          }}>
+                            ⚡ LOAD TRƯỚC (ở giữa)
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+
+                  {/* THÊM MỘT SENTINEL DỰ PHÒNG Ở CUỐI */}
+                  {hasNextPage && !sentinelTriggeredRef.current && (
+                    <div
+                      ref={loadMoreRef}
+                      className="backup-sentinel"
+                      style={{
+                        height: '1px',
+                        width: '100%',
+                        background: 'transparent'
+                      }}
+                    />
+                  )}
+
+                  {/* Loading indicator */}
+                  {(isFetchingNextPage || infiniteFetching) && (
+                    <div className="infinite-loading" style={{ padding: '20px 0' }}>
+                      <div style={{ textAlign: 'center', color: '#666' }}>
+                        <FaSpinner className="spinner" /> Đang tải thêm khách sạn...
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* End message */}
+                  {!hasNextPage && hotels.length > 0 && !infiniteFetching && (
+                    <div className="infinite-end-message">
+                      <p>🎉 Bạn đã xem hết tất cả {totalResults} khách sạn!</p>
+                      <button
+                        className="back-to-top"
+                        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                      >
+                        <FaArrowRight /> Lên đầu trang
+                      </button>
+                    </div>
                   )}
                 </div>
               )}
 
-              {/* Nội dung hotels */}
-              {viewMode === "infinite" ? (
-                <>
-                  {/* Danh sách hotels với infinite scroll thủ công */}
-                  <div className="hotel-list-infinite">
-                    {hotels.map((hotel, index) => (
-                      <div key={`${hotel.id}-${index}`}>
-                        <HotelCard hotel={hotel} />
-                        
-                        {/* 🚨 FIX 3: Sentinel chỉ có một, ở cuối danh sách */}
-                        {index === hotels.length - 3 && hasNextPage && (
-                          <div
-                            ref={loadMoreRef}
-                            className="load-more-sentinel"
-                            style={{
-                              height: '1px',
-                              background: 'transparent',
-                              margin: '10px 0'
-                            }}
-                          />
-                        )}
-                      </div>
-                    ))}
-                    
-                    {/* Loading indicator */}
-                    {(isFetchingNextPage || infiniteFetching) && (
-                      <div className="infinite-loading">
-                        <PartLoading />
-                        <div style={{ textAlign: 'center', color: '#666', marginTop: '10px' }}>
-                          <FaSpinner className="spinner" /> Đang tải thêm khách sạn...
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* End message */}
-                    {!hasNextPage && hotels.length > 0 && !infiniteFetching && (
-                      <div className="infinite-end-message">
-                        <p>🎉 Bạn đã xem hết tất cả {totalResults} khách sạn!</p>
-                        <button
-                          className="back-to-top"
-                          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                        >
-                          <FaArrowRight /> Lên đầu trang
-                        </button>
-                      </div>
-                    )}
-                    
-                    {/* Sentinel dự phòng ở cuối */}
-                    {hasNextPage && !loadMoreRef.current && (
-                      <div
-                        ref={loadMoreRef}
-                        style={{
-                          height: '1px',
-                          background: 'transparent'
-                        }}
-                      />
-                    )}
-                  </div>
-                </>
-              ) : (
-                <>
-                  {/* Pagination mode */}
-                  <div className="hotel-list-pagination">
-                    {hotels.map((hotel) => (
-                      <HotelCard key={hotel.id} hotel={hotel} />
-                    ))}
+              {/* Nội dung hotels - PAGINATION MODE */}
+              {viewMode === "pagination" && (
+                <div className="hotel-list-pagination">
+                  {hotels.map((hotel) => (
+                    <HotelCard key={hotel.id} hotel={hotel} />
+                  ))}
 
-                    {paginationFetching && (
-                      <div className="loading-overlay">
-                        <FaSpinner className="spinner" />
-                        <span>Đang tải trang {currentPage}...</span>
-                      </div>
-                    )}
-                  </div>
-                </>
+                  {paginationFetching && (
+                    <div className="loading-overlay">
+                      <FaSpinner className="spinner" />
+                      <span>Đang tải trang {currentPage}...</span>
+                    </div>
+                  )}
+                </div>
               )}
 
               {/* Hiển thị khi không có kết quả */}
@@ -564,6 +691,14 @@ function HotelList() {
                 </div>
               )}
 
+              {/* Loading ban đầu */}
+              {loading && hotels.length === 0 && (
+                <div style={{ textAlign: 'center', padding: '50px' }}>
+                  <PartLoading />
+                  <p>Đang tải khách sạn...</p>
+                </div>
+              )}
+
               {/* Pagination controls */}
               {viewMode === "pagination" && hotels.length > 0 && renderPagination()}
             </div>
@@ -573,8 +708,28 @@ function HotelList() {
         </div>
       </section>
 
-      {/* CSS inline */}
+      {/* CSS */}
       <style jsx>{`
+        .mid-list-sentinel {
+          opacity: 0.7;
+          transition: opacity 0.3s;
+        }
+        
+        .mid-list-sentinel:hover {
+          opacity: 1;
+        }
+        
+        .spinner {
+          animation: spin 0.8s linear infinite;
+          margin-right: 8px;
+          display: inline-block;
+        }
+        
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
         .hotel-list-header {
           display: flex;
           justify-content: space-between;
@@ -583,24 +738,24 @@ function HotelList() {
           padding-bottom: 15px;
           border-bottom: 1px solid #eee;
         }
-
+        
         .header-left {
           display: flex;
           flex-direction: column;
           gap: 10px;
         }
-
+        
         .view-mode-toggle {
           display: flex;
           align-items: center;
           gap: 10px;
         }
-
+        
         .toggle-label {
           font-weight: 600;
           color: #666;
         }
-
+        
         .mode-btn {
           padding: 8px 16px;
           border: 2px solid #ddd;
@@ -613,18 +768,23 @@ function HotelList() {
           font-size: 14px;
           transition: all 0.3s;
         }
-
+        
         .mode-btn:hover {
           border-color: #007bff;
           color: #007bff;
         }
-
+        
         .mode-btn.active {
           background: #007bff;
           color: white;
           border-color: #007bff;
         }
-
+        
+        .mode-btn.active:hover {
+          background: #0056b3;
+          border-color: #0056b3;
+        }
+        
         .pagination-container {
           margin-top: 40px;
           padding-top: 20px;
@@ -634,19 +794,19 @@ function HotelList() {
           gap: 20px;
           align-items: center;
         }
-
+        
         .pagination-info {
           color: #666;
           font-size: 14px;
         }
-
+        
         .pagination-controls {
           display: flex;
           gap: 8px;
           flex-wrap: wrap;
           justify-content: center;
         }
-
+        
         .pagination-btn {
           padding: 8px 16px;
           border: 1px solid #ddd;
@@ -660,34 +820,34 @@ function HotelList() {
           gap: 5px;
           transition: all 0.2s;
         }
-
+        
         .pagination-btn:hover:not(:disabled) {
           background: #f8f9fa;
           border-color: #007bff;
         }
-
+        
         .pagination-btn.active {
           background: #007bff;
           color: white;
           border-color: #007bff;
         }
-
+        
         .pagination-btn:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
-
+        
         .pagination-dots {
           padding: 8px;
           color: #999;
         }
-
+        
         .pagination-jump {
           display: flex;
           align-items: center;
           gap: 10px;
         }
-
+        
         .pagination-jump input {
           width: 60px;
           padding: 8px;
@@ -695,7 +855,7 @@ function HotelList() {
           border-radius: 4px;
           text-align: center;
         }
-
+        
         .pagination-jump button {
           padding: 8px 16px;
           background: #28a745;
@@ -704,7 +864,7 @@ function HotelList() {
           border-radius: 4px;
           cursor: pointer;
         }
-
+        
         .loading-overlay {
           position: fixed;
           top: 50%;
@@ -719,22 +879,12 @@ function HotelList() {
           gap: 10px;
           z-index: 1000;
         }
-
+        
         .infinite-loading {
           padding: 20px 0;
           text-align: center;
         }
-
-        .spinner {
-          animation: spin 1s linear infinite;
-          margin-right: 8px;
-        }
-
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-
+        
         .infinite-end-message {
           text-align: center;
           padding: 40px 20px;
@@ -744,7 +894,7 @@ function HotelList() {
           background: #f8f9fa;
           border-radius: 8px;
         }
-
+        
         .back-to-top {
           margin-top: 15px;
           padding: 10px 20px;
@@ -758,12 +908,12 @@ function HotelList() {
           gap: 8px;
           transition: all 0.3s;
         }
-
+        
         .back-to-top:hover {
           background: #0056b3;
           transform: translateY(-2px);
         }
-
+        
         .no-results {
           text-align: center;
           padding: 60px 20px;
@@ -771,18 +921,18 @@ function HotelList() {
           border-radius: 12px;
           margin-top: 20px;
         }
-
+        
         .no-results-icon {
           font-size: 64px;
           margin-bottom: 20px;
           animation: bounce 2s infinite;
         }
-
+        
         @keyframes bounce {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-10px); }
         }
-
+        
         .clear-filters-btn {
           margin-top: 20px;
           padding: 12px 24px;
@@ -793,12 +943,12 @@ function HotelList() {
           cursor: pointer;
           transition: all 0.3s;
         }
-
+        
         .clear-filters-btn:hover {
           background: #c82333;
           transform: translateY(-2px);
         }
-
+        
         /* Responsive */
         @media (max-width: 768px) {
           .hotel-list-header {
@@ -824,6 +974,11 @@ function HotelList() {
           .no-results {
             padding: 40px 15px;
           }
+          
+          .mid-list-sentinel > div {
+            font-size: 9px;
+            padding: 2px 8px;
+          }
         }
       `}</style>
     </div>
@@ -831,16 +986,16 @@ function HotelList() {
 }
 
 // Helper component để render hotel card
-function HotelCard({ hotel }) {
-  const firstRoom = hotel.rooms?.[0];
+function HotelCard({ hotel, index }) {
+  const firstRoom = hotel.firstroom;
   const duration = firstRoom?.available_from && firstRoom?.available_to
-    ? `Từ ${firstRoom.available_from} đến ${firstRoom.available_to}`
+    ? `Từ ${firstRoom.available_from} đến ${firstRoom?.available_to}`
     : "Chưa có thông tin";
 
   return (
     <Hotel
-      key={hotel.id}
-      image={hotel.images?.[0]?.url || "/default-hotel.jpg"}
+      key={`${hotel.id}-${index || ''}`}
+      image={hotel.firstimage?.url || "/default-hotel.jpg"}
       title={hotel.name}
       description={hotel.description}
       location={hotel.province}
