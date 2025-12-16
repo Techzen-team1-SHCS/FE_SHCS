@@ -9,7 +9,7 @@ import { useRecommendedHotels } from '../../queries/useRecommendedHotels'; // Im
 
 const HotelsRecommend = () => {
   const { user } = useContext(AuthContext);
-  
+
   // Sử dụng useQuery thông qua custom hook
   const {
     data: hotelsRecommendPage = [],
@@ -27,11 +27,11 @@ const HotelsRecommend = () => {
     // Kiểm tra local storage khi component mount
     const hasInteracted = localStorage.getItem('hasHotelInteraction') === 'true';
     setHasInteraction(hasInteracted);
-    
+
     // Xác định nguồn dữ liệu
     const dataSource = localStorage.getItem("token") ? "AI/History" : "Top Hotels";
     setSource(dataSource);
-    
+
     // Nếu có dữ liệu từ API, cũng coi như có tương tác
     if (hotelsRecommendPage.length > 0 && !hasInteracted) {
       setHasInteraction(true);
@@ -73,20 +73,20 @@ const HotelsRecommend = () => {
             <div className="ai-circuit"></div>
           </div>
         </div>
-        
-        <div className="container" style={{marginTop:'50px'}}>
+
+        <div className="container" style={{ marginTop: '50px' }}>
           <div className="ai-banner-content">
             <div className="ai-header-badge">
               <FaRobot className="ai-badge-icon" />
               <span>AI Recommendation Engine</span>
             </div>
-            
+
             <h1 className="ai-main-title">
               <span className="ai-gradient-text">Smart Hotel</span>
               <br />
               Recommendations
             </h1>
-            
+
             <p className="ai-subtitle">
               Powered by advanced machine learning algorithms that understand your preferences
               {user && " and booking history"}
@@ -112,8 +112,8 @@ const HotelsRecommend = () => {
                 <FaBrain className="source-icon" />
                 <span>Source: {source}</span>
               </div>
-              
-              <button 
+
+              <button
                 className="refresh-btn"
                 onClick={() => refetch()}
                 disabled={refreshing}
@@ -149,7 +149,7 @@ const HotelsRecommend = () => {
               </div>
               <h3>Oops! AI encountered an error</h3>
               <p>We couldn't load recommendations at this time</p>
-              <button 
+              <button
                 className="ai-primary-btn"
                 onClick={() => refetch()}
               >
@@ -176,10 +176,10 @@ const HotelsRecommend = () => {
                     Found <strong>{hotelsRecommendPage.length}</strong> personalized recommendations
                   </span>
                 </div>
-                
+
                 <div className="ai-confidence">
                   <div className="confidence-meter">
-                    <div className="confidence-fill" style={{width: '92%'}}></div>
+                    <div className="confidence-fill" style={{ width: '92%' }}></div>
                   </div>
                   <span>92% Match</span>
                 </div>
@@ -190,15 +190,55 @@ const HotelsRecommend = () => {
                   <div className="ai-empty-orb">
                     <FaRobot className="empty-icon" />
                   </div>
+
                   <h3>No recommendations found</h3>
-                  <p>Try exploring more hotels to improve AI suggestions</p>
+                  <p>
+                    Our AI needs more interaction to understand your preferences.
+                    Follow these simple steps to unlock personalized hotel suggestions.
+                  </p>
+
+                  {/* AI STEP FLOW */}
+                  <div className="ai-steps-flow">
+                    <div className="ai-step">
+                      <FaSearch className="step-icon" />
+                      <h4>Explore Hotels</h4>
+                      <p>Browse available hotels</p>
+                    </div>
+
+                    <div className="ai-step-arrow">→</div>
+
+                    <div className="ai-step">
+                      <FaInfoCircle className="step-icon" />
+                      <h4>View Details</h4>
+                      <p>Check hotel information</p>
+                    </div>
+
+                    <div className="ai-step-arrow">→</div>
+
+                    <div className="ai-step">
+                      <FaStar className="step-icon" />
+                      <h4>Interact</h4>
+                      <p>Save or book hotels</p>
+                    </div>
+
+                    <div className="ai-step-arrow">→</div>
+
+                    <div className="ai-step ">
+                      <FaBrain className="step-icon" />
+                      <h4>AI Learns</h4>
+                      <p>Get smart recommendations</p>
+                    </div>
+                  </div>
+
+                  {/* ACTION BUTTONS */}
                   <div className="empty-state-actions">
                     <Link to="/HotelList" className="ai-primary-btn">
                       <FaSearch />
                       Explore Hotels
                     </Link>
-                    <button 
-                      className="ai-secondary-btn" 
+
+                    <button
+                      className="ai-secondary-btn"
                       onClick={() => refetch()}
                     >
                       <FaSyncAlt />
@@ -206,6 +246,7 @@ const HotelsRecommend = () => {
                     </button>
                   </div>
                 </div>
+
               ) : (
                 <>
                   <div className="ai-success-message">
@@ -215,11 +256,11 @@ const HotelsRecommend = () => {
                       <p>Here are personalized recommendations based on your activity</p>
                     </div>
                   </div>
-                  
+
                   <div className="ai-recommendations-grid">
                     {hotelsRecommendPage.map((hotel, index) => (
-                      <div 
-                        key={hotel.id} 
+                      <div
+                        key={hotel.id}
                         className="ai-hotel-card-wrapper"
                         style={{ '--ai-accent': getAIColor(index) }}
                       >
@@ -227,7 +268,7 @@ const HotelsRecommend = () => {
                           <FaStar className="badge-star" />
                           #{index + 1} AI Pick
                         </div>
-                        
+
                         <HotelCardRecommendation
                           image={hotel.images?.[0]?.url || 'default-hotel.jpg'}
                           title={hotel.name}

@@ -70,13 +70,7 @@ const Header = () => {
                 { label: "404 Error", path: "*" },
             ],
         },
-        {
-            label: "Blog",
-
-            sub: [
-                { label: "Blog List", path: "/BlogList" },
-            ],
-        },
+        
     ];
     const renderMenu = (items) => (
         <ul className="navigation clearfix" >
@@ -287,10 +281,7 @@ const Header = () => {
                     />
                 )}
             </header>
-            {!user && !isAuthVisible && <PopUpButton onLoginClick={() => {
-                setIsLogin(true);
-                setIsAuthVisible(true);
-            }} />}
+            
         </>
     );
 };

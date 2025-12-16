@@ -500,9 +500,15 @@ function HotelList() {
               {/* Header với view mode toggle */}
               <div className="hotel-list-header">
                 <div className="header-left">
-                  <h4 style={{ fontWeight: 700 }}>
-                    {destination}: tìm thấy {totalResults} chỗ nghỉ
-                  </h4>
+                  {!loading || hotels.length > 0 ? (
+                    <h4 style={{ fontWeight: 700 }}>
+                      {destination}: tìm thấy {totalResults} chỗ nghỉ
+                    </h4>
+                  ) : (
+                    <h4 style={{ fontWeight: 700 }}>
+                      {destination}: đang tìm kiếm...
+                    </h4>
+                  )}
                   <div className="view-mode-toggle">
                     <span className="toggle-label">Chế độ xem:</span>
                     <button
@@ -631,17 +637,7 @@ function HotelList() {
                         background: 'transparent'
                       }}
                     />
-                  )}
-
-                  {/* Loading indicator */}
-                  {(isFetchingNextPage || infiniteFetching) && (
-                    <div className="infinite-loading" style={{ padding: '20px 0' }}>
-                      <div style={{ textAlign: 'center', color: '#666' }}>
-                        <FaSpinner className="spinner" /> Đang tải thêm khách sạn...
-                      </div>
-                    </div>
-                  )}
-                  
+                  )}      
                   {/* End message */}
                   {!hasNextPage && hotels.length > 0 && !infiniteFetching && (
                     <div className="infinite-end-message">
@@ -663,13 +659,6 @@ function HotelList() {
                   {hotels.map((hotel) => (
                     <HotelCard key={hotel.id} hotel={hotel} />
                   ))}
-
-                  {paginationFetching && (
-                    <div className="loading-overlay">
-                      <FaSpinner className="spinner" />
-                      <span>Đang tải trang {currentPage}...</span>
-                    </div>
-                  )}
                 </div>
               )}
 
