@@ -217,18 +217,6 @@ const BookingSidebarContent = ({ booking }) => {
             </div>
 
             {/* Hotel Information */}
-            <div className={hotelSection}>
-                <h4 className={sectionTitle}>Thông tin khách sạn</h4>
-                <div className={hotelInfo}>
-                    <div className={hotelName}>
-                        {booking.hotel?.name || booking.room?.hotel_name || 'Khách sạn'}
-                    </div>
-                    <div className={hotelDetails}>
-                        {booking.hotel?.province || booking.room?.hotel_location || ''}
-                        {booking.room?.room_type && ` - ${booking.room.room_type}`}
-                    </div>
-                </div>
-            </div>
 
             {/* Booking Details */}
             <div className={bookingDetails}>
@@ -352,53 +340,6 @@ const BookingSidebarContent = ({ booking }) => {
             </div>
 
             {/* Actions */}
-            <div className={actionsSection}>
-                <h4 className={sectionTitle}>Thao tác</h4>
-                <div className={detailGrid}>
-                    <button
-                        className={`${actionButton} ${editButton}`}
-                        onClick={handleEdit}
-                    >
-                        <span className={icon}>✏️</span> Chỉnh sửa
-                    </button>
-                    
-                    {booking.status !== 'canceled' && booking.status !== 'completed' && (
-                        <button
-                            className={`${actionButton} ${cancelButton}`}
-                            onClick={handleCancel}
-                        >
-                            <span className={icon}>❌</span> Hủy đặt phòng
-                        </button>
-                    )}
-                    
-                    {booking.status === 'pending' && (
-                        <button
-                            className={`${actionButton} ${confirmButton}`}
-                            onClick={handleConfirm}
-                        >
-                            <span className={icon}>✅</span> Xác nhận
-                        </button>
-                    )}
-                    
-                    {booking.status === 'confirmed' && (
-                        <button
-                            className={`${actionButton} ${checkinButton}`}
-                            onClick={handleCheckin}
-                        >
-                            <span className={icon}>🔑</span> Check-in
-                        </button>
-                    )}
-                    
-                    {booking.status === 'checked-in' && (
-                        <button
-                            className={`${actionButton} ${checkoutButton}`}
-                            onClick={handleCheckout}
-                        >
-                            <span className={icon}>🏃</span> Check-out
-                        </button>
-                    )}
-                </div>
-            </div>
         </div>
     );
 };

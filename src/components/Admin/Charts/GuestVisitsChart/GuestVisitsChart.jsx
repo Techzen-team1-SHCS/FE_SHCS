@@ -1,5 +1,5 @@
 // components/GuestVisitsChart/GuestVisitsChart.jsx
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -11,10 +11,10 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import { useQuery } from '@tanstack/react-query';
 import styles from "./GuestVisitsChart.module.css";
 import { dashboardService } from '../../../../services/dashBoardService';
 
-// Tạo instance riêng cho Line chart - KHÔNG CÓ centerTextPlugin
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -25,6 +25,20 @@ ChartJS.register(
     Legend
 );
 
+// Định nghĩa hàm fetch bên ngoài component để tránh tạo lại mỗi lần render
+const fetchChartData = async (period) => {
+    try {
+        const res = await dashboardService.getBookingCharts(period);
+        return {
+            labels: res.labels,
+            data: res.data
+        };
+    } catch (error) {
+        console.log("Chart load failed", error);
+        throw error;
+    }
+};
+
 const GuestVisitsChart = () => {
     const {
         chartCard,
@@ -34,41 +48,56 @@ const GuestVisitsChart = () => {
         chartContainer
     } = styles;
 
-    const [selectedPeriod, setSelectedPeriod] = useState('monthly');
-    const [chartData,setChartData]=useState({
-        labels:[],
-        data:[]
-    });
+    const [selectedPeriod, setSelectedPeriod] = React.useState('monthly');
     const chartRef = useRef(null);
 
-    const fetchChartData=async()=>{
-       try {
-        const res=await dashboardService.getBookingCharts(selectedPeriod);
-        setChartData({
-         labels:res.labels,
-         data:res.data
-        })
-       } catch (error) {
-        console.log("Chart load failed",error);
-       }
-    }
-    useEffect(() => {
-    fetchChartData();
-  }, [selectedPeriod]);
+    // Sử dụng TanStack Query với các tối ưu hóa
+    const { 
+        data: chartData = { labels: [], data: [] }, 
+        isLoading, 
+        isError,
+        refetch 
+    } = useQuery({
+        queryKey: ['bookingCharts', selectedPeriod], // Key phụ thuộc vào selectedPeriod
+        queryFn: () => fetchChartData(selectedPeriod),
+        staleTime: 5 * 60 * 1000, // Dữ liệu vẫn "tươi" trong 5 phút
+        cacheTime: 10 * 60 * 1000, // Cache trong 10 phút
+        refetchOnWindowFocus: false, // Không refetch khi focus window
+        refetchOnMount: false, // Chỉ fetch khi mounted nếu dữ liệu stale
+        refetchOnReconnect: false, // Không refetch khi reconnect
+        retry: 1, // Chỉ retry 1 lần khi fail
+        // Tối ưu cho dữ liệu chart: không cần background refetch
+        refetchInterval: false,
+        // Keep previous data khi đang fetch data mới
+        keepPreviousData: true,
+    });
 
-    
+    // Tối ưu: Memoize các hàm tính toán
+    const getMaxValue = React.useCallback(() => {
+        const data = chartData.data || [];
+        if (data.length === 0) return 400;
+        const maxDataValue = Math.max(...data);
+        return Math.ceil(maxDataValue / 10) * 10 + 10;
+    }, [chartData.data]);
 
-    // Tạo gradient cho line chart
-    const createGradient = (ctx) => {
+    const getStepSize = React.useCallback(() => {
+        const maxValue = getMaxValue();
+        return Math.ceil(maxValue / 4);
+    }, [getMaxValue]);
+
+    // Tạo gradient với useMemo để tránh tạo lại
+    const createGradient = React.useCallback((ctx) => {
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
         gradient.addColorStop(0, 'rgba(0, 123, 255, 0.8)');
         gradient.addColorStop(0.7, 'rgba(0, 123, 255, 0.2)');
         gradient.addColorStop(1, 'rgba(0, 123, 255, 0.05)');
         return gradient;
-    };
-    const getChartData = () => {
-        const ctx = chartRef.current?.ctx;
+    }, []);
 
+    // Memoize chart data để tránh tạo lại object mỗi lần render
+    const chartDataConfig = React.useMemo(() => {
+        const ctx = chartRef.current?.ctx;
+        
         return {
             labels: chartData.labels,
             datasets: [
@@ -91,23 +120,10 @@ const GuestVisitsChart = () => {
                 },
             ],
         };
-    };
-    // CHỈNH: Tự động tính max value dựa trên data thực
-    const getMaxValue = () => {
-        const data = chartData.data || [];
-        
-        if (data.length === 0) return 400;
-        
-        const maxDataValue = Math.max(...data);
-        return Math.ceil(maxDataValue / 10) * 10 + 10;
-    };
+    }, [chartData.labels, chartData.data, createGradient]);
 
-    // CHỈNH: Tự động tính step size
-    const getStepSize = () => {
-        const maxValue = getMaxValue();
-        return Math.ceil(maxValue / 4);
-    };
-    const options = {
+    // Memoize chart options
+    const chartOptions = React.useMemo(() => ({
         responsive: true,
         maintainAspectRatio: false,
         interaction: {
@@ -156,7 +172,7 @@ const GuestVisitsChart = () => {
             },
             y: {
                 beginAtZero: true,
-                max:getMaxValue(),
+                max: getMaxValue(),
                 grid: {
                     color: '#e9ecef',
                     borderDash: [5, 5],
@@ -164,7 +180,7 @@ const GuestVisitsChart = () => {
                 },
                 ticks: {
                     color: '#6c757d',
-                    stepSize:getStepSize(),
+                    stepSize: getStepSize(),
                     callback: function(value) {
                         return value;
                     },
@@ -193,38 +209,48 @@ const GuestVisitsChart = () => {
                 hoverBackgroundColor: '#0056b3',
             }
         }
-    };
+    }), [getMaxValue, getStepSize]);
 
     const handlePeriodChange = (event) => {
         setSelectedPeriod(event.target.value);
     };
 
-    useEffect(() => {
-        console.log(`Period changed to: ${selectedPeriod}`);
-    }, [selectedPeriod]);
-
     return (
         <div className={chartCard}>
             <div className={header}>
-                <h3 className={title}></h3>
-                <select 
-                    className={sortBy} 
-                    value={selectedPeriod} 
-                    onChange={handlePeriodChange}
-                >
-                    <option value="monthly">Monthly</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="daily">Daily</option>
-                </select>
+                <h3 className={title}>Guest Visits</h3>
+                <div className={styles.periodSelector}>
+                    <select 
+                        className={sortBy} 
+                        value={selectedPeriod} 
+                        onChange={handlePeriodChange}
+                        disabled={isLoading}
+                    >
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="daily">Daily</option>
+                    </select>
+                    {isLoading && (
+                        <span className={styles.loadingIndicator}>Loading...</span>
+                    )}
+                </div>
             </div>
             
             <div className={chartContainer}>
-                <Line 
-                    ref={chartRef}
-                    data={getChartData()} 
-                    options={options}
-                    plugins={[]} // ĐẢM BẢO KHÔNG CÓ PLUGIN NÀO
-                />
+                {isError ? (
+                    <div className={styles.errorContainer}>
+                        <p>Failed to load chart data</p>
+                        <button onClick={() => refetch()}>Retry</button>
+                    </div>
+                ) : (
+                    <Line 
+                        ref={chartRef}
+                        data={chartDataConfig} 
+                        options={chartOptions}
+                        plugins={[]}
+                        redraw={isLoading} // Chỉ redraw khi loading để giữ UI ổn định
+                    />
+                )}
             </div>
         </div>
     );
