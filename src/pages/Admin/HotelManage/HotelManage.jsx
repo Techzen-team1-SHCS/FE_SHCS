@@ -8,7 +8,6 @@ import PartLoading from '../../../components/Loading/PartLoading';
 const HotelManage = () => {
     const {
         container,
-
         tableContainer,
         table,
         tableHeader,
@@ -104,6 +103,27 @@ const HotelManage = () => {
         fetchHotels();
     }, []);
 
+    // Xử lý hotel_class từ server (có thể là 40 = 4 sao, hoặc 4 = 4 sao)
+    const parseHotelClassFromServer = (hotelClass) => {
+        if (!hotelClass) return '';
+        
+        // Nếu giá trị >= 10, chia cho 10 để lấy số sao
+        if (hotelClass >= 10) {
+            return (hotelClass / 10).toString();
+        }
+        // Ngược lại, trả về giá trị gốc
+        return hotelClass.toString();
+    };
+
+    // Format hotel_class để gửi lên server (luôn gửi giá trị 1-5)
+    const formatHotelClassForServer = (hotelClass) => {
+        const value = parseFloat(hotelClass);
+        if (isNaN(value) || value < 1 || value > 5) {
+            return 0;
+        }
+        return value;
+    };
+
     // Handle View
     const handleView = async (hotelId, shouldEdit = false) => {
         try {
@@ -126,7 +146,7 @@ const HotelManage = () => {
                         name: hotel.name || '',
                         province: hotel.province || '',
                         price: hotel.price || '',
-                        hotel_class: hotel.hotel_class ? (hotel.hotel_class / 10).toString() : '',
+                        hotel_class: parseHotelClassFromServer(hotel.hotel_class), // Sử dụng hàm parse
                         description: hotel.description || '',
                         text: hotel.text || '',
                         amenities: amenitiesArray,
@@ -159,7 +179,7 @@ const HotelManage = () => {
             name: selectedHotel.name || '',
             province: selectedHotel.province || '',
             price: selectedHotel.price || '',
-            hotel_class: selectedHotel.hotel_class ? (selectedHotel.hotel_class / 10).toString() : '',
+            hotel_class: parseHotelClassFromServer(selectedHotel.hotel_class), // Sử dụng hàm parse
             description: selectedHotel.description || '',
             text: selectedHotel.text || '',
             amenities: Array.isArray(selectedHotel.amenities) ? selectedHotel.amenities : [],
@@ -269,12 +289,19 @@ const HotelManage = () => {
                 return;
             }
 
-            // Prepare data
+            // Validate và format hotel_class
+            const starRating = formatHotelClassForServer(editForm.hotel_class);
+            if (starRating === 0) {
+                toast.error("Hạng sao phải từ 1 đến 5");
+                return;
+            }
+
+            // Prepare data - QUAN TRỌNG: Chỉ gửi giá trị sao thực (1-5)
             const updateData = {
                 name: editForm.name,
                 province: editForm.province,
                 price: Number(editForm.price),
-                hotel_class: Math.round(Number(editForm.hotel_class) * 10),
+                hotel_class: starRating, // Chỉ gửi giá trị 1-5
                 description: editForm.description,
                 text: editForm.text,
                 name_nearby_place: editForm.name_nearby_place,
@@ -294,18 +321,23 @@ const HotelManage = () => {
             // Call API
             const response = await hotelService.updateHotel(selectedHotel.id, updateData);
             
+            // Cập nhật hiển thị hotel_class cho state (giữ nguyên định dạng server)
+            const updatedHotelData = {
+                ...selectedHotel,
+                ...updateData,
+                // Cập nhật để hiển thị đúng trên UI
+                hotel_class: starRating * 10 // Hoặc starRating tùy server
+            };
+            
             // Update state
             setHotelsData(prev => prev.map(hotel => 
                 hotel.id === selectedHotel.id 
-                    ? { ...hotel, ...updateData }
+                    ? updatedHotelData
                     : hotel
             ));
             
             // Update selected hotel
-            setSelectedHotel(prev => ({
-                ...prev,
-                ...updateData
-            }));
+            setSelectedHotel(updatedHotelData);
             
             // Exit edit mode
             setIsEditMode(false);
@@ -332,15 +364,16 @@ const HotelManage = () => {
             });
         }
     };
+
     const amenities = Array.isArray(selectedHotel?.amenities)
-    ? selectedHotel.amenities
-    : (() => {
-        try {
-            return JSON.parse(selectedHotel?.amenities || "[]");
-        } catch (e) {
-            return [];
-        }
-    })();
+        ? selectedHotel.amenities
+        : (() => {
+            try {
+                return JSON.parse(selectedHotel?.amenities || "[]");
+            } catch (e) {
+                return [];
+            }
+        })();
 
     // Handle Cancel Edit
     const handleCancelEdit = () => {
@@ -373,6 +406,38 @@ const HotelManage = () => {
         });
     };
 
+    // Hiển thị số sao đúng (từ hotel_class của server)
+    const renderStars = (hotelClass) => {
+        // Tính số sao thực từ hotel_class
+        let starRating;
+        if (hotelClass >= 10) {
+            starRating = hotelClass / 10; // Nếu là 40 thì thành 4
+        } else {
+            starRating = hotelClass; // Nếu là 4 thì giữ nguyên
+        }
+        
+        const stars = [];
+        for (let i = 1; i <= 5; i++) {
+            stars.push(
+                <span key={i} style={{ color: i <= starRating ? '#ffc107' : '#e4e5e9' }}>
+                    ★
+                </span>
+            );
+        }
+        return stars;
+    };
+
+    // Hiển thị số sao dạng text
+    const getStarText = (hotelClass) => {
+        let starRating;
+        if (hotelClass >= 10) {
+            starRating = hotelClass / 10;
+        } else {
+            starRating = hotelClass;
+        }
+        return starRating ? `${starRating}/5` : '0/5';
+    };
+
     const getStatusBadge = (hotel) => {
         if (!hotel?.rooms) return statusAvailable;
         
@@ -395,19 +460,6 @@ const HotelManage = () => {
         return "Còn phòng";
     };
 
-    const renderStars = (rating) => {
-        const stars = [];
-        const starRating = rating / 10;
-        for (let i = 1; i <= 5; i++) {
-            stars.push(
-                <span key={i} style={{ color: i <= starRating ? '#ffc107' : '#e4e5e9' }}>
-                    ★
-                </span>
-            );
-        }
-        return stars;
-    };
-
     const getRoomStats = (hotel) => {
         if (!hotel?.rooms) return { totalRooms: 0, occupiedRooms: 0, availableRooms: 0 };
         
@@ -424,8 +476,6 @@ const HotelManage = () => {
 
     return (
         <div className={container}>
-            
-
             <div className={tableContainer}>
                 <table className={table}>
                     <thead className={tableHeader}>
@@ -446,7 +496,7 @@ const HotelManage = () => {
                                         <div className={hotelInfo}>
                                             <div className={imageContainer}>
                                                 <img 
-                                                    src={hotel?.images?.[0]?.url || '/default-hotel.jpg'} 
+                                                    src={hotel?.firstimage?.url|| '/default-hotel.jpg'} 
                                                     alt={hotel.name}
                                                     className={hotelImage}
                                                     onError={(e) => {
@@ -495,7 +545,7 @@ const HotelManage = () => {
                                                 {renderStars(hotel?.hotel_class)}
                                             </div>
                                             <div style={{ fontSize: '12px', color: '#666' }}>
-                                                {hotel?.hotel_class ? (hotel.hotel_class / 10) : 0}/5
+                                                {getStarText(hotel?.hotel_class)}
                                             </div>
                                         </div>
                                     </td>
@@ -601,18 +651,21 @@ const HotelManage = () => {
                                     </div>
                                     
                                     <div className={formGroup}>
-                                        <label className={formLabel}>Hạng sao (1-5)</label>
+                                        <label className={formLabel}>Hạng sao (1-5) *</label>
                                         <input
                                             type="number"
                                             name="hotel_class"
                                             value={editForm.hotel_class}
                                             onChange={handleInputChange}
                                             className={formControl}
-                                            placeholder="1-5"
+                                            placeholder="Nhập từ 1 đến 5"
                                             min="1"
                                             max="5"
                                             step="0.5"
                                         />
+                                        <small style={{ color: '#666', fontSize: '12px' }}>
+                                            Ví dụ: 3.5 = 3.5 sao, 4 = 4 sao
+                                        </small>
                                     </div>
                                     
                                     <div className={formGroup}>
@@ -751,7 +804,7 @@ const HotelManage = () => {
                                     {/* Ảnh chính */}
                                     <div className={image2Container}>
                                         <img 
-                                            src={selectedHotel?.images?.[0]?.url || '/default-hotel.jpg'} 
+                                            src={selectedHotel?.firstimage?.url || '/default-hotel.jpg'} 
                                             alt={selectedHotel.name}
                                             className={hotelImage}
                                         />
@@ -781,7 +834,7 @@ const HotelManage = () => {
                                                 <div className={detailLabel}>Hạng sao</div>
                                                 <div className={detailValue}>
                                                     {renderStars(selectedHotel.hotel_class)} 
-                                                    ({selectedHotel.hotel_class ? (selectedHotel.hotel_class / 10) : 0}/5)
+                                                    ({getStarText(selectedHotel.hotel_class)})
                                                 </div>
                                             </div>
                                             <div className={detailItem}>

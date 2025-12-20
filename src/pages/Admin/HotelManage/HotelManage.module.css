@@ -5,7 +5,74 @@
     animation: fadeIn 0.5s ease-out;
 }
 /* ================= SIDEBAR STYLES ================= */
+/* Thêm vào HotelManage.module.css */
 
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.paginationInfo {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.paginationControls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pageButton {
+    padding: 6px 12px;
+    border: 1px solid #dee2e6;
+    background-color: white;
+    color: #007bff;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 40px;
+    transition: all 0.3s ease;
+}
+
+.pageButton:hover:not(:disabled) {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.activePage {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.disabledPage {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.pageInput {
+    padding: 6px 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 60px;
+    text-align: center;
+}
+
+.pageSizeSelect {
+    padding: 6px 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 14px;
+}
 /* Overlay nền */
 .sidebarOverlay {
   position: fixed;

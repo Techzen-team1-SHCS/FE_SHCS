@@ -104,5 +104,20 @@ export const dashboardService = {
         } catch (error) {
             throw new Error(error.response?.data?.message || 'Failed to fetch bookings');
         }
+    },
+    async dashboardSummary(){
+        try {
+            const token=localStorage.getItem('token');
+            if(!token){
+                throw new Error('Authentication token not found');
+            }
+            const response=await api.get('auth/dashboard/summary',{
+                headers:{Authorization:`Bearer ${token}`},
+            })
+            return response.data.data;
+        } catch (error) {
+            throw new Error(error.response.data.message || 'Failed to fetch data');
+        }
     }
+
 };
