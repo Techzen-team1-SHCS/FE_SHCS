@@ -67,7 +67,6 @@ const Header = () => {
 
             sub: [
                 { label: "Contact Us", path: "/help" },
-                { label: "404 Error", path: "*" },
             ],
         },
         
