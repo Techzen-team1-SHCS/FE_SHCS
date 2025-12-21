@@ -65,9 +65,9 @@ function App() {
           {/* Route admin */}
           <Route path='/admin/login' element={<LoginPage />} />
           <Route element={
-            <AdminPrivateRoute>
+            //<AdminPrivateRoute>
               <AdminLayout />
-            </AdminPrivateRoute>
+            //</AdminPrivateRoute>
           }>
             <Route path="/admin/dashboard" element={<Dashboard />} />
             <Route path="/admin/booking-manage" element={<BookingManage />} />
