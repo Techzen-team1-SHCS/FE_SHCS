@@ -105,6 +105,85 @@
     align-items: center;
     
 }
+.page-wrapper {
+  background-color: #ffffff;
+}
+
+.hotel-hero-section {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.container1 {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.image-sequence {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.image-sequence img:first-child {
+  grid-column: span 2;
+  height: 300px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.image-sequence img:not(:first-child) {
+  height: 200px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+/* Animation cho hover effects */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hotel-hero-section {
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2563eb;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1d4ed8;
+}
+
+/* Hover effects */
+.roomRender:hover {
+  transform: translateY(-4px);
+  transition: transform 0.3s ease;
+}
+
+.amenity-item:hover {
+  background-color: #f0f9ff;
+  transition: background-color 0.2s ease;
+}
 .container2{
   margin-top: 40px;
   width: 100%;

@@ -123,7 +123,7 @@ const AmenityIcon = ({ amenityName, className = "" }) => {
   };
 
   return (
-    <i style={{color:'green'}} className={`${getAmenityIcon(amenityName)} ${className}`}></i>
+    <i style={{color:'white'}} className={`${getAmenityIcon(amenityName)} ${className}`}></i>
   );
 };
 

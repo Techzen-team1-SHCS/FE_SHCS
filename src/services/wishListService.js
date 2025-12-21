@@ -68,8 +68,18 @@ export const wishListService = {
         
       }
 
+    },
+    async checkwishList(hotelId) {
+      const token=localStorage.getItem('token');
+      if (!token) {
+            throw new Error('Authentication token not found');
+        }
+      const res = await api.get('auth/wishlist/check', {
+        params: { hotel_id: hotelId },
+        headers:{ Authorization: `Bearer ${token}` }
+      });
+      return res.data.liked;
     }
-    
 
   
 };  

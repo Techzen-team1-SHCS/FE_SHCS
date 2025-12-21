@@ -9,21 +9,10 @@ const Notification = ({ userId }) => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [hasFetched, setHasFetched] = useState(false); // 🚀 Track đã fetch chưa
-    const [isInitialDelayComplete, setIsInitialDelayComplete] = useState(false); // 🚀 Delay ban đầu
+    const [hasFetched, setHasFetched] = useState(false);
     const dropdownRef = useRef(null);
     const listRef = useRef(null);
     const navigate = useNavigate();
-    
-    // 🚀 DELAY BAN ĐẦU: Chờ 2 giây để search hotel có ưu tiên
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsInitialDelayComplete(true);
-            console.log("⏳ Notification component ready to fetch (after 2s delay)");
-        }, 2000); // Delay 2 giây cho search hotel
-        
-        return () => clearTimeout(timer);
-    }, []);
     
     // Click outside to close
     useEffect(() => {
@@ -46,12 +35,13 @@ const Notification = ({ userId }) => {
         }
     }, [isOpen]);
 
-    // 🚀 LAZY FETCH: Chỉ fetch khi user click vào notification icon VÀ đã hết delay ban đầu
+    // ✅ FETCH NGAY KHI COMPONENT MOUNT
     useEffect(() => {
-        if (!isOpen || !isInitialDelayComplete || hasFetched) return;
-        
         const fetchNotifications = async () => {
-            console.log("📨 Fetching notifications (lazy load)");
+            // Chỉ fetch nếu chưa fetch lần nào
+            if (hasFetched) return;
+            
+            console.log("📨 Fetching notifications on mount");
             setLoading(true);
             try {
                 const res = await fetch('/api/auth/notifications', {
@@ -60,25 +50,63 @@ const Notification = ({ userId }) => {
                         'Content-Type': 'application/json'
                     }
                 });
-                if (!res.ok) throw new Error('Failed to fetch notifications');
-                const data = await res.json();
-                setNotifications(data.notifications || []);
-                setHasFetched(true); // Đánh dấu đã fetch
+                
+                if (!res.ok) {
+                    // Nếu token hết hạn, thử lấy lại token
+                    if (res.status === 401) {
+                        const refreshRes = await fetch('/api/auth/refresh', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('refreshToken')}`,
+                            }
+                        });
+                        
+                        if (refreshRes.ok) {
+                            const { token } = await refreshRes.json();
+                            localStorage.setItem('token', token);
+                            
+                            // Thử fetch lại notifications
+                            const retryRes = await fetch('/api/auth/notifications', {
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+                            
+                            if (retryRes.ok) {
+                                const data = await retryRes.json();
+                                setNotifications(data.notifications || []);
+                                setHasFetched(true);
+                            } else {
+                                throw new Error('Failed to fetch notifications after refresh');
+                            }
+                        } else {
+                            throw new Error('Token expired and refresh failed');
+                        }
+                    } else {
+                        throw new Error('Failed to fetch notifications');
+                    }
+                } else {
+                    const data = await res.json();
+                    setNotifications(data.notifications || []);
+                    setHasFetched(true);
+                }
             } catch (err) {
-                console.error(err);
-                setError('Failed to load notifications');
+                console.error('Notification fetch error:', err);
+                setError('Không thể tải thông báo');
+                // Vẫn đánh dấu đã fetch để không thử lại liên tục
+                setHasFetched(true);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchNotifications();
-    }, [isOpen, isInitialDelayComplete, hasFetched]); // 🚀 Chỉ fetch khi mở dropdown
+    }, [hasFetched]); // Chỉ chạy khi hasFetched thay đổi
 
-    // 🚀 Realtime notifications - CŨNG DELAY
+    // ✅ Realtime notifications - Kết nối ngay khi có userId
     useEffect(() => {
-        // Chỉ kết nối realtime nếu đã fetch notifications ít nhất 1 lần
-        if (!hasFetched || !userId || !window.Echo) return;
+        if (!userId || !window.Echo) return;
 
         console.log("📡 Connecting to realtime notification channel");
         const channel = window.Echo.private(`user.${userId}`);
@@ -86,23 +114,62 @@ const Notification = ({ userId }) => {
         channel.listen('NotificationSuccess', (data) => {
             console.log("🔔 New realtime notification received");
             setNotifications(prev => [data, ...prev]);
+            
+            // Hiển thị toast/thông báo mới (tùy chọn)
+            if (data.title && data.message) {
+                showNewNotificationToast(data.title, data.message);
+            }
+        });
+
+        // Lắng nghe các sự kiện khác nếu có
+        channel.listen('.notification.created', (data) => {
+            console.log("🔔 Notification created event received");
+            setNotifications(prev => [data.notification, ...prev]);
         });
 
         return () => {
             if (channel) {
+                console.log("📡 Disconnecting from notification channel");
                 window.Echo.leave(`user.${userId}`);
             }
         };
-    }, [userId, hasFetched]); // 🚀 Chỉ kết nối khi đã fetch lần đầu
+    }, [userId]); // Chỉ cần userId
+
+    // ✅ Hàm hiển thị toast thông báo mới (tùy chọn)
+    const showNewNotificationToast = (title, message) => {
+        // Sử dụng thư viện toast hoặc custom implementation
+        if (window.showToast) {
+            window.showToast({
+                type: 'info',
+                title: title,
+                message: message,
+                duration: 5000
+            });
+        }
+        
+        // Hoặc phát âm thanh thông báo
+        try {
+            const audio = new Audio('/notification-sound.mp3');
+            audio.volume = 0.3;
+            audio.play().catch(e => console.log("Audio play failed:", e));
+        } catch (e) {
+            console.log("Audio error:", e);
+        }
+    };
 
     const unreadCount = notifications.filter(n => !n.is_read).length;
 
-    // 🚀 Toggle với lazy loading
+    // ✅ Toggle dropdown
     const toggleDropdown = () => {
         const newState = !isOpen;
         setIsOpen(newState);
         
-        // Nếu chưa fetch bao giờ và delay đã xong, sẽ trigger fetch trong useEffect
+        // Nếu đang mở và có thông báo chưa đọc, có thể đánh dấu đọc tất cả
+        if (newState && unreadCount > 0) {
+            // Có thể tự động đánh dấu đọc khi mở
+            // markAllAsRead();
+        }
+        
         console.log(`🔔 Notification dropdown ${newState ? 'opened' : 'closed'}`);
     };
 
@@ -132,6 +199,12 @@ const Notification = ({ userId }) => {
         }
     };
 
+    // Refresh notifications
+    const refreshNotifications = async () => {
+        setHasFetched(false); // Reset để fetch lại
+        setLoading(true);
+    };
+
     const handleClickNotification = (n) => {
         // Mark read
         if (!n.is_read) markAsRead(n.id);
@@ -147,15 +220,26 @@ const Notification = ({ userId }) => {
         // Điều hướng theo loại
         if (n.type === 'booking' && parsedData?.booking_id) {
             navigate(`/booking/${parsedData.booking_id}`);
+            setIsOpen(false);
         }
 
         if (n.type === 'payment') {
             navigate('/profile?tab=payment');
+            setIsOpen(false);
         }
 
         if (n.type === 'discount') {
             navigate('/discount');
+            setIsOpen(false);
         }
+
+        if (n.type === 'message' && parsedData?.chat_id) {
+            navigate(`/messages/${parsedData.chat_id}`);
+            setIsOpen(false);
+        }
+
+        // Đóng dropdown sau khi click
+        // setIsOpen(false);
     };
 
     const formatTime = (timeString) => {
@@ -172,12 +256,11 @@ const Notification = ({ userId }) => {
         return `${Math.floor(diffHrs/24)} ngày trước`;
     };
 
-    // Get notification type color
+    // Get notification type
     const getNotificationType = (notification) => {
         if (notification.type) return notification.type;
-        // Auto-detect type from content
         const message = notification.message?.toLowerCase() || '';
-        if (message.includes('thành công') || message.includes('success') || message.includes('thành công')) 
+        if (message.includes('thành công') || message.includes('success') || message.includes('đã xác nhận')) 
             return 'success';
         if (message.includes('cảnh báo') || message.includes('warning') || message.includes('chú ý')) 
             return 'warning';
@@ -186,17 +269,24 @@ const Notification = ({ userId }) => {
         return 'info';
     };
 
+    // Format số lượng thông báo
+    const formatBadgeCount = (count) => {
+        if (count > 99) return '99+';
+        return count;
+    };
+
     return (
         <div className={styles.notificationContainer} ref={dropdownRef}>
             <button 
                 onClick={toggleDropdown} 
                 className={styles.notificationButton}
                 title="Thông báo"
+                aria-label={`Thông báo ${unreadCount > 0 ? `có ${unreadCount} thông báo chưa đọc` : ''}`}
             >
-                🔔
+                <span className={styles.bellIcon}>🔔</span>
                 {unreadCount > 0 && (
                     <span className={styles.notificationBadge}>
-                        {unreadCount > 99 ? '99+' : unreadCount}
+                        {formatBadgeCount(unreadCount)}
                     </span>
                 )}
             </button>
@@ -204,56 +294,79 @@ const Notification = ({ userId }) => {
             <div className={`${styles.dropdown} ${isOpen ? styles.show : ''}`}>
                 <div className={styles.dropdownHeader}>
                     <h3>Thông báo</h3>
-                    {unreadCount > 0 && (
+                    <div className={styles.headerActions}>
+                        {unreadCount > 0 && (
+                            <button 
+                                className={styles.markAllReadButton} 
+                                onClick={markAllAsRead}
+                                disabled={loading}
+                                title="Đánh dấu tất cả đã đọc"
+                            >
+                                Đánh dấu đã đọc
+                            </button>
+                        )}
                         <button 
-                            className={styles.markAllReadButton} 
-                            onClick={markAllAsRead}
+                            className={styles.refreshButton}
+                            onClick={refreshNotifications}
                             disabled={loading}
+                            title="Làm mới thông báo"
                         >
-                            Đánh dấu đã đọc tất cả
+                            ↻
                         </button>
-                    )}
+                    </div>
                 </div>
 
                 <div className={styles.notificationList} ref={listRef}>
-                    {/* 🚀 Hiển thị trạng thái loading */}
-                    {loading && (
+                    {/* Loading state */}
+                    {loading && !hasFetched && (
                         <div className={styles.loadingState}>
                             <PartLoading />
-                            <p style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
-                                Đang tải thông báo...
-                            </p>
+                            <p className={styles.loadingText}>Đang tải thông báo...</p>
                         </div>
                     )}
                     
-                    {error && <div className={styles.errorState}>{error}</div>}
-                    
-                    {/* 🚀 Hiển thị placeholder nếu chưa fetch lần nào */}
-                    {!loading && !hasFetched && isOpen && (
-                        <div className={styles.emptyState}>
-                            <p>Nhấn để tải thông báo</p>
-                            <small style={{ color: '#999' }}>
-                                (Tự động tải sau 2 giây để ưu tiên tìm kiếm)
-                            </small>
+                    {/* Error state */}
+                    {error && !loading && (
+                        <div className={styles.errorState}>
+                            <p>{error}</p>
+                            <button 
+                                onClick={refreshNotifications}
+                                className={styles.retryButton}
+                            >
+                                Thử lại
+                            </button>
                         </div>
                     )}
                     
+                    {/* Empty state */}
                     {!loading && hasFetched && notifications.length === 0 && (
-                        <div className={styles.emptyState}>Không có thông báo</div>
+                        <div className={styles.emptyState}>
+                            <div className={styles.emptyIcon}>📭</div>
+                            <p>Không có thông báo</p>
+                            <small>Thông báo mới sẽ xuất hiện tại đây</small>
+                        </div>
                     )}
 
+                    {/* Notifications list */}
                     {hasFetched && notifications.map(notification => {
                         const type = getNotificationType(notification);
                         const isUnread = !notification.is_read;
                         
                         return (
                             <div
-                                key={notification.id}
+                                key={notification.id || notification.created_at}
                                 className={`${styles.notificationItem} ${
                                     isUnread ? styles.unread : styles.read
                                 }`}
                                 onClick={() => handleClickNotification(notification)}
                                 data-type={type}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        handleClickNotification(notification);
+                                    }
+                                }}
                             >
                                 <div className={styles.notificationContent}>
                                     <div 
@@ -266,11 +379,13 @@ const Notification = ({ userId }) => {
                                     <div className={styles.notificationMessage}>
                                         {notification.message}
                                     </div>
-                                    <div className={styles.notificationTime}>
-                                        {formatTime(notification.created_at)}
-                                        <p className={styles.statusText}>
-                                            {isUnread ? "Chưa đọc" : "Đã đọc"}
-                                        </p>
+                                    <div className={styles.notificationFooter}>
+                                        <span className={styles.notificationTime}>
+                                            {formatTime(notification.created_at)}
+                                        </span>
+                                        <span className={`${styles.statusText} ${isUnread ? styles.statusUnread : styles.statusRead}`}>
+                                            {isUnread ? "• Chưa đọc" : "Đã đọc"}
+                                        </span>
                                     </div>
                                 </div>
                             </div>

@@ -100,80 +100,49 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
         return Object.keys(newErrors).length === 0;
     };
     const handleAuthSubmit = async (e) => {
-        e.preventDefault();
-        if (validateForm()) {
-            setIsLoading(true);
-            try {
-                if (isLogin) {
-                const result = await authService.login(email, password);
+  e.preventDefault();
 
-                // 🚨 Check lỗi trước khi xử lý dữ liệu
-                if (result.status !== 200) {
-                    toast.error(result.data?.message || "Đăng nhập thất bại!");
-                    return;
-                }
+  if (!validateForm()) return;
 
-                const user = result.data.user;
-                const token = result.data.access_token;
+  setIsLoading(true);
 
-                if (!user || !token) {
-                    toast.error("Không lấy được dữ liệu người dùng. Vui lòng thử lại.");
-                    return;
-                }
+  try {
+    if (isLogin) {
+      const result = await authService.login(email, password);
 
-                // Nếu muốn fetch thêm thông tin user: avatar,...
-                const userRes = await authService.getUserById(user.id);
-                const fullUser = userRes.data?.user || user;
+      // ❗ LẤY ĐÚNG KEY
+      login(result.user, result.token);
 
-                login(fullUser, token);
-                toast.success('Đăng nhập thành công!');
-                setIsAuthVisible(false);
-                navigate('/');
-            } else {
-                    const result = await authService.register({
-                        name,
-                        email,
-                        password,
-                        password_confirmation: confirmPassword,
-                        phone
-                    });
-                    if (result.status === 'success') {
-                        toast.success('Đăng ký thành công!');
-                        setIsLogin(true);
-                        // Reset form
-                        setEmail('');
-                        setPassword('');
-                        setConfirmPassword('');
-                        setName('');
-                        setPhone('');
-                        setErrors({});
-                    }
-                }
-            } catch (error) {
-                if (error.response?.status === 403) {
-                    toast.warn(error.response.data.message || "Tài khoản bị chặn");
-                    return;
-                }
-                if (error.response?.data?.errors) {
-                    // Handle validation errors from API
-                    const apiErrors = error.response.data.errors;
-                    const newErrors = {};
-                    Object.keys(apiErrors).forEach(key => {
-                        newErrors[key] = Array.isArray(apiErrors[key]) ? apiErrors[key][0] : apiErrors[key];
-                    });
-                    setErrors(newErrors);
-                    toast.error('Vui lòng kiểm tra lại thông tin');
-                } else {
-                    toast.error(error.response?.data?.message || error.response?.data?.error || 'Có lỗi xảy ra');
-                }
-            }
-            finally {
-                setIsLoading(false);
-            }
-        } else {
-            setIsLoading(false);
-        }
-    };
+      toast.success('Đăng nhập thành công!');
+      setIsAuthVisible(false);
+      navigate('/');
+    } else {
+      const result = await authService.register({
+        name,
+        email,
+        password,
+        password_confirmation: confirmPassword,
+        phone,
+      });
+
+      if (result.status === 'success') {
+        toast.success('Đăng ký thành công!');
+        setIsLogin(true);
+      }
+    }
+  } catch (error) {
+    if (error.response?.status === 403) {
+      toast.warn(error.response.data.message);
+    } else if (error.response?.status === 401) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error(error.message || 'Có lỗi xảy ra');
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
     const handleForgotPasswordSubmit = async (e) => {
         e.preventDefault();

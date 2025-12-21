@@ -3,22 +3,27 @@ import api from './api';
 
 export const authService = {
   // 🔹 LOGIN
-  login: async (email, password) => {
-    const response = await axios.post('/api/auth/login', { email, password });
+   login: async (email, password) => {
+    const response = await api.post('/auth/login', { email, password });
 
-    if (response.data.status === 200) {
-      const token = response.data.data?.access_token;
-      const user = response.data.data?.user;
+    const { status, data, message } = response.data;
 
-      // ✅ Lưu token & user vào localStorage
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-
-      // ✅ Trả về gọn gàng để dùng trong AuthContext.login()
-      return { status: 200, token, user };
+    if (status !== 200) {
+      throw new Error(message || 'Đăng nhập thất bại');
     }
 
-    return response.data;
+    const { access_token, user } = data;
+
+    // Lưu localStorage
+    localStorage.setItem('token', access_token);
+    localStorage.setItem('user', JSON.stringify(user));
+
+    // ✅ TRẢ ĐÚNG FORMAT
+    return {
+      status: 200,
+      user,
+      token: access_token,
+    };
   },
   //Login với google
   loginGoogle: async (idToken) => {

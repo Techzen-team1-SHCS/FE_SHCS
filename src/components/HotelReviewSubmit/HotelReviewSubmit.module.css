@@ -21,11 +21,11 @@
   flex:0 0 30%;
 }
 .form{
-  flex: 0 0 80%;
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  gap: 20px;
 }
 .starBtn {
   background: none;
@@ -55,7 +55,7 @@
 }
 
 .input {
-  flex: 0 0 70%;
+  width: 100%;
   align-items: center;
   justify-self: center;
 }

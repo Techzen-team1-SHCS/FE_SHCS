@@ -32,7 +32,7 @@ const HotelRecommendation = () => {
                         }
                     </p>
                     
-                    <div className="features">
+                    <div className="features" style={{color:'black'}}>
                         <div className="feature-item">
                             <i className="fas fa-bolt"></i>
                             <span>Đề xuất thông minh</span>
@@ -74,12 +74,13 @@ const HotelRecommendation = () => {
 
             <style jsx>{`
                 .ai-recommendation-banner {
+                    width:98%;
                     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                     color: white;
                     padding: 80px 0;
                     position: relative;
                     overflow: hidden;
-                    margin: 40px 0;
+                    margin: 40px auto;
                     border-radius: 20px;
                 }
                 

@@ -68,7 +68,6 @@ const HotelReviewSubmit = ({ hotelId, onReviewSubmit }) => {
 
   return (
     <div className={reviewSubmit}>
-      <h3 className={title}>Your rating</h3>
       <form onSubmit={handleSubmit} className={form}>
         <div className={group}>
           {/* Review Textarea */}
@@ -80,7 +79,8 @@ const HotelReviewSubmit = ({ hotelId, onReviewSubmit }) => {
             />
           </div>
           {/* Star Rating */}
-          <div className={starRating}>
+        </div>
+        <div className={starRating}>
             {stars.map((star) => (
               <button
                 key={star}
@@ -94,7 +94,6 @@ const HotelReviewSubmit = ({ hotelId, onReviewSubmit }) => {
               </button>
             ))}
           </div>
-        </div>
         {/* Submit Button */}
         <button type="submit" className={submitBtn} disabled={loading}>
           {loading ? 'Sending...' : 'Send'}

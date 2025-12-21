@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import './style.css';
 import { MdOutlineBedroomParent } from "react-icons/md";
 import { useBehavior } from "../../contexts/BehaviorContext";
-import { useContext, useState } from "react"
+import { useContext, useState,useEffect } from "react"
 import { AuthContext } from '../../contexts/AuthContext';
 import { wishListService } from '../../services/wishListService';
 import { toast } from 'react-toastify';
@@ -24,6 +24,7 @@ const Hotel = ({
   const { user } = useContext(AuthContext);
   const { logBehavior } = useBehavior();
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const handleBookClick = () => {
     logBehavior("booking", {
@@ -31,50 +32,76 @@ const Hotel = ({
       hotelId: id,
     });
   };
-  
+  useEffect(() => {
+  let isMounted = true;
 
+  const checkLiked = async () => {
+    if (!user) {
+      setIsLiked(false);
+      return;
+    }
+
+    try {
+      const liked = await wishListService.checkwishList(id);
+      if (isMounted) {
+        setIsLiked(liked);
+      }
+    } catch (error) {
+      console.error("Check wishlist error:", error);
+    }
+  };
+
+  checkLiked();
+
+  return () => {
+    isMounted = false;
+  };
+}, [user, id]);
+  
   const handleWishlist = async () => {
   if (!user) {
-    alert('Vui lòng đăng nhập để thêm vào danh sách yêu thích');
+    toast.info("Vui lòng đăng nhập để thêm vào yêu thích");
     return;
   }
+
+  if (isLoading) return;
 
   setIsLoading(true);
 
   try {
-    const wishlistData = {
-      hotel_id: id,
-      user_id: user?.id,
-    };
+    if (!isLiked) {
+      // ❤️ ADD
+      await wishListService.addToWishList({
+        hotel_id: id,
+        user_id: user.id
+      });
 
-    // 👉 THỬ THÊM WISHLIST
-    await wishListService.addToWishList(wishlistData);
+      setIsLiked(true);
 
-    toast.success("Đã thêm vào danh sách yêu thích!");
+      toast.success("Đã thêm vào danh sách yêu thích");
 
-    // 👉 Ghi log hành vi
-    logBehavior("like", {
-      userId: user?.id,
-      hotelId: id,
-    });
+      logBehavior("like", {
+        userId: user.id,
+        hotelId: id
+      });
+
+    } else {
+      // 🤍 REMOVE + XÓA LOG HÀNH VI
+      await wishListService.removeFromWishList(id, user.id);
+      
+      setIsLiked(false);
+
+      toast.info("Đã xóa khỏi danh sách yêu thích");
+    }
 
   } catch (error) {
     console.error("Wishlist error:", error);
-
-    toast.warn(error.message || "Đã được thêm vào danh sách yêu thích");
-
-    // 👉🔥 AUTO REMOVE NẾU LỖI (TRONG TRƯỜNG HỢP ĐÃ TỒN TẠI)
-    try {
-      await wishListService.removeFromWishList(id, user?.id);
-      console.log("Tự động remove thành công!");
-    } catch (removeErr) {
-      console.error("Remove wishlist failed:", removeErr);
-    }
-
+    toast.error("Có lỗi xảy ra, vui lòng thử lại");
   } finally {
     setIsLoading(false);
   }
 };
+
 
   const handleZoomImage = () => {
     setIsZoomed(!isZoomed);
@@ -102,7 +129,11 @@ const Hotel = ({
           <div className="ratting">
             <i className="fas fa-star"></i> {rating}
           </div>
-          <button className="heart" onClick={handleWishlist}>
+          <button
+            className={`heart ${isLiked ? "liked" : ""}`}
+            onClick={handleWishlist}
+            disabled={isLoading}
+          >
             <i className="fas fa-heart"></i>
           </button>
           <img 
