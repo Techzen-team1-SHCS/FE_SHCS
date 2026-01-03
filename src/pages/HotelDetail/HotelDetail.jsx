@@ -342,7 +342,7 @@ const HotelDetail = () => {
             <HotelBooking 
               onBook={handleBookNowFromCalendar} 
               hotelId={hotelId}
-              price={roomArray[0].price}
+              price={roomArray[0]?.price|| 0}
               style={{ border: 'none' }}
             />
 

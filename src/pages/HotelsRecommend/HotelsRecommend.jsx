@@ -178,10 +178,10 @@ const HotelsRecommend = () => {
                 </div>
 
                 <div className="ai-confidence">
-                  <div className="confidence-meter">
+                  {/* <div className="confidence-meter">
                     <div className="confidence-fill" style={{ width: '92%' }}></div>
                   </div>
-                  <span>92% Match</span>
+                  <span>92% Match</span> */}
                 </div>
               </div>
 

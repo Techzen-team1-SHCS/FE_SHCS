@@ -6,10 +6,12 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import styles from './TopHotelSlider.module.css';
 import { useTopHotelsQuery } from "../../queries/useTopHotelsQuery";
+import { useNavigate } from "react-router-dom";
 const TopHotelSlider = () => {
+  const navigate = useNavigate();
   const {data:topHotels=[],isLoading,isError}=useTopHotelsQuery();
   if (isLoading) return <div>Loading top hotels...</div>;
-
+  
   return (
     <section className={styles.topHotelsSlider}>
       <div className="container">
@@ -38,7 +40,7 @@ const TopHotelSlider = () => {
                   <div className={styles.hotelImage}>
                     <img src={hotel.images?.[0]?.url || "/default-hotel.jpg"} alt={hotel.name} />
                     <div className={styles.hotelOverlay}>
-                      <button className={styles.bookNowBtn}>Book Now</button>
+                      <button className={styles.bookNowBtn}  onClick={() => navigate(`/hotel/${hotel.id}`)}>Book Now</button>
                     </div>
                   </div>
 

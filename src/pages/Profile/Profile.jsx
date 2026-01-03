@@ -8,6 +8,7 @@ import { authService } from '../../services/authService';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from '../../components/Loading/Loader';
+import LoaderButton from '../../components/Loading/LoaderButton';
 import PaymentMethod from '../../components/Payment/PaymentMethod';
 import { useSearchParams } from "react-router-dom";
 
@@ -297,7 +298,7 @@ const Profile = () => {
                 onClick={() => saveChanges(field)}
                 disabled={loading}
             >
-                {loading ? 'Saving...' : 'Save'}
+                {loading ? <LoaderButton /> : 'Save'}
             </button>
             <button
                 className={styles.cancelBtn}
@@ -309,9 +310,9 @@ const Profile = () => {
         </div>
     );
 
-    if(loading){
-        return <Loader></Loader>
-    }
+    // if(loading){
+    //     return <Loader></Loader>
+    // }
     
     return (
         <div className={styles.pageWrapper}>

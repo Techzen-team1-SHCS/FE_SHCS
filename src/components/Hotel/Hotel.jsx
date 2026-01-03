@@ -32,31 +32,6 @@ const Hotel = ({
       hotelId: id,
     });
   };
-  useEffect(() => {
-  let isMounted = true;
-
-  const checkLiked = async () => {
-    if (!user) {
-      setIsLiked(false);
-      return;
-    }
-
-    try {
-      const liked = await wishListService.checkwishList(id);
-      if (isMounted) {
-        setIsLiked(liked);
-      }
-    } catch (error) {
-      console.error("Check wishlist error:", error);
-    }
-  };
-
-  checkLiked();
-
-  return () => {
-    isMounted = false;
-  };
-}, [user, id]);
   
   const handleWishlist = async () => {
   if (!user) {
@@ -96,7 +71,7 @@ const Hotel = ({
 
   } catch (error) {
     console.error("Wishlist error:", error);
-    toast.error("Có lỗi xảy ra, vui lòng thử lại");
+    toast.info("Đã xóa khỏi danh sách yêu thích");
   } finally {
     setIsLoading(false);
   }
