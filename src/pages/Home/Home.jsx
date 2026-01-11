@@ -28,6 +28,7 @@ const Home = () => {
                 setIsAuthVisible(true);
             }} />}
             
+            
         </div>
     )
 }
