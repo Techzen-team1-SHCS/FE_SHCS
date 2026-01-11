@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api'; // URL của Laravel backend
+const API_BASE_URL = 'https://beshcs-production.up.railway.app/api'; // URL của Laravel backend
 
 const api = axios.create({
   baseURL: API_BASE_URL,
