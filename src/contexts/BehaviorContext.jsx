@@ -46,7 +46,7 @@ export const BehaviorProvider = ({ children }) => {
 
     try {
       await axios.post(
-        "http://localhost:8000/api/auth/user-behaviors/batch",
+        "https://beshcs-production.up.railway.app/api/auth/user-behaviors/batch",
         { logs: batch },
         {
           headers: {

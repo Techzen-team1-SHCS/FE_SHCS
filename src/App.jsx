@@ -26,13 +26,12 @@ import Notification from './pages/Admin/Notification/Notification';
 import HotelManage from './pages/Admin/HotelManage/HotelManage';
 import UserManage from './pages/Admin/UserManage/UserManage';
 import LoginPage from './pages/Admin/LoginPage/LoginPage';
-import AdminPrivateRoute from './routes/AdminPrivateRoute';
 import Help from './pages/Help/Help';
 import DiscountList from './pages/Discount/DiscountList';
 import DiscountDetail from './pages/Discount/DiscountDetail';
 import SettingPage from './pages/Admin/Setting/SettingPage';
-// import { AuthProvider } from './contexts/AuthContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ChatButton } from './components/ChatAI/ChatButton';
 const queryClient = new QueryClient();
 function App() {
   return (
@@ -60,7 +59,6 @@ function App() {
             <Route path="/help" element={<Help />} />
             <Route path="/discounts" element={<DiscountList />} />
             <Route path="/discount/:id" element={<DiscountDetail />} />
-            {/* có thể thêm các page khác cần layout */}
           </Route>
           {/* Route admin */}
           <Route path='/admin/login' element={<LoginPage />} />
@@ -76,7 +74,6 @@ function App() {
             <Route path="/admin/users-manage" element={<UserManage />} />
             <Route path="/admin/settings" element={<SettingPage />} />
           </Route>
-          {/* Route KHÔNG dùng MainLayout */}
         </Routes>
         <ToastContainer
           position="top-right"
