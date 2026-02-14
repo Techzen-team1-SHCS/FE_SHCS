@@ -1,3 +1,19 @@
+.sectionTitle {
+    font-size: 85px;
+}
+
+@media (max-width: 768px) {
+    .sectionTitle {
+        font-size: 52px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .sectionTitle {
+        font-size: 40px;
+    }
+}
+
 .discountCard{
     width: 320px;
     height: 280px;

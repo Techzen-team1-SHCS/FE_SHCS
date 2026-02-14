@@ -9,12 +9,14 @@ import { toast } from 'react-toastify';
 import Notification from '../../components/Notification/Notification';
 import styles from './Header.module.css';
 const Header = () => {
-    const { navigation,authAppear, authWrapper, btnRegister, content, triangleUp, dangky, linkLogin, userMenu, userHeader, userAvatar, menuItem, menuDivider, logoutBtn, authT, customFaUser, customFaDown, authUser } = styles;
+    const { navigation, authAppear, authWrapper, btnRegister, content, triangleUp, dangky, linkLogin, userMenu, userHeader, userAvatar, menuItem, menuDivider, logoutBtn, authT, customFaUser, customFaDown, authUser } = styles;
     const { user, logout } = useContext(AuthContext);
     const [isAuthVisible, setIsAuthVisible] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isAuthAppear, setIsAuthAppear] = useState(false);
     const [isLogin, setIsLogin] = useState('');
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [expandedDropdown, setExpandedDropdown] = useState(null);
 
     const handleAuthAppear = () => {
         setIsAuthAppear(!isAuthAppear);
@@ -69,13 +71,28 @@ const Header = () => {
                 { label: "Contact Us", path: "/help" },
             ],
         },
-        
+
     ];
     const renderMenu = (items) => (
         <ul className="navigation clearfix" >
             {items.map((item, idx) => (
-                <li key={idx} className={item.sub ? "dropdown" : ""}>
-                    <Link to={item.path} style={{ textDecoration: 'none' }}>{item.label}</Link>
+                <li key={idx} className={`${item.sub ? "dropdown" : ""} ${expandedDropdown === idx ? "open" : ""}`}>
+                    <Link
+                        to={item.path}
+                        style={{ textDecoration: 'none' }}
+                        onClick={(e) => {
+                            if (item.sub && mobileOpen) {
+                                e.preventDefault();
+                                setExpandedDropdown(expandedDropdown === idx ? null : idx);
+                            } else {
+                                setMobileOpen(false);
+                            }
+                        }}
+                        className={item.sub ? "has-dropdown" : ""}
+                    >
+                        {item.label}
+                        {item.sub && <span className="dropdown-arrow">▼</span>}
+                    </Link>
                     {item.sub && <ul >{renderSubMenu(item.sub)}</ul>}
                 </li>
             ))}
@@ -85,7 +102,7 @@ const Header = () => {
         <>
             {items.map((subItem, idx) => (
                 <li key={idx} className={subItem.sub ? "dropdown" : ""}>
-                    <Link to={subItem.path} style={{ textDecoration: 'none' }}>{subItem.label}</Link>
+                    <Link to={subItem.path} style={{ textDecoration: 'none' }} onClick={() => setMobileOpen(false)}>{subItem.label}</Link>
                     {subItem.sub && <ul>{renderSubMenu(subItem.sub)}</ul>}
                 </li>
             ))}
@@ -98,7 +115,7 @@ const Header = () => {
             {/* Main Header */}
             <header className={`main-header header-one white-menu menu-absolute fixed-header`}>
                 {/* Header-Upper */}
-                
+
                 <div className="header-upper py-30 rpy-0">
                     <div className="container-fluid clearfix">
                         <div className="header-inner rel d-flex align-items-center">
@@ -123,9 +140,10 @@ const Header = () => {
                                         {/* Toggle Button */}
                                         <button
                                             type="button"
-                                            className="navbar-toggle"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target=".navbar-collapse"
+                                            className={`navbar-toggle ${mobileOpen ? 'open' : ''}`}
+                                            aria-expanded={mobileOpen}
+                                            aria-label="Toggle navigation"
+                                            onClick={() => setMobileOpen(!mobileOpen)}
                                         >
                                             <span className="icon-bar"></span>
                                             <span className="icon-bar"></span>
@@ -133,7 +151,7 @@ const Header = () => {
                                         </button>
                                     </div>
 
-                                    <div className="navbar-collapse collapse clearfix">
+                                    <div className={`navbar-collapse collapse clearfix ${mobileOpen ? 'show-mobile' : ''}`}>
                                         {renderMenu(navItems)}
                                     </div>
                                 </nav>
@@ -157,7 +175,7 @@ const Header = () => {
                                     {isAuthAppear && (
                                         <div >
                                             <div className={`${triangleUp} position-absolute`}></div>
-                                            <div className={`position-absolute ${authAppear} `} style={{ minWidth: '220px' }}>
+                                            <div className={`position-absolute ${authAppear} `}>
                                                 {!user ? (
                                                     // Nếu chưa đăng nhập
                                                     <div className={btnRegister}>
@@ -280,7 +298,7 @@ const Header = () => {
                     />
                 )}
             </header>
-            
+
         </>
     );
 };

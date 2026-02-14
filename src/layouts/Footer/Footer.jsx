@@ -188,8 +188,9 @@ const Footer = () => {
                 onSubmit={formik.handleSubmit}
                 noValidate
               >
-                <div>
+                <div >
                   <input
+                    style={{borderRadius:'35px'}}
                     id="news-email"
                     name="email"
                     type="email"

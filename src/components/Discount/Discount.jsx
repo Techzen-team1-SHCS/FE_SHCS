@@ -29,7 +29,7 @@ const Discount = () => {
         },
     ];
 
-    const { discountCard } = styles
+    const { discountCard, sectionTitle } = styles
     return (
         <section className="destinations-area bgc-black pt-100 pb-70 rel z-1">
             <div className="container-fluid">
@@ -41,7 +41,7 @@ const Discount = () => {
                             data-aos-duration="1500"
                             data-aos-offset="50"
                         >
-                            <h1>Discount Coupons</h1>
+                            <h1 className={sectionTitle}>Discount Coupons</h1>
                             <div className="hotel-more-btn text-center mt-40">
                                 <a className="theme-btn style-four" href='/discounts' style={{ cursor: "pointer" }}>
                                     <span data-hover="Explore More Discount">Explore More Discount</span>

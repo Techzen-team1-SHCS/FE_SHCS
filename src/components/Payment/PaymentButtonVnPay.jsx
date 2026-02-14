@@ -24,7 +24,6 @@ const PaymentButtonVnPay = ({ bookingId, amount }) => {
       onClick={handlePayment}
       disabled={isLoading}
       className={styles.slice}
-      style={{width:"30%",fontSize:"16px", marginBottom:"20px"}}
     >
       <span className={styles.text}>
         {isLoading ? <LoaderButton color='black'/> : 'Thanh toán qua VNPay'}
