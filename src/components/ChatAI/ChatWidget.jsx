@@ -457,7 +457,7 @@ const ChatWidget = () => {
         /* Khung Chat */
         .chat-box {
           position: fixed;
-          bottom: 120px;
+          bottom: 80px;
           right: 30px;
           width: 420px; /* Rộng hơn để chứa card */
           height: 600px;
@@ -836,13 +836,13 @@ const ChatWidget = () => {
         }
 
         .hotel-detail {
+          align-items: center;
           display: flex;
-          align-items: flex-start;
           margin-bottom: 10px;
           font-size: 13px;
           line-height: 1.6;
           padding: 6px 0;
-        }
+      }
 
         .hotel-detail:last-child {
           margin-bottom: 0;
