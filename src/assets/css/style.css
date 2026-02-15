@@ -126,13 +126,6 @@ a:focus, a:active {
   -o-transition: all 300ms ease 0s;
   -ms-transition: all 300ms ease 0s; }
 
-input, select, textarea {
-  outline: none;
-  appearance: unset !important;
-  -moz-appearance: unset !important;
-  -webkit-appearance: unset !important;
-  -o-appearance: unset !important;
-  -ms-appearance: unset !important; }
 
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
   appearance: none !important;
@@ -142,7 +135,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
   -ms-appearance: none !important;
   margin: 0; }
 
-input:focus, select:focus, textarea:focus {
+input:focus, {
   outline: none;
   box-shadow: none !important;
   -moz-box-shadow: none !important;
@@ -513,7 +506,7 @@ label.valid {
 .signin-image {
   margin-left: 110px;
   margin-right: 20px;
-  margin-top: 10px; }
+  margin-top: 40px; }
 
 @media screen and (max-width: 1200px) {
   .container {

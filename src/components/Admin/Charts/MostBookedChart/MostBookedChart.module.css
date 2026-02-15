@@ -1,0 +1,331 @@
+.chartCard {
+    margin-top: 2px;
+    background: white;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    transition: box-shadow 0.3s ease;
+    border: 1px solid #f1f3f4;
+    height: 400px;
+}
+
+.chartCard:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    justify-content: space-between;
+}
+
+.title {
+    color: #2c3e50;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    flex: 0 0 40%;
+    font-family: 'Inter', sans-serif;
+}
+
+
+.chartContainer {
+    height: 300px;
+    position: relative;
+}
+/* Styles cơ bản */
+.chartCard {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: box-shadow 0.3s ease;
+}
+
+.chartCard:hover {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 15px;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #212529;
+    margin: 0 0 10px 0;
+}
+
+.chartContainer {
+    height: 320px;
+    position: relative;
+}
+
+/* Chart info styles */
+.chartInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.dataCount, .totalBookings {
+    background: #f8f9fa;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid #e9ecef;
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.refreshButton {
+    padding: 6px 12px;
+    background: #e9ecef;
+    border: none;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.refreshButton:hover:not(:disabled) {
+    background: #dee2e6;
+    color: #212529;
+}
+
+.refreshButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Error styles */
+.errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 250px;
+    gap: 20px;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 30px;
+}
+
+.errorMessage {
+    color: #dc3545;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.errorActions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.retryButton {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.retryButton:hover {
+    background: #0056b3;
+}
+
+.retryButton:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+.cacheButton {
+    padding: 10px 20px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.cacheButton:hover {
+    background: #495057;
+}
+
+/* Skeleton loading styles */
+.skeletonContainer {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.skeletonHeader {
+    width: 200px;
+    height: 24px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite ease-in-out;
+    border-radius: 4px;
+    margin-bottom: 30px;
+}
+
+.skeletonChart {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 250px;
+    gap: 16px;
+    padding: 20px 0;
+}
+
+.skeletonBar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.skeletonBarFill {
+    width: 70%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite ease-in-out;
+    border-radius: 6px 6px 0 0;
+    min-height: 20px;
+    animation-delay: calc(var(--bar-index) * 0.1s);
+}
+
+/* Tạo hiệu ứng loading lần lượt cho các bars */
+.skeletonBar:nth-child(1) .skeletonBarFill {
+    height: 80%;
+    --bar-index: 1;
+}
+
+.skeletonBar:nth-child(2) .skeletonBarFill {
+    height: 60%;
+    --bar-index: 2;
+}
+
+.skeletonBar:nth-child(3) .skeletonBarFill {
+    height: 90%;
+    --bar-index: 3;
+}
+
+.skeletonBar:nth-child(4) .skeletonBarFill {
+    height: 50%;
+    --bar-index: 4;
+}
+
+.skeletonBar:nth-child(5) .skeletonBarFill {
+    height: 70%;
+    --bar-index: 5;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Debug info (chỉ hiển thị trong development) */
+.debugInfo {
+    margin-top: 15px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #007bff;
+    font-size: 11px;
+    color: #6c757d;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .chartContainer {
+        height: 280px;
+    }
+    
+    .chartInfo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .errorActions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .retryButton, .cacheButton {
+        width: 100%;
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .chartCard {
+        width: 100%;
+        padding: 16px;
+        margin-top: 16px;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .title {
+        flex: none;
+    }
+    
+    .sortBy {
+        flex: none;
+        width: 100%;
+    }
+    
+    .chartContainer {
+        height: 250px;
+    }
+}
+
+/* Animation cho chart */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chartContainer canvas {
+    animation: fadeIn 0.5s ease-out;
+}

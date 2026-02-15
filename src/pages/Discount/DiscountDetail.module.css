@@ -1,0 +1,215 @@
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-top: 150px;
+}
+
+.header {
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.title {
+    font-size: 2.5rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.backButton {
+    background: none;
+    border: 2px solid #007bff;
+    color: #007bff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.backButton:hover {
+    background: #007bff;
+    color: white;
+}
+
+.discountDetail {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.discountHero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    padding: 30px;
+}
+
+.discountImage {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 100%;
+}
+
+.discountImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.activeBadge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #28a745;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.discountContent h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.discountContent p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.codeSection {
+    margin: 25px 0;
+}
+
+.codeDisplay {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px dashed #007bff;
+}
+
+.codeDisplay strong {
+    font-size: 1.5rem;
+    color: #007bff;
+    flex: 1;
+}
+
+.copyButton {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.copyButton:hover {
+    background: #0056b3;
+}
+
+.discountInfo {
+    margin: 25px 0;
+}
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.infoItem {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.infoLabel {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.infoValue {
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: bold;
+}
+
+.expiredAlert {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px 0;
+    border: 1px solid #f5c6cb;
+}
+
+.actionSection {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.useButton {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.useButton:hover:not(:disabled) {
+    background: #218838;
+}
+
+.useButton:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+.termsList {
+    padding: 30px;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+.termsList h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.termItem {
+    color: #666;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .discountHero {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+    
+    .infoGrid {
+        grid-template-columns: 1fr;
+    }
+    
+    .title {
+        font-size: 2rem;
+    }
+}

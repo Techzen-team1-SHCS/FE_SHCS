@@ -1,0 +1,294 @@
+.auth-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.content{
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  text-align: center;
+}
+.triangle-up {
+      width: 0;
+      height:0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 10px solid #ffffff;
+      left:100px;
+}
+.dangky{
+    cursor: pointer;
+    width: 100%;
+    padding: 10px 7px;
+    background-color:rgb(123, 239, 246);
+    border-radius: 100px;
+    color: rgb(0, 0, 0);
+}
+.dangky:hover{
+    background-color: blue;
+    color: whitesmoke;
+    transition: ease-in-out 0.3s;
+}
+.linkLogin{
+    color: blue;
+    display: flex;
+    width: 100%;
+    text-align: left;
+    text-decoration: underline;
+}
+.user-menu {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    width: 100%;
+    
+}
+
+.user-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    color: white;
+    text-align: center;
+    border-radius: 16px 16px 0 0;
+}
+
+.user-avatar {
+    border: 3px solid white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.user-avatar:hover {
+    transform: scale(1.05);
+}
+
+.menu-item {
+    padding: 6px 20px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    color: #333;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.menu-item:hover {
+    background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+    color: #667eea;
+    transform: translateX(5px);
+}
+
+.menu-item .icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.menu-divider {
+    margin: 8px 20px;
+    border: none;
+    border-top: 1px solid #f0f0f0;
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 90%; /* ← HOẶC ĐỂ AUTO */
+    margin: 10px auto; /* ← AUTO CHO CĂN GIỮA */
+    display: block;
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+/*Login/regeister*/
+.auth-t{
+  display:flex;
+  margin-right: 20px;
+  cursor: pointer;
+  width: 200px;
+}
+.custom-fa-user{
+  width: 30px;
+  margin-top: 5px;
+}
+.custom-fa-down{
+  margin-top: 5px;
+  margin-left: 5px;
+}
+.auth-user{
+  color:#0056b3;
+}
+.auth-appear{
+    padding: 0;
+    border-radius: 16px;
+  background-color: white;
+  top:37px;
+  position: absolute;
+  z-index: 1000;
+  left:20px;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Dropdown arrow for all screens */
+.dropdown-arrow {
+  font-size: 11px;
+  margin-left: 8px;
+  transition: transform 0.2s ease;
+  color: currentColor;
+}
+
+/* Desktop: static arrow */
+@media (min-width: 992px) {
+  .navigation a.has-dropdown {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* Responsive header/navigation for mobile */
+@media (max-width: 991px) {
+    .mobile-logo { display: none; }
+    .header-inner {
+        padding: 8px 12px;
+        align-items: center;
+    }
+
+    .logo img, .mobile-logo img {
+        height: 38px;
+        width: auto;
+    }
+
+
+    /* Hide desktop collapsed nav by default on mobile */
+    .navbar-collapse.collapse {
+        display: none !important;
+    }
+
+    /* When toggle is activated, show a full-width stacked menu */
+    .navbar-collapse.collapse.show-mobile {
+        display: block !important;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 100%;
+        background: #ffffff;
+        padding: 12px 16px 20px 16px;
+        z-index: 1050;
+        box-shadow: 0 10px 30px rgba(2,6,23,0.08);
+        border-top: 1px solid #f1f3f5;
+        max-height: 400px;
+        overflow-y: auto;
+        width: 90%;
+        max-width: 500px;
+        border-radius: 0 0 8px 8px;
+    }
+
+    /* Make navigation vertical for mobile */
+    .navbar-collapse .navigation {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .navbar-collapse .navigation li {
+        padding: 8px 6px;
+    }
+
+    /* Hide submenu by default on mobile */
+    .navbar-collapse .navigation li.dropdown > ul {
+        display: none !important;
+        position: static;
+        width: 100%;
+        background: #f5f5f5;
+        padding: 8px 0;
+        margin-top: 4px;
+        border-radius: 6px;
+
+    }
+
+    /* Show submenu when dropdown is opened */
+    .navbar-collapse .navigation li.dropdown.open > ul {
+        display: block !important;
+    }
+
+    /* Style submenu items */
+    .navbar-collapse .navigation li.dropdown ul li {
+        padding: 6px 16px;
+        margin-left: 12px;
+    }
+
+    .navbar-collapse .navigation li.dropdown ul li a {
+        font-size: 13px;
+        color: #555;
+    }
+
+    /* Dropdown arrow styling for mobile */
+    .navbar-collapse .navigation a.has-dropdown {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .navbar-collapse .navigation li.dropdown.open a.has-dropdown .dropdown-arrow {
+        transform: rotate(180deg);
+    }
+
+    /* Reduce auth width and hide extra caret/text to save space */
+    .auth-t, .auth-wrapper {
+        width: auto !important;
+        margin-left: 8px;
+    }
+
+    .auth-user { display: none; }
+    .custom-fa-down { display: none; }
+
+    /* Make header elements align horizontally and allow overflow */
+    .nav-outer {
+        flex: 1 1 auto;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .navbar-toggle {
+        align-items: center;
+        width: 44px;
+        height: 40px;
+        border-radius: 8px;
+        background: transparent;
+        border: 1px solid transparent;
+    }
+
+    .navbar-toggle .icon-bar {
+        display: block;
+        width: 18px;
+        height: 2px;
+        background: #333;
+        margin: 3px 0;
+    }
+}

@@ -10,8 +10,28 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.2",
+    "@tanstack/react-query": "^5.90.12",
+    "axios": "^1.13.1",
+    "crypto-js": "^4.2.0",
+    "env": "^0.0.2",
+    "formik": "^2.4.6",
+    "jwt-decode": "^4.0.0",
+    "laravel-echo": "^2.2.4",
+    "pusher-js": "^8.4.0",
+    "qs": "^6.14.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.5.0",
+    "react-infinite-scroll-component": "^6.1.1",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.9.1",
+    "react-toastify": "^11.0.5",
+    "styled-components": "^6.1.19",
+    "sweetalert2": "^11.26.3",
+    "swiper": "^12.0.2",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

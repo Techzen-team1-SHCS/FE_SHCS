@@ -1,0 +1,137 @@
+/* GuestVisitsChart.module.css */
+.chartCard {
+    background: white;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    transition: box-shadow 0.3s ease;
+    border: 1px solid #f1f3f4;
+    height: 400px;
+}
+
+.chartCard:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    justify-content: space-between;
+}
+
+.title {
+    color: #2c3e50;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    flex: 0 0 20%;
+    font-family: 'Inter', sans-serif;
+}
+
+.sortBy {
+    width: 20%;
+    cursor: pointer;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 8px 12px;
+    background: white;
+    color: #495057;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.sortBy:hover {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+.sortBy:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.chartContainer {
+    height: 300px;
+    position: relative;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .chartCard {
+        width: 100%;
+        padding: 16px;
+        margin-top: 16px;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .title {
+        flex: none;
+    }
+    
+    .sortBy {
+        flex: none;
+        width: 100%;
+    }
+    
+    .chartContainer {
+        height: 250px;
+    }
+}
+
+/* Animation cho chart */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chartContainer canvas {
+    animation: fadeIn 0.5s ease-out;
+}
+.periodSelector {
+    width: 100%;
+    justify-content: right;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.loadingIndicator {
+    font-size: 12px;
+    color: #666;
+}
+
+.errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 10px;
+}
+
+.errorContainer button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.errorContainer button:hover {
+    background-color: #0056b3;
+}

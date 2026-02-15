@@ -1,0 +1,54 @@
+
+.destination-item.style-three .content{
+   padding: 0;
+   height: auto;
+}
+.destination-item .image img{
+    min-width: 460px;
+    height: 300px;
+}
+.content1{
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+.destination-item .content .location {
+    width: 100%;
+    display: flex;
+    gap:10px;
+    align-items: center;
+}
+
+
+.price{
+    font-size: 17px;
+    font-weight: 700;
+}
+.destination-footer{
+    display: flex;
+    gap: 20px;
+}
+.heart {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.heart i {
+  color: #9ca3af; /* xám */
+  font-size: 25px;
+  transition: all 0.25s ease;
+}
+
+.heart.liked i {
+  color: #ef4444; /* 🔴 đỏ */
+}
+
+.heart:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
