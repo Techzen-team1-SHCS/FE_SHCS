@@ -1,16 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
 
 const ChatWidget = () => {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { id: 1, text: "Chào bạn 👋 — mình có thể giúp gì?", sender: "bot", isTyping: false, type: "text" }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [isBotTyping, setIsBotTyping] = useState(false);
   const chatBodyRef = useRef(null);
-  const eventSourceRef = useRef(null);
 
   // Tự động cuộn xuống tin nhắn mới nhất
   useEffect(() => {
@@ -18,15 +14,6 @@ const ChatWidget = () => {
       chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
     }
   }, [messages]);
-
-  // Hủy kết nối khi component unmount
-  useEffect(() => {
-    return () => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-      }
-    };
-  }, []);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isBotTyping) return;
@@ -37,7 +24,8 @@ const ChatWidget = () => {
       text: inputValue,
       sender: "user",
       isTyping: false,
-      type: "text"
+      type: "text",
+      hotels: []
     };
     setMessages(prev => [...prev, newUserMessage]);
 
@@ -48,62 +36,73 @@ const ChatWidget = () => {
     const botMsgId = Date.now() + 1;
     setMessages(prev => [
       ...prev,
-      { id: botMsgId, text: "", sender: "bot", isTyping: true, type: "text" }
+      { id: botMsgId, text: "", sender: "bot", isTyping: true, type: "text", hotels: [] }
     ]);
     setIsBotTyping(true);
 
-    // ⚠️ SSE chỉ hỗ trợ GET → gửi message qua query string
-   const url = `${import.meta.env.VITE_API_URL}/auth/chat/stream?message=${encodeURIComponent(userMessage)}`;
-    // Đóng kết nối cũ nếu có
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-    }
+    try {
+      // 🎯 Gọi API để lấy JSON response
+      const url = `${import.meta.env.VITE_API_URL}/auth/chat/stream`;
+      const response = await fetch(url, {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage })
+      });
 
-    const eventSource = new EventSource(url);
-    eventSourceRef.current = eventSource;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-    let isFirstChunk = true;
+      const data = await response.json();
 
-    // 🔴 Nhận từng chunk realtime
-    eventSource.onmessage = (e) => {
-      const chunk = e.data;
-      
-      if (isFirstChunk) {
-        // Xóa typing animation khi có dữ liệu đầu tiên
+      if (data.status === 200 && data.hotels && Array.isArray(data.hotels) && data.hotels.length > 0) {
+        // ✅ Cập nhật tin nhắn với hotels từ JSON
         setMessages(prev =>
           prev.map(msg =>
             msg.id === botMsgId
-              ? { ...msg, text: chunk, isTyping: false }
+              ? {
+                ...msg,
+                text: `Tìm thấy ${data.hotels.length} khách sạn phù hợp:`,
+                isTyping: false,
+                hotels: data.hotels
+              }
               : msg
           )
         );
-        isFirstChunk = false;
       } else {
-        // Thêm chunk vào tin nhắn hiện tại
+        // ❌ Nếu không có hotels, hiển thị thông báo
         setMessages(prev =>
           prev.map(msg =>
             msg.id === botMsgId
-              ? { ...msg, text: msg.text + chunk }
+              ? {
+                ...msg,
+                text: data.message || "Không tìm thấy khách sạn phù hợp với yêu cầu của bạn.",
+                isTyping: false,
+                hotels: []
+              }
               : msg
           )
         );
       }
-    };
-
-    // ❌ Nếu lỗi hoặc kết thúc → đóng kết nối
-    eventSource.onerror = () => {
-      eventSource.close();
-      setIsBotTyping(false);
-      
-      // Cập nhật tin nhắn cuối cùng
+    } catch (error) {
+      console.error('Error fetching hotels:', error);
       setMessages(prev =>
         prev.map(msg =>
           msg.id === botMsgId
-            ? { ...msg, isTyping: false }
+            ? {
+              ...msg,
+              text: "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại.",
+              isTyping: false,
+              hotels: []
+            }
             : msg
         )
       );
-    };
+    } finally {
+      setIsBotTyping(false);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -135,57 +134,7 @@ const ChatWidget = () => {
     </div>
   );
 
-  // Hàm parse message để tách khách sạn
-  const parseHotelCards = (text) => {
-    // Tách các khách sạn từ text
-    const lines = text.split('\n');
-    const hotelCards = [];
-    let currentHotel = null;
-    let introText = [];
-
-    for (let line of lines) {
-      // Phát hiện khách sạn mới (có **Tên KS**)
-      if (line.includes('**') && (line.includes('Khách sạn') || line.includes('KS'))) {
-        if (currentHotel) {
-          hotelCards.push({ ...currentHotel, type: 'hotel' });
-        }
-        
-        // Extract tên khách sạn từ markdown
-        const nameMatch = line.match(/\*\*(.*?)\*\*/);
-        const name = nameMatch ? nameMatch[1] : line;
-        
-        currentHotel = {
-          name: name.replace('Khách sạn', '').replace('KS', '').trim(),
-          description: [],
-          details: []
-        };
-      } 
-      // Thông tin khách sạn
-      else if (currentHotel) {
-        if (line.includes('📍') || line.includes('💰') || line.includes('⭐') || line.includes('✨')) {
-          currentHotel.details.push(line);
-        } else if (line.trim()) {
-          currentHotel.description.push(line);
-        }
-      }
-      // Text thường
-      else if (line.trim() && !line.startsWith('###') && !line.startsWith('---')) {
-        introText.push(line);
-      }
-    }
-
-    // Thêm khách sạn cuối
-    if (currentHotel) {
-      hotelCards.push({ ...currentHotel, type: 'hotel' });
-    }
-
-    return {
-      intro: introText.join('\n'),
-      hotels: hotelCards
-    };
-  };
-
-  // Tạo ID từ tên khách sạn (giả lập, BE nên trả về hotelId)
+  // Tạo ID từ tên khách sạn (fallback nếu không có hotel.id)
   const generateHotelId = (name) => {
     return name.toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
@@ -193,9 +142,11 @@ const ChatWidget = () => {
   };
 
   // Component Hotel Card
+  /* eslint-disable react/prop-types */
   const HotelCard = ({ hotel }) => {
-    const hotelId = generateHotelId(hotel.name);
-    
+    // Sử dụng hotel.id trực tiếp nếu là number, hoặc generate từ name nếu không có
+    const hotelId = hotel.id ? (typeof hotel.id === 'number' ? hotel.id : hotel.id.toString()) : generateHotelId(hotel.name || '');
+
     return (
       <div className="hotel-card">
         <div className="hotel-card-header">
@@ -216,29 +167,45 @@ const ChatWidget = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="hotel-card-content">
-          {hotel.details.map((detail, idx) => (
-            <div key={idx} className="hotel-detail">
-              {detail.includes('📍') && <span className="icon">📍</span>}
-              {detail.includes('💰') && <span className="icon">💰</span>}
-              {detail.includes('⭐') && <span className="icon">⭐</span>}
-              {detail.includes('✨') && <span className="icon">✨</span>}
-              <span className="detail-text">{detail}</span>
-            </div>
-          ))}
-          
-          {hotel.description.length > 0 && (
+          <div className="hotel-details-list">
+            {hotel.price && (
+              <div className="hotel-detail">
+                <span className="icon">💰</span>
+                <span className="detail-text">Giá: {hotel.price}</span>
+              </div>
+            )}
+            {hotel.province && (
+              <div className="hotel-detail">
+                <span className="icon">📍</span>
+                <span className="detail-text">Địa điểm: {hotel.province}</span>
+              </div>
+            )}
+            {hotel.stars && (
+              <div className="hotel-detail">
+                <span className="icon">⭐</span>
+                <span className="detail-text">Hạng sao: {hotel.stars}</span>
+              </div>
+            )}
+            {hotel.amenities && (
+              <div className="hotel-detail">
+                <span className="icon">🛎</span>
+                <span className="detail-text">Tiện ích: {hotel.amenities}</span>
+              </div>
+            )}
+          </div>
+
+          {hotel.description && (
             <div className="hotel-description">
-              {hotel.description.map((desc, idx) => (
-                <p key={idx}>{desc}</p>
-              ))}
+              <p>{hotel.description}</p>
             </div>
           )}
         </div>
       </div>
     );
   };
+  /* eslint-enable react/prop-types */
 
   // Render message theo type
   const renderMessage = (message) => {
@@ -246,31 +213,34 @@ const ChatWidget = () => {
       return <TypingIndicator />;
     }
 
-    if (message.sender === 'bot' && message.text) {
-      const { intro, hotels } = parseHotelCards(message.text);
-      
+    if (message.sender === 'bot') {
+      const hotels = message.hotels || [];
+
       return (
         <div className="bot-message-content">
-          {intro && intro.trim() && (
+          {/* Hiển thị text message nếu có */}
+          {message.text && (
             <div className="message-intro">
-              <ReactMarkdown>{intro}</ReactMarkdown>
+              <p>{message.text}</p>
             </div>
           )}
-          
+
+          {/* Hiển thị hotel cards từ JSON */}
           {hotels.length > 0 && (
             <div className="hotels-container">
-              <h4 className="hotels-title">🏨 Khách sạn đề xuất:</h4>
               <div className="hotels-grid">
                 {hotels.map((hotel, idx) => (
-                  <HotelCard key={idx} hotel={hotel} />
+                  <HotelCard key={hotel.id || idx} hotel={hotel} />
                 ))}
               </div>
             </div>
           )}
-          
-          {/* Nếu không parse được hotel, hiển thị markdown bình thường */}
-          {hotels.length === 0 && intro && (
-            <ReactMarkdown>{message.text}</ReactMarkdown>
+
+          {/* Nếu không có hotels và có text, chỉ hiển thị text */}
+          {hotels.length === 0 && message.text && (
+            <div className="message-text">
+              <p>{message.text}</p>
+            </div>
           )}
         </div>
       );
@@ -283,8 +253,8 @@ const ChatWidget = () => {
   return (
     <>
       {/* Nút Chat với hiệu ứng */}
-      <div 
-        className={`chat-icon ${open ? 'open' : ''}`} 
+      <div
+        className={`chat-icon ${open ? 'open' : ''}`}
         onClick={() => setOpen(!open)}
         title="Mở hộp chat"
       >
@@ -309,8 +279,8 @@ const ChatWidget = () => {
             </div>
             <button className="chat-close" onClick={() => setOpen(false)}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </div>
@@ -330,8 +300,8 @@ const ChatWidget = () => {
 
             {/* Tin nhắn */}
             {messages.map((message) => (
-              <div 
-                key={message.id} 
+              <div
+                key={message.id}
                 className={`msg ${message.sender} ${message.sender === 'bot' ? 'fade-in' : 'slide-in'}`}
               >
                 <div className="msg-content">
@@ -339,8 +309,8 @@ const ChatWidget = () => {
                     {renderMessage(message)}
                   </div>
                   <div className="msg-time">
-                    {message.sender === 'user' || !message.isTyping ? 
-                      new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 
+                    {message.sender === 'user' || !message.isTyping ?
+                      new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) :
                       'Đang nhập...'}
                   </div>
                 </div>
@@ -352,8 +322,8 @@ const ChatWidget = () => {
               <p><strong>💬 Bạn có thể hỏi:</strong></p>
               <div className="questions-container">
                 {sampleQuestions.map((question, index) => (
-                  <button 
-                    key={index} 
+                  <button
+                    key={index}
                     className="question-chip"
                     onClick={() => handleSampleQuestion(question)}
                     disabled={isBotTyping}
@@ -367,16 +337,16 @@ const ChatWidget = () => {
 
           <div className="chat-footer">
             <div className="input-container">
-              <input 
-                type="text" 
-                placeholder="Nhập câu hỏi về khách sạn..." 
+              <input
+                type="text"
+                placeholder="Nhập câu hỏi về khách sạn..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
                 disabled={isBotTyping}
               />
-              <button 
-                className="send-btn" 
+              <button
+                className="send-btn"
                 onClick={handleSendMessage}
                 disabled={inputValue.trim() === "" || isBotTyping}
               >
@@ -388,8 +358,8 @@ const ChatWidget = () => {
                   </div>
                 ) : (
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 )}
               </button>
@@ -401,6 +371,7 @@ const ChatWidget = () => {
         </div>
       )}
 
+      {/* eslint-disable-next-line react/no-unknown-property */}
       <style jsx>{`
         /* Biến CSS */
         :root {
@@ -702,46 +673,64 @@ const ChatWidget = () => {
         .message-intro {
           margin-bottom: 16px;
           line-height: 1.6;
+          color: var(--text-color);
         }
 
         .message-intro :global(p) {
+          margin: 8px 0;
+          line-height: 1.6;
+        }
+
+        .message-intro :global(strong) {
+          color: var(--secondary-color);
+          font-weight: 600;
+        }
+
+        .message-markdown {
+          line-height: 1.6;
+          color: var(--text-color);
+        }
+
+        .message-markdown :global(p) {
           margin: 8px 0;
         }
 
         /* Hotels Container */
         .hotels-container {
-          margin-top: 12px;
+          margin-top: 16px;
         }
 
         .hotels-title {
-          font-size: 15px;
+          font-size: 16px;
           font-weight: 600;
           color: var(--primary-color);
-          margin: 0 0 12px 0;
-          padding-bottom: 8px;
+          margin: 0 0 16px 0;
+          padding-bottom: 10px;
           border-bottom: 2px solid var(--bot-color);
         }
 
         .hotels-grid {
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 24px;
+          padding: 8px 0;
         }
 
         /* Hotel Card */
         .hotel-card {
+          display:block!important;
           background: white;
-          border-radius: 12px;
-          box-shadow: var(--card-shadow);
-          border: 1px solid #e9ecef;
+          border-radius: 16px;
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+          border: 2px solid #e9ecef;
           overflow: hidden;
           transition: var(--transition);
-          margin: 4px 0;
+          margin: 0;
         }
 
         .hotel-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+          transform: translateY(-3px);
+          box-shadow: 0 8px 24px rgba(67, 97, 238, 0.15), 0 0 0 1px rgba(67, 97, 238, 0.1);
           border-color: var(--primary-light);
         }
 
@@ -772,6 +761,8 @@ const ChatWidget = () => {
         }
 
         .hotel-title {
+          gap:20px;
+          flex-direction:column;
           flex: 1;
           display: flex;
           justify-content: space-between;
@@ -836,27 +827,40 @@ const ChatWidget = () => {
 
         /* Hotel Card Content */
         .hotel-card-content {
-          padding: 16px;
+          padding: 20px;
+          background: #fafbfc;
+        }
+
+        .hotel-details-list {
+          margin-bottom: 12px;
         }
 
         .hotel-detail {
           display: flex;
           align-items: flex-start;
-          margin-bottom: 8px;
+          margin-bottom: 10px;
           font-size: 13px;
-          line-height: 1.5;
+          line-height: 1.6;
+          padding: 6px 0;
+        }
+
+        .hotel-detail:last-child {
+          margin-bottom: 0;
         }
 
         .icon {
-          margin-right: 8px;
-          font-size: 14px;
+          margin-right: 10px;
+          font-size: 16px;
           flex-shrink: 0;
-          margin-top: 1px;
+          margin-top: 2px;
+          width: 20px;
+          text-align: center;
         }
 
         .detail-text {
           flex: 1;
           color: var(--text-color);
+          word-wrap: break-word;
         }
 
         .hotel-description {

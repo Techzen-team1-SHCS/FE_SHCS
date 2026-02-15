@@ -46,7 +46,7 @@ export const BehaviorProvider = ({ children }) => {
 
     try {
       await axios.post(
-        "https://beshcs-production.up.railway.app/api/auth/user-behaviors/batch",
+        "http://localhost:8000/api/auth/user-behaviors/batch",
         { logs: batch },
         {
           headers: {
@@ -56,7 +56,6 @@ export const BehaviorProvider = ({ children }) => {
       );
     } catch (error) {
       console.error("❌ Behavior batch error:", error);
-      // ❗ nếu muốn retry: queue.unshift(...batch);
     }
   };
 
