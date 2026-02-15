@@ -10,7 +10,7 @@ const About = () => {
       image: "/vi.jpg",
       instagram: "https://www.instagram.com/vitran712/",
       facebook: "https://www.facebook.com/tran.vi.209923?locale=vi_VN",
-      skills: ["React", "Node.js", "MongoDB", "Php","Laravel","UI/UX"]
+      skills: ["React", "Node.js", "MongoDB", "Php", "Laravel", "UI/UX"]
     },
     {
       id: 2,
@@ -28,13 +28,13 @@ const About = () => {
       image: "/van.jpg",
       instagram: "https://www.instagram.com/nobitaco197/",
       facebook: "https://www.facebook.com/minhquan19072004",
-      skills: ["Tester","Q&A", "UI/UX"]
+      skills: ["Tester", "Q&A", "UI/UX"]
     },
     {
       id: 4,
       name: "Nguyễn Thiên Tú",
       position: "AI developer ",
-      image:'/tu.jpg',
+      image: '/tu.jpg',
       facebook: "https://www.facebook.com/tu.nguyenthien.35",
       skills: ["MySQL", "php", "Marchine learning"]
     },
@@ -42,7 +42,7 @@ const About = () => {
       id: 5,
       name: "Nguyễn Thành Nhân",
       position: "AI developer ",
-      image:"/nhan.jpg",
+      image: "/nhan.jpg",
       facebook: "https://www.facebook.com/share/1AX2YpUXyD/",
       skills: ["Python", "Java", "Sorfware Achitectural Designer"]
     }
@@ -67,7 +67,7 @@ const About = () => {
       {/* Header Section */}
       <div className="about-header">
         <div className="about-header-content">
-          <h1 className="about-title" style={{marginTop:"50px"}}>Về Dự Án Của Chúng Tôi</h1>
+          <h1 className="about-title" style={{ marginTop: "50px" }}>Về Dự Án Của Chúng Tôi</h1>
           <p className="about-subtitle">
             Hệ thống gợi ý khách sạn thông minh tích hợp booking - Công nghệ AI phân tích hành vi người dùng
           </p>
@@ -79,12 +79,12 @@ const About = () => {
         <div className="project-intro-content">
           <h2 className="section-title">HOTEL RECOMMENDATION SYSTEM</h2>
           <p className="project-description">
-            Dự án của chúng tôi là một nền tảng web hiện đại sử dụng công nghệ AI và Machine Learning để 
-            phân tích hành vi người dùng, từ đó đưa ra các gợi ý khách sạn phù hợp nhất với sở thích và 
-            thói quen du lịch của từng cá nhân. Hệ thống tích hợp đầy đủ các chức năng đặt phòng, thanh toán 
+            Dự án của chúng tôi là một nền tảng web hiện đại sử dụng công nghệ AI và Machine Learning để
+            phân tích hành vi người dùng, từ đó đưa ra các gợi ý khách sạn phù hợp nhất với sở thích và
+            thói quen du lịch của từng cá nhân. Hệ thống tích hợp đầy đủ các chức năng đặt phòng, thanh toán
             và quản lý đặt chỗ thông minh.
           </p>
-          
+
           <div className="project-features">
             {projectFeatures.map((feature, index) => (
               <div key={index} className="feature-card">
@@ -124,13 +124,13 @@ const About = () => {
       <div className="team-section">
         <h2 className="section-title">Đội Ngũ Phát Triển</h2>
         <p className="section-subtitle">Những người đứng sau dự án thành công</p>
-        
+
         <div className="team-grid">
           {teamMembers.map((member) => (
             <div key={member.id} className="member-card">
               <div className="member-image-container">
-                <img 
-                  src={member.image} 
+                <img
+                  src={member.image}
                   alt={member.name}
                   className="member-image"
                   onError={(e) => {
@@ -147,11 +147,11 @@ const About = () => {
                   </a>
                 </div>
               </div>
-              
+
               <div className="member-info">
                 <h3 className="member-name">{member.name}</h3>
                 <p className="member-position">{member.position}</p>
-                
+
                 <div className="member-skills">
                   {member.skills.map((skill, index) => (
                     <span key={index} className="skill-tag">{skill}</span>
@@ -168,8 +168,8 @@ const About = () => {
         <div className="mission-content">
           <h2 className="section-title">Tầm Nhìn & Sứ Mệnh</h2>
           <p className="mission-text">
-            Chúng tôi hướng đến việc tạo ra một hệ sinh thái du lịch thông minh, nơi mỗi khách hàng 
-            đều có trải nghiệm đặt phòng khách sạn cá nhân hóa và hoàn hảo nhất. Sứ mệnh của chúng tôi 
+            Chúng tôi hướng đến việc tạo ra một hệ sinh thái du lịch thông minh, nơi mỗi khách hàng
+            đều có trải nghiệm đặt phòng khách sạn cá nhân hóa và hoàn hảo nhất. Sứ mệnh của chúng tôi
             là ứng dụng AI để thấu hiểu và phục vụ tốt hơn nhu cầu du lịch của người Việt.
           </p>
           <div className="mission-highlights">
@@ -608,6 +608,10 @@ const About = () => {
           .mission-highlights {
             flex-direction: column;
             align-items: center;
+          }
+
+          .mission-section {
+            clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 100%);
           }
         }
         

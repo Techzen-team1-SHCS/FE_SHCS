@@ -212,3 +212,26 @@
   top: calc(var(--support-size) * -1);
   opacity: 1;
 }
+
+/* Responsive wrapper for popup button */
+.popupWrapper {
+  position: fixed;
+  right: 300px;
+  bottom: 300px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.popupWrapper.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .popupWrapper {
+    right: 100px;
+  }
+}

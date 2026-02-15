@@ -4992,16 +4992,7 @@ blockquote {
   }
 
   .main-menu .navbar-collapse .navigation>li.dropdown > a::after {
-    content: "";
-    display: inline-block;
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid currentColor;
-    margin-left: 8px;
-    vertical-align: middle;
-    transition: transform 0.25s ease;
+    display: none !important;
   }
 
   /* Rotate arrow when submenu is visible (hover) */
@@ -7949,14 +7940,33 @@ blockquote {
   max-width: 500px;
 }
 
+.features-customer-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  text-align: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
 @media only screen and (min-width: 768px) {
   .features-customer-box {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    text-align: left;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
   }
 }
 
@@ -7977,6 +7987,7 @@ blockquote {
 }
 
 .features-customer-box .content {
+  width:100%;
   margin-left: -20%;
   background: white;
   border-radius: 20px;
@@ -11735,9 +11746,9 @@ blockquote .blockquote-footer:before {
 
 .newsletter-form {
   padding: 10px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-
+  display: flex;
+  align-items: center;
+  gap: 0;
   background: #fff;
   position: relative;
   border-radius: 35px;
@@ -11746,6 +11757,9 @@ blockquote .blockquote-footer:before {
 .newsletter-form input {
   border: 0;
   padding: 11px 5px 11px 30px;
+  flex: 1;
+  min-width: 0;
+  outline: none;
 }
 
 @media only screen and (max-width: 375px) {
@@ -11755,12 +11769,26 @@ blockquote .blockquote-footer:before {
 }
 
 .newsletter-form .theme-btn {
-  -webkit-box-flex: 0;
-  -ms-flex: none;
-  flex: none;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding: 12px 20px;
 }
 
 @media only screen and (max-width: 479px) {
+  .newsletter-form {
+    padding: 6px;
+  }
+  
+  .newsletter-form input {
+    padding: 10px 4px 10px 20px;
+    font-size: 14px;
+  }
+  
+  .newsletter-form .theme-btn {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
   .newsletter-form .theme-btn i {
     display: none;
   }

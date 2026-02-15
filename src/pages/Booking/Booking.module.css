@@ -1,25 +1,24 @@
 .bookingContainer{
-    display: flex;
-    padding: 50px;
-
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 20px;
 }
 .bookingLeft{
-    flex: 0 0 30%;
-    width: 100%;
-    height: auto;
+  width: 100%;
 }
 .bookingRight{
-    flex: 0 0 70%;
-    padding-left: 100px;
+  width: 100%;
 }
 .bookingHotelImage{
-    width: 100%;
-    height: 30%;
-    margin-bottom: 20px;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
 }
 .bookingDatePicker{
-    width: 100%;
-    
+  width: 100%;
 }
 .hotelName{
     display: flex;
@@ -145,4 +144,52 @@
 }
 .weight{
     font-weight: bold;
+}
+
+/* Responsive breakpoint: tablet and up */
+@media (min-width: 768px) {
+  .bookingContainer{
+    flex-direction: row;
+    padding: 32px;
+    gap: 32px;
+    align-items: flex-start;
+  }
+
+  .bookingLeft{
+    flex: 0 0 34%;
+    max-width: 34%;
+  }
+
+  .bookingRight{
+    flex: 1 1 66%;
+    max-width: 66%;
+    padding-left: 40px;
+  }
+
+  .bookingHotelImage{
+    height: 220px;
+  }
+}
+
+/* Desktop: relax spacing */
+@media (min-width: 1024px) {
+  .bookingContainer{
+    padding: 50px;
+    gap: 40px;
+  }
+
+  .bookingLeft{
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+
+  .bookingRight{
+    flex: 0 0 70%;
+    max-width: 70%;
+    padding-left: 100px;
+  }
+
+  .bookingHotelImage{
+    height: 260px;
+  }
 }

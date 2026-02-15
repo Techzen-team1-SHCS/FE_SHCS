@@ -1047,3 +1047,43 @@
   }
 }
 
+/* ===============================
+   RESPONSIVE MOBILE
+================================ */
+
+@keyframes arrowFlowMobile {
+  0% {
+    opacity: 0.15;
+    transform: rotate(90deg) translateX(-0px);
+  }
+  50% {
+    opacity: 0.9;
+    transform: rotate(90deg) translateX(8px);
+  }
+  100% {
+    opacity: 0.15;
+    transform: rotate(90deg) translateX(0px);
+  }
+}
+
+@media (max-width: 768px) {
+  .ai-steps-flow {
+    flex-direction: column;
+    gap: 12px;
+    margin: 24px 0 20px;
+  }
+
+  .ai-step {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .ai-step-arrow {
+    animation: arrowFlowMobile 1.2s ease-in-out infinite;
+    margin: 4px 0;
+    font-size: 24px;
+    display: block;
+  }
+}
+

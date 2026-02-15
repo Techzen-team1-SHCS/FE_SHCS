@@ -50,7 +50,7 @@
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 8px;   
 }
 
 .btnRegister{
@@ -188,7 +188,12 @@
     width: 220px;
     align-items: center;
 }
-
+@media (max-width: 991px) {
+    .authT{
+        justify-content: flex-end;
+        width: 130px;
+    }
+}
 .customFaUser{
     width: 34px;
     height: 34px;
@@ -223,4 +228,14 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+}
+@media (max-width: 991px) {
+        .authAppear{
+                width: 160px;
+        }
+        .userMenu {
+                width: 160px;
+                width: 200px;
+                margin-right: 50px;
+        }
 }

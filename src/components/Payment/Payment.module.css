@@ -301,8 +301,9 @@
   --c2: #478ac9;
   --size-letter: 32px;
   padding: 0.5em 1em;
-  font-size: var(--size-letter);
-
+  width: 30%;
+  font-size: 16px;
+  margin-bottom: 20px;
   background-color: transparent;
   border: calc(var(--size-letter) / 6) solid var(--c2);
   border-radius: 0.2em;
@@ -344,7 +345,11 @@
     width: calc(120% + 1em);
   }
 }
-
+@media (max-width: 768px) {
+  .slice {
+    width: 100%;
+  }
+}
 .slice:active {
   scale: 0.98;
   filter: brightness(0.9);

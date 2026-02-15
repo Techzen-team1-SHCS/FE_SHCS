@@ -51,9 +51,9 @@ function SearchBar() {
 
         if (showDatePicker === 'checkIn') {
             if (filters.checkOut && selectedDate >= new Date(filters.checkOut)) {
-            toast.error("❌ Ngày nhận phòng phải trước ngày trả phòng");
-            return;
-        }
+                toast.error("❌ Ngày nhận phòng phải trước ngày trả phòng");
+                return;
+            }
             setFilters(prev => ({ ...prev, checkIn: date }));
             if (!filters.checkOut) setShowDatePicker('checkOut');
             else setShowDatePicker(null);
@@ -389,29 +389,9 @@ function SearchBar() {
 
                 {/* Date Picker Popup */}
                 {showDatePicker && (
-                    <div style={{
-                        position: 'absolute',
-                        backgroundColor: 'white',
-                        border: '1px solid #ccc',
-                        borderRadius: '12px',
-                        padding: '20px',
-                        zIndex: 1000,
-                        boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                        fontFamily: "'Outfit', sans-serif",
-                        width: '650px',
-                        top: '100%',
-                        left: '50%',
-                        transform: 'translateX(-50%)'
-                    }}>
+                    <div className="search-bar-date-picker">
                         {/* Header với thông tin và nút hủy */}
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            marginBottom: '20px',
-                            borderBottom: '1px solid #eee',
-                            paddingBottom: '15px'
-                        }}>
+                        <div className="search-bar-date-header">
                             <div style={{ flex: 1 }}>
                                 <h3 style={{ margin: 0, color: '#333' }}>
                                     {showDatePicker === 'checkIn' ? 'Chọn ngày nhận phòng' : 'Chọn ngày trả phòng'}
@@ -487,7 +467,7 @@ function SearchBar() {
                                     )}
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div className="search-bar-date-close-btn" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <button
                                     onClick={() => setShowDatePicker(null)}
                                     style={{
@@ -507,13 +487,7 @@ function SearchBar() {
                         </div>
 
                         {/* Nút chuyển tháng */}
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            marginBottom: '15px',
-                            padding: '0 10px'
-                        }}>
+                        <div className="search-bar-month-nav">
                             <button
                                 onClick={() => handleMonthChange('prev')}
                                 disabled={monthOffset === 0}
@@ -579,24 +553,12 @@ function SearchBar() {
                         </div>
 
                         {/* Lịch */}
-                        <div style={{
-                            display: 'flex',
-                            gap: '30px',
-                            justifyContent: 'center',
-                            minHeight: '250px'
-                        }}>
+                        <div className="search-bar-calendar-grid">
                             {generateCalendar(monthOffset)}
                         </div>
 
                         {/* Hướng dẫn */}
-                        <div style={{
-                            marginTop: '20px',
-                            padding: '12px',
-                            backgroundColor: '#f8f9fa',
-                            borderRadius: '8px',
-                            fontSize: '12px',
-                            color: '#666'
-                        }}>
+                        <div className="search-bar-info">
                             <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                     <div style={{

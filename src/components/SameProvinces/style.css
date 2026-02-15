@@ -1,7 +1,12 @@
 .same-province-hotels {
   width: 100%;
 }
-
+@media (max-width: 768px) {
+  .same-province-hotels h2{
+   font-size: 24px;
+   font-weight: 600;
+  }
+}
 .hotels-grid {
   width: 100%;
   display: flex;

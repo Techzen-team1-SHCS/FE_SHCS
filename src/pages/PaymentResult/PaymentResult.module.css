@@ -97,6 +97,7 @@
 @media (max-width: 768px) {
   .pageWrapper {
     padding: 15px;
+
   }
   
   .resultCard {
@@ -113,11 +114,12 @@
   
   .homeButton {
     width: 100%;
-    max-width: 200px;
+    max-width: none;
   }
 }
 
 @media (max-width: 480px) {
+
   .resultCard {
     padding: 25px 15px;
   }

@@ -1,6 +1,7 @@
 .container {
   min-height: 100vh;
   background: #f8fafc;
+  margin-top: 100px;
 }
 
 /* Hero Banner */
@@ -502,6 +503,9 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .container {
+    margin-top: 60px;
+  }
   .heroTitle {
     font-size: 2rem;
   }
