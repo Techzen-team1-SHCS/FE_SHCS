@@ -281,7 +281,7 @@ function SearchBar() {
     };
 
     return (
-        <div className="container container-1200" style={{ fontFamily: "'Outfit', sans-serif", zIndex: '80' }}>
+        <div className="container container-1200" style={{ fontFamily: "'Outfit', sans-serif", zIndex: '1' }}>
             <div
                 className="search-filter-inner"
                 data-aos="zoom-out-down"

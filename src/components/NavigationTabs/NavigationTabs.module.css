@@ -194,15 +194,70 @@
 @media (max-width: 576px) {
   .tabContainer {
     flex-direction: column;
+    align-items: flex-start;
+    height: 400px;
   }
-  
+
   .tab {
     width: 100%;
     justify-content: flex-start;
     min-height: 60px;
   }
-  
+
+  /* Loader chuyển thành dọc */
   .loader {
-    display: none;
+    width: 2px;
+    height: 100%;
+    align-self: left;
+    margin-left: 40px;  
+  }
+
+  /* Hòn đá */
+  .loader:after {
+    left: 50%;
+    top: 0;
+  }
+
+  /* Active → chạy từ trên xuống */
+  .loader.active:after {
+    animation: rollingRockVertical 2.5s cubic-bezier(.79, 0, .47, .97) infinite;
+  }
+
+  /* Paused → đứng yên ở trên */
+  .loader.paused:after {
+    animation: none;
+    top: 0;
+    transform: translateX(-50%) rotate(0deg);
+  }
+}
+@keyframes rollingRockVertical {
+  0% {
+    top: 0;
+    transform: translateX(-50%) rotate(0deg);
+  }
+
+  20% {
+    top: 20%;
+    transform: translateX(-50%) rotate(72deg);
+  }
+
+  40% {
+    top: 40%;
+    transform: translateX(-50%) rotate(144deg);
+  }
+
+  60% {
+    top: 60%;
+    transform: translateX(-50%) rotate(216deg);
+  }
+
+  80% {
+    top: 80%;
+    transform: translateX(-50%) rotate(288deg);
+  }
+
+  100% {
+    top: 100%;
+    transform: translateX(-50%) rotate(360deg);
   }
 }

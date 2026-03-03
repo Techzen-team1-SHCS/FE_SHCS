@@ -40,3 +40,46 @@
     align-items: center !important;
     height: auto !important;
 }
+
+
+
+
+.navWrapper {
+  position: relative;
+  width: 100%;
+  
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-290%);
+}
+
+.navBtn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  border: none;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.3s ease;
+}
+
+.navBtn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.1);
+}
+
+.navBtn svg {
+  transition: stroke 0.3s ease;
+  
+}
+
+.navBtn:hover svg {
+  stroke: #ffcc00;
+}

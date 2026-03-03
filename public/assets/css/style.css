@@ -4558,7 +4558,11 @@ blockquote {
   -o-transition: all 500ms ease;
   transition: all 500ms ease;
 }
-
+@media (max-width: 768px) {
+  .main-header .header-upper {
+    max-height: 60px;
+  }
+}
 .main-header .logo-outer {
   -webkit-box-flex: 0;
   -ms-flex: none;
@@ -5783,6 +5787,14 @@ blockquote {
   padding: 20px  10px;
   -webkit-box-shadow: 10px 4px 60px rgba(197, 197, 197, 0.25);
   box-shadow: 10px 4px 60px rgba(197, 197, 197, 0.25);
+}
+
+/* Reset z-index on mobile to avoid conflict with filter drawer */
+@media (max-width: 991px) {
+  .search-filter-inner {
+    z-index: auto;
+    position: relative;
+  }
 }
 
 @media only screen and (max-width: 1299px) {
@@ -7498,7 +7510,24 @@ blockquote {
 .count-text.m-plus:after {
   content: 'm+';
 }
-
+@media only screen and (max-width: 768px) {
+  .count-text.k-plus {
+    display: flex;
+    justify-content: center;
+  }
+  .count-text.m-plus {
+    display: flex;
+    justify-content: center;
+  }
+  .counter-title{
+    display: flex;
+    justify-content: center;
+  }
+  .theme-btn.mt-10.style-two {
+    display: flex;
+    justify-content: center;
+  }
+}
 /*******************************************************/
 /******************** ## About Area ********************/
 /*******************************************************/

@@ -27,8 +27,9 @@ function HotelList() {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [viewMode, setViewMode] = useState("infinite");
   const [currentPage, setCurrentPage] = useState(1);
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
   const { user } = useContext(AuthContext);
-  
+  const [tempMobileFilters, setTempMobileFilters] = useState([]);
   // Approve user
   const userRef = useRef(null);
   const hasSentRef = useRef(false);
@@ -152,7 +153,7 @@ function HotelList() {
     onSuccess: (data) => {
       if (isInitialMountRef.current && data?.pages?.[0]?.hotels?.length > 0) {
         isInitialMountRef.current = false;
-        
+
         const hasMore = data.pages[0].pagination?.current_page < data.pages[0].pagination?.last_page;
         if (hasMore && !isFetchingNextPage && !sentinelTriggeredRef.current) {
           setTimeout(() => {
@@ -220,7 +221,7 @@ function HotelList() {
     const handleIntersection = (entries) => {
       const [entry] = entries;
       const now = Date.now();
-      
+
       // Throttle
       if (now - lastLoadTimeRef.current < 500) {
         return;
@@ -242,13 +243,13 @@ function HotelList() {
       if (sentinelElement && observerRef.current) {
         observerRef.current.observe(sentinelElement);
         console.log("👁️ Observer attached to MID-LIST sentinel");
-        
+
         // Kiểm tra xem sentinel có đang trong viewport không
         const checkSentinelVisibility = () => {
           if (sentinelElement) {
             const rect = sentinelElement.getBoundingClientRect();
             const isVisible = rect.top <= window.innerHeight;
-            
+
             if (isVisible && hasNextPage && !isFetchingNextPage && !sentinelTriggeredRef.current) {
               console.log("🎯 Sentinel is already visible! Triggering immediate load...");
               sentinelTriggeredRef.current = true;
@@ -256,7 +257,7 @@ function HotelList() {
             }
           }
         };
-        
+
         setTimeout(checkSentinelVisibility, 100);
       }
     }, 100);
@@ -271,8 +272,8 @@ function HotelList() {
   }, [viewMode, hasNextPage, isFetchingNextPage, fetchNextPage, infiniteData?.pages?.length]);
 
   // =========== DATA PROCESSING ===========
-  let hotels = [];
-  let totalResults = 0;
+  let hotels = mockHotels; // Mặc định dùng mock data để hiển thị ngay, sẽ bị ghi đè khi query thành công
+  let totalResults = mockHotels.length;
   let paginationInfo = null;
   let loading = false;
   let isError = false;
@@ -454,7 +455,7 @@ function HotelList() {
   return (
     <div className="page-wrapper">
       <section
-        className="page-banner-area pt-50 pb-35 rel z-1 bgs-cover"
+        className="page-banner-area pt-50 pb-35 rel bgs-cover"
         style={{ backgroundImage: "url(assets/images/banner/banner.jpg)" }}
       >
         <div className="container">
@@ -469,7 +470,7 @@ function HotelList() {
       <section className="tour-list-page py-50 rel z-1">
         <div className="container">
           <div className="row flex">
-            <div className="col-lg-3 col-md-6 col-sm-10 rmb-75">
+            <div className="col-lg-3 col-md-6 col-sm-10 rmb-75 desktop-sidebar">
               <div className="sticky-sidebar">
                 <div
                   style={{
@@ -492,8 +493,47 @@ function HotelList() {
                   ></iframe>
                 </div>
 
-                <HotelListFilter onFilterChange={handleFilterChange} />
+                <HotelListFilter selected={selectedFilters} onFilterChange={handleFilterChange} />
               </div>
+            </div>
+
+            {/* Mobile Filter Button */}
+            <div className="mobile-filter-section">
+              <button
+                className="mobile-filter-btn"
+                onClick={() => setShowMobileFilter(!showMobileFilter)}
+              >
+                <i className="fal fa-filter" style={{ marginRight: '8px' }}></i>
+                Bộ lọc
+              </button>
+
+              {showMobileFilter && (
+                <>
+                  <div
+                    className="filter-backdrop"
+                    onClick={() => setShowMobileFilter(false)}
+                  />
+
+                  <div className="mobile-filter-drawer">
+                    <div className="drawer-header">
+                      <h3>Bộ lọc tìm kiếm</h3>
+                      <button
+                        className="close-btn"
+                        onClick={() => {
+                          handleFilterChange(tempMobileFilters);
+                          setShowMobileFilter(false)
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                    <div className="drawer-content">
+                      <HotelListFilter selected={tempMobileFilters}
+                        onFilterChange={setTempMobileFilters} />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="col-lg-9">
@@ -501,11 +541,11 @@ function HotelList() {
               <div className="hotel-list-header">
                 <div className="header-left">
                   {!loading || hotels.length > 0 ? (
-                    <h4 style={{ fontWeight: 700 }}>
+                    <h4 style={{ fontWeight: 300, fontSize: '18px' }}>
                       {destination}: tìm thấy {totalResults} chỗ nghỉ
                     </h4>
                   ) : (
-                    <h4 style={{ fontWeight: 700 }}>
+                    <h4 style={{ fontWeight: 300, fontSize: '18px' }}>
                       {destination}: đang tìm kiếm...
                     </h4>
                   )}
@@ -516,7 +556,7 @@ function HotelList() {
                       onClick={() => handleViewModeChange("infinite")}
                       title="Cuộn vô tận - load cực sớm"
                     >
-                      <FaSync /> Cuộn vô tận (LOAD SỚM)
+                      <FaSync /> Cuộn vô tận
                     </button>
                     <button
                       className={`mode-btn ${viewMode === "pagination" ? "active" : ""}`}
@@ -588,7 +628,7 @@ function HotelList() {
                   {hotels.map((hotel, index) => (
                     <div key={`${hotel.id}-${index}`}>
                       <HotelCard hotel={hotel} index={index} />
-                      
+
                       {/* 🚀🚀 SENTINEL ĐẶT Ở GIỮA DANH SÁCH */}
                       {index === sentinelPosition && hasNextPage && !isFetchingNextPage && !sentinelTriggeredRef.current && (
                         <div
@@ -637,7 +677,7 @@ function HotelList() {
                         background: 'transparent'
                       }}
                     />
-                  )}      
+                  )}
                   {/* End message */}
                   {!hasNextPage && hotels.length > 0 && !infiniteFetching && (
                     <div className="infinite-end-message">
@@ -938,7 +978,133 @@ function HotelList() {
           transform: translateY(-2px);
         }
         
+        /* Mobile Filter Styles */
+        .desktop-sidebar {
+          display: block;
+        }
+        
+        .mobile-filter-section {
+          display: none;
+          position: relative;
+          margin-bottom: 20px;
+        }
+        
+        .mobile-filter-btn {
+          width: 100%;
+          padding: 14px 16px;
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 16px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s;
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .mobile-filter-btn:active {
+          transform: scale(0.98);
+        }
+        
+        .filter-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.6);
+          z-index: 9999;
+          animation: fadeIn 0.3s ease;
+        }
+        
+        .mobile-filter-drawer {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: white;
+          border-radius: 20px 20px 0 0;
+          max-height: 90vh;
+          overflow-y: auto;
+          z-index: 10000;
+          animation: slideUp 0.3s ease;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes slideUp {
+          from {
+            transform: translateY(100%);
+          }
+          to {
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        
+        .drawer-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px 16px;
+          border-bottom: 1px solid #eee;
+          position: sticky;
+          top: 0;
+          background: white;
+          border-radius: 20px 20px 0 0;
+          z-index: 10;
+        }
+        
+        .drawer-header h3 {
+          margin: 0;
+          font-size: 18px;
+          color: #2d3748;
+        }
+        
+        .close-btn {
+          background: none;
+          border: none;
+          font-size: 32px;
+          color: #718096;
+          cursor: pointer;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: color 0.2s;
+        }
+        
+        .close-btn:active {
+          color: #2d3748;
+        }
+        
+        .drawer-content {
+          padding: 16px;
+        }
+        
         /* Responsive */
+        @media (max-width: 991px) {
+          .desktop-sidebar {
+            display: none;
+          }
+          
+          .mobile-filter-section {
+            display: block;
+          }
+        }
+        
         @media (max-width: 768px) {
           .hotel-list-header {
             flex-direction: column;
@@ -967,6 +1133,10 @@ function HotelList() {
           .mid-list-sentinel > div {
             font-size: 9px;
             padding: 2px 8px;
+          }
+          
+          .mobile-filter-drawer {
+            max-height: 80vh;
           }
         }
       `}</style>

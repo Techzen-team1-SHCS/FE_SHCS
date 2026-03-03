@@ -213,6 +213,30 @@
 .authUser{
     color: #243b55;
     font-weight: 600;
+    /* truncate long names to avoid breaking layout */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* ensure the parent flex container allows shrinking */
+.authT {
+    display:flex;
+    margin-right: 20px;
+    cursor: pointer;
+    width: 220px;
+    align-items: center;
+    /* allow child text to shrink */
+}
+
+@media (max-width: 991px) {
+    .authT{
+        justify-content: flex-end;
+        width: 130px;
+    }
 }
 
 .authAppear{

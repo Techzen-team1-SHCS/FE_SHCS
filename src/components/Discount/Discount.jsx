@@ -57,7 +57,10 @@ const Discount = () => {
                         modules={[Navigation, Pagination, Autoplay]}
                         spaceBetween={10}
                         slidesPerView={1}
-                        navigation
+                        navigation={{
+                            prevEl: '.discount-prev',
+                            nextEl: '.discount-next',
+                        }}
                         pagination={{ clickable: true }}
                         autoplay={{
                             delay: 5000,
@@ -94,6 +97,35 @@ const Discount = () => {
                             </SwiperSlide>
                         ))}
                     </Swiper>
+                    <div className={styles.navWrapper}>
+                        {/* PREV */}
+                        <button className={`discount-prev ${styles.navBtn}`}>
+                            <svg width="60" height="60" viewBox="0 0 24 24">
+                                <path
+                                    d="M15 18l-6-6 6-6"
+                                    stroke="white"
+                                    strokeWidth="2"
+                                    fill="none"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                        </button>
+
+                        {/* NEXT */}
+                        <button className={`discount-next ${styles.navBtn}`}>
+                            <svg width="60" height="60" viewBox="0 0 24 24">
+                                <path
+                                    d="M9 6l6 6-6 6"
+                                    stroke="white"
+                                    strokeWidth="2"
+                                    fill="none"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>

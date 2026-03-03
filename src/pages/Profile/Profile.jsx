@@ -352,10 +352,7 @@ const Profile = () => {
                                         <p className={styles.headerSubtitle}>Manage your personal information and preferences</p>
                                     </div>
                                     <div className={styles.headerActions}>
-                                        <button className={styles.helpBtn}>
-                                            <span>?</span>
-                                            <span className={styles.tooltip}>Need help?</span>
-                                        </button>
+                                        
                                         <div className={styles.userAvatar}>
                                             <img
                                                 src={preview || avatar}
