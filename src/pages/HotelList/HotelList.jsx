@@ -272,8 +272,8 @@ function HotelList() {
   }, [viewMode, hasNextPage, isFetchingNextPage, fetchNextPage, infiniteData?.pages?.length]);
 
   // =========== DATA PROCESSING ===========
-  let hotels = mockHotels; // Mặc định dùng mock data để hiển thị ngay, sẽ bị ghi đè khi query thành công
-  let totalResults = mockHotels.length;
+  let hotels = []; // Mặc định dùng mock data để hiển thị ngay, sẽ bị ghi đè khi query thành công
+  let totalResults = 0;
   let paginationInfo = null;
   let loading = false;
   let isError = false;
