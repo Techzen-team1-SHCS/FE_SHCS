@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "../../components/HotelListFilter/HotelListFilter.module.css";
 
-const HotelListFilter = ({ onFilterChange }) => {
+const HotelListFilter = ({ selected,onFilterChange }) => {
   const filterData = [
   {
     title: "Các bộ lọc phổ biến",
@@ -94,14 +94,12 @@ const HotelListFilter = ({ onFilterChange }) => {
   },
 ];
 
-  const [selected, setSelected] = useState([]);
 
   const handleCheckboxChange = (name, checked) => {
     let newSelected = [...selected];
     if (checked) newSelected.push(name);
     else newSelected = newSelected.filter((item) => item !== name);
 
-    setSelected(newSelected);
     onFilterChange(newSelected); // gửi danh sách filter lên cha
   };
 
@@ -131,7 +129,7 @@ const FilterGroup = ({ title, options, selected, onCheckboxChange }) => {
       <h4 className={styles.groupTitle}>{title}</h4>
       <ul className={styles.optionList}>
         {visibleOptions.map((option, idx) => {
-          const isChecked = selected.includes(option.name);
+          const isChecked = selected?.includes(option.name);
           return (
             <li key={idx} className={styles.optionItem}>
               <label className={styles.label}>

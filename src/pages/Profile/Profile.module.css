@@ -166,7 +166,14 @@
     border: 4px solid #667eea;
     overflow: hidden;
 }
-
+@media only screen and (max-width: 768px){
+    .headerContent{
+        flex-direction: column;
+        gap: 20px;
+        justify-content: center;
+    }
+   
+}
 .avatarImg {
     width: 100%;
     height: 100%;
@@ -667,6 +674,12 @@
     .headerContent {
         flex-direction: column;
         gap: 20px;
+    }
+    
+    /* make action buttons centered when stacked */
+    .headerActions {
+        justify-content: center;
+        width: 100%;
     }
     
     .formRow {

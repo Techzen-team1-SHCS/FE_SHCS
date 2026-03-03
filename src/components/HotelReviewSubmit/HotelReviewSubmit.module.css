@@ -20,6 +20,12 @@
   width: 100%;
   flex:0 0 30%;
 }
+@media (max-width: 768px) {
+  .starRating{
+    display: flex;
+    justify-content: center;
+  }
+}
 .form{
   width: 100%;
   display: flex;
