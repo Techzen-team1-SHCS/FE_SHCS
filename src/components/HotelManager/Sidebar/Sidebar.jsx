@@ -3,6 +3,7 @@ import styles from "./Sidebar.module.css";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from '../../../contexts/AuthContext';
 import { toast } from 'react-toastify';
+import { FiBell } from "react-icons/fi";
 
 const Sidebar = () => {
     const {
@@ -29,6 +30,7 @@ const Sidebar = () => {
 
     const menuItems = [
         { path: "/hotel-manager/hotel", label: "Hotel", icon: "🏨" },
+        { path: "/hotel-manager/notification", label: "Notifications", icon: <FiBell /> },
 
     ];
 
