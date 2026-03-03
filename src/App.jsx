@@ -31,6 +31,8 @@ import DiscountList from './pages/Discount/DiscountList';
 import DiscountDetail from './pages/Discount/DiscountDetail';
 import SettingPage from './pages/Admin/Setting/SettingPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import HotelManagerLayout from './layouts/HotelManagerLayout/HotelManagerLayout';
+import Hotel from './pages/HotelManager/Hotel/Hotel';
 const queryClient = new QueryClient();
 function App() {
   return (
@@ -72,6 +74,15 @@ function App() {
             <Route path="/admin/hotels-manage" element={<HotelManage />} />
             <Route path="/admin/users-manage" element={<UserManage />} />
             <Route path="/admin/settings" element={<SettingPage />} />
+          </Route>
+          {/* Route hotel manager */}
+          <Route element={
+            //<AdminPrivateRoute>
+              <HotelManagerLayout />
+            //</AdminPrivateRoute>
+          }>
+            <Route path="/hotel-manager/hotel" element={<Hotel />} />
+            
           </Route>
         </Routes>
         <ToastContainer
