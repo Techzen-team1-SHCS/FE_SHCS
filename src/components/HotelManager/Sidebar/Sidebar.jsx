@@ -4,6 +4,10 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from '../../../contexts/AuthContext';
 import { toast } from 'react-toastify';
 import { FiBell } from "react-icons/fi";
+import { FaChartBar } from "react-icons/fa";
+import { FaHotel } from "react-icons/fa";
+import { MdAddBusiness } from "react-icons/md";
+
 
 const Sidebar = () => {
     const {
@@ -29,7 +33,9 @@ const Sidebar = () => {
     };
 
     const menuItems = [
-        { path: "/hotel-manager/hotel", label: "Hotel", icon: "🏨" },
+        { path: "/hotel-manager/hotel", label: "Hotel", icon: <FaHotel /> },
+        { path: "/hotel-manager/registerhotel", label: "RegisterHotel", icon: <MdAddBusiness />  },
+        { path: "/hotel-manager/analysis", label: "Analysis", icon: <FaChartBar />  },
         { path: "/hotel-manager/notification", label: "Notifications", icon: <FiBell /> },
 
     ];
