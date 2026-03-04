@@ -23,6 +23,7 @@ const HotelManagerLayout = () => {
     const getTitleFromPath = () => {
         const pathToTitle = {
             "/hotel-manager/hotel": "Hotel",
+            "/hotel-manager/notification": "Notifications",
         };
 
         return pathToTitle[location.pathname] || "Hotel Manager Panel";

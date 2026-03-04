@@ -17,7 +17,7 @@
     background-color: lightgray;
 }
 .active{
-    background-color: rgba(172, 127, 94, 1);
+    background-color: #B8DEFF;
     color: white;
 }
 .active:hover {
