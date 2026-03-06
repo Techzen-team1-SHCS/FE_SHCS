@@ -3,7 +3,9 @@
   background-color: #f5f7fb;
   min-height: 100vh;
 }
-
+.tr{
+  text-align: center;
+}
 .title {
   font-size: 20px;
   font-weight: 600;
@@ -64,7 +66,7 @@
 
 .table th {
   padding: 14px;
-  text-align: left;
+  text-align: center;
   border-bottom: 1px dashed #EDF2F9;
   font-weight: 600;
 }
