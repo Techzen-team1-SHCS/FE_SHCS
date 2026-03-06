@@ -62,7 +62,7 @@ export default function HotelManagement() {
       <div className={styles.tableWrapper}>
         <table className={styles.table}>
           <thead>
-            <tr>
+            <tr >
               <th>Hotel name</th>
               <th>ID hotel</th>
               <th>Avg rating</th>
@@ -76,7 +76,7 @@ export default function HotelManagement() {
 
           <tbody>
             {currentHotels.map((hotel) => (
-              <tr key={hotel.id}>
+              <tr key={hotel.id} className={styles.tr}>
                 <td>{hotel.name}</td>
                 <td>{hotel.hotelId}</td>
                 <td>{hotel.rating}</td>

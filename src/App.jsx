@@ -35,6 +35,7 @@ import HotelManagerLayout from './layouts/HotelManagerLayout/HotelManagerLayout'
 import Hotel from './pages/HotelManager/Hotel/Hotel';
 import Notifications from './pages/HotelManager/Notification/Notifcation';
 import Analysis from './pages/HotelManager/Analysis/Analysis';
+import RegisterHotel from './pages/HotelManager/RegisterHotel/RegisterHotel';
 const queryClient = new QueryClient();
 function App() {
   return (
@@ -84,6 +85,7 @@ function App() {
             //</AdminPrivateRoute>
           }>
             <Route path="/hotel-manager/hotel" element={<Hotel />} />
+            <Route path="/hotel-manager/registerhotel" element={<RegisterHotel />} />
             <Route path="/hotel-manager/analysis" element={<Analysis />} />
             <Route path="/hotel-manager/notification" element={<Notifications />} />
             
