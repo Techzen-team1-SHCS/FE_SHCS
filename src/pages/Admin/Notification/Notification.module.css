@@ -1,7 +1,5 @@
 .pageContainer {
   padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
   background: #f8fafc;
   min-height: 100vh;
 }

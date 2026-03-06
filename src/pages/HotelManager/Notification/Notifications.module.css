@@ -48,12 +48,22 @@
 }
 
 .leftIcon {
-  font-size: 28px;
-  margin-right: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
-
+.leftIcon img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
 .content {
   flex: 1;
+  margin-left: 20px;
 }
 
 .header {
