@@ -372,7 +372,7 @@ const ChatWidget = () => {
       )}
 
       {/* eslint-disable-next-line react/no-unknown-property */}
-      <style jsx>{`
+      <style>{`
         /* Biến CSS */
         :root {
           --primary-color: #4361ee;
