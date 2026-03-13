@@ -7,7 +7,7 @@ import LoadingState from "../Component/LoadingState/LoadingState";
 import ErrorState from "../Component/ErrorState/ErrorState";
 import RecommendationGrid from "../Component/RecommendationGrid/RecommendationGrid";
 
-import { useRecommendLogic } from "../hooks/useRecommendLogic";
+import { useRecommendLogic } from "../Hooks/useRecommendLogic";
 
 import TopHotelSlider from "../../../../components/TopHotelSlider/TopHotelSlider";
 
