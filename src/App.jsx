@@ -31,11 +31,11 @@ import DiscountList from './pages/Discount/DiscountList';
 import DiscountDetail from './pages/Discount/DiscountDetail';
 import SettingPage from './pages/Admin/Setting/SettingPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import HotelManagerLayout from './layouts/HotelManagerLayout/HotelManagerLayout';
-import Hotel from './pages/HotelManager/Hotel/Hotel';
-import Notifications from './pages/HotelManager/Notification/Notifcation';
-import Analysis from './pages/HotelManager/Analysis/Analysis';
-import RegisterHotel from './pages/HotelManager/RegisterHotel/RegisterHotel';
+import HotelManagerLayout from './pages/HotelManager/Components/HotelManagerLayout/HotelManagerLayout';
+import Hotel from './pages/HotelManager/Main/Hotel/Hotel';
+import Notifications from './pages/HotelManager/Main/Notification/Notifcation';
+import Analysis from './pages/HotelManager/Main/Analysis/Analysis';
+import RegisterHotel from './pages/HotelManager/Main/RegisterHotel/RegisterHotel';
 const queryClient = new QueryClient();
 function App() {
   return (
