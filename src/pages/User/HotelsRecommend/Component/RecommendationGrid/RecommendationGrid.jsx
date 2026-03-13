@@ -1,6 +1,6 @@
 import HotelCardRecommendation from "../HotelCardRecommendation/HotelCardRecommendation";
 import { FaStar } from "react-icons/fa";
-import { getAIColor } from "../../helpers/getAIColor";
+import { getAIColor } from "../../Helpers/getAIColor";
 
 const RecommendationGrid = ({ hotels }) => {
 
