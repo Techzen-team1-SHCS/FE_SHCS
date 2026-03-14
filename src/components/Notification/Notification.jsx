@@ -3,6 +3,7 @@ import styles from './Notification.module.css';
 import '../../config/echo';
 import { useNavigate } from 'react-router-dom';
 import PartLoading from '../Loading/PartLoading';
+import api from '../../services/api';
 
 const Notification = ({ userId }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -44,53 +45,9 @@ const Notification = ({ userId }) => {
             console.log("📨 Fetching notifications on mount");
             setLoading(true);
             try {
-                const res = await fetch('/api/auth/notifications', {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (!res.ok) {
-                    // Nếu token hết hạn, thử lấy lại token
-                    if (res.status === 401) {
-                        const refreshRes = await fetch('/api/auth/refresh', {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `Bearer ${localStorage.getItem('refreshToken')}`,
-                            }
-                        });
-                        
-                        if (refreshRes.ok) {
-                            const { token } = await refreshRes.json();
-                            localStorage.setItem('token', token);
-                            
-                            // Thử fetch lại notifications
-                            const retryRes = await fetch('/api/auth/notifications', {
-                                headers: {
-                                    'Authorization': `Bearer ${token}`,
-                                    'Content-Type': 'application/json'
-                                }
-                            });
-                            
-                            if (retryRes.ok) {
-                                const data = await retryRes.json();
-                                setNotifications(data.notifications || []);
-                                setHasFetched(true);
-                            } else {
-                                throw new Error('Failed to fetch notifications after refresh');
-                            }
-                        } else {
-                            throw new Error('Token expired and refresh failed');
-                        }
-                    } else {
-                        throw new Error('Failed to fetch notifications');
-                    }
-                } else {
-                    const data = await res.json();
-                    setNotifications(data.notifications || []);
-                    setHasFetched(true);
-                }
+                const res = await api.get('/auth/notifications');
+                setNotifications(res.data.notifications || []);
+                setHasFetched(true);
             } catch (err) {
                 console.error('Notification fetch error:', err);
                 setError('Không thể tải thông báo');
@@ -101,8 +58,10 @@ const Notification = ({ userId }) => {
             }
         };
 
-        fetchNotifications();
-    }, [hasFetched]); // Chỉ chạy khi hasFetched thay đổi
+        if (userId) {
+            fetchNotifications();
+        }
+    }, [userId, hasFetched]); // Chỉ chạy khi hasFetched thay đổi
 
     // ✅ Realtime notifications - Kết nối ngay khi có userId
     useEffect(() => {

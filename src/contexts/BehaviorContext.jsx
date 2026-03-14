@@ -46,7 +46,7 @@ export const BehaviorProvider = ({ children }) => {
 
     try {
       await axios.post(
-        "http://localhost:8000/api/auth/user-behaviors/batch",
+        import.meta.env.VITE_API_URL + "/auth/user-behaviors/batch",
         { logs: batch },
         {
           headers: {

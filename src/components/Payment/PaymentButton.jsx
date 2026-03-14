@@ -34,14 +34,14 @@ const PaymentButton = ({ amount, bookingInfo }) => {
     setLoading(true);
     try {
       // TRƯỚC TIÊN: XÁC THỰC PASSWORD
-      const authResponse = await axios.post('http://localhost:8000/api/payment/authenticate', {
+      const authResponse = await axios.post(import.meta.env.VITE_API_URL + '/payment/authenticate', {
         phoneNumber: phoneNumber,
         password: password
       });
 
       if (authResponse.data.success) {
         // NẾU PASSWORD ĐÚNG: GỬI OTP
-        const otpResponse = await axios.post('http://localhost:8000/api/payment/send-otp', {
+        const otpResponse = await axios.post(import.meta.env.VITE_API_URL + '/payment/send-otp', {
           phoneNumber: phoneNumber,
         });
 
@@ -101,7 +101,7 @@ const PaymentButton = ({ amount, bookingInfo }) => {
         phoneNumber: phoneNumber,
         otp: otpCode
       };
-      const response = await axios.post('http://localhost:8000/api/payment/verify-otp', payload);
+      const response = await axios.post(import.meta.env.VITE_API_URL + '/payment/verify-otp', payload);
 
       if (response.data.success) {
         alert('Thanh toán thành công!');
