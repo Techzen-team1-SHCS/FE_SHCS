@@ -26,9 +26,15 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('API Error:', error.response?.status, error.config?.url);
     if (error.response?.status === 401) {
+      console.warn('Unauthorized! Clearing storage and redirecting...');
       localStorage.removeItem('token');
-      window.location.href = '/';
+      localStorage.removeItem('user');
+      // Chỉ redirect nếu không phải đang ở trang chủ để tránh loop
+      if (window.location.pathname !== '/') {
+        window.location.href = '/';
+      }
     }
     return Promise.reject(error);
   }

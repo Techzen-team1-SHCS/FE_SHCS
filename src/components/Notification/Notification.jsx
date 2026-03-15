@@ -135,10 +135,7 @@ const Notification = ({ userId }) => {
     // Mark as read
     const markAsRead = async (id) => {
         try {
-            await fetch(`/api/auth/notifications/${id}/read`, {
-                method: 'PUT',
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            });
+            await api.put(`/auth/notifications/${id}/read`);
             setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
         } catch (err) {
             console.error(err);
@@ -148,10 +145,7 @@ const Notification = ({ userId }) => {
     // Mark all as read
     const markAllAsRead = async () => {
         try {
-            await fetch('/api/auth/notifications/mark-all-read', {
-                method: 'PUT',
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            });
+            await api.put('/auth/notifications/mark-all-read');
             setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
         } catch (err) {
             console.error(err);
