@@ -6,7 +6,7 @@ window.Pusher = Pusher;
 window.Echo = new Echo({
     broadcaster: 'reverb',
     key: 'fm1tyjgkqjeyxj3yczff',
-    wsHost: 'be-shcs.onrender.com',
+    wsHost: 'hotel-booking-reverb.onrender.com',
     wsPort: 443,
     wssPort: 443,
     forceTLS: true,
