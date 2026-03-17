@@ -1,34 +1,32 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home/Home';
+import Home from './pages/User/Home/Main/Home';
 import './App.css'
-import HotelList from './pages/HotelList/HotelList';
+import HotelList from './pages/User/HotelList/Main/HotelList';
 import MainLayout from './layouts/MainLayout/MainLayout';
-import About from './pages/About/About';
-import Destination1 from './pages/Destination1/Destination1';
-import ContactUs from './pages/ContactUs/ContactUs';
+import About from './pages/User/About/Main/About';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
-import BlogList from './pages/BlogList/BlogList';
-import HotelDetail from './pages/HotelDetail/HotelDetail';
+import BlogList from './pages/User/BlogList/Main/BlogList';
+import HotelDetail from './pages/User/HotelDetail/Main/HotelDetail';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ResetPassword from './pages/ResetPassword/ResetPassword';
+import ResetPassword from './pages/User/ResetPassword/Main/ResetPassword';
 import { BehaviorProvider } from './contexts/BehaviorContext';
-import HotelsRecommend from './pages/HotelsRecommend/HotelsRecommend';
-import Booking from './pages/Booking/Booking';
-import PaymentResult from './pages/PaymentResult/PaymentResult';
-import ManageBooking from './pages/ManageBooking/ManageBooking';
-import Profile from './pages/Profile/Profile';
+import HotelsRecommend from './pages/User/HotelsRecommend/Main/HotelsRecommend';
+import Booking from './pages/User/Booking/Main/Booking';
+import PaymentResult from './pages/User/PaymentResult/Main/PaymentResult';
+import ManageBooking from './pages/User/ManageBooking/Main/ManageBooking';
+import Profile from './pages/User/Profile/Main/Profile';
 import AdminLayout from './layouts/AdminLayout/AdminLayout'
 import Dashboard from './pages/Admin/Dashboard/Dashboard'
 import BookingManage from './pages/Admin/BookingManage/BookingManage';
-import WishList from './pages/WishList/WishList';
+import WishList from './pages/User/WishList/Main/WishList';
 import Notification from './pages/Admin/Notification/Notification';
 import HotelManage from './pages/Admin/HotelManage/HotelManage';
 import UserManage from './pages/Admin/UserManage/UserManage';
 import LoginPage from './pages/Admin/LoginPage/LoginPage';
-import Help from './pages/Help/Help';
-import DiscountList from './pages/Discount/DiscountList';
-import DiscountDetail from './pages/Discount/DiscountDetail';
+import Help from './pages/User/Help/Main/Help';
+import DiscountList from './pages/User/Discount/Main/DiscountList';
+import DiscountDetail from './pages/User/Discount/Main/DiscountDetail';
 import SettingPage from './pages/Admin/Setting/SettingPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import HotelManagerLayout from './layouts/HotelManagerLayout/HotelManagerLayout';
@@ -48,8 +46,6 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/HotelList" element={<HotelList />} />
             <Route path="/About" element={<About />} />
-            <Route path="/Destination1" element={<Destination1 />} />
-            <Route path="/ContactUs" element={<ContactUs />} />
             <Route path='*' element={<NotFoundPage />}></Route>
             <Route path='/BlogList' element={<BlogList />}></Route>
             <Route path='/hotel/:hotelId' element={<HotelDetail />}></Route>
