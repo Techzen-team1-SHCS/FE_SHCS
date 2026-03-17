@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^41.4.2",
+    "@ckeditor/ckeditor5-react": "^11.0.1",
     "@react-oauth/google": "^0.12.2",
     "@tanstack/react-query": "^5.90.12",
     "axios": "^1.13.1",
