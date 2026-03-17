@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api'; // URL của Laravel backend
+const API_BASE_URL = import.meta.env.VITE_API_URL; // URL của Laravel backend
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -21,14 +21,20 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
+///
 // Response interceptor để xử lý lỗi
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('API Error:', error.response?.status, error.config?.url);
     if (error.response?.status === 401) {
+      console.warn('Unauthorized! Clearing storage and redirecting...');
       localStorage.removeItem('token');
-      window.location.href = '/';
+      localStorage.removeItem('user');
+      // Chỉ redirect nếu không phải đang ở trang chủ để tránh loop
+      if (window.location.pathname !== '/') {
+        window.location.href = '/';
+      }
     }
     return Promise.reject(error);
   }
