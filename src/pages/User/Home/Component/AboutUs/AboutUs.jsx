@@ -1,5 +1,3 @@
-import React from "react";
-
 const AboutUs = () => {
   return (
     <section className="about-us-area py-100 rpb-90 rel z-1">

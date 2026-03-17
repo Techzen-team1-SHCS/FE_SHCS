@@ -1,13 +1,11 @@
 import React from 'react';
 import './style.css';
-import { useNavigate } from 'react-router-dom';
 import Button from '../../../../../components/Button/Button';
 import PartLoading from '../../../../../components/Loading/PartLoading';
 import { useSimilarHotels } from '../../Hooks/useSimilarHotels';
 import { getHotelImage, getHotelGuest } from '../../Helpers/hotelHelper';
 
 function SimilarHotel({ currentHotelId }) {
-  const navigate = useNavigate();
 
   // SỬA: Dùng React Query thay vì useState + useEffect
   const {

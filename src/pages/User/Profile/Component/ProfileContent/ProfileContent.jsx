@@ -1,4 +1,3 @@
-import React from "react";
 import RenderEditField from "../renderEditField/renderEditField";
 export default function ProfileContent({
     styles,
@@ -8,7 +7,6 @@ export default function ProfileContent({
     avatar,
     handleEditAvatar,
     formData,
-    renderEditField,
     editingField,
     EditFieldActions,
     EditButton,

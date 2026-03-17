@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './BookingSidebarContent.module.css';
 
 const BookingSidebarContent = ({ booking }) => {
@@ -8,16 +7,11 @@ const BookingSidebarContent = ({ booking }) => {
         bookingTitle,
         userSection,
         userInfo,
-        userAvatar,
         avatarContainer,
         avatarImage,
         avatarPlaceholder,
         userName,
         userContact,
-        hotelSection,
-        hotelInfo,
-        hotelName,
-        hotelDetails,
         bookingDetails,
         sectionTitle,
         detailGrid,
@@ -41,14 +35,6 @@ const BookingSidebarContent = ({ booking }) => {
         priceLabel,
         priceValue,
         totalPrice,
-        actionsSection,
-        actionButton,
-        editButton,
-        cancelButton,
-        confirmButton,
-        checkinButton,
-        checkoutButton,
-        icon,
         notesSection,
         notesText,
         timestampSection,

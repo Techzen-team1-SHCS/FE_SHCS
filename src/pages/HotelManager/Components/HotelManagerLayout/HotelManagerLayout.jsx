@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import styles from "./HotelManagerLayout.module.css";
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from "../Sidebar/Sidebar";
 import { AuthContext } from '../../../../contexts/AuthContext';
 

@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import styles from "./Analysis.module.css";
 import Select from "react-select";
 import { data } from "../../Mock/chartData";
@@ -16,7 +15,6 @@ import {
   BOOKING_CHART_RANGE,
   BOOKING_CHART_COLOR,
   ANALYSIS_SOLUTIONS,
-  ANALYSIS_PLACEHOLDER
 } from "../../Constants/Analysis/analysisConstants";
 import { selectStyles } from "../../Helpers/Analysis";
 import { useAnalysis } from "../../hooks/useAnalysis";

@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import styles from "../Profile.module.css"
 import { useContext } from 'react';
 import { AuthContext } from '../../../../contexts/AuthContext';
-import { Link } from 'react-router-dom';
+import Loader from '../../../../components/Loading/Loader';
 import EditButton from '../../../../components/EditButton/EditButton';
 import 'react-toastify/dist/ReactToastify.css';
 import PaymentMethod from '../Component/PaymentMethod/PaymentMethod';

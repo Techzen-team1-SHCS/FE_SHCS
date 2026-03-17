@@ -1,10 +1,8 @@
-import React from 'react';
 import styles from './UserSidebarContent.module.css';
 
 const UserSidebarContent = ({ user }) => {
     const {
         userHeader,
-        userAvatar,
         avatarContainer,
         avatarImage,
         avatarPlaceholder,

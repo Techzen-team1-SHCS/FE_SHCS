@@ -9,9 +9,6 @@ const HotelBookingInfo = ({ hotelData, onTotalPriceChange }) => {
     const [nights, setNights] = useState(0);
     const [showDatePicker, setShowDatePicker] = useState(null);
     const [tempDate, setTempDate] = useState("");
-    const navigate = useNavigate();
-    const { hotelId } = useParams();
-
     // Tính tổng tiền
     const totalPrice = hotelData?.price ? nights * hotelData.price : 0;
     useEffect(() => {
@@ -45,26 +42,6 @@ const HotelBookingInfo = ({ hotelData, onTotalPriceChange }) => {
             setNights(0);
         }
     }, [checkIn, checkOut]);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!checkIn || !checkOut || nights <= 0) {
-            alert("❌ Please select valid dates");
-            return;
-        }
-
-        // Chuyển dữ liệu booking qua navigate state
-        navigate(`/booking/${hotelId}`, {
-            state: {
-                checkIn,
-                checkOut,
-                guests,
-                nights,
-                totalPrice,
-                hotelData
-            }
-        });
-    };
 
     // Lấy ngày tối thiểu cho check-out
     const getMinCheckOutDate = () => {

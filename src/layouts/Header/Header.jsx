@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import Notification from '../../components/Notification/Notification';
 import styles from './Header.module.css';
 const Header = () => {
-    const { navigation, authAppear, authWrapper, btnRegister, content, triangleUp, dangky, linkLogin, userMenu, userHeader, userAvatar, menuItem, menuDivider, logoutBtn, authT, customFaUser, customFaDown, authUser } = styles;
+    const { authAppear, authWrapper, btnRegister, content, triangleUp, dangky, linkLogin, userMenu, userHeader, userAvatar, menuItem, menuDivider, logoutBtn, authT, customFaUser, customFaDown, authUser } = styles;
     const { user, logout } = useContext(AuthContext);
     const [isAuthVisible, setIsAuthVisible] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);

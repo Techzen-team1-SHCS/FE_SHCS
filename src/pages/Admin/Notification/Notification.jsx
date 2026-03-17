@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Notification.module.css";
 import { notificationService } from "../../../services/notificationService";
 import PartLoading from "../../../components/Loading/PartLoading";
@@ -171,7 +171,7 @@ const Notification = () => {
           <div className={emptyState}>
             <div className={emptyIcon}>📭</div>
             <h3 className={emptyText}>No notifications yet</h3>
-            <p>We'll notify you when something arrives</p>
+            <p>We&apos;ll notify you when something arrives</p>
           </div>
         ) : (
           notifications.map((notification) => (

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from '../PaymentResult.module.css';
 import PartLoading from '../../../../components/Loading/PartLoading';

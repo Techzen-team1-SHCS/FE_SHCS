@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import styles from './PaymentMethod.module.css'
 import { formatVND } from '../../../../../utils/dateUtils';
 import paymentService from '../../../../../services/paymentService';

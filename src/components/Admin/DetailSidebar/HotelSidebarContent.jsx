@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './HotelSidebarContent.module.css';
 
 const HotelSidebarContent = ({ hotel }) => {
@@ -22,7 +21,6 @@ const HotelSidebarContent = ({ hotel }) => {
         statusBadge,
         statusAvailable,
         statusOccupied,
-        starRating,
         starIcon,
         starFilled,
         starEmpty

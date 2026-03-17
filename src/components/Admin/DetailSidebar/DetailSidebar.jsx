@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './DetailSidebar.module.css';
 
 const DetailSidebar = ({ 

@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './Loader.module.css';
 
 const LoaderButton = ({ size = "small", color = "#fff" }) => {

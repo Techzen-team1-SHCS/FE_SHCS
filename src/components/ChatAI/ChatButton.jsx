@@ -1,7 +1,3 @@
-import React from 'react'
-
 export const ChatButton = () => {
-  return (
-    <div>ChatButton</div>
-  )
-}
+  return <div>ChatButton</div>;
+};

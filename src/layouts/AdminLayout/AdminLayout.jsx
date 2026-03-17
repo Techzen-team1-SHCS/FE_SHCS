@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import styles from "./AdminLayout.module.css";
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { AuthContext } from '../../contexts/AuthContext';
 

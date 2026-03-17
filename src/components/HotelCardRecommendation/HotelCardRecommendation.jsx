@@ -1,4 +1,3 @@
-import React from 'react'
 import styles from './HotelCardRecommendation.module.css'
 import { formatVND } from '../../utils/dateUtils';
 const HotelCardRecommendation = ({

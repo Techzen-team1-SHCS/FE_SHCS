@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useMemo, useCallback } from 'react';
+import { useContext, useEffect, useState, useMemo, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { bookingService } from '../../../../../services/bookingService';
 import { AuthContext } from '../../../../../contexts/AuthContext';
@@ -16,7 +16,6 @@ import {
   FaExclamationTriangle,
   FaStar,
   FaWifi,
-  FaCar,
   FaSwimmingPool,
   FaUtensils,
   FaParking,
@@ -25,7 +24,27 @@ import {
 } from 'react-icons/fa';
 import './AvailableRooms.css';
 
-const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
+const amenityIcons = {
+  'WiFi': <FaWifi />,
+  'Parking': <FaParking />,
+  'Swimming pool': <FaSwimmingPool />,
+  'Restaurant': <FaUtensils />,
+  'Room service': <FaConciergeBell />,
+  '24h front desk': <FaConciergeBell />,
+  'Spa': <FaStar />,
+  'Fitness center': <FaStar />,
+  'Sea view': <FaStar />,
+  'Balcony': <FaStar />,
+};
+
+const getAmenityIcon = (amenity) => {
+  const foundKey = Object.keys(amenityIcons).find(key => 
+    amenity.toLowerCase().includes(key.toLowerCase())
+  );
+  return foundKey ? amenityIcons[foundKey] : <FaCheck />;
+};
+
+const AvailableRooms = ({ availableRooms, searchParams }) => {
   const [selectedRooms, setSelectedRooms] = useState({});
   const [loading, setLoading] = useState({});
   const [roomQuantities, setRoomQuantities] = useState({});
@@ -38,19 +57,6 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
   const roomsToDisplay = useMemo(() => {
     return Array.isArray(availableRooms) ? availableRooms : [];
   }, [availableRooms]);
-
-  const amenityIcons = {
-    'WiFi': <FaWifi />,
-    'Parking': <FaParking />,
-    'Swimming pool': <FaSwimmingPool />,
-    'Restaurant': <FaUtensils />,
-    'Room service': <FaConciergeBell />,
-    '24h front desk': <FaConciergeBell />,
-    'Spa': <FaStar />,
-    'Fitness center': <FaStar />,
-    'Sea view': <FaStar />,
-    'Balcony': <FaStar />,
-  };
 
   useEffect(() => {
     if (!window.Echo) {
@@ -80,11 +86,6 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
         toast.info('📌 Mỗi đặt phòng chỉ được chọn một loại phòng. Vui lòng hủy chọn loại phòng hiện tại trước khi chọn loại khác.');
         return;
       }
-      
-      setSelectedRooms(prev => ({
-        [roomId]: qty
-      }));
-      setSelectedRoomType(roomId);
       
       if (!selectedRoomType) {
         toast.info('💡 Mẹo: Mỗi booking chỉ được chọn một loại phòng. Nếu muốn đổi loại phòng, hãy hủy chọn loại hiện tại.');
@@ -185,12 +186,6 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
     }).format(price);
   }, []);
 
-  const getAmenityIcon = (amenity) => {
-    const foundKey = Object.keys(amenityIcons).find(key => 
-      amenity.toLowerCase().includes(key.toLowerCase())
-    );
-    return foundKey ? amenityIcons[foundKey] : <FaCheck />;
-  };
 
   const renderRoomCard = useCallback((room) => {
     const amenities = getAmenities(room.amenities);
@@ -513,5 +508,5 @@ const AvailableRooms = ({ availableRooms, onRoomSelect, searchParams }) => {
   );
 };
 
-export default React.memo(AvailableRooms);
+export default memo(AvailableRooms);
 

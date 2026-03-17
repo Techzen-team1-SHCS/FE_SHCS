@@ -1,8 +1,7 @@
-import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './Style.css'
 const HotelCard1 = ({ topHotel, aosDelay }) => {
-    const navigate=useNavigate();
+
     
     return (
         <div className="col-xxl-3 col-xl-4 col-md-6">

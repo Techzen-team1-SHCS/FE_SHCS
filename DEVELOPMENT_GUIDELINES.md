@@ -51,3 +51,12 @@ Sau khi hoàn thành code, tất cả thành viên **BẮT BUỘC** chạy các 
 ---
 
 *Lưu ý: Mọi thành viên cần tuân thủ nghiêm ngặt quy trình này để đảm bảo tiến độ và chất lượng dự án.*
+
+---
+
+## 4. Các Tham Khảo & Quy Chuẩn Khác
+
+Bên cạnh quy trình trên, thành viên trong team được yêu cầu đọc và tuân thủ các tài liệu quy chuẩn sau:
+- [Quy tắc Lập trình & Chiến lược Branching](./CODING_RULES.md) (Coding Standards & Git Flow)
+- [Quy ước Viết Commit](./COMMIT_CONVENTION.md) (Conventional Commits)
+- [Mẫu Pull Request](./.github/PULL_REQUEST_TEMPLATE.md) (PR Template)

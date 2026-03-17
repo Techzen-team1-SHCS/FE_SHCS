@@ -1,6 +1,3 @@
-// Local copy of AmenityIcon, used only in HotelDetail
-import React from 'react';
-
 const AmenityIcon = ({ amenityName, className = "" }) => {
   const getAmenityIcon = (name) => {
     const nameLower = name.toLowerCase();

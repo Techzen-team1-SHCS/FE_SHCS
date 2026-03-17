@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import paymentService from '../../services/paymentService';
 import LoaderButton from '../Loading/LoaderButton';
 import { toast } from 'react-toastify';
 import styles from './Payment.module.css';
 
-const PaymentButtonVnPay = ({ bookingId, amount }) => {
+const PaymentButtonVnPay = ({ bookingId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const handlePayment = async () => {
     setIsLoading(true);

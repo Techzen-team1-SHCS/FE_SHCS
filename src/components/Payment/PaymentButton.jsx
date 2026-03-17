@@ -1,5 +1,5 @@
 // components/Payment/VNPayPayment.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import styles from './Payment.module.css';
 const PaymentButton = ({ amount, bookingInfo }) => {

@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useCallback } from 'react';
+import { useRef, useMemo, useCallback } from 'react';
 import { Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -211,7 +211,7 @@ const MostBookedChartContent = () => {
           },
           maxRotation: 45,
           minRotation: 0,
-          callback: function(value, index) {
+          callback: function(value) {
             // Hiển thị full name trong tooltip, chỉ hiển thị tên rút gọn ở axis
             const label = this.getLabelForValue(value);
             return label;
@@ -331,7 +331,7 @@ const MostBookedChartContent = () => {
       </div>
       
       {/* Debug info - chỉ hiển thị trong development */}
-      {process.env.NODE_ENV === 'development' && (
+      {import.meta.env.MODE === 'development' && (
         <div className={styles.debugInfo}>
           <small>
             Status: {isFetching ? 'Fetching...' : 'Ready'} | 

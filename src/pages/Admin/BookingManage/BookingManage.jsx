@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import styles from './BookingManage.module.css';
 import { bookingService } from '../../../services/bookingService';
@@ -29,7 +29,6 @@ const BookingManage = () => {
         paymentCanceled,
         actionCell,
         deleteButton,
-        deleteIcon,
         statusSelect,
         actionButton,
         viewButton,
@@ -48,11 +47,10 @@ const BookingManage = () => {
         formGroup,
         formLabel,
         formInput,
-        formSelect
     } = styles;
 
     const queryClient = useQueryClient();
-    const { login, user } = useContext(AuthContext);
+    const {user} = useContext(AuthContext);
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);

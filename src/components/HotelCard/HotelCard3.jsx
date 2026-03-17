@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useBehavior } from "../../contexts/BehaviorContext";
 import { Link } from "react-router-dom";
-const HotelCard3 = ({ hotel, aosDelay, index }) => {
+const HotelCard3 = ({ hotel, aosDelay }) => {
     const { user } = useContext(AuthContext);
     const { logBehavior } = useBehavior();
     const [isHovered, setIsHovered] = useState(false);
@@ -13,7 +13,6 @@ const HotelCard3 = ({ hotel, aosDelay, index }) => {
 
     // Lấy ảnh
     const mainImage = hotel.images?.[0]?.url || "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop";
-    const secondaryImage = hotel.images?.[1]?.url || "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w-800&auto=format&fit=crop";
 
     // Parse amenities
     const amenities = hotel.amenities ? JSON.parse(hotel.amenities).slice(0, 4) : [];

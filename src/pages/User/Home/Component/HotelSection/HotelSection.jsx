@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import HotelCard3 from "../../../../../components/HotelCard/HotelCard3";
 import { useTopHotelsQuery } from "../../../../../queries/useTopHotelsQuery";
 import PartLoading from "../../../../../components/Loading/PartLoading";
@@ -74,7 +74,7 @@ const HotelSection = () => {
               data-aos-duration="1500"
               data-aos-offset="50"
             >
-              <h2>Discover the World's Class Top Hotel</h2>
+              <h2>Discover the World&apos;s Class Top Hotel</h2>
               <p>
                 One site{" "}
                 <span className="count-text plus" data-speed="3000" data-stop="34500">

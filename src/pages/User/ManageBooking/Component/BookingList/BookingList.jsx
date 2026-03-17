@@ -1,5 +1,5 @@
-import ManageBookingCard from "../ManageBookingCard/ManageBookingCard";
 import styles from "../../ManageBooking.module.css";
+import Loader from "../../../../components/Loading/Loader";
 const BookingList = ({
   activeTab,
   loading,

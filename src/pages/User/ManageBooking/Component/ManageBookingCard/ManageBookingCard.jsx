@@ -1,13 +1,12 @@
-import React, { useState } from "react";
 import styles from "./ManageBookingCard.module.css";
 import { useNavigate } from "react-router-dom";
-import { formatDateTime, getNights, getFreeCancelDeadline, calculateCancelFee, getCancelPolicy } from "../../../../../utils/dateUtils.js";
+import { formatDateTime,getCancelPolicy } from "../../../../../utils/dateUtils.js";
 import ButtonCancel from "../../../../../components/Button/ButtonCancel.jsx";
 import ButtonDetail from "../../../../../components/Button/ButtonDetail.jsx";
 import Swal from "sweetalert2";
 import { bookingService } from "../../../../../services/bookingService.js";
 const ManageBookingCard = ({ booking, onViewDetails, onReBook, onCancelSuccess }) => {
-    const { card, cardBody, cardGroup, cardName, cardInfo, status, btn, hotelInfo, dotBtn, menu, deleteBtn } = styles;
+    const { card, cardBody, cardGroup, cardName, cardInfo, status, hotelInfo } = styles;
     const navigate = useNavigate();
     const getBookContent = (status) => {
         switch (status) {

@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './HotelReviewStats.module.css';
 import PartLoading from '../../../../../components/Loading/PartLoading';
 

@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from '../WishList.module.css';
-import { FaFilter } from 'react-icons/fa';
 import Loader from '../../../../components/Loading/Loader';
 import { useNavigate } from 'react-router-dom';
 import { useWishlist } from "../Hooks/useWishlist";

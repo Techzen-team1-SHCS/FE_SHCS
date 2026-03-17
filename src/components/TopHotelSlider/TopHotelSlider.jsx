@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import 'swiper/css';
@@ -9,7 +8,7 @@ import { useTopHotelsQuery } from "../../queries/useTopHotelsQuery";
 import { useNavigate } from "react-router-dom";
 const TopHotelSlider = () => {
   const navigate = useNavigate();
-  const {data:topHotels=[],isLoading,isError}=useTopHotelsQuery();
+  const {data:topHotels=[],isLoading}=useTopHotelsQuery();
   if (isLoading) return <div>Loading top hotels...</div>;
   
   return (

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import HeroSection from '../Component/HeroSection/HeroSection'
 import PopularDestinations from '../Component/PopularDestination/PopularDestinations'
 import AboutUs from '../Component/AboutUs/AboutUs'
@@ -10,9 +10,9 @@ import { AuthContext } from '../../../../contexts/AuthContext'
 import PopUpButton from '../../../../components/PopupButton/PopUpButton'
 
 const Home = () => {
-    const { user, logout } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const [isAuthVisible, setIsAuthVisible] = useState(false);
-    const [isLogin, setIsLogin] = useState('');
+    const [isLogin, setIsLogin] = useState(false);
     return (
         <div className="page-wrapper">
             <HeroSection />

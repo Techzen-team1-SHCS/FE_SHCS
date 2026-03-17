@@ -1,6 +1,5 @@
 // components/Payment/VNPayPayment.jsx
-import React, { useState } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import styles from './Payment.module.css';
 import paymentService from '../../services/paymentService';
 const PaymentButton2 = ({ hotelData,amount  }) => {

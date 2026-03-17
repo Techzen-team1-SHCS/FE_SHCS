@@ -1,4 +1,3 @@
-import { useState } from "react";
 import styles from "./Step1Property.module.css";
 import { cityData } from "../../../Constants/RegisterHotel/CityData";
 import { usePropertyForm } from "../../../hooks/RegisterHotel/Step1Property";
@@ -37,8 +36,7 @@ const {
             className={styles.input}
             value={city}
             onChange={(e) => {
-              setCity(e.target.value);
-              setDistrict("");
+              handleCityChange(e.target.value);
             }}
           >
             {Object.keys(cityData).map((c) => (

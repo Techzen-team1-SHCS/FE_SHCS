@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -9,7 +8,7 @@ import { PROMOTIONS } from '../../Constants/promotion';
 const Discount = () => {
     const promotions = PROMOTIONS;
 
-    const { discountCard, sectionTitle } = styles
+    const { sectionTitle } = styles
     return (
         <section className="destinations-area bgc-black pt-100 pb-70 rel z-1">
             <div className="container-fluid">

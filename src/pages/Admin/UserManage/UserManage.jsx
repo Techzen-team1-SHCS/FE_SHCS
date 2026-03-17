@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './UserManage.module.css';
 import { authService } from '../../../services/authService';
 import { toast } from 'react-toastify';
@@ -17,14 +17,11 @@ const UserManage = () => {
         tr,
         td,
         statusActive,
-        statusInactive,
         statusSuspended,
-        statusPending,
         actionCell,
         actionButton,
         viewButton,
         editButton,
-        deleteButton,
         banButton,
         unbanButton,
         buttonGroup,

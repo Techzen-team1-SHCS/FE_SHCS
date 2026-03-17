@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
@@ -178,7 +177,7 @@ const Footer = () => {
                   >
                     0
                   </span>{" "}
-                  most popular experience you'll remember
+                  most popular experience you&apos;ll remember
                 </p>
               </div>
 

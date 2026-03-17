@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import "./HotelBooking.css";
 import { useNavigate } from "react-router-dom";
-import { formatVND } from "../../utils/dateUtils";
-
-const HotelBooking = ({ onBook, hotelId,price }) => {
+const HotelBooking = ({ onBook, hotelId }) => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
@@ -125,15 +123,6 @@ const HotelBooking = ({ onBook, hotelId,price }) => {
   // Render date picker modal
   const renderDatePickerModal = () => {
     if (!showDatePicker) return null;
-
-    const minDate = showDatePicker === 'checkIn' 
-      ? new Date().toISOString().split("T")[0] 
-      : new Date(checkIn);
-    
-    const maxDate = showDatePicker === 'checkIn'
-      ? null
-      : null;
-
     const title = showDatePicker === 'checkIn' ? 'Select Check-in Date' : 'Select Check-out Date';
 
     return (

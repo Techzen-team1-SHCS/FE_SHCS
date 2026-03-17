@@ -3,12 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styles from '../style.module.css';
 import '../style.css';
 
-import HotelBooking from '../Component/HotelBooking/HotelBooking.jsx';
-import AmenityIcon from '../Component/Amenities/AmenityIcon.jsx';
+
 import SameProvinceHotels from '../Component/SameProvinces/SameProvinceHotels.jsx';
 import SimilarHotel from '../Component/SimilarHotel/SimilarHotel.jsx';
 import NavigationTabs from '../../../../components/NavigationTabs/NavigationTabs.jsx';
-import AvailableRooms from '../Component/AvailableRooms/AvailableRooms.jsx';
 import HotelReviewSubmit from '../Component/HotelReviewSubmit/HotelReviewSubmit.jsx';
 import HotelReviewsList from '../Component/HotelReviewsList/HotelReviewsList.jsx';
 import HotelReviewStats from '../Component/HotelReviewStats/HotelReviewStats.jsx';
@@ -40,10 +38,6 @@ const HotelDetail = () => {
     searchParams,
     availableRoomsSectionRef,
     searchAvailableRoomsMutation,
-
-    showAllPhotos,
-    setShowAllPhotos,
-
     handleReviewSubmit,
     handleBookNowFromCalendar,
     refetchComments,

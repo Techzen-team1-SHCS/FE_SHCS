@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import styles from './HotelReviewsList.module.css';
 import { commentService } from '../../../../../services/commentService';
 import { AuthContext } from '../../../../../contexts/AuthContext'; // ← THÊM IMPORT
@@ -20,17 +20,14 @@ const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) =
         reviewsList,
         loadingText,
         emptyState,
-        reviewItem,
         reviewHeader,
         userAvatar,
-        userInfo,
         userName,
         reviewDate,
         reviewComment,
         reviewICard,
         replyContainer,
         replyButton,
-        replySection
     } = styles;
 
     // Calculate average rating from root comments
@@ -69,7 +66,7 @@ const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) =
         }
         setIsSubmitting(true);
         try {
-            const response = await commentService.postComment({
+            await commentService.postComment({
                 comment: newComment.trim(),
                 parent_id: replyTo,
                 maHotel: hotelId

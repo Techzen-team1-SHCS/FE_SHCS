@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { AuthContext } from '../../../../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -72,7 +72,7 @@ const HotelRecommendation = () => {
                 <div className="floating-element el-3"><i className="fas fa-bed"></i></div>
             </div>
 
-            <style jsx>{`
+            <style>{`
                 .ai-recommendation-banner {
                     width:98%;
                     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

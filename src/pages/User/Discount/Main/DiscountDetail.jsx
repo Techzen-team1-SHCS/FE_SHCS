@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from '../DiscountDetail.module.css';
 import { discounts } from '../Constants/discountData';

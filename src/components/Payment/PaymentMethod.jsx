@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import styles from './PaymentMethod.module.css'
 import { formatVND } from '../../utils/dateUtils';
 import paymentService from '../../services/paymentService';
 import { authService } from '../../services/authService';
-import CurrentTime from '../CurrentTime/CurrentTime';
 import { useQuery } from '@tanstack/react-query';
+import CurrentTime from '../CurrentTime/CurrentTime';
 
 const PaymentMethod = ({ user }) => {
     const [activeFilter, setActiveFilter] = useState('all');

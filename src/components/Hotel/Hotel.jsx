@@ -2,11 +2,10 @@ import { Link } from 'react-router-dom';
 import './style.css';
 import { MdOutlineBedroomParent } from "react-icons/md";
 import { useBehavior } from "../../contexts/BehaviorContext";
-import { useContext, useState,useEffect } from "react"
+import { useContext, useState } from "react"
 import { AuthContext } from '../../contexts/AuthContext';
 import { wishListService } from '../../services/wishListService';
 import { toast } from 'react-toastify';
-import PartLoading from '../Loading/PartLoading';
 
 const Hotel = ({
   image,
@@ -16,7 +15,6 @@ const Hotel = ({
   duration,
   guests,
   price,
-  badgeLabel = null,
   rating,
   detailsUrl = "#",
   id

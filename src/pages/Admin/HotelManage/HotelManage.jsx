@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './HotelManage.module.css';
 import { hotelService } from '../../../services/hotelService';
 import { toast } from 'react-toastify';
@@ -172,22 +172,7 @@ const HotelManage = () => {
     };
 
     // Bắt đầu chế độ chỉnh sửa
-    const startEditMode = () => {
-        if (!selectedHotel) return;
-        
-        setEditForm({
-            name: selectedHotel.name || '',
-            province: selectedHotel.province || '',
-            price: selectedHotel.price || '',
-            hotel_class: parseHotelClassFromServer(selectedHotel.hotel_class), // Sử dụng hàm parse
-            description: selectedHotel.description || '',
-            text: selectedHotel.text || '',
-            amenities: Array.isArray(selectedHotel.amenities) ? selectedHotel.amenities : [],
-            name_nearby_place: selectedHotel.name_nearby_place || ''
-        });
-        setNewAmenity('');
-        setIsEditMode(true);
-    };
+    
 
     // Handle Delete
     const handleDelete = async (hotelId) => {

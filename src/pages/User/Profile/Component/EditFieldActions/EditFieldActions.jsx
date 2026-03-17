@@ -1,4 +1,3 @@
-import React from "react";
 import LoaderButton from "../../../../../components/Loading/LoaderButton";
 import styles from "../../Profile.module.css";
 

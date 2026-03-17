@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import SearchBar from "../../../../components/SearchBar/SearchBar";
 import ErrorMessage from "../Component/ErrorMessage/ErrorMessage";
 import HotelListFilter from "../Component/HotelListFilter/HotelListFilter";
-import { useBehavior } from "../../../../contexts/BehaviorContext";
 import "../HotelList.css";
 import TopHotelSlider from "../../../../components/TopHotelSlider/TopHotelSlider";
 import PartLoading from "../../../../components/Loading/PartLoading";
@@ -11,10 +10,6 @@ import InfiniteHotelList from "../Component/InfiniteHotelList/InfiniteHotelList"
 import PaginationHotelList from "../Component/PaginationHotelList/PaginationHotelList";
 import NoResults from "../Component/NoResults/NoResults";
 import { useApproveUser } from "../Hooks/useApproveUser";
-import {
-  FaThList,
-  FaSync,
-} from "react-icons/fa";
 import { AuthContext } from "../../../../contexts/AuthContext";
 import { AMENITIES_MAP } from "../Constants/hotelListConstants";
 import { mapSelectedFilters, getFiltersFromQuery, getSentinelPosition } from "../Helpers/hotelListHelpers";
@@ -29,7 +24,6 @@ import MobileFilterDrawer from "../Component/MobileFilterDrawer/MobileFilterDraw
 import DestinationMap from "../Component/DestinationMap/DestinationMap";
 function HotelList() {
   const location = useLocation();
-  const { logBehavior } = useBehavior();
   const {
     selectedFilters,
     setSelectedFilters,
@@ -37,8 +31,6 @@ function HotelList() {
     setViewMode,
     currentPage,
     setCurrentPage,
-    showMobileFilter,
-    setShowMobileFilter,
     tempMobileFilters,
     setTempMobileFilters,
     loadMoreRef,

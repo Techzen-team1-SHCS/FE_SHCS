@@ -1,11 +1,9 @@
 import styles from "./HotelManagement.module.css";
-import { useState } from "react";
 import { hotels } from "../../Mock/hotelData";
 import { HOTEL_TABS } from "../../Constants/Hotel/hotelTabs";
 import { HOTEL_TABLE_COLUMNS } from "../../Constants/Hotel/hotelTableColumns";
 import { HOTEL_STATUS } from "../../Constants/Hotel/hotelStatus";
 import { useHotelManagement } from "../../hooks/useHotelManagement";
-import { filterHotels } from "../../Helpers/HotelHelpers";
 import {getPaginationPages } from "../../Helpers/HotelHelpers"
 
 export default function HotelManagement() {
@@ -17,9 +15,6 @@ export default function HotelManagement() {
     currentHotels,
     totalPages,
   } = useHotelManagement(hotels, 5); // số dòng mỗi trang
-
-  // ===== FILTER =====
-  const filteredHotels = filterHotels(hotels, activeTab);
 
   return (
     <div className={styles.container}>

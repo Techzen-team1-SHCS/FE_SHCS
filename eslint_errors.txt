@@ -1,0 +1,12 @@
+
+D:\FE_SHCS\src\components\Admin\Charts\MostBookedChart\MostBookedChart.jsx
+  334:8  error  'process' is not defined  no-undef
+
+D:\FE_SHCS\src\pages\Admin\Notification\Notification.jsx
+  174:18  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+D:\FE_SHCS\src\pages\User\Home\Component\HotelSection\HotelSection.jsx
+  77:37  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+✖ 3 problems (3 errors, 0 warnings)
+

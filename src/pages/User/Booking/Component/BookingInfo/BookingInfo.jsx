@@ -1,14 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styles from './BookingInfo.module.css';
-import { getAmenityImage } from '../../../../../utils/amenityImage';
 import PaymentButtonVnPay from '../../../../../components/Payment/PaymentButtonVnPay';
-import { discountService } from '../../../../../services/discountService';
-import { toast } from 'react-toastify';
 import PartLoading from '../../../../../components/Loading/PartLoading';
 import { useAmenities } from '../../Hooks/useAmenities';
 import { useBookingForm } from '../../Hooks/useBookingForm';
 import { useDiscount } from '../../Hooks/useDiscount';
-const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, onPriceChange }) => {
+const BookingInfo = ({ hotelData, onBookingSubmit, onBackToForm, onPriceChange }) => {
     const { services, loading } = useAmenities(hotelData);
 
     const { formData, handleInputChange } =
@@ -29,7 +26,6 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, on
         sectionTitle,
         serviceContainer,
         serviceItem,
-        serviceImage,
         serviceName,
         divider,
         noServices,
@@ -235,7 +231,7 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, on
                                 <div>
                                     <div style={{ fontWeight: 'bold' }}>Áp dụng mã giảm giá thành công!</div>
                                     <div style={{ fontSize: '13px', marginTop: '4px' }}>
-                                        Bạn đã tiết kiệm được {displayDiscountAmount.toLocaleString('vi-VN')} VND với mã "{appliedCoupon}"
+                                        Bạn đã tiết kiệm được {displayDiscountAmount.toLocaleString('vi-VN')} VND với mã &quot;{appliedCoupon}&quot;
                                     </div>
                                 </div>
                             </div>
@@ -424,7 +420,7 @@ const BookingInfo = ({ hotelData, onBookingSubmit, currentStep, onBackToForm, on
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                             <span style={{ fontSize: '16px' }}>✓</span>
                                             <div>
-                                                <div>Đã áp dụng mã "{appliedCoupon}"</div>
+                                                <div>Đã áp dụng mã &quot;{appliedCoupon}&quot;</div>
                                                 <div style={{ fontSize: '12px', marginTop: '2px' }}>
                                                     Giảm {displayDiscountAmount.toLocaleString('vi-VN')} VND
                                                 </div>

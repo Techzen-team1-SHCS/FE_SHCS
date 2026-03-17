@@ -140,9 +140,6 @@ const ChatWidget = () => {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
   };
-
-  // Component Hotel Card
-  /* eslint-disable react/prop-types */
   const HotelCard = ({ hotel }) => {
     // Sử dụng hotel.id trực tiếp nếu là number, hoặc generate từ name nếu không có
     const hotelId = hotel.id ? (typeof hotel.id === 'number' ? hotel.id : hotel.id.toString()) : generateHotelId(hotel.name || '');
@@ -204,11 +201,9 @@ const ChatWidget = () => {
         </div>
       </div>
     );
-  };
-  /* eslint-enable react/prop-types */
-
+    };
   // Render message theo type
-  const renderMessage = (message) => {
+    function renderMessage(message) {
     if (message.sender === 'bot' && message.isTyping) {
       return <TypingIndicator />;
     }
@@ -248,7 +243,7 @@ const ChatWidget = () => {
 
     // User message
     return message.text;
-  };
+  }
 
   return (
     <>

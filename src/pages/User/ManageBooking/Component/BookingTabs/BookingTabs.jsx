@@ -1,4 +1,3 @@
-import { BOOKING_TABS } from "../../Constants/bookingTabs";
 import { getTabLabel, getTabIcon } from "../../Helpers/bookingHelpers";
 import styles from "../../ManageBooking.module.css";
 const BookingTabs = ({ activeTab, setActiveTab, stats }) => {
