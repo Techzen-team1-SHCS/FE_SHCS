@@ -1,0 +1,1 @@
+export const HOTEL_TABS = ["All", "Open", "Close"];

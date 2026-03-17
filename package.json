@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^41.4.2",
+    "@ckeditor/ckeditor5-react": "^11.0.1",
     "@react-oauth/google": "^0.12.2",
     "@tanstack/react-query": "^5.90.12",
     "axios": "^1.13.1",
@@ -27,6 +29,7 @@
     "react-infinite-scroll-component": "^6.1.1",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.9.1",
+    "react-select": "^5.10.2",
     "react-toastify": "^11.0.5",
     "recharts": "^3.7.0",
     "styled-components": "^6.1.19",

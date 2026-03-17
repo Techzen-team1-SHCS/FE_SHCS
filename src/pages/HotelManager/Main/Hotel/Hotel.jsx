@@ -1,44 +1,31 @@
 import styles from "./HotelManagement.module.css";
 import { useState } from "react";
-
-const hotels = Array.from({ length: 14 }, (_, i) => ({
-  id: i + 1,
-  name: "Tran Vy Homestay",
-  hotelId: "12345",
-  rating: 4.2,
-  revenue: "250,000,000 vnd",
-  totalRooms: 120,
-  availableRooms: 50,
-  date: "14-Aug-2023 at 12:00 AM",
-  status: i % 2 === 0 ? "Open" : "Close",
-}));
+import { hotels } from "../../Mock/hotelData";
+import { HOTEL_TABS } from "../../Constants/Hotel/hotelTabs";
+import { HOTEL_TABLE_COLUMNS } from "../../Constants/Hotel/hotelTableColumns";
+import { HOTEL_STATUS } from "../../Constants/Hotel/hotelStatus";
+import { useHotelManagement } from "../../hooks/useHotelManagement";
+import { filterHotels } from "../../Helpers/HotelHelpers";
+import {getPaginationPages } from "../../Helpers/HotelHelpers"
 
 export default function HotelManagement() {
-  const [activeTab, setActiveTab] = useState("All");
-  const [currentPage, setCurrentPage] = useState(1);
+  const {
+    activeTab,
+    setActiveTab,
+    currentPage,
+    setCurrentPage,
+    currentHotels,
+    totalPages,
+  } = useHotelManagement(hotels, 5); // số dòng mỗi trang
 
-  const itemsPerPage = 5; // số dòng mỗi trang
-  
   // ===== FILTER =====
-  const filteredHotels =
-    activeTab === "All"
-      ? hotels
-      : hotels.filter((hotel) => hotel.status === activeTab);
-
-  // ===== PHÂN TRANG =====
-  const totalPages = Math.ceil(filteredHotels.length / itemsPerPage);
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentHotels = filteredHotels.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  const filteredHotels = filterHotels(hotels, activeTab);
 
   return (
     <div className={styles.container}>
       <div className={styles.topBar}>
         <div className={styles.tabs}>
-          {["All", "Open", "Close"].map((tab) => (
+          {HOTEL_TABS.map((tab) => (
             <button
               key={tab}
               className={`${styles.tab} ${
@@ -62,15 +49,10 @@ export default function HotelManagement() {
       <div className={styles.tableWrapper}>
         <table className={styles.table}>
           <thead>
-            <tr >
-              <th>Hotel name</th>
-              <th>ID hotel</th>
-              <th>Avg rating</th>
-              <th>Revenue today</th>
-              <th>Total rooms</th>
-              <th>Available rooms</th>
-              <th>Registration date</th>
-              <th>Status</th>
+            <tr>
+              {HOTEL_TABLE_COLUMNS.map((col, index) => (
+                <th key={index}>{col}</th>
+              ))}
             </tr>
           </thead>
 
@@ -87,7 +69,7 @@ export default function HotelManagement() {
                 <td>
                   <span
                     className={`${styles.status} ${
-                      hotel.status === "Open"
+                      hotel.status === HOTEL_STATUS.OPEN
                         ? styles.open
                         : styles.close
                     }`}
@@ -112,19 +94,17 @@ export default function HotelManagement() {
         </button>
 
         <div className={styles.pages}>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-            (num) => (
-              <button
-                key={num}
-                className={`${styles.pageBtn} ${
-                  num === currentPage ? styles.activePage : ""
-                }`}
-                onClick={() => setCurrentPage(num)}
-              >
-                {num}
-              </button>
-            )
-          )}
+          {getPaginationPages(totalPages).map((num) => (
+            <button
+              key={num}
+              className={`${styles.pageBtn} ${
+                num === currentPage ? styles.activePage : ""
+              }`}
+              onClick={() => setCurrentPage(num)}
+            >
+              {num}
+            </button>
+          ))}
         </div>
 
         <button
