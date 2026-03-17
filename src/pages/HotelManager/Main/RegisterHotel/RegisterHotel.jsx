@@ -1,8 +1,8 @@
 import { useState } from "react"
-import Step1Property from "../../../components/HotelManager/registerHotel/Step1Property/Step1Property"
-import Step2Amenities from "../../../components/HotelManager/registerHotel/Step2Amenities/Step2Amenities"
-import Step3Photo from "../../../components/HotelManager/registerHotel/Step3Photo/Step3Photo"
-import styles from "../RegisterHotel/RegisterHotel.module.css"
+import Step1Property from "../../Components/registerHotel/Step1Property/Step1Property"
+import Step2Amenities from "../../Components/registerHotel/Step2Amenities/Step2Amenities"
+import Step3Photo from "../../Components/registerHotel/Step3Photo/Step3Infor"
+import styles from "./RegisterHotel.module.css"
 function RegisterHotel() {
 
 const [step, setStep] = useState(1)
