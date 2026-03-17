@@ -119,7 +119,7 @@
                     && $('.nav-search form').has(event.target).length == 0 && !$('.nav-search form').is(event.target)) {
                     if ($('.nav-search form').hasClass('hide') == false) {
                         $('.nav-search form').toggleClass('hide');
-                    };
+                    }
                 }
             });
         }

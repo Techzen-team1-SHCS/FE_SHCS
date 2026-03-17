@@ -28,10 +28,10 @@ export function useNotifications(initialData) {
 
   // fix page khi filter làm giảm page
   useEffect(() => {
-    if (currentPage > totalPages) {
+    if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
-  }, [filtered.length]);
+  }, [totalPages, currentPage]);
 
   // ===== MARK AS READ =====
   const markAsRead = (id) => {

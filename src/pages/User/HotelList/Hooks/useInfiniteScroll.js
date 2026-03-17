@@ -49,6 +49,9 @@ export const useInfiniteScroll = ({
     viewMode,
     hasNextPage,
     isFetchingNextPage,
-    fetchNextPage
+    fetchNextPage,
+    lastLoadTimeRef,
+    loadMoreRef,
+    observerRef
   ]);
 };

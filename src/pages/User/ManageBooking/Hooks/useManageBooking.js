@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { bookingService } from "../../../../services/bookingService";
 import { filterBookingsByTab, calculateBookingStats } from "../Helpers/bookingHelpers";
 
@@ -16,7 +16,7 @@ export const useManageBooking = (user) => {
 
     const filteredBookings = filterBookingsByTab(allBookings, activeTab);
 
-    const fetchAllBookings = async () => {
+    const fetchAllBookings = useCallback(async () => {
 
         if (!user) {
             setError("Vui lòng đăng nhập để xem booking");
@@ -44,11 +44,11 @@ export const useManageBooking = (user) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [user]);
 
     useEffect(() => {
         fetchAllBookings();
-    }, [user]);
+    }, [fetchAllBookings]);
 
     useEffect(() => {
         setStats(calculateBookingStats(allBookings));
