@@ -1,5 +1,5 @@
 import styles from "../../ManageBooking.module.css";
-import Loader from "../../../../components/Loading/Loader";
+import Loader from "../../../../../components/Loading/Loader";
 const BookingList = ({
   activeTab,
   loading,

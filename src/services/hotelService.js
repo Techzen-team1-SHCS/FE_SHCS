@@ -2,12 +2,12 @@ import api from "./api";
 import qs from "qs";
 const formatDate = (dateString) => {
   if (!dateString) return '';
-  
+
   // Nếu là Date object
   if (dateString instanceof Date) {
     return dateString.toISOString().split('T')[0];
   }
-  
+
   // Nếu là string date
   const date = new Date(dateString);
   return date.toISOString().split('T')[0];
@@ -50,7 +50,7 @@ export const hotelService = {
           guests
         }
       });
-      
+
       // Dựa trên cấu trúc response của bạn
       if (response.data.status === 200 || response.data.success) {
         return response.data.data || []; // Trả về data từ API
@@ -62,12 +62,12 @@ export const hotelService = {
       throw error;
     }
   },
-  async getSameProvince(id){
-    const response=await api.get(`/auth/hotels/${id}/same-province`);
+  async getSameProvince(id) {
+    const response = await api.get(`/auth/hotels/${id}/same-province`);
     return response.data.data;
   },
-  async getSimilarHotel(id){
-    const response=await api.get(`/auth/hotels/${id}/same-style`);
+  async getSimilarHotel(id) {
+    const response = await api.get(`/auth/hotels/${id}/same-style`);
     return response.data.data;
   },
   async getHotelById(id) {
@@ -80,7 +80,7 @@ export const hotelService = {
     return response.data.content;
   },
   async getRecommendedHotels() {
-  try {
+    try {
       const token = localStorage.getItem("token");
 
       const headers = token
@@ -95,33 +95,52 @@ export const hotelService = {
       return []; // không throw → FE vẫn hoạt động
     }
   },
-  async getDeleteHotel(id){
+  async getDeleteHotel(id) {
     try {
-      const token=localStorage.getItem('token');
-      if(!token){
+      const token = localStorage.getItem('token');
+      if (!token) {
         throw new Error('Authentication no token not found')
       }
-      const response=await api.delete(`/auth/hotel/${id}`,{
-        headers:{Authorization:`Bearer ${token}`}
+      const response = await api.delete(`/auth/hotel/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       return response.data;
     } catch (error) {
       console.log('Không thể xóa người dùng');
     }
   },
-  async updateHotel(id,data){
+  async updateHotel(id, data) {
     try {
-      const token=localStorage.getItem('token');
-      if(!token){
+      const token = localStorage.getItem('token');
+      if (!token) {
         throw new Error('Authentication no token not found')
       }
-      const response=await api.put(`auth/hotel/${id}`,data,{
-        headers:{Authorization:`Bearer ${token}`}
+      const response = await api.put(`auth/hotel/${id}`, data, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       return response.data;
     } catch (error) {
       console.log('Không thể cập nhật khách sạn');
     }
-  }
+  },
+  async getHotelManagerHotels() {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('Chưa có token');
+
+      const response = await api.get('/auth/hotel-manager/hotels', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.data.success || response.data.status === 200) {
+        return response.data.data || [];
+      }
+      return [];
+    } catch (err) {
+      console.error('Lỗi lấy hotel manager', err);
+      return [];
+    }
+  },
 };
+
 

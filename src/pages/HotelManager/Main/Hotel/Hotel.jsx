@@ -1,20 +1,29 @@
+import { useEffect, useState } from "react";
 import styles from "./HotelManagement.module.css";
-import { hotels } from "../../Mock/hotelData";
+// import { hotels } from "../../Mock/hotelData"; // bỏ
 import { HOTEL_TABS } from "../../Constants/Hotel/hotelTabs";
 import { HOTEL_TABLE_COLUMNS } from "../../Constants/Hotel/hotelTableColumns";
 import { HOTEL_STATUS } from "../../Constants/Hotel/hotelStatus";
 import { useHotelManagement } from "../../hooks/useHotelManagement";
-import {getPaginationPages } from "../../Helpers/HotelHelpers"
+import { getPaginationPages } from "../../Helpers/HotelHelpers";
+import PartLoading from "../../../../components/Loading/PartLoading";
 
 export default function HotelManagement() {
   const {
+    loading,
     activeTab,
     setActiveTab,
+    search,
+    setSearch,
     currentPage,
     setCurrentPage,
     currentHotels,
     totalPages,
-  } = useHotelManagement(hotels, 5); // số dòng mỗi trang
+  } = useHotelManagement(5);
+
+  if (loading) {
+    return <div><PartLoading /></div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -28,7 +37,7 @@ export default function HotelManagement() {
               }`}
               onClick={() => {
                 setActiveTab(tab);
-                setCurrentPage(1); // reset về trang 1 khi đổi tab
+                setCurrentPage(1);
               }}
             >
               {tab}
@@ -53,14 +62,14 @@ export default function HotelManagement() {
 
           <tbody>
             {currentHotels.map((hotel) => (
-              <tr key={hotel.id} className={styles.tr}>
+              <tr key={hotel.id}>
                 <td>{hotel.name}</td>
-                <td>{hotel.hotelId}</td>
-                <td>{hotel.rating}</td>
-                <td>{hotel.revenue}</td>
-                <td>{hotel.totalRooms}</td>
-                <td>{hotel.availableRooms}</td>
-                <td>{hotel.date}</td>
+                <td>{hotel.hotelId || hotel.id}</td>
+                <td>{hotel.rating || "-"}</td>
+                <td>{hotel.revenue || "-"}</td>
+                <td>{hotel.totalRooms || "-"}</td>
+                <td>{hotel.availableRooms || "-"}</td>
+                <td>{hotel.date || "-"}</td>
                 <td>
                   <span
                     className={`${styles.status} ${
@@ -69,7 +78,7 @@ export default function HotelManagement() {
                         : styles.close
                     }`}
                   >
-                    {hotel.status}
+                    {hotel.status || HOTEL_STATUS.CLOSE}
                   </span>
                 </td>
               </tr>
@@ -78,7 +87,6 @@ export default function HotelManagement() {
         </table>
       </div>
 
-      {/* ===== PAGINATION UI giữ nguyên ===== */}
       <div className={styles.pagination}>
         <button
           className={styles.prev}
