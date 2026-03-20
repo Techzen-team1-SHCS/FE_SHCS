@@ -131,7 +131,7 @@ const HotelReviewsList = ({ reviews = [], loading, hotelId, onCommentPosted }) =
         }
     };
 
-    const renderReplyForm = (parentId) => (
+    const renderReplyForm = () => (
         <form className={replyContainer} onSubmit={e => { e.preventDefault(); handleSubmitReply(); }}>
             <textarea
                 value={newComment}

@@ -110,40 +110,6 @@ const BookingSidebarContent = ({ booking }) => {
         const diffTime = Math.abs(end - start);
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     };
-
-    const handleEdit = () => {
-        console.log('Edit booking:', booking.id);
-        // Xử lý chỉnh sửa
-    };
-
-    const handleCancel = () => {
-        if (window.confirm('Bạn có chắc chắn muốn hủy đặt phòng này?')) {
-            console.log('Cancel booking:', booking.id);
-            // Xử lý hủy
-        }
-    };
-
-    const handleConfirm = () => {
-        if (window.confirm('Xác nhận đặt phòng này?')) {
-            console.log('Confirm booking:', booking.id);
-            // Xử lý xác nhận
-        }
-    };
-
-    const handleCheckin = () => {
-        if (window.confirm('Xác nhận khách đã nhận phòng?')) {
-            console.log('Checkin booking:', booking.id);
-            // Xử lý check-in
-        }
-    };
-
-    const handleCheckout = () => {
-        if (window.confirm('Xác nhận khách đã trả phòng?')) {
-            console.log('Checkout booking:', booking.id);
-            // Xử lý check-out
-        }
-    };
-
     const getInitials = (name) => {
         if (!name) return 'U';
         return name

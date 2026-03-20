@@ -132,15 +132,55 @@ export const hotelService = {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      if (response.data.success || response.data.status === 200) {
-        return response.data.data || [];
+      // Hỗ trợ cả response theo 2 cách: { success: true } và { status: true } (hoặc status: 200)
+      const success =
+        response.data?.success === true ||
+        response.data?.status === true ||
+        response.data?.status === 200;
+
+      if (success) {
+        return response.data?.data || [];
       }
       return [];
-    } catch (err) {
-      console.error('Lỗi lấy hotel manager', err);
+    } catch (error) {
+      console.error('Lỗi lấy hotel manager', error);
       return [];
     }
   },
+  async createHotelManagerHotel(payload) {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await api.post('/auth/hotel-manager/hotels', payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Return the hotel object directly, not wrapper
+      return res.data?.data ?? res.data;
+    }
+    catch (error) {
+      console.error('Lỗi createHotelManagerHotel', error);
+      throw error;
+    }
+  },
+  async uploadHotelImages(hotelId, imageFiles) {
+    try {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      imageFiles.forEach((file) => {
+        formData.append('images', file);
+      });
+
+      const res = await api.post(`/auth/hotel-manager/hotels/${hotelId}/images`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      return res.data;
+    } catch (error) {
+      console.error('Lỗi uploadHotelImages', error);
+      throw error;
+    }
+  },
 };
-
-

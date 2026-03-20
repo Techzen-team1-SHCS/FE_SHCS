@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./HotelCard2.module.css";
 
 const HotelCard2 = ({ PopularHotel, aosDelay, index,onClick }) => {

@@ -1,5 +1,5 @@
 // NavigationTabs.jsx
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styles from './NavigationTabs.module.css';
 
 const NavigationTabs = ({ hotelId,currentStep = 1 }) => {

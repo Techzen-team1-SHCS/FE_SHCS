@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import styles from "./HotelManagement.module.css";
 // import { hotels } from "../../Mock/hotelData"; // bỏ
 import { HOTEL_TABS } from "../../Constants/Hotel/hotelTabs";
@@ -32,9 +31,8 @@ export default function HotelManagement() {
           {HOTEL_TABS.map((tab) => (
             <button
               key={tab}
-              className={`${styles.tab} ${
-                activeTab === tab ? styles.activeTab : ""
-              }`}
+              className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ""
+                }`}
               onClick={() => {
                 setActiveTab(tab);
                 setCurrentPage(1);
@@ -46,7 +44,7 @@ export default function HotelManagement() {
         </div>
 
         <div className={styles.searchBox}>
-          <input placeholder="Search by room number" />
+          <input placeholder="Search by room number" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
       </div>
 
@@ -72,11 +70,10 @@ export default function HotelManagement() {
                 <td>{hotel.date || "-"}</td>
                 <td>
                   <span
-                    className={`${styles.status} ${
-                      hotel.status === HOTEL_STATUS.OPEN
+                    className={`${styles.status} ${hotel.status === HOTEL_STATUS.OPEN
                         ? styles.open
                         : styles.close
-                    }`}
+                      }`}
                   >
                     {hotel.status || HOTEL_STATUS.CLOSE}
                   </span>
@@ -100,9 +97,8 @@ export default function HotelManagement() {
           {getPaginationPages(totalPages).map((num) => (
             <button
               key={num}
-              className={`${styles.pageBtn} ${
-                num === currentPage ? styles.activePage : ""
-              }`}
+              className={`${styles.pageBtn} ${num === currentPage ? styles.activePage : ""
+                }`}
               onClick={() => setCurrentPage(num)}
             >
               {num}

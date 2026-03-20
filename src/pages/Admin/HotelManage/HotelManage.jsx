@@ -69,7 +69,7 @@ const HotelManage = () => {
     const [hotelsData, setHotelsData] = useState([]);
     const [selectedHotel, setSelectedHotel] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [ setIsLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [editForm, setEditForm] = useState({

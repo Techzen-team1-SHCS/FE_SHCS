@@ -1,4 +1,5 @@
 export const HOTEL_STATUS = {
   OPEN: "Open",
-  CLOSE: "Close"
+  CLOSE: "Close",
+  PENDING: "pending"
 };

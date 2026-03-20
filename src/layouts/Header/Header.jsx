@@ -4,7 +4,6 @@ import Auth from '../../components/Auth/Auth';
 import '../Header/index.css'
 import { useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
-import PopUpButton from "../../components/PopupButton/PopUpButton"
 import { toast } from 'react-toastify';
 import Notification from '../../components/Notification/Notification';
 import styles from './Header.module.css';
@@ -12,7 +11,7 @@ const Header = () => {
     const { authAppear, authWrapper, btnRegister, content, triangleUp, dangky, linkLogin, userMenu, userHeader, userAvatar, menuItem, menuDivider, logoutBtn, authT, customFaUser, customFaDown, authUser } = styles;
     const { user, logout } = useContext(AuthContext);
     const [isAuthVisible, setIsAuthVisible] = useState(false);
-    const [isScrolled, setIsScrolled] = useState(false);
+    const [ setIsScrolled] = useState(false);
     const [isAuthAppear, setIsAuthAppear] = useState(false);
     const [isLogin, setIsLogin] = useState('');
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -33,7 +32,7 @@ const Header = () => {
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, [setIsScrolled]);
 
 
     const navItems = [

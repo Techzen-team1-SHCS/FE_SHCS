@@ -1,6 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
 import { hotelService } from "../../../services/hotelService";
-import { HOTEL_STATUS } from "../Constants/Hotel/hotelStatus";
 
 export const useHotelManagement = (itemsPerPage = 5) => {
   const [allHotels, setAllHotels] = useState([]);
@@ -27,9 +26,14 @@ export const useHotelManagement = (itemsPerPage = 5) => {
 
     // filter theo tab
     if (activeTab !== "All") {
-      result = result.filter(
-        (h) => h.status === activeTab
-      );
+      const active = activeTab.toLowerCase();
+      result = result.filter((h) => {
+        const status = (h.status || "").toLowerCase();
+        if (active === "pending") return status === "pending";
+        if (active === "open") return status === "open";
+        if (active === "close") return status === "close";
+        return true;
+      });
     }
 
     // search

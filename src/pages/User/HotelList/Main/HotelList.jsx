@@ -68,23 +68,14 @@ function HotelList() {
     viewMode
   });
   const {
-    data: infiniteData,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     refetch: refetchInfinite,
-    isLoading: infiniteLoading,
-    isFetching: infiniteFetching,
-    isError: infiniteError,
-    error: infiniteErrorData
   } = infiniteQuery;
   const {
-    data: paginationData,
     refetch: refetchPagination,
-    isLoading: paginationLoading,
     isFetching: paginationFetching,
-    isError: paginationError,
-    error: paginationErrorData
   } = paginationQuery;
   const {
     hotels,
