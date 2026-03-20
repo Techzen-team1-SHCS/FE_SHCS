@@ -12,7 +12,7 @@ import PopUpButton from '../../../../components/PopupButton/PopUpButton'
 const Home = () => {
     const { user } = useContext(AuthContext);
     const [isAuthVisible, setIsAuthVisible] = useState(false);
-    const [isLogin, setIsLogin] = useState(false);
+    const [ setIsLogin] = useState(false);
     return (
         <div className="page-wrapper">
             <HeroSection />

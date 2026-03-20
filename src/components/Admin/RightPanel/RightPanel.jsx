@@ -27,7 +27,7 @@ const RightPanel = () => {
         time
     } = styles;
      const [hotelStats, setHotelStats] = useState(null);
-    const [upcomingReservations, setUpcomingReservations] = useState([]); // nếu có API riêng
+    const [upcomingReservations] = useState([]); // nếu có API riêng
     const [satisfactionData, setSatisfactionData] = useState(null);
     useEffect(() => {
         const fetchData = async () => {

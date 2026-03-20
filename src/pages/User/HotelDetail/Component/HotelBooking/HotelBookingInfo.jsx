@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import styles from "./HotelBookingInfo.module.css";
 
 const HotelBookingInfo = ({ hotelData, onTotalPriceChange }) => {

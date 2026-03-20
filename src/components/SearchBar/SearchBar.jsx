@@ -225,11 +225,7 @@ function SearchBar() {
             setMonthOffset(prev => prev + 1);
         }
     };
-    // Khi đóng date picker, reset về tháng hiện tại
-    const handleCloseDatePicker = () => {
-        setShowDatePicker(null);
-        setMonthOffset(0); // Reset về tháng hiện tại
-    };
+    
     const destinations = ["Hà Nội", "Đà Nẵng", "Hồ Chí Minh", "Nha Trang", "Huế", "Hải Phòng", "Phú Quốc", "Đà Lạt"];
     const roomTypes = [
         "Cổ điển", "Hiện đại",
@@ -262,16 +258,7 @@ function SearchBar() {
 
     };
 
-    const datePickerStyle = {
-        position: 'absolute',
-        backgroundColor: 'white',
-        border: '1px solid #ccc',
-        borderRadius: '8px',
-        padding: '20px',
-        zIndex: 1000,
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        fontFamily: "'Outfit', sans-serif"
-    };
+    
 
     const dropdownItemStyle = {
         padding: '8px',

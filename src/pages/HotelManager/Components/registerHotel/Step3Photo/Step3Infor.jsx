@@ -6,21 +6,38 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 import { EDITOR_CONFIG } from "../../../Constants/RegisterHotel/Step3";
 import { useHotelInfoForm } from "../../../hooks/RegisterHotel/Step3";
+import { useEffect } from "react";
 
-export default function Step3HotelInfo({ prevStep }) {
+export default function Step3HotelInfo({ prevStep, data, onSubmit }) {
   const {
     hotelName,
     description,
     detailInfo,
+    price,
+    hotelClass,
+    nameNearbyPlace,
     images,
     setHotelName,
     setDescription,
     setDetailInfo,
+    setPrice,
+    setHotelClass,
+    setNameNearbyPlace,
     handleUpload,
     removeImage,
+    setImages,
     handleFinish
-  } = useHotelInfoForm();
-
+  } = useHotelInfoForm(data, onSubmit);
+  // lần đầu set data nếu có
+  useEffect(() => {
+    if (data?.name) setHotelName(data.name);
+    if (data?.description) setDescription(data.description);
+    if (data?.detail_info) setDetailInfo(data.detail_info);
+    if (data?.price) setPrice(data.price);
+    if (data?.hotel_class) setHotelClass(data.hotel_class);
+    if (data?.name_nearby_place) setNameNearbyPlace(data.name_nearby_place);
+    if (data?.images) setImages(data.images);
+  }, [data, setHotelName, setDescription, setDetailInfo, setPrice, setHotelClass, setNameNearbyPlace, setImages]);
   const handleDrop = (e) => {
     e.preventDefault();
     handleUpload(e.dataTransfer.files);
@@ -45,6 +62,37 @@ export default function Step3HotelInfo({ prevStep }) {
           type="text"
           value={hotelName}
           onChange={(e) => setHotelName(e.target.value)}
+        />
+      </div>
+
+      <div className={styles.field}>
+        <label>Price (VND)</label>
+        <input
+          type="number"
+          min="0"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+        />
+      </div>
+
+      <div className={styles.field}>
+        <label>Class (1-5)</label>
+        <input
+          type="number"
+          min="1"
+          max="5"
+          step="0.1"
+          value={hotelClass}
+          onChange={(e) => setHotelClass(e.target.value)}
+        />
+      </div>
+
+      <div className={styles.field}>
+        <label>Nearby place</label>
+        <input
+          type="text"
+          value={nameNearbyPlace}
+          onChange={(e) => setNameNearbyPlace(e.target.value)}
         />
       </div>
 

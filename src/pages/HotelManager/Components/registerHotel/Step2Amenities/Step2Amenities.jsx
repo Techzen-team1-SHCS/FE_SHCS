@@ -2,10 +2,21 @@ import styles from "./Step2Amenities.module.css";
 import { AMENITIES_OPTIONS } from "../../../Constants/RegisterHotel/Step2";
 import { useAmenitiesForm } from "../../../hooks/RegisterHotel/Step2";
 
-export default function Step2Amenities({ nextStep, prevStep }) {
+export default function Step2Amenities({ nextStep, prevStep, setData }) {
 
   const { amenities, toggleAmenity } = useAmenitiesForm();
 
+  const handleContinue = () => {
+    if (typeof setData === 'function') {
+      // Map boolean amenity keys to a simple list, then send to parent formData
+      setData({
+        amenities: Object.entries(amenities)
+          .filter(([, value]) => value)
+          .map(([key]) => key)
+      });
+    }
+    nextStep();
+  }
   return (
     <div className={styles.container}>
 
@@ -50,7 +61,7 @@ export default function Step2Amenities({ nextStep, prevStep }) {
 
         <button
           className={styles.continueBtn}
-          onClick={nextStep}
+          onClick={handleContinue}
         >
           continue
         </button>

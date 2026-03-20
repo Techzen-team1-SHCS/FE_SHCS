@@ -2,8 +2,8 @@ import styles from "./Step1Property.module.css";
 import { cityData } from "../../../Constants/RegisterHotel/CityData";
 import { usePropertyForm } from "../../../hooks/RegisterHotel/Step1Property";
 
-export default function Step1Property({ nextStep }) {
-const {
+export default function Step1Property({ nextStep, setData }) {
+  const {
     city,
     district,
     address,
@@ -15,6 +15,17 @@ const {
     handleCityChange
   } = usePropertyForm();
 
+  const handleContinue = () => {
+    if (typeof setData === 'function') {
+      setData({
+        province: city,
+        name_nearby_place: district,
+        address,
+        zip
+      });
+    }
+    nextStep();
+  }
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Your property</h2>
@@ -30,7 +41,7 @@ const {
         />
 
         {/* City */}
-        <div style={{display:'flex',flexDirection:'column'}}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label>City</label>
           <select
             className={styles.input}
@@ -74,7 +85,7 @@ const {
       </div>
 
       {/* Button */}
-      <button className={styles.continueBtn} onClick={nextStep}>
+      <button className={styles.continueBtn} onClick={handleContinue}>
         continue
       </button>
     </div>

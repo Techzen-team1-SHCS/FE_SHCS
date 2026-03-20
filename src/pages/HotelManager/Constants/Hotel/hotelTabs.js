@@ -1,1 +1,1 @@
-export const HOTEL_TABS = ["All", "Open", "Close"];
+export const HOTEL_TABS = ["All", "Open", "Close", "Pending"];

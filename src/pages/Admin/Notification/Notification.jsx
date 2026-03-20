@@ -71,10 +71,10 @@ const Notification = () => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-      const response = await notificationService.getNotifications();
-      setNotifications(response.data || []);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      const notifications = await notificationService.getNotifications();
+      setNotifications(notifications || []);
     } catch (error) {
       console.error("Fetch notifications error:", error);
       setNotifications([]);
@@ -117,7 +117,7 @@ const Notification = () => {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    
+
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -130,7 +130,7 @@ const Notification = () => {
         <div className={header}>
           <h1 className={headerTitle}>Notifications</h1>
         </div>
-        <p className={headerSubtitle}><PartLoading/></p>
+        <p className={headerSubtitle}><PartLoading /></p>
       </div>
     );
   }
@@ -145,16 +145,16 @@ const Notification = () => {
             {notifications.length} total notifications
           </p>
         </div>
-        
+
         {notifications.length > 0 && (
           <div className={actionsContainer}>
-            <button 
+            <button
               className={refreshBtn}
               onClick={fetchNotifications}
             >
               Refresh
             </button>
-            <button 
+            <button
               className={markAllReadBtn}
               onClick={markAllAsRead}
               disabled={notifications.every(n => n.read)}
@@ -176,9 +176,8 @@ const Notification = () => {
         ) : (
           notifications.map((notification) => (
             <div
-              className={`${notificationCard} ${
-                !notification.read ? unreadCard : ""
-              }`}
+              className={`${notificationCard} ${!notification.read ? unreadCard : ""
+                }`}
               key={notification.id || notification._id}
               onClick={() => !notification.read && markAsRead(notification.id)}
               style={{ cursor: !notification.read ? "pointer" : "default" }}
@@ -196,7 +195,7 @@ const Notification = () => {
                     alt={notification.type}
                   />
                 </div>
-                
+
                 <div className={contentContainer}>
                   <div className={notificationHeader}>
                     <h3 className={notificationTitle}>{notification.title}</h3>
