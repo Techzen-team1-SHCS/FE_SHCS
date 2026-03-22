@@ -27,6 +27,10 @@ const HotelManagerLayout = () => {
             "/hotel-manager/notification": "Notifications",
         };
 
+        if (location.pathname.startsWith("/hotel-manager/hotel/") && location.pathname.split("/").length === 4) {
+            return "Hotel Detail";
+        }
+
         return pathToTitle[location.pathname] || "Hotel Manager Panel";
     };
 

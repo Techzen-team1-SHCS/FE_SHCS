@@ -75,6 +75,14 @@ export const hotelService = {
     return response.data.data;
   },
 
+  async getHotelManagerHotelById(id) {
+    const token = localStorage.getItem('token');
+    const response = await api.get(`/auth/hotel-manager/hotels/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data.data;
+  },
+
   async getAllHotels() {
     const response = await api.get("/auth/hotel");
     return response.data.content;
