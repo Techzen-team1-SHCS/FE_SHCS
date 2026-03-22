@@ -1,22 +1,10 @@
 import api from './api';
 
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  if (!token || token === 'null' || token === 'undefined') {
-    throw new Error('Authentication token not found');
-  }
-  return {
-    Authorization: `Bearer ${token}`,
-  };
-};
-
 export const notificationService = {
   // Dùng cho trang Admin - lấy tất cả thông báo
   async getNotifications() {
     try {
-      const response = await api.get('/auth/Allnotifications', {
-        headers: getAuthHeaders(),
-      });
+      const response = await api.get('/auth/Allnotifications');
       return response.data?.data || [];
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to fetch notifications');
@@ -26,9 +14,7 @@ export const notificationService = {
   // Dùng cho Hotel Manager / User - lấy thông báo theo user hiện tại
   async getHotelManagerNotifications() {
     try {
-      const response = await api.get('/auth/notifications', {
-        headers: getAuthHeaders(),
-      });
+      const response = await api.get('/auth/notifications');
       return response.data?.notifications || [];
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to fetch notifications');
@@ -37,9 +23,7 @@ export const notificationService = {
 
   async markAsRead(id) {
     try {
-      await api.put(`/auth/notifications/${id}/read`, null, {
-        headers: getAuthHeaders(),
-      });
+      await api.put(`/auth/notifications/${id}/read`);
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to mark notification as read');
     }
@@ -47,11 +31,42 @@ export const notificationService = {
 
   async markAllAsRead() {
     try {
-      await api.put('/auth/notifications/mark-all-read', null, {
-        headers: getAuthHeaders(),
-      });
+      await api.put('/auth/notifications/mark-all-read');
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to mark all notifications as read');
+    }
+  },
+
+  // Lấy danh sách khách sạn chờ duyệt
+  async getPendingHotels() {
+    try {
+      const response = await api.get('/auth/admin/hotels/pending');
+      return response.data?.data || [];
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch pending hotels');
+    }
+  },
+
+  // Duyệt khách sạn
+  async approveHotel(hotelId) {
+    try {
+      const response = await api.post(`/auth/admin/hotel/${hotelId}/approve`, {});
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to approve hotel');
+    }
+  },
+
+  // Từ chối khách sạn
+  async rejectHotel(hotelId, reason) {
+    try {
+      const response = await api.post(
+        `/auth/admin/hotel/${hotelId}/reject`,
+        { reason }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to reject hotel');
     }
   },
 };
