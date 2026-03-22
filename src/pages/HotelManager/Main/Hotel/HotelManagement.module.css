@@ -131,3 +131,18 @@
 .activePage {
   background-color: #e5e7eb;
 }
+
+.deleteButton {
+  padding: 5px 10px;
+  border: 1px solid #dc2626;
+  background-color: #ef4444;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.deleteButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
