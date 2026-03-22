@@ -1,13 +1,16 @@
 import styles from "./HotelManagement.module.css";
-// import { hotels } from "../../Mock/hotelData"; // bỏ
+import { hotels } from "../../Mock/hotelData"; // bỏ
 import { HOTEL_TABS } from "../../Constants/Hotel/hotelTabs";
 import { HOTEL_TABLE_COLUMNS } from "../../Constants/Hotel/hotelTableColumns";
 import { HOTEL_STATUS } from "../../Constants/Hotel/hotelStatus";
 import { useHotelManagement } from "../../hooks/useHotelManagement";
 import { getPaginationPages } from "../../Helpers/HotelHelpers";
 import PartLoading from "../../../../components/Loading/PartLoading";
+import { useNavigate } from "react-router-dom";
 
 export default function HotelManagement() {
+  const navigate = useNavigate();
+
   const {
     loading,
     activeTab,
@@ -20,8 +23,18 @@ export default function HotelManagement() {
     totalPages,
   } = useHotelManagement(5);
 
+  const handleHotelRowClick = (hotel) => {
+    const hotelId = hotel.id || hotel.hotelId;
+    if (!hotelId) return;
+    navigate(`/hotel-manager/hotel/${hotelId}`);
+  };
+
   if (loading) {
-    return <div><PartLoading /></div>;
+    return (
+      <div>
+        <PartLoading />
+      </div>
+    );
   }
 
   return (
@@ -31,8 +44,9 @@ export default function HotelManagement() {
           {HOTEL_TABS.map((tab) => (
             <button
               key={tab}
-              className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ""
-                }`}
+              className={`${styles.tab} ${
+                activeTab === tab ? styles.activeTab : ""
+              }`}
               onClick={() => {
                 setActiveTab(tab);
                 setCurrentPage(1);
@@ -44,7 +58,11 @@ export default function HotelManagement() {
         </div>
 
         <div className={styles.searchBox}>
-          <input placeholder="Search by room number" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input
+            placeholder="Search by room number"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
       </div>
 
@@ -60,7 +78,11 @@ export default function HotelManagement() {
 
           <tbody>
             {currentHotels.map((hotel) => (
-              <tr key={hotel.id}>
+              <tr
+                key={hotel.id}
+                className={styles.clickableRow}
+                onClick={() => handleHotelRowClick(hotel)}
+              >
                 <td>{hotel.name}</td>
                 <td>{hotel.hotelId || hotel.id}</td>
                 <td>{hotel.rating || "-"}</td>
@@ -70,10 +92,11 @@ export default function HotelManagement() {
                 <td>{hotel.date || "-"}</td>
                 <td>
                   <span
-                    className={`${styles.status} ${hotel.status === HOTEL_STATUS.OPEN
+                    className={`${styles.status} ${
+                      hotel.status === HOTEL_STATUS.OPEN
                         ? styles.open
                         : styles.close
-                      }`}
+                    }`}
                   >
                     {hotel.status || HOTEL_STATUS.CLOSE}
                   </span>
@@ -97,8 +120,9 @@ export default function HotelManagement() {
           {getPaginationPages(totalPages).map((num) => (
             <button
               key={num}
-              className={`${styles.pageBtn} ${num === currentPage ? styles.activePage : ""
-                }`}
+              className={`${styles.pageBtn} ${
+                num === currentPage ? styles.activePage : ""
+              }`}
               onClick={() => setCurrentPage(num)}
             >
               {num}

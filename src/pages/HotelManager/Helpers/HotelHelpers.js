@@ -7,3 +7,7 @@ export function filterHotels(hotels, activeTab) {
 
   return hotels.filter((hotel) => hotel.status === activeTab);
 }
+
+export const renderStars = (rating) => {
+  return "⭐".repeat(rating);
+};

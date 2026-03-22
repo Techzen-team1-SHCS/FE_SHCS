@@ -7,6 +7,7 @@ import About from './pages/User/About/Main/About';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import BlogList from './pages/User/BlogList/Main/BlogList';
 import HotelDetail from './pages/User/HotelDetail/Main/HotelDetail';
+import HotelManagerHotelDetail from './pages/HotelManager/Main/Hotel/HotelDetail';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ResetPassword from './pages/User/ResetPassword/Main/ResetPassword';
@@ -81,6 +82,7 @@ function App() {
             //</AdminPrivateRoute>
           }>
             <Route path="/hotel-manager/hotel" element={<Hotel />} />
+            <Route path="/hotel-manager/hotel/:id" element={<HotelManagerHotelDetail />} />
             <Route path="/hotel-manager/registerhotel" element={<RegisterHotel />} />
             <Route path="/hotel-manager/analysis" element={<Analysis />} />
             <Route path="/hotel-manager/notification" element={<Notifications />} />
