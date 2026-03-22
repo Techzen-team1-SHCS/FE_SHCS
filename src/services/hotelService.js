@@ -83,6 +83,25 @@ export const hotelService = {
     return response.data.data;
   },
 
+  async deleteHotelManagerHotel(id) {
+    try {
+      const response = await api.delete(`/auth/hotel-manager/hotels/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Lỗi xóa khách sạn hotel manager', error);
+      throw error;
+    }
+  },
+
+  async updateHotelManagerHotel(id, data) {
+    try {
+      const response = await api.post(`/auth/hotel-manager/hotels/${id}`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Lỗi cập nhật khách sạn hotel manager', error);
+      throw error;
+    }
+  },
   async getAllHotels() {
     const response = await api.get("/auth/hotel");
     return response.data.content;

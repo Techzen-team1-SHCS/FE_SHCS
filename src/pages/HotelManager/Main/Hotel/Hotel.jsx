@@ -1,5 +1,4 @@
 import styles from "./HotelManagement.module.css";
-import { hotels } from "../../Mock/hotelData"; // bỏ
 import { HOTEL_TABS } from "../../Constants/Hotel/hotelTabs";
 import { HOTEL_TABLE_COLUMNS } from "../../Constants/Hotel/hotelTableColumns";
 import { HOTEL_STATUS } from "../../Constants/Hotel/hotelStatus";
@@ -7,9 +6,22 @@ import { useHotelManagement } from "../../hooks/useHotelManagement";
 import { getPaginationPages } from "../../Helpers/HotelHelpers";
 import PartLoading from "../../../../components/Loading/PartLoading";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { hotelService } from "../../../../services/hotelService";
 
 export default function HotelManagement() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const deleteHotelMutation = useMutation({
+    mutationFn: (hotelId) => hotelService.deleteHotelManagerHotel(hotelId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["hotel-manager-list"]);
+    },
+    onError: () => {
+      alert("Xóa khách sạn thất bại. Vui lòng thử lại.");
+    },
+  });
 
   const {
     loading,
@@ -44,9 +56,8 @@ export default function HotelManagement() {
           {HOTEL_TABS.map((tab) => (
             <button
               key={tab}
-              className={`${styles.tab} ${
-                activeTab === tab ? styles.activeTab : ""
-              }`}
+              className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ""
+                }`}
               onClick={() => {
                 setActiveTab(tab);
                 setCurrentPage(1);
@@ -92,14 +103,30 @@ export default function HotelManagement() {
                 <td>{hotel.date || "-"}</td>
                 <td>
                   <span
-                    className={`${styles.status} ${
-                      hotel.status === HOTEL_STATUS.OPEN
+                    className={`${styles.status} ${hotel.status === HOTEL_STATUS.OPEN
                         ? styles.open
                         : styles.close
-                    }`}
+                      }`}
                   >
                     {hotel.status || HOTEL_STATUS.CLOSE}
                   </span>
+                </td>                <td>
+                  <button
+                    className={styles.deleteButton}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      if (
+                        window.confirm(
+                          `Bạn có chắc chắn muốn xóa khách sạn "${hotel.name}"?`
+                        )
+                      ) {
+                        deleteHotelMutation.mutate(hotel.id);
+                      }
+                    }}
+                    disabled={deleteHotelMutation.isLoading}
+                  >
+                    {deleteHotelMutation.isLoading ? "Đang xóa..." : "Xóa"}
+                  </button>
                 </td>
               </tr>
             ))}
@@ -120,9 +147,8 @@ export default function HotelManagement() {
           {getPaginationPages(totalPages).map((num) => (
             <button
               key={num}
-              className={`${styles.pageBtn} ${
-                num === currentPage ? styles.activePage : ""
-              }`}
+              className={`${styles.pageBtn} ${num === currentPage ? styles.activePage : ""
+                }`}
               onClick={() => setCurrentPage(num)}
             >
               {num}

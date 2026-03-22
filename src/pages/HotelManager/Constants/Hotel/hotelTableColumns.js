@@ -6,5 +6,6 @@ export const HOTEL_TABLE_COLUMNS = [
   "Total rooms",
   "Available rooms",
   "Registration date",
-  "Status"
+  "Status",
+  "Actions"
 ];

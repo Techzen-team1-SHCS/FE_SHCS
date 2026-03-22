@@ -13,6 +13,33 @@
   font-size: 0.95rem;
 }
 
+.editInput {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.editInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.editField {
+  margin-bottom: 16px;
+}
+
+.editLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
 .galleryGrid {
   display: grid;
   grid-template-columns: 2fr 1fr;
