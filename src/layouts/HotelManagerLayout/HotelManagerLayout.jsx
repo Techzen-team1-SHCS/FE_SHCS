@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import styles from "./HotelManagerLayout.module.css";
 import { Outlet, useLocation } from 'react-router-dom';
-import Sidebar from "../../components/HotelManager/Sidebar/Sidebar";
+import Sidebar from "../../pages/HotelManager/Components/Sidebar/Sidebar";
 import { AuthContext } from '../../contexts/AuthContext';
 
 const HotelManagerLayout = () => {
@@ -23,6 +23,8 @@ const HotelManagerLayout = () => {
     const getTitleFromPath = () => {
         const pathToTitle = {
             "/hotel-manager/hotel": "Hotel",
+            "/hotel-manager/rooms": "Rooms",
+            "/hotel-manager/housekeeping": "House keeping",
             "/hotel-manager/analysis": "Analysis",
             "/hotel-manager/notification": "Notifications",
         };
