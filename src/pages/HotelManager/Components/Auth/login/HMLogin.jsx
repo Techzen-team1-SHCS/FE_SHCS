@@ -12,8 +12,7 @@ export default function Login() {
       <div className={styles.left}>
         {/* LOGO */}
         <div className={styles.logo}>
-          <img src="/logo.png" alt="logo" />
-          <span>SHCS</span>
+          <img src="/assets/images/logos/logo-two.png" alt="logo" />
         </div>
 
         {/* TITLE */}

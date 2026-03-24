@@ -13,11 +13,34 @@ export default function Register() {
     form,
     showPass,
     showConfirm,
+    loading,
+    error,
+    errors,
+    success,
     handleChange,
     togglePass,
     toggleConfirm,
     handleSubmit,
   } = useRegister();
+
+  if (success) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.right}>
+          <div className={styles.logo}>
+            <img src="/assets/images/logos/logo-two.png" alt="logo" />
+          </div>
+          <h2 className={styles.title}>Đăng ký thành công!</h2>
+          <p className={styles.subtitle}>
+            Tài khoản của bạn đã được tạo. Vui lòng đăng nhập để tiếp tục.
+          </p>
+          <Link to="/hotel-manager/login" className={styles.link}>
+            Đăng nhập ngay
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -37,8 +60,8 @@ export default function Register() {
       {/* RIGHT */}
       <div className={styles.right}>
         <div className={styles.logo}>
-          <img src="/logo.png" />
-          <span>SHCS</span>
+          <img src="/assets/images/logos/logo-two.png" alt="logo" />
+
         </div>
 
         <h2 className={styles.title}>Sign up</h2>
@@ -46,59 +69,70 @@ export default function Register() {
           Let’s get you all set up so you can access your personal account.
         </p>
 
-        {/* INPUT GRID */}
-        <div className={styles.grid}>
-          {REGISTER_FIELDS.map((f) => (
-            <FormInput
-              key={f.name}
-              label={f.label}
-              name={f.name}
-              value={form[f.name]}
-              onChange={handleChange}
-              placeholder={f.placeholder}
-            />
-          ))}
+        {error && <div className={styles.error}>{error}</div>}
 
-          <div className={styles.inputGroupFull}>
-            <PasswordInput
-              label="Password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              show={showPass}
-              toggle={togglePass}
-            />
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+          {/* INPUT GRID */}
+          <div className={styles.grid}>
+            {REGISTER_FIELDS.map((f) => (
+              <FormInput
+                key={f.name}
+                label={f.label}
+                name={f.name}
+                value={form[f.name]}
+                onChange={handleChange}
+                placeholder={f.placeholder}
+                error={errors[f.name]}
+              />
+            ))}
+
+            <div className={styles.inputGroupFull}>
+              <PasswordInput
+                label="Password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                show={showPass}
+                toggle={togglePass}
+                error={errors.password}
+              />
+            </div>
+
+            <div className={styles.inputGroupFull}>
+              <PasswordInput
+                label="Confirm Password"
+                name="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                show={showConfirm}
+                toggle={toggleConfirm}
+                error={errors.confirmPassword}
+              />
+            </div>
           </div>
 
-          <div className={styles.inputGroupFull}>
-            <PasswordInput
-              label="Confirm Password"
-              name="confirmPassword"
-              value={form.confirmPassword}
+          {/* TERMS */}
+          <div className={styles.terms}>
+            <input
+              type="checkbox"
+              name="agree"
+              checked={form.agree}
               onChange={handleChange}
-              show={showConfirm}
-              toggle={toggleConfirm}
             />
+            <span>
+              I agree to all the <b>Terms</b> and <b>Privacy Policies</b>
+            </span>
           </div>
-        </div>
 
-        {/* TERMS */}
-        <div className={styles.terms}>
-          <input
-            type="checkbox"
-            name="agree"
-            checked={form.agree}
-            onChange={handleChange}
-          />
-          <span>
-            I agree to all the <b>Terms</b> and <b>Privacy Policies</b>
-          </span>
-        </div>
-
-        {/* BUTTON */}
-        <button className={styles.registerBtn} onClick={handleSubmit}>
-          Create account
-        </button>
+          {/* BUTTON */}
+          <button
+            type="submit"
+            className={styles.registerBtn}
+            disabled={loading}
+          >
+            {loading ? "Creating account..." : "Create account"}
+          </button>
+        </form>
 
         <p className={styles.loginText}>
           Already have an account?{" "}
