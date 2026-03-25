@@ -7,7 +7,8 @@ import { FiBell } from "react-icons/fi";
 import { FaChartBar } from "react-icons/fa";
 import { FaHotel } from "react-icons/fa";
 import { MdAddBusiness } from "react-icons/md";
-
+import { FaBed } from "react-icons/fa";
+import { FiTool } from "react-icons/fi";
 
 const Sidebar = () => {
     const {
@@ -34,9 +35,12 @@ const Sidebar = () => {
 
     const menuItems = [
         { path: "/hotel-manager/hotel", label: "Hotel", icon: <FaHotel /> },
+        { path: "/hotel-manager/rooms", label: "Rooms", icon: <FaBed /> },
         { path: "/hotel-manager/registerhotel", label: "RegisterHotel", icon: <MdAddBusiness />  },
         { path: "/hotel-manager/analysis", label: "Analysis", icon: <FaChartBar />  },
+        { path: "/hotel-manager/housekeeping", label: "HouseKeeping", icon: <FiTool /> },
         { path: "/hotel-manager/notification", label: "Notifications", icon: <FiBell /> },
+        
 
     ];
 
