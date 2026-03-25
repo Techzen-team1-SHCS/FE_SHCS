@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styles from "./RoomModal.module.css";
 
 const RoomModal = ({ isOpen, onClose, room, onSave, mode }) => {

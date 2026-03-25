@@ -4,7 +4,7 @@ import GoogleLoginButton from "../../../../../components/Auth/GoogleLoginButton"
 import { Link } from "react-router-dom";
 
 export default function Login() {
-  const { form, handleChange, handleLogin } = useAuth();
+  const { form, error, loading, recentLogins, handleChange, handleLogin, handleRecentLogin } = useAuth();
 
   return (
     <div className={styles.container}>
@@ -20,6 +20,8 @@ export default function Login() {
         <p className={styles.subtitle}>
           Login to access your travelwise account
         </p>
+
+        {error && <div className={styles.error}>{error}</div>}
 
         {/* EMAIL */}
         <div className={styles.formGroup}>
@@ -56,8 +58,12 @@ export default function Login() {
         </div>
 
         {/* LOGIN BUTTON */}
-        <button className={styles.loginBtn} onClick={handleLogin}>
-          Login
+        <button
+          className={styles.loginBtn}
+          onClick={handleLogin}
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         {/* SIGN UP */}
@@ -86,17 +92,32 @@ export default function Login() {
         </p>
 
         <div className={styles.cards}>
-          {/* USER CARD */}
-          <div className={styles.card}>
-            <img src="https://i.pravatar.cc/150?img=3" alt="user" />
-            <div className={styles.cardName}>Van</div>
-          </div>
+          {recentLogins.length > 0 ? (
+            recentLogins.map((user) => (
+              <>
+                <div key={user.email} className={styles.card} onClick={() => handleRecentLogin(user)} style={{ cursor: "pointer" }}>
+                  <img src={user.avatar || "https://i.pravatar.cc/150?img=3"} alt={user.name} />
+                  <div className={styles.cardName}>{user.name}</div>
+                </div>
+                <div className={styles.card}>
+                  <div className={styles.addCard}>+</div>
+                  <div className={styles.cardName}>Add account</div>
+                </div>
+              </>
 
-          {/* ADD ACCOUNT */}
-          <div className={styles.card}>
-            <div className={styles.addCard}>+</div>
-            <div className={styles.cardName}>Add account</div>
-          </div>
+            ))
+          ) : (
+            <>
+              <div className={styles.card}>
+                <img src="https://i.pravatar.cc/150?img=3" alt="user" />
+                <div className={styles.cardName}>Van</div>
+              </div>
+              <div className={styles.card}>
+                <div className={styles.addCard}>+</div>
+                <div className={styles.cardName}>Add account</div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
