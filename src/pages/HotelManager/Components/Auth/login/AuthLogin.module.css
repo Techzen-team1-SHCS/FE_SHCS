@@ -19,10 +19,11 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 40px;
+  margin-left: -15px;
 }
 
 .logo img {
-  width: 40px;
+  width: 150px;
 }
 
 .logo span {

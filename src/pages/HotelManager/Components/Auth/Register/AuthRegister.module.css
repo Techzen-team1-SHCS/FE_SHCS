@@ -55,10 +55,12 @@
   align-items: center;
   gap: 10px;
   justify-content: flex-end;
+  margin-right: -15px;
+
 }
 
 .logo img {
-  width: 40px;
+  width: 150px;
 }
 
 /* TITLE */
@@ -166,4 +168,15 @@ input:focus {
 
 .google > div {
   width: 100% !important;
+}
+
+/* ERROR */
+.error {
+  color: #dc3545;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-size: 14px;
 }
