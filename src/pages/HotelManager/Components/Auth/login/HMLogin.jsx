@@ -99,10 +99,6 @@ export default function Login() {
                   <img src={user.avatar || "https://i.pravatar.cc/150?img=3"} alt={user.name} />
                   <div className={styles.cardName}>{user.name}</div>
                 </div>
-                <div className={styles.card}>
-                  <div className={styles.addCard}>+</div>
-                  <div className={styles.cardName}>Add account</div>
-                </div>
               </>
 
             ))
