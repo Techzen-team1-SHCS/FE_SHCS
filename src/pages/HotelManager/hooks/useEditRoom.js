@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { hotelRooms } from "../Mock/roomData";
 import {
   ROOM_AMENITIES,
@@ -19,16 +19,47 @@ const initialFormState = {
   images: [],
 };
 
-export const useAddRoom = () => {
+const getStoredRooms = () => {
+  const saved = localStorage.getItem("hotelRooms");
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // ignore
+    }
+  }
+  return hotelRooms;
+};
+
+const findRoomById = (id) => {
+  const rooms = getStoredRooms();
+  return rooms.find((room) => String(room.id) === String(id));
+};
+
+export const useEditRoom = (roomId) => {
   const [form, setForm] = useState(initialFormState);
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
 
-  const selectedAmenities = useMemo(() => form.amenities, [form.amenities]);
-  const selectedAccessibility = useMemo(
-    () => form.accessibility,
-    [form.accessibility],
-  );
+  useEffect(() => {
+    if (!roomId) return;
+    const room = findRoomById(roomId);
+    if (room) {
+      setForm({
+        roomNo: room.roomNo || "",
+        floor: room.floor || "",
+        status: room.availability || room.status || "Vacant",
+        type: room.roomType || room.type || "Deluxe",
+        capacity: room.capacity || "",
+        pricePerNight: room.pricePerNight || room.price || "",
+        description: room.description || "",
+        amenities: room.amenities || [],
+        accessibility: room.accessibility || [],
+        images: room.images || [],
+      });
+    }
+  }, [roomId]);
 
   const handleInputChange = (key, value) => {
     if (key === "images") {
@@ -75,55 +106,39 @@ export const useAddRoom = () => {
       return;
     }
 
-    const saved = localStorage.getItem("hotelRooms");
-    let existingRooms = [];
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) existingRooms = parsed;
-      } catch {
-        existingRooms = [];
-      }
-    }
+    const rooms = getStoredRooms();
+    const updated = rooms.map((room) => {
+      if (String(room.id) !== String(roomId)) return room;
+      return {
+        ...room,
+        roomNo: form.roomNo,
+        floor: form.floor,
+        availability: form.status,
+        status: form.status,
+        roomType: form.type,
+        type: form.type,
+        capacity: form.capacity,
+        price: form.pricePerNight,
+        pricePerNight: form.pricePerNight,
+        description: form.description,
+        amenities: form.amenities,
+        accessibility: form.accessibility,
+        images: form.images,
+      };
+    });
 
-    const baseRooms = existingRooms.length > 0 ? existingRooms : hotelRooms;
-    const newRoom = {
-      id: Date.now(),
-      roomNo: form.roomNo,
-      floor: form.floor,
-      availability: form.status,
-      status: form.status,
-      roomType: form.type,
-      type: form.type,
-      capacity: form.capacity,
-      price: form.pricePerNight,
-      pricePerNight: form.pricePerNight,
-      description: form.description,
-      amenities: form.amenities,
-      accessibility: form.accessibility,
-      images: form.images,
-    };
+    localStorage.setItem("hotelRooms", JSON.stringify(updated));
 
-    localStorage.setItem("hotelRooms", JSON.stringify([...baseRooms, newRoom]));
-
-    setSuccessMessage("Tạo phòng mới thành công");
+    setSuccessMessage("Cập nhật phòng thành công");
     setTimeout(() => {
       onSuccess?.();
     }, 600);
-  };
-
-  const resetForm = () => {
-    setForm(initialFormState);
-    setErrors({});
-    setSuccessMessage("");
   };
 
   return {
     form,
     errors,
     successMessage,
-    selectedAmenities,
-    selectedAccessibility,
     roomAmenities: ROOM_AMENITIES,
     roomAccessibility: ROOM_ACCESSIBILITY_FEATURES,
     handleInputChange,
@@ -131,6 +146,5 @@ export const useAddRoom = () => {
     removeImage,
     toggleCheckbox,
     handleSubmit,
-    resetForm,
   };
 };

@@ -4,16 +4,36 @@ import { filterRoomsByTab, searchRooms } from "../Helpers/RoomHelpers";
 import { getPaginationPages } from "../Helpers/HotelHelpers";
 
 export const useRoomManagement = (itemsPerPage = 10) => {
-  const [rooms] = useState(hotelRooms);
+  const [rooms] = useState(() => {
+    const saved = localStorage.getItem("hotelRooms");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) ? parsed : hotelRooms;
+      } catch {
+        return hotelRooms;
+      }
+    }
+    return hotelRooms;
+  });
   const [activeTab, setActiveTab] = useState("All");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRoomIds, setSelectedRoomIds] = useState([]);
 
-  const filteredByTab = useMemo(() => filterRoomsByTab(rooms, activeTab), [rooms, activeTab]);
-  const searchedRooms = useMemo(() => searchRooms(filteredByTab, search), [filteredByTab, search]);
+  const filteredByTab = useMemo(
+    () => filterRoomsByTab(rooms, activeTab),
+    [rooms, activeTab],
+  );
+  const searchedRooms = useMemo(
+    () => searchRooms(filteredByTab, search),
+    [filteredByTab, search],
+  );
 
-  const totalPages = Math.max(1, Math.ceil(searchedRooms.length / itemsPerPage));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(searchedRooms.length / itemsPerPage),
+  );
 
   const currentRooms = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -26,7 +46,7 @@ export const useRoomManagement = (itemsPerPage = 10) => {
 
   const toggleSelectedRoom = (id) => {
     setSelectedRoomIds((prev) =>
-      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id],
     );
   };
 

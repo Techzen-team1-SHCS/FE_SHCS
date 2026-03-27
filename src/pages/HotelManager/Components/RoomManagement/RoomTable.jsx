@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import styles from "../../Main/Room/RoomManagement.module.css";
 import { ROOM_TABLE_COLUMNS } from "../../Constants/Hotel/roomTableColumns";
 import { getRoomStatusClass } from "../../Helpers/RoomHelpers";
@@ -10,6 +11,7 @@ const RoomTable = ({
   selectAll,
   allSelected,
 }) => {
+  const navigate = useNavigate();
   return (
     <div className={styles.tableWrap}>
       <table className={styles.table}>
@@ -30,7 +32,10 @@ const RoomTable = ({
         <tbody>
           {rooms.length === 0 ? (
             <tr>
-              <td colSpan={ROOM_TABLE_COLUMNS.length + 1} className={styles.noData}>
+              <td
+                colSpan={ROOM_TABLE_COLUMNS.length + 1}
+                className={styles.noData}
+              >
                 No rooms found
               </td>
             </tr>
@@ -49,6 +54,7 @@ const RoomTable = ({
                   <td>{room.roomNo}</td>
                   <td>{room.roomType}</td>
                   <td>{room.capacity}</td>
+                  <td>{room.price || room.pricePerNight || "-"}</td>
                   <td>
                     <span className={`${styles.status} ${styles[statusClass]}`}>
                       {room.availability}
@@ -59,7 +65,13 @@ const RoomTable = ({
                     <button className={styles.actionBtn} title="View">
                       <FiEye />
                     </button>
-                    <button className={styles.actionBtn} title="More">
+                    <button
+                      className={styles.actionBtn}
+                      title="Edit"
+                      onClick={() =>
+                        navigate(`/hotel-manager/rooms/edit/${room.id}`)
+                      }
+                    >
                       <FiMoreHorizontal />
                     </button>
                   </td>
