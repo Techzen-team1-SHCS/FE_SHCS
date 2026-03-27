@@ -30,7 +30,7 @@ const Sidebar = () => {
     const handleLogout = () => {
         logout();
         toast.success('Đăng xuất thành công!');
-        navigate('/admin/login');
+        navigate('/hotel-manager/login');
     };
 
     const menuItems = [
