@@ -113,6 +113,67 @@ export default function HotelDetail() {
         <p className={styles.description}>{hotel.description}</p>
       )}
 
+      {/* Additional Information Section */}
+      <div className={styles.infoSection}>
+        <h3 className={styles.sectionTitle}>Thông tin bổ sung</h3>
+        <div className={styles.infoGrid}>
+          <div className={styles.infoItem}>
+            <span className={styles.infoLabel}>Trạng thái:</span>
+            <span className={styles.infoValue}>{hotel.status || 'N/A'}</span>
+          </div>
+          <div className={styles.infoItem}>
+            <span className={styles.infoLabel}>Giá từ:</span>
+            <span className={styles.infoValue}>{hotel.price ? `${hotel.price} VNĐ` : 'N/A'}</span>
+          </div>
+          <div className={styles.infoItem}>
+            <span className={styles.infoLabel}>Địa điểm gần:</span>
+            <span className={styles.infoValue}>{hotel.name_nearby_place || 'N/A'}</span>
+          </div>
+          <div className={styles.infoItem}>
+            <span className={styles.infoLabel}>Hạng sao:</span>
+            <span className={styles.infoValue}>{hotel.hotel_class || 'N/A'}</span>
+          </div>
+          <div className={styles.infoItem}>
+            <span className={styles.infoLabel}>Ngày tạo:</span>
+            <span className={styles.infoValue}>
+              {hotel.created_at ? new Date(hotel.created_at).toLocaleDateString('vi-VN') : 'N/A'}
+            </span>
+          </div>
+          <div className={styles.infoItem}>
+            <span className={styles.infoLabel}>Ngày cập nhật:</span>
+            <span className={styles.infoValue}>
+              {hotel.updated_at ? new Date(hotel.updated_at).toLocaleDateString('vi-VN') : 'N/A'}
+            </span>
+          </div>
+        </div>
+        {hotel.text && (
+          <div className={styles.textSection}>
+            <h4 className={styles.subTitle}>Mô tả chi tiết</h4>
+            <p className={styles.textContent}>{hotel.text}</p>
+          </div>
+        )}
+        {hotel.amenities && (
+          <div className={styles.amenitiesSection}>
+            <h4 className={styles.subTitle}>Tiện nghi</h4>
+            <ul className={styles.amenitiesList}>
+              {JSON.parse(hotel.amenities).map((amenity, index) => (
+                <li key={index} className={styles.amenityItem}>{amenity}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {hotel.styles && hotel.styles.length > 0 && (
+          <div className={styles.stylesSection}>
+            <h4 className={styles.subTitle}>Phong cách</h4>
+            <ul className={styles.stylesList}>
+              {hotel.styles.map((style, index) => (
+                <li key={index} className={styles.styleItem}>{style}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
       <Gallery images={hotel.images} />
 
       <h3 className={styles.sectionTitle}>Room Services</h3>
