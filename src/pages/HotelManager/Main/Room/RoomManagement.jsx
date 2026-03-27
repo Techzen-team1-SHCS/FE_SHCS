@@ -1,10 +1,12 @@
 import styles from "./RoomManagement.module.css";
 import RoomTable from "../../Components/RoomManagement/RoomTable";
 import { useRoomManagement } from "../../hooks/useRoomManagement";
+import { useNavigate } from "react-router-dom";
 
 const TABS = ["All", "Available", "Booked", "Needs Cleaning"];
 
 const RoomManagementPage = () => {
+  const navigate = useNavigate();
   const {
     rooms,
     activeTab,
@@ -50,7 +52,12 @@ const RoomManagementPage = () => {
             </button>
           ))}
         </div>
-        <button className={styles.addRoomBtn}>+ Add a new room</button>
+        <button
+          className={styles.addRoomBtn}
+          onClick={() => navigate('/hotel-manager/rooms/add')}
+        >
+          + Add a new room
+        </button>
       </div>
 
       <div className={styles.filterRow}>
