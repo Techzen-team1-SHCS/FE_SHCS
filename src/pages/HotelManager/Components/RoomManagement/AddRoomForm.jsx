@@ -17,7 +17,9 @@ const AddRoomForm = ({
     <form className={styles.form} onSubmit={(e) => handleSubmit(e, onCancel)}>
       <section className={styles.card}>
         <h3>Room Picture</h3>
-        <p className={styles.smallText}>Tải lên ảnh phòng để hiển thị tốt hơn trong quản lý.</p>
+        <p className={styles.smallText}>
+          Tải lên ảnh phòng để hiển thị tốt hơn trong quản lý.
+        </p>
         <div className={styles.imageGrid}>
           <label className={styles.uploadBox}>
             <span>Add image</span>
@@ -32,7 +34,9 @@ const AddRoomForm = ({
 
         <div className={styles.previewBox}>
           {form.images.length === 0 ? (
-            <span className={styles.previewPlaceholder}>No images selected</span>
+            <span className={styles.previewPlaceholder}>
+              No images selected
+            </span>
           ) : (
             form.images.map((img, index) => (
               <div key={index} className={styles.imageItem}>
@@ -60,36 +64,34 @@ const AddRoomForm = ({
               onChange={(e) => handleInputChange("roomNo", e.target.value)}
               placeholder="room number"
             />
-            {errors.roomNo && <p className={styles.errorText}>{errors.roomNo}</p>}
-          </div>
-          <div className={styles.fieldItem}>
-            <label>Room floor *</label>
-            <input
-              value={form.floor}
-              onChange={(e) => handleInputChange("floor", e.target.value)}
-              placeholder="room floor number"
-            />
-            {errors.floor && <p className={styles.errorText}>{errors.floor}</p>}
+            {errors.roomNo && (
+              <p className={styles.errorText}>{errors.roomNo}</p>
+            )}
           </div>
           <div className={styles.fieldItem}>
             <label>Reservation status *</label>
-            <select value={form.status} onChange={(e) => handleInputChange("status", e.target.value)}>
+            <select
+              value={form.status}
+              onChange={(e) => handleInputChange("status", e.target.value)}
+            >
               <option value="Vacant">Vacant</option>
               <option value="Reserved">Reserved</option>
               <option value="Occupied">Occupied</option>
               <option value="Cleaning">Cleaning</option>
             </select>
           </div>
-          <div className={styles.fieldItem}>
-            <label>Room type *</label>
-            <select value={form.type} onChange={(e) => handleInputChange("type", e.target.value)}>
-              <option value="Deluxe">Deluxe</option>
-              <option value="Standard">Standard</option>
-              <option value="Luxury">Luxury</option>
-            </select>
-          </div>
         </div>
-
+        <div className={styles.fieldItem}>
+          <label>Room type *</label>
+          <select
+            value={form.type}
+            onChange={(e) => handleInputChange("type", e.target.value)}
+          >
+            <option value="Deluxe">Deluxe</option>
+            <option value="Standard">Standard</option>
+            <option value="Luxury">Luxury</option>
+          </select>
+        </div>
         <div className={styles.rowGroup}>
           <div className={styles.fieldItem}>
             <label>Room capacity *</label>
@@ -100,18 +102,24 @@ const AddRoomForm = ({
               placeholder="2-4 guests"
               min={1}
             />
-            {errors.capacity && <p className={styles.errorText}>{errors.capacity}</p>}
+            {errors.capacity && (
+              <p className={styles.errorText}>{errors.capacity}</p>
+            )}
           </div>
           <div className={styles.fieldItem}>
             <label>Room price per night *</label>
             <input
               type="number"
               value={form.pricePerNight}
-              onChange={(e) => handleInputChange("pricePerNight", e.target.value)}
+              onChange={(e) =>
+                handleInputChange("pricePerNight", e.target.value)
+              }
               placeholder="$ price"
               min={0}
             />
-            {errors.pricePerNight && <p className={styles.errorText}>{errors.pricePerNight}</p>}
+            {errors.pricePerNight && (
+              <p className={styles.errorText}>{errors.pricePerNight}</p>
+            )}
           </div>
         </div>
 
@@ -123,7 +131,9 @@ const AddRoomForm = ({
             placeholder="room description"
             rows={4}
           />
-          {errors.description && <p className={styles.errorText}>{errors.description}</p>}
+          {errors.description && (
+            <p className={styles.errorText}>{errors.description}</p>
+          )}
         </div>
       </section>
 
@@ -146,7 +156,9 @@ const AddRoomForm = ({
 
       <section className={styles.card}>
         <h3>Accessibility Features</h3>
-        <p className={styles.smallText}>Hỗ trợ khả năng tiếp cận cho khách hàng.</p>
+        <p className={styles.smallText}>
+          Hỗ trợ khả năng tiếp cận cho khách hàng.
+        </p>
         <div className={styles.checkboxGrid}>
           {roomAccessibility.map((item) => (
             <label key={item} className={styles.checkboxItem}>
