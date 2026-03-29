@@ -3,7 +3,6 @@ import {
   createPreviewImages,
   removeImageByIndex,
 } from "../../Helpers/RegisterHotel/Step3";
-import { formatVND } from "../../../../utils/dateUtils";
 import { formatHotelClass } from "../../Helpers/HotelHelpers";
 
 export function useHotelInfoForm(initial = {}, onSubmit) {
@@ -31,7 +30,7 @@ export function useHotelInfoForm(initial = {}, onSubmit) {
       return;
     }
 
-    const parsedPrice = formatVND(price);
+    const parsedPrice = parseFloat(price);
     const hotelClassNumber = formatHotelClass(hotelClass);
 
     const normalizedHotelClass = Number.isFinite(hotelClassNumber)
@@ -41,7 +40,7 @@ export function useHotelInfoForm(initial = {}, onSubmit) {
     await onSubmit({
       name: hotelName,
       description,
-      detail_info: text,
+      text: detailInfo,
       price: parsedPrice,
       hotel_class: normalizedHotelClass,
       name_nearby_place: nameNearbyPlace,

@@ -34,6 +34,31 @@ function RegisterHotel() {
   const handleCreateHotel = async (partial) => {
     const merged = { ...formData, ...partial };
 
+    // Gom dữ liệu từ Step 1 vào description (plain text, không dùng HTML)
+    const addressInfo = [merged.address, merged.name_nearby_place, merged.province]
+      .filter(item => item)
+      .join(', ');
+    const zipInfo = merged.zip ? ` (Mã ZIP: ${merged.zip})` : '';
+    
+    const locationText = `Địa chỉ khách sạn: ${addressInfo}${zipInfo}`;
+    // Loại bỏ HTML tags từ CKEditor description nhưng giữ lại xuống dòng
+    const plainDescription = (merged.description || "")
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/p>\s*<p>/gi, '\n')
+      .replace(/<[^>]*>/g, ' ')
+      .trim();
+
+    merged.description = locationText + '\n\n' + plainDescription;
+
+    // Loại bỏ HTML tags từ CKEditor text (Detailed Information)
+    if (merged.text) {
+      merged.text = merged.text
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/p>\s*<p>/gi, '\n')
+        .replace(/<[^>]*>/g, ' ')
+        .trim();
+    }
+
     const { images, ...hotelPayload } = merged;
 
     setLoading(true);
