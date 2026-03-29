@@ -24,7 +24,7 @@ export default function Header({ hotel = {}, isEditing = false, editData = {}, o
               className={styles.editInput}
               placeholder="Nhập tỉnh/thành phố"
             />
-          </div>
+          </div>   
         </>
       ) : (
         <>
