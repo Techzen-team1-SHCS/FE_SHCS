@@ -1,5 +1,7 @@
-export const HOTEL_STATUS = {
-  OPEN: "Open",
-  CLOSE: "Close",
-  PENDING: "pending"
-};
+const getStatusStyles = (styles) => ({
+  approved: styles.open,
+  pending: styles.pending,
+  close: styles.close,
+});
+
+export default getStatusStyles;
