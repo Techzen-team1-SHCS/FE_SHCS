@@ -163,7 +163,7 @@ export default function HotelDetail() {
           <div className={styles.amenitiesSection}>
             <h4 className={styles.subTitle}>Tiện nghi</h4>
             <ul className={styles.amenitiesList}>
-              {JSON.parse(hotel.amenities).map((amenity, index) => (
+              {(Array.isArray(hotel.amenities) ? hotel.amenities : (typeof hotel.amenities === 'string' ? JSON.parse(hotel.amenities || "[]") : [])).map((amenity, index) => (
                 <li key={index} className={styles.amenityItem}>{amenity}</li>
               ))}
             </ul>
