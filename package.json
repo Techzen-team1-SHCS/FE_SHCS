@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.2",
+    "antd": "^5.29.1",
     "axios": "^1.13.1",
     "crypto-js": "^4.2.0",
     "env": "^0.0.2",

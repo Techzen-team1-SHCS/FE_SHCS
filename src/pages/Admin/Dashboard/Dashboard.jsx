@@ -6,6 +6,7 @@ import BookingTable from '../../../components/Admin/BookingTable/BookingTable';
 import RightPanel from '../../../components/Admin/RightPanel/RightPanel';
 import MostBookedChart from '../../../components/Admin/Charts/MostBookedChart/MostBookedChart';
 import RecentBookTable from '../../../components/Admin/RecentBookTable/RecentBookTable';
+import RecentlyRegisteredHotels from '../../../components/Admin/RecentlyRegisterHotels/Recently';
 const Dashboard = () => {
     const {
         left,
@@ -146,6 +147,7 @@ const Dashboard = () => {
                     <DashboardCard cardData={cardData} />
                     <GuestVisitsChart GuestVisitData={GuestVisitData} />
                     <MostBookedChart MostBookedData={MostBookedData} />
+                    <RecentlyRegisteredHotels/>
                 </div>
                 <div className={right}>
                     <RightPanel hotelStats={hotelStats} upcomingReservations={upcomingReservations} satisfactionData={satisfactionData} />
