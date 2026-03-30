@@ -1,29 +1,16 @@
-import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import styles from './TopHotelSlider.module.css';
-import { hotelService } from "../../services/hotelService";
-
+import { useTopHotelsQuery } from "../../queries/useTopHotelsQuery";
+import { useNavigate } from "react-router-dom";
 const TopHotelSlider = () => {
-  const [topHotels, setTopHotels] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTopHotels = async () => {
-      setLoading(true);
-      const data = await hotelService.getTopHotel();
-      setTopHotels(data || []);
-      setLoading(false);
-    };
-
-    fetchTopHotels();
-  }, []);
-
-  if (loading) return <div>Loading top hotels...</div>;
-
+  const navigate = useNavigate();
+  const {data:topHotels=[],isLoading}=useTopHotelsQuery();
+  if (isLoading) return <div>Loading top hotels...</div>;
+  
   return (
     <section className={styles.topHotelsSlider}>
       <div className="container">
@@ -50,9 +37,9 @@ const TopHotelSlider = () => {
               <SwiperSlide key={hotel.id}>
                 <div className={styles.hotelCard}>
                   <div className={styles.hotelImage}>
-                    <img src={hotel.images?.[0]?.url || "/assets/images/default-hotel.jpg"} alt={hotel.name} />
+                    <img src={hotel.images?.[0]?.url || "/default-hotel.jpg"} alt={hotel.name} />
                     <div className={styles.hotelOverlay}>
-                      <button className={styles.bookNowBtn}>Book Now</button>
+                      <button className={styles.bookNowBtn}  onClick={() => navigate(`/hotel/${hotel.id}`)}>Book Now</button>
                     </div>
                   </div>
 

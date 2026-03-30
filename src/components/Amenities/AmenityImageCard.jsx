@@ -1,5 +1,3 @@
-// components/AmenityImageCard.jsx
-import React from 'react';
 import { getAmenityImage } from '../../utils/amenityImage';
 
 const AmenityImageCard = ({ amenityName }) => {

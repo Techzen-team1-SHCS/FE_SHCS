@@ -30,3 +30,25 @@
     display: flex;
     gap: 20px;
 }
+.heart {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.heart i {
+  color: #9ca3af; /* xám */
+  font-size: 25px;
+  transition: all 0.25s ease;
+}
+
+.heart.liked i {
+  color: #ef4444; /* 🔴 đỏ */
+}
+
+.heart:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+

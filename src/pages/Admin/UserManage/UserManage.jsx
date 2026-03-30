@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './UserManage.module.css';
+import { authService } from '../../../services/authService';
+import { toast } from 'react-toastify';
+import Swal from "sweetalert2";
+import PartLoading from '../../../components/Loading/PartLoading';
 
 const UserManage = () => {
     const {
         container,
+        header,
         tableContainer,
         table,
         tableHeader,
@@ -12,163 +17,419 @@ const UserManage = () => {
         tr,
         td,
         statusActive,
-        statusInactive,
         statusSuspended,
-        statusPending,
         actionCell,
-        deleteButton,
+        actionButton,
+        viewButton,
+        editButton,
         banButton,
         unbanButton,
-        deleteIcon
+        buttonGroup,
+        buttonIcon,
+        userAvatar,
+        avatarContainer,
+        userInfo,
+        userName,
+        userEmail,
+        roleBadge,
+        roleAdmin,
+        roleUser,
+        statusBadge
     } = styles;
 
-    const [usersData, setUsersData] = useState([
-        {
-            id: 1,
-            username: "john_doe",
-            email: "john@example.com",
-            role: "user",
-            status: "active",
-            joinDate: "2024-01-15",
-            lastLogin: "2024-03-20 14:30",
-            isBanned: false
-        },
-        {
-            id: 2,
-            username: "admin",
-            email: "admin@example.com",
-            role: "user",
-            status: "inactive",
-            joinDate: "2024-01-10",
-            lastLogin: "2024-03-21 09:15",
-            isBanned: false
-        },
-        {
-            id: 3,
-            username: "spammer",
-            email: "spam@example.com",
-            role: "user",
-            status: "suspended",
-            joinDate: "2024-02-01",
-            lastLogin: "2024-03-10 16:45",
-            isBanned: true
-        }
-    ]);
-
-    const getStatusClass = (status) => {
-        switch (status) {
-            case 'active': return statusActive;
-            case 'inactive': return statusInactive;
-            case 'suspended': return statusSuspended;
-            case 'pending': return statusPending;
-            default: return '';
+    const [usersData, setUsersData] = useState([]);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const fetchUsers = async () => {  // ⬅ đưa ra ngoài để nơi khác gọi được
+        try {
+            setLoading(true);
+            const response = await authService.getAllUsers();
+            setUsersData(response || []);
+        } catch (error) {
+            console.error('Fetch users error:', error);
+            setUsersData([]);
+        } finally {
+            setLoading(false);
         }
     };
 
-    // Hàm ban tài khoản
-    const handleBanUser = (id) => {
-        if (window.confirm('Are you sure you want to ban this user?')) {
-            setUsersData(prevData =>
-                prevData.map(user =>
-                    user.id === id
-                        ? { ...user, status: 'suspended', isBanned: true }
-                        : user
-                )
-            );
+    useEffect(() => {
+        fetchUsers(); // gọi khi load trang
+    }, []);
+
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleDateString('vi-VN');
+    };
+
+    const getRoleText = (role) => {
+        return role === 1 ? 'Quản trị viên' : 'Người dùng';
+    };
+
+    const getRoleClass = (role) => {
+        return role === 1 ? roleAdmin : roleUser;
+    };
+
+    const getStatusInfo = (user) => {
+        // Check is_blocked (0 = không bị chặn, 1 = đang bị chặn)
+        if (user.is_blocked === 1) {
+            return { text: 'Bị chặn', class: statusSuspended };
+        } else {
+            return { text: 'Hoạt động', class: statusActive };
         }
     };
 
-    // Hàm unban tài khoản
-    const handleUnbanUser = (id) => {
-        if (window.confirm('Are you sure you want to unban this user?')) {
-            setUsersData(prevData =>
-                prevData.map(user =>
-                    user.id === id
-                        ? { ...user, status: 'active', isBanned: false }
-                        : user
-                )
-            );
+    // const handleView = (userId) => {
+    //     const user = usersData.find(u => u.id === userId);
+    //     setSelectedUser(user);
+    //     setIsSidebarOpen(true);
+    // };
+
+    // const handleEdit = (userId) => {
+    //     console.log('Edit user:', userId);
+    //     // Xử lý chỉnh sửa
+    // };
+
+    // const handleDelete = (userId) => {
+    //     console.log('Delete user:', userId);
+    //     if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+    //         // Xử lý xóa
+    //     }
+    // };
+
+    const handleView = (userId) => {
+        const user = usersData.find(u => u.id === userId);
+        setSelectedUser(user);
+        setIsDetailModalOpen(true);
+    };
+
+    const handleEdit = (userId) => {
+        const user = usersData.find(u => u.id === userId);
+        if (!user) return;
+
+        Swal.fire({
+            title: 'Chỉnh sửa thông tin người dùng',
+            html: `
+                <div style="text-align: left;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Tên:</label>
+                        <input id="editName" type="text" class="swal2-input" value="${user.name || ''}" placeholder="Tên người dùng">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email:</label>
+                        <input id="editEmail" type="email" class="swal2-input" value="${user.email || ''}" placeholder="Email">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Điện thoại:</label>
+                        <input id="editPhone" type="text" class="swal2-input" value="${user.phone || ''}" placeholder="Điện thoại">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Địa chỉ:</label>
+                        <input id="editAddress" type="text" class="swal2-input" value="${user.address || ''}" placeholder="Địa chỉ">
+                    </div>
+                </div>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Lưu',
+            cancelButtonText: 'Hủy',
+            preConfirm: async () => {
+                const updatedData = {
+                    name: document.getElementById('editName').value,
+                    email: document.getElementById('editEmail').value,
+                    phone: document.getElementById('editPhone').value,
+                    address: document.getElementById('editAddress').value
+                };
+
+                try {
+                    await authService.updateUser(userId, updatedData);
+                    toast.success('Cập nhật thông tin thành công!');
+                    fetchUsers();
+                } catch (error) {
+                    toast.error('Cập nhật thất bại: ' + error.message);
+                }
+            }
+        });
+    };
+
+    const handleToggleBan = async (user) => {
+        const isUnban = user.is_blocked === 1;  // 1 = đang bị chặn, cần bỏ chặn
+        const actionText = isUnban ? "bỏ chặn" : "chặn";
+        const actionColor = isUnban ? "#3085d6" : "#d33";
+
+        const result = await Swal.fire({
+            title: `Xác nhận ${actionText}?`,
+            text: `Bạn có chắc chắn muốn ${actionText} người dùng này?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: actionColor,
+            cancelButtonColor: "#aaa",
+            confirmButtonText: `Có, ${actionText}`,
+            cancelButtonText: "Hủy"
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            if (isUnban) {
+                await authService.unblockUser(user.id);
+            } else {
+                await authService.blockUser(user.id);
+            }
+
+            await Swal.fire({
+                icon: "success",
+                title: `Đã ${actionText} thành công!`,
+                showConfirmButton: false,
+                timer: 1500
+            });
+
+            fetchUsers(); // reload lại danh sách
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi!",
+                text: error.message || "Có lỗi xảy ra"
+            });
         }
     };
 
-    const handleDelete = (id) => {
-        if (window.confirm('Are you sure you want to delete this user?')) {
-            setUsersData(prevData => prevData.filter(user => user.id !== id));
-        }
+
+    const getInitials = (name) => {
+        if (!name) return 'U';
+        return name
+            .split(' ')
+            .map(word => word[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2);
     };
+
+    if (loading) {
+        return <div className='mt-40'><PartLoading /></div>;
+    }
 
     return (
         <div className={container}>
+            <div className={header}>
+                <div className={styles.headerStats}>
+                    <div className={styles.stat}>
+                        <span className={styles.statNumber}>{usersData.length}</span>
+                        <span className={styles.statLabel}>Tổng người dùng</span>
+                    </div>
+                    <div className={styles.stat}>
+                        <span className={styles.statNumber}>
+                            {usersData.filter(user => user.role === 1).length}
+                        </span>
+                        <span className={styles.statLabel}>Quản trị viên</span>
+                    </div>
+                    <div className={styles.stat}>
+                        <span className={styles.statNumber}>
+                            {usersData.filter(user => getStatusInfo(user).class === statusActive).length}
+                        </span>
+                        <span className={styles.statLabel}>Đang hoạt động</span>
+                    </div>
+                </div>
+            </div>
+
             <div className={tableContainer}>
                 <table className={table}>
                     <thead className={tableHeader}>
                         <tr>
-                            <th className={th}>Username</th>
-                            <th className={th}>Email</th>
-                            <th className={th}>Role</th>
-                            <th className={th}>Join Date</th>
-                            <th className={th}>Last Login</th>
-                            <th className={th}>Status</th>
-                            <th className={th}>Actions</th>
-                            <th className={th}></th>
+                            <th className={th}>Người dùng</th>
+                            <th className={th}>Thông tin</th>
+                            <th className={th}>Vai trò</th>
+                            <th className={th}>Trạng thái</th>
+                            <th className={th}>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody className={tableBody}>
-                        {usersData.map((user) => (
-                            <tr key={user.id} className={tr}>
-                                <td className={td}>{user.username}</td>
-                                <td className={td}>{user.email}</td>
-                                <td className={td}>{user.role}</td>
-                                <td className={td}>{user.joinDate}</td>
-                                <td className={td}>{user.lastLogin}</td>
-                                <td className={td}>
-                                    <span className={getStatusClass(user.status)}>
-                                        {user.status}
-                                    </span>
-                                </td>
-                                <td className={td}>
-                                    <div className={actionCell}>
-                                        {!user.isBanned ? (
-                                            <button
-                                                className={banButton}
-                                                onClick={() => handleBanUser(user.id)}
-                                                title="Ban user"
-                                            >
-                                                Ban
-                                            </button>
-                                        ) : (
-                                            <button
-                                                className={unbanButton}
-                                                onClick={() => handleUnbanUser(user.id)}
-                                                title="Unban user"
-                                            >
-                                                Unban
-                                            </button>
-                                        )}
-
-                                    </div>
-
-
-                                </td>
-                                <td className={td}>{/* Nút Delete */}
-                                    <button
-                                        className={deleteButton}
-                                        onClick={() => handleDelete(user.id)}
-                                        title="Delete user"
-                                    >
-                                        <svg className={deleteIcon} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M3 6H5H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M10 11V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M14 11V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                        {usersData.map((user) => {
+                            const statusInfo = getStatusInfo(user);
+                            return (
+                                <tr key={user.id} className={tr}>
+                                    <td className={td}>
+                                        <div className={userInfo}>
+                                            <div className={avatarContainer}>
+                                                {user.image ? (
+                                                    <img
+                                                        src={user.image}
+                                                        alt={user.name}
+                                                        className={userAvatar}
+                                                        onError={(e) => {
+                                                            e.target.style.display = 'none';
+                                                            e.target.nextSibling.style.display = 'flex';
+                                                        }}
+                                                    />
+                                                ) : null}
+                                                <div
+                                                    className={styles.avatarPlaceholder}
+                                                    style={{ display: user.image ? 'none' : 'flex' }}
+                                                >
+                                                    {getInitials(user.name)}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className={userName}>{user.name || 'Chưa đặt tên'}</div>
+                                                <div className={userEmail}>ID: {user.id}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className={td}>
+                                        <div className={styles.userDetails}>
+                                            <div className={styles.detailItem}>
+                                                <strong>📞</strong> {user.phone || 'N/A'}
+                                            </div>
+                                            <div className={styles.detailItem}>
+                                                <strong>📧</strong> {user.email}
+                                            </div>
+                                            <div className={styles.detailItem}>
+                                                <strong>👤</strong> {user.gender === 'Male' ? 'Nam' : user.gender === 'Female' ? 'Nữ' : 'N/A'}
+                                            </div>
+                                            <div className={styles.detailItem}>
+                                                <strong>🎂</strong> {formatDate(user.birth)}
+                                            </div>
+                                            {user.address && (
+                                                <div className={styles.detailItem}>
+                                                    <strong>📍</strong>
+                                                    <span className={styles.address}>{user.address.substring(0, 30)}...</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className={td}>
+                                        <span className={`${roleBadge} ${getRoleClass(user.role)}`}>
+                                            {getRoleText(user.role)}
+                                        </span>
+                                    </td>
+                                    <td className={td}>
+                                        <span className={`${statusBadge} ${statusInfo.class}`}>
+                                            {statusInfo.text}
+                                        </span>
+                                    </td>
+                                    <td className={td}>
+                                        <div className={actionCell}>
+                                            <div className={buttonGroup}>
+                                                <button
+                                                    className={`${actionButton} ${viewButton}`}
+                                                    onClick={() => handleView(user.id)}
+                                                    title="Xem chi tiết"
+                                                >
+                                                    <span className={buttonIcon}>👁️</span>
+                                                </button>
+                                                <button
+                                                    className={`${actionButton} ${editButton}`}
+                                                    onClick={() => handleEdit(user.id)}
+                                                    title="Chỉnh sửa"
+                                                >
+                                                    <span className={buttonIcon}>✏️</span>
+                                                </button>
+                                                <button
+                                                    className={`${actionButton} ${user.is_blocked === 1 ? unbanButton : banButton}`}
+                                                    onClick={() => handleToggleBan(user)}
+                                                    title={user?.is_blocked === 1 ? "Bỏ chặn" : "Chặn người dùng"}
+                                                >
+                                                    <span className={buttonIcon}>
+                                                        {user?.is_blocked === 1 ? '🔓' : '🚫'}
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
+
+            {/* Modal xem chi tiết */}
+            {isDetailModalOpen && selectedUser && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        borderRadius: '8px',
+                        padding: '30px',
+                        maxWidth: '500px',
+                        width: '90%',
+                        maxHeight: '80vh',
+                        overflowY: 'auto'
+                    }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <h2>Chi tiết người dùng</h2>
+                            <button
+                                onClick={() => setIsDetailModalOpen(false)}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    fontSize: '24px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <div style={{ marginBottom: '20px' }}>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Tên:</strong> {selectedUser.name || 'N/A'}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Email:</strong> {selectedUser.email}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Điện thoại:</strong> {selectedUser.phone || 'N/A'}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Giới tính:</strong> {selectedUser.gender === 'Male' ? 'Nam' : selectedUser.gender === 'Female' ? 'Nữ' : 'N/A'}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Ngày sinh:</strong> {formatDate(selectedUser.birth)}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Địa chỉ:</strong> {selectedUser.address || 'N/A'}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Vai trò:</strong> {getRoleText(selectedUser.role)}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Trạng thái:</strong> {getStatusInfo(selectedUser).text}
+                            </div>
+                            <div style={{ marginBottom: '15px' }}>
+                                <strong>Ngày tạo:</strong> {formatDate(selectedUser.createdAt)}
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setIsDetailModalOpen(false)}
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                backgroundColor: '#3085d6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '16px'
+                            }}
+                        >
+                            Đóng
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

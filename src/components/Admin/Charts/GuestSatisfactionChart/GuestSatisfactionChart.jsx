@@ -1,5 +1,3 @@
-// components/GuestSatisfactionChart/GuestSatisfactionChart.jsx
-import React from 'react';
 import { Pie } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -15,7 +13,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const centerTextPlugin = {
     id: 'centerText',
     afterDraw(chart) {
-        const { ctx, chartArea: { left, right, top, bottom, width, height } } = chart;
+        const { ctx, chartArea: {width, height } } = chart;
         const total = chart.config._config.total || 4551;
         ctx.save();
         ctx.textAlign = 'center';

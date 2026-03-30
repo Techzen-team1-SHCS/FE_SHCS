@@ -1,0 +1,116 @@
+/* Base Sidebar Styles */
+.sidebarOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -500px;
+    width: 500px;
+    height: 100vh;
+    background: white;
+    box-shadow: -2px 0 20px rgba(0, 0, 0, 0.15);
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1001;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebarOpen {
+    right: 0;
+}
+
+.sidebarHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f8f9fa;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.sidebarTitle {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+    background: #e9ecef;
+    color: #333;
+}
+
+.sidebarContent {
+    padding: 25px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Type-specific styles */
+.sidebarHotel {
+    width: 550px;
+}
+
+.sidebarUser {
+    width: 500px;
+}
+
+.sidebarBooking {
+    width: 600px;
+}
+
+.sidebarDefault {
+    width: 450px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .sidebarHotel,
+    .sidebarUser,
+    .sidebarBooking,
+    .sidebarDefault {
+        width: 100%;
+    }
+    
+    .sidebarHeader {
+        padding: 15px 20px;
+    }
+    
+    .sidebarContent {
+        padding: 20px;
+    }
+}

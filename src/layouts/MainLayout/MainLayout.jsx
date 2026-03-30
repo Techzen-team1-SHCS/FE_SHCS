@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import initScripts from '../../utils/initScripts';
 import { Outlet, useLocation } from 'react-router-dom'; // 👈 thêm useLocation
+import ChatWidget from '../../components/ChatAI/ChatWidget';
 
 const MainLayout = () => {
   const location = useLocation(); // 👈 lấy location từ React Router
@@ -24,6 +25,7 @@ const MainLayout = () => {
         <Outlet />
       </main>
       <Footer />
+      <ChatWidget></ChatWidget>
     </>
   );
 };

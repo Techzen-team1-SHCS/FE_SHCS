@@ -1,6 +1,5 @@
-import React from 'react'
 import styles from './HotelCardRecommendation.module.css'
-
+import { formatVND } from '../../utils/dateUtils';
 const HotelCardRecommendation = ({
     image,
     title,
@@ -49,7 +48,7 @@ const HotelCardRecommendation = ({
                 </div>
 
                 <div className={styles.hotelPrice}>
-                    <span className={styles.price}>{price}</span>
+                    <span className={styles.price}> {formatVND(price)}</span>
                 </div>
                 <a href={detailsUrl} className={styles.bookButton} >
                     Đặt ngay

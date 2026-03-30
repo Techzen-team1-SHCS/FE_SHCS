@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./LoadingSkeleton.module.css";
 
 const {
@@ -9,7 +8,6 @@ const {
     lineXLarge,
     lineLarge,
     lineMedium,
-    lineSmall,
     statusSkeleton,
     buttonGroupSkeleton,
     buttonSkeleton,

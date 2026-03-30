@@ -37,4 +37,22 @@ a:hover{
     justify-content: center;
     align-items: center;
     height: 90px;
+    
+}
+.nav{
+    padding-top: 20px;
+}
+.logoutButton {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+}
+
+.logoutButton:hover {
+    background-color: #fed7d7;
+    color: #c53030;
 }

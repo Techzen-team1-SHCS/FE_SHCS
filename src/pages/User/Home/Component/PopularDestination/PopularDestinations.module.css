@@ -1,0 +1,7 @@
+.popularDestinationsWrap {
+    border: 1px solid var(--border-color);
+}
+.sectionTitle{
+    margin-top: -10px;
+    position: relative;
+}

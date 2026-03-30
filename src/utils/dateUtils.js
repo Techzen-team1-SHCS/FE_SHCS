@@ -11,6 +11,9 @@ export const formatDateTime = (isoString) => {
     hour12: false
   });
 };
+export const formatVND = (amount) => {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+};
 
 export const getNights = (checkIn, checkOut) => {
   const start = new Date(checkIn);

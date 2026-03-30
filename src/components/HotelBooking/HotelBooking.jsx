@@ -1,25 +1,32 @@
 import { useEffect, useState } from "react";
 import "./HotelBooking.css";
 import { useNavigate } from "react-router-dom";
-
-const HotelBooking = ({ onBook,hotelId }) => {
+const HotelBooking = ({ onBook, hotelId }) => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
   const [nights, setNights] = useState(0);
-  const [showDatePicker, setShowDatePicker] = useState(null); // 'checkIn' | 'checkOut' | null
+  const [showDatePicker, setShowDatePicker] = useState(null);
   const [tempDate, setTempDate] = useState("");
-  const navigate=useNavigate()
+  const navigate = useNavigate();
+
   // Khởi tạo ngày mặc định
   useEffect(() => {
     const today = new Date();
     const tomorrow = new Date();
     tomorrow.setDate(today.getDate() + 1);
     
-    setCheckIn(today.toISOString().split("T")[0]);
-    setCheckOut(tomorrow.toISOString().split("T")[0]);
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    setCheckIn(formatDate(today));
+    setCheckOut(formatDate(tomorrow));
   }, []);
- 
+
   // Validate dates và tính số đêm
   useEffect(() => {
     if (checkIn && checkOut) {
@@ -35,23 +42,21 @@ const HotelBooking = ({ onBook,hotelId }) => {
       setNights(0);
     }
   }, [checkIn, checkOut]);
-  const getMinCheckInDate = () => {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
-  };
-  
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const today = new Date();
-    if (new Date(checkIn) < new Date(today.toISOString().split("T")[0])) {
+    const today = new Date().toISOString().split("T")[0];
+    
+    if (new Date(checkIn) < new Date(today)) {
       alert("❌ Check-in date cannot be in the past");
       return;
     }
+    
     if (!checkIn || !checkOut || nights <= 0) {
       alert("❌ Please select valid dates");
       return;
     }
+    
     const bookingData = {
       checkIn,
       checkOut,
@@ -61,25 +66,11 @@ const HotelBooking = ({ onBook,hotelId }) => {
 
     console.log('Booking data:', bookingData);
 
-    // Gọi hàm onBook từ props
     if (onBook) {
       onBook(bookingData);
     } else {
-      // Fallback: navigate đến booking page nếu không có onBook
       navigate(`/booking/${hotelId}`);
     }
-  };
-
-  // Lấy ngày tối thiểu cho check-out
-  const getMinCheckOutDate = () => {
-    if (!checkIn) {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      return tomorrow.toISOString().split("T")[0];
-    }
-    const min = new Date(checkIn);
-    min.setDate(min.getDate() + 1);
-    return min.toISOString().split("T")[0];
   };
 
   // Format date để hiển thị
@@ -87,7 +78,8 @@ const HotelBooking = ({ onBook,hotelId }) => {
     const date = new Date(dateString);
     return {
       day: date.getDate(),
-      month: date.toLocaleString("en-US", { month: "short" })
+      month: date.toLocaleString("en-US", { month: "short" }),
+      year: date.getFullYear()
     };
   };
 
@@ -98,45 +90,40 @@ const HotelBooking = ({ onBook,hotelId }) => {
   };
 
   // Chọn ngày
- const handleDateSelect = (date) => {
-  const today = new Date().toISOString().split("T")[0];
+  const handleDateSelect = (date) => {
+    const today = new Date().toISOString().split("T")[0];
 
-  if (showDatePicker === 'checkIn') {
-    if (date < today) {
-      alert("❌ Check-in cannot be in the past");
-      setTempDate(today);
-      return;
+    if (showDatePicker === 'checkIn') {
+      if (date < today) {
+        alert("❌ Check-in cannot be in the past");
+        setTempDate(today);
+        return;
+      }
+      setCheckIn(date);
+
+      if (new Date(date) >= new Date(checkOut)) {
+        const newCheckOut = new Date(date);
+        newCheckOut.setDate(newCheckOut.getDate() + 1);
+        setCheckOut(newCheckOut.toISOString().split("T")[0]);
+      }
+    } else if (showDatePicker === 'checkOut') {
+      if (new Date(date) <= new Date(checkIn)) {
+        alert("❌ Check-out must be after check-in");
+        const minCheckOut = new Date(checkIn);
+        minCheckOut.setDate(minCheckOut.getDate() + 1);
+        setTempDate(minCheckOut.toISOString().split("T")[0]);
+        return;
+      }
+      setCheckOut(date);
     }
-    setCheckIn(date);
 
-    // Tự động điều chỉnh check-out nếu cần
-    if (new Date(date) >= new Date(checkOut)) {
-      const newCheckOut = new Date(date);
-      newCheckOut.setDate(newCheckOut.getDate() + 1);
-      setCheckOut(newCheckOut.toISOString().split("T")[0]);
-    }
-  } else if (showDatePicker === 'checkOut') {
-    if (new Date(date) <= new Date(checkIn)) {
-      alert("❌ Check-out must be after check-in");
-      setTempDate(getMinCheckOutDate());
-      return;
-    }
-    setCheckOut(date);
-  }
-
-  setShowDatePicker(null);
-};
-
+    setShowDatePicker(null);
+  };
 
   // Render date picker modal
   const renderDatePickerModal = () => {
     if (!showDatePicker) return null;
-
-    const minDate = showDatePicker === 'checkIn' 
-      ? new Date().toISOString().split("T")[0] 
-      : getMinCheckOutDate();
-
-    const title = showDatePicker === 'checkIn' ? 'SELECT CHECK-IN DATE' : 'SELECT CHECK-OUT DATE';
+    const title = showDatePicker === 'checkIn' ? 'Select Check-in Date' : 'Select Check-out Date';
 
     return (
       <div className="date-picker-overlay" onClick={() => setShowDatePicker(null)}>
@@ -156,19 +143,22 @@ const HotelBooking = ({ onBook,hotelId }) => {
               type="date"
               value={tempDate}
               onChange={(e) => setTempDate(e.target.value)}
-              min={showDatePicker === 'checkIn' ? getMinCheckInDate() : getMinCheckOutDate()}
+              min={showDatePicker === 'checkIn' ? new Date().toISOString().split("T")[0] : ''}
               className="date-picker-input"
               autoFocus
             />
           </div>
 
           <div className="selected-date-info">
-            Selected: <strong>{new Date(tempDate).toLocaleDateString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}</strong>
+            <div className="selected-date-label">Selected Date:</div>
+            <div className="selected-date">
+              {new Date(tempDate).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </div>
           </div>
 
           <div className="date-picker-actions">
@@ -176,13 +166,13 @@ const HotelBooking = ({ onBook,hotelId }) => {
               className="cancel-btn"
               onClick={() => setShowDatePicker(null)}
             >
-              CANCEL
+              Cancel
             </button>
             <button 
               className="confirm-btn"
               onClick={() => handleDateSelect(tempDate)}
             >
-              CONFIRM
+              Confirm
             </button>
           </div>
         </div>
@@ -191,66 +181,87 @@ const HotelBooking = ({ onBook,hotelId }) => {
   };
 
   return (
-    <div className="booking-box">
-      {/* CHECK-IN & CHECK-OUT */}
-      <div className="date-section">
-        <div className="booking-item">
-          <h4>CHECK-IN</h4>
-          <div 
-            className="value-box date-box" 
-            onClick={() => openDatePicker('checkIn')}
-          >
-            <div className="date-display">
-              <span className="date-day">{formatDisplayDate(checkIn).day}</span>
-              <span className="date-month">{formatDisplayDate(checkIn).month}</span>
+    <div className="hotel-booking-container">
+      <div className="booking-card">
+        <div className="booking-form">
+          {/* DATE SELECTION */}
+          <div className="date-selection">
+            <div className="date-field" onClick={() => openDatePicker('checkIn')}>
+              <div className="date-label">CHECK-IN</div>
+              <div className="date-value">
+                <div className="date-display">
+                  <span className="date-day">{formatDisplayDate(checkIn).day}</span>
+                  <div className="date-month-year">
+                    <span className="date-month">{formatDisplayDate(checkIn).month}</span>
+                    <span className="date-year">{formatDisplayDate(checkIn).year}</span>
+                  </div>
+                </div>
+                <div className="calendar-icon">📅</div>
+              </div>
             </div>
-            <div className="calendar-indicator">▼</div>
-          </div>
-        </div>
 
-        <div className="booking-item">
-          <h4>CHECK-OUT</h4>
-          <div 
-            className="value-box date-box" 
-            onClick={() => openDatePicker('checkOut')}
-          >
-            <div className="date-display">
-              <span className="date-day">{formatDisplayDate(checkOut).day}</span>
-              <span className="date-month">{formatDisplayDate(checkOut).month}</span>
+            <div className="nights-display">
+              <span className="nights-count">{nights}</span>
+              <span className="nights-label">night{nights !== 1 ? 's' : ''}</span>
             </div>
-            <div className="calendar-indicator">▼</div>
+
+            <div className="date-field" onClick={() => openDatePicker('checkOut')}>
+              <div className="date-label">CHECK-OUT</div>
+              <div className="date-value">
+                <div className="date-display">
+                  <span className="date-day">{formatDisplayDate(checkOut).day}</span>
+                  <div className="date-month-year">
+                    <span className="date-month">{formatDisplayDate(checkOut).month}</span>
+                    <span className="date-year">{formatDisplayDate(checkOut).year}</span>
+                  </div>
+                </div>
+                <div className="calendar-icon">📅</div>
+              </div>
+            </div>
+          </div>
+
+          {/* GUESTS SELECTION */}
+          <div className="guests-selection">
+            <div className="guests-label">GUESTS</div>
+            <div className="guests-controls">
+              <button 
+                className="guest-btn minus" 
+                onClick={() => setGuests((g) => Math.max(1, g - 1))}
+              >
+                −
+              </button>
+              <div className="guest-count">
+                <span className="count">{guests}</span>
+                <span className="guest-label">guest{guests !== 1 ? 's' : ''}</span>
+              </div>
+              <button 
+                className="guest-btn plus" 
+                onClick={() => setGuests((g) => g + 1)}
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          {/* TOTAL PRICE */}
+          
+
+          {/* BOOK BUTTON */}
+          <button
+            className="book-now-btn"
+            onClick={handleSubmit}
+            disabled={nights <= 0}
+          >
+            <span className="btn-text">Book Now</span>
+            <span className="btn-arrow">→</span>
+          </button>
+
+          <div className="security-info">
+            <span className="secure-icon">🔒</span>
+            <span>Your booking is secure and encrypted</span>
           </div>
         </div>
       </div>
-
-      {/* GUESTS & NIGHTS */}
-      <div className="date-section">
-        <div className="booking-item">
-          <h4>GUESTS</h4>
-          <div className="value-box number-box">
-            <button onClick={() => setGuests((g) => Math.max(1, g - 1))}>−</button>
-            <span className="number-display">{guests}</span>
-            <button onClick={() => setGuests((g) => g + 1)}>+</button>
-          </div>
-        </div>
-
-        <div className="booking-item ">
-          <h4>NIGHTS</h4>
-          <div className="value-box number-box">
-            <span className="number-display">{nights}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* BOOK BUTTON */}
-      <button
-        className="book-btn"
-        onClick={handleSubmit}
-        disabled={!checkIn || !checkOut || nights <= 0}
-        
-      >
-        BOOK NOW
-      </button>
 
       {/* Date Picker Modal */}
       {renderDatePickerModal()}

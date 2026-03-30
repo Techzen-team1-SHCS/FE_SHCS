@@ -1,0 +1,145 @@
+/* SearchBar calendar responsive styles */
+
+.search-bar-date-picker {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 20px;
+  z-index: 1000;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  font-family: 'Outfit', sans-serif;
+  width: 650px;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Mobile responsive - make calendar narrower and single column */
+@media (max-width: 768px) {
+  .search-bar-date-picker {
+    width: 95vw;
+    max-width: 500px;
+    padding: 15px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-bar-date-picker {
+    width: 90vw;
+    max-width: 340px;
+    padding: 12px;
+    top: 90%;
+  }
+}
+
+/* Calendar grid responsive */
+.search-bar-calendar-grid {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  min-height: 250px;
+}
+
+@media (max-width: 768px) {
+  .search-bar-calendar-grid {
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-bar-calendar-grid {
+    gap: 10px;
+    min-height: auto;
+  }
+}
+
+/* Header responsive */
+.search-bar-date-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+}
+
+@media (max-width: 480px) {
+  .search-bar-date-header {
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+}
+
+/* Close button responsive */
+.search-bar-date-close-btn {
+  margin-top: 0;
+}
+
+@media (max-width: 480px) {
+  .search-bar-date-close-btn {
+    margin-top: 10px;
+    width: 100%;
+  }
+}
+
+/* Month navigation responsive */
+.search-bar-month-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 0 10px;
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .search-bar-month-nav {
+    flex-wrap: wrap;
+    padding: 0 5px;
+    margin-bottom: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .search-bar-month-nav {
+    gap: 5px;
+  }
+
+  .search-bar-month-nav button {
+    padding: 6px 8px !important;
+    font-size: 12px !important;
+  }
+
+  .search-bar-month-nav button span {
+    display: none;
+  }
+}
+
+/* Info text responsive */
+.search-bar-info {
+  margin-top: 20px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+@media (max-width: 480px) {
+  .search-bar-info {
+    margin-top: 12px;
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  .search-bar-info > div {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+}

@@ -25,21 +25,61 @@ export const wishListService = {
         });
         return response.data;
        } catch (error) {
-         throw new Error(error.response?.data?.message || 'Failed to add to wish list');
+         throw new Error(error.response?.data?.message || 'Đã có trong danh sách yêu thích');
        }
     },
-    async removeFromWishList(id) {
+    async removeFromWishList(hotelId, userId) {
       try {
         const token = localStorage.getItem('token');
-        if(!token){
+        if (!token) {
           throw new Error('Authentication token not found');
         }
-        const response = await api.delete(`auth/wishlist/${id}`, {
-          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+
+        const response = await api.delete(`auth/remove/like`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          data: {
+            hotel_id: hotelId,
+            user_id: userId
+          }
         });
+
         return response.data;
+
       } catch (error) {
         throw new Error(error.response?.data?.message || 'Failed to remove from wish list');
       }
+    },
+    async deleteWishList(id){
+      try {
+          const token=localStorage.getItem('token');
+          if(!token){
+            throw new Error('Authentication token not found ');
+          }
+          const response=await api.delete(`auth/wishlist/${id}`,{
+            headers:{Authorization:`Bearer ${token}`}
+          });
+          return response.data;
+      } catch (error) {
+         console.log('Error deleting wishlist:',error);
+         throw error;
+        
+      }
+
+    },
+    async checkwishList(hotelId) {
+      const token=localStorage.getItem('token');
+      if (!token) {
+            throw new Error('Authentication token not found');
+        }
+      const res = await api.get('auth/wishlist/check', {
+        params: { hotel_id: hotelId },
+        headers:{ Authorization: `Bearer ${token}` }
+      });
+      return res.data.liked;
     }
+
+  
 };  

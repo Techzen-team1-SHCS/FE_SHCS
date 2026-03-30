@@ -1,0 +1,265 @@
+:root {
+    --header-bg: #ffffff;
+    --accent: #1f3a93; /* deep navy */
+    --muted: #6b7280; /* gray */
+    --soft-border: #e6e8eb;
+    --shadow: 0 6px 18px rgba(16,24,40,0.06);
+}
+
+/* Header container for module-specific overrides */
+.header {
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--soft-border);
+    box-shadow: var(--shadow);
+}
+
+.logoInner {
+    display: flex;
+    align-items: center;
+}
+
+.logoInner img {
+    height: 44px;
+    width: auto;
+    object-fit: contain;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.navLink {
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: capitalize;
+    padding: 8px 10px;
+    border-radius: 6px;
+    transition: color 0.18s ease, background-color 0.18s ease, transform 0.18s ease;
+}
+
+.navLink:hover {
+    color: var(--accent);
+    background: rgba(31,58,147,0.06);
+    transform: translateY(-1px);
+}
+
+.authWrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;   
+}
+
+.btnRegister{
+        width: 100%;
+        padding: 10px 0;
+}
+
+.content{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.triangleUp {
+            width: 0;
+            height:0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid #ffffff;
+            left:100px;
+}
+
+.dangky{
+        cursor: pointer;
+        width: 100%;
+        padding: 10px 7px;
+        background-color: #f3f6fb;
+        border-radius: 100px;
+        color: var(--accent);
+}
+
+.dangky:hover{
+        background-color: rgba(31,58,147,0.08);
+        color: var(--accent);
+        transition: ease-in-out 0.2s;
+}
+
+.linkLogin{
+        color: var(--accent);
+        display: flex;
+        width: 100%;
+        text-align: left;
+        text-decoration: underline;
+}
+
+.userMenu {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 12px 30px rgba(2,6,23,0.12);
+        border: 1px solid var(--soft-border);
+        overflow: hidden;
+        width: 260px;
+}
+
+.userHeader {
+        background: linear-gradient(180deg, #f7f9fc 0%, #eef3fb 100%);
+        padding: 18px;
+        color: var(--accent);
+        text-align: center;
+        border-radius: 12px 12px 0 0;
+}
+
+.userAvatar {
+        border: 2px solid white;
+        box-shadow: 0 6px 20px rgba(16,24,40,0.08);
+        transition: transform 0.25s ease;
+        width: 72px;
+        height: 72px;
+        object-fit: cover;
+        border-radius: 50%;
+}
+
+.userAvatar:hover {
+        transform: translateY(-2px);
+}
+
+.menuItem {
+        padding: 10px 18px;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        color: #263238;
+        font-size: 14px;
+        transition: background-color 0.18s ease, color 0.18s ease;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+}
+
+.menuItem:hover {
+        background: rgba(31,58,147,0.04);
+        color: var(--accent);
+}
+
+.menuItem .icon {
+        font-size: 16px;
+        width: 20px;
+        text-align: center;
+}
+
+.menuDivider {
+        margin: 8px 12px;
+        border: none;
+        border-top: 1px solid #f1f3f5;
+}
+
+.logoutBtn {
+        background: #e53935;
+        border: none;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        display: block;
+        text-align: center;
+        width: calc(100% - 32px);
+        margin: 10px 16px;
+}
+
+.logoutBtn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(229,57,53,0.18);
+}
+
+.authT{
+    display:flex;
+    margin-right: 20px;
+    cursor: pointer;
+    width: 220px;
+    align-items: center;
+}
+@media (max-width: 991px) {
+    .authT{
+        justify-content: flex-end;
+        width: 130px;
+    }
+}
+.customFaUser{
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(31,58,147,0.08);
+    color: var(--accent);
+}
+
+.customFaDown{
+    margin-left: 5px;
+    color: var(--muted);
+}
+
+.authUser{
+    color: #243b55;
+    font-weight: 600;
+    /* truncate long names to avoid breaking layout */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* ensure the parent flex container allows shrinking */
+.authT {
+    display:flex;
+    margin-right: 20px;
+    cursor: pointer;
+    width: 220px;
+    align-items: center;
+    /* allow child text to shrink */
+}
+
+@media (max-width: 991px) {
+    .authT{
+        justify-content: flex-end;
+        width: 130px;
+    }
+}
+
+.authAppear{
+        padding: 0;
+        border-radius: 12px;
+        background-color: white;
+        top:42px;
+        position: absolute;
+        z-index: 1000;
+        left:12px;
+        width: 260px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+}
+@media (max-width: 991px) {
+        .authAppear{
+                width: 160px;
+        }
+        .userMenu {
+                width: 160px;
+                width: 200px;
+                margin-right: 50px;
+        }
+}

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './RecentBookTable.module.css';
+import { dashboardService } from '../../../services/dashBoardService';
+import { formatDateTime } from '../../../utils/dateUtils';
 
-const RecentBookTable = ({ recentBookData }) => {
+const RecentBookTable = () => {
     const {
         container,
         tableContainer,
@@ -15,64 +17,27 @@ const RecentBookTable = ({ recentBookData }) => {
         statusOccupied,
         statusMaintenance,
         statusCleaning,
-        statusSelect,
-        header,
-        title
     } = styles;
 
     // Sử dụng prop recentBookData nếu có, nếu không dùng dữ liệu mẫu
-    const [roomsData, setRoomsData] = useState(recentBookData || [
-        {
-            id: 1,
-            hotelName: "Hilton DaNang",
-            roomNumber: "101",
-            roomType: "Deluxe",
-            capacity: 2,
-            price: 150,
-            status: "occupied",
-            currentBooking: {
-                guestName: "Nguyen Van A",
-                checkIn: "2024-01-15 14:00",
+    const [roomsData, setRoomsData] = useState([]);
+    useEffect(()=>{
+        const fetchRoom=async()=>{
+            try {
+                const result=await dashboardService.getHotelBookingToday();
+                setRoomsData(result)
+            } catch (error) {
+                console.error(error.response?.data?.message || 'Failed to fetch dashboard revenue');
             }
-        },
-        {
-            id: 2,
-            hotelName: "Hilton DaNang",
-            roomNumber: "102",
-            roomType: "Standard",
-            capacity: 2,
-            price: 100,
-            status: "available",
-            currentBooking: null
-        },
-        {
-            id: 3,
-            hotelName: "Hilton DaNang",
-            roomNumber: "103",
-            roomType: "Standard",
-            capacity: 2,
-            price: 100,
-            status: "maintenance",
-            currentBooking: null
-        },
-        {
-            id: 4,
-            hotelName: "Hilton DaNang",
-            roomNumber: "104",
-            roomType: "Standard",
-            capacity: 2,
-            price: 100,
-            status: "cleaning",
-            currentBooking: null
         }
-    ]);
-
+        fetchRoom();
+    },[]);
     const getStatusClass = (status) => {
         switch (status) {
-            case 'available': return statusAvailable;
-            case 'occupied': return statusOccupied;
-            case 'maintenance': return statusMaintenance;
-            case 'cleaning': return statusCleaning;
+            case 'pending': return statusAvailable;
+            case 'completed': return statusOccupied;
+            case 'confirm': return statusMaintenance;
+            case 'cancelled': return statusCleaning;
             default: return '';
         }
     };
@@ -98,24 +63,24 @@ const RecentBookTable = ({ recentBookData }) => {
                         {roomsData.slice(0, 4).map((room) => (
                             <tr key={room.id} className={tr}>
                                 <td className={td}>
-                                    <span>{room.hotelName}</span>
+                                    <span>{room?.room?.hotel?.name}</span>
                                 </td>
                                 <td className={td}>
-                                    <span>{room.roomNumber}</span>
+                                    <span>{room?.room?.room_type}</span>
                                 </td>
                                 <td className={td}>
                                     <span>
-                                        {room.currentBooking ? room.currentBooking.guestName : '-'}
+                                        {room?.user?.name}
                                     </span>
                                 </td>
                                 <td className={td}>
                                     <span>
-                                        {room.currentBooking ? room.currentBooking.checkIn : '-'}
+                                        {formatDateTime(room?.check_in)}
                                     </span>
                                 </td>
                                 <td className={td}>
-                                    <span className={getStatusClass(room.status)}>
-                                        {room.status}
+                                    <span className={getStatusClass(room?.status)}>
+                                        {room?.status}
                                     </span>
                                 </td>
                             </tr>

@@ -6,9 +6,27 @@ import GoogleLoginButton from './GoogleLoginButton';
 import { useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 import "../Auth/index.css"
+import styles from './Auth.module.css';
+import LoaderButton from '../Loading/LoaderButton';
+
 const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
+    const {
+        authPopup,
+        authOverlay,
+        authContainer,
+        authHeader,
+        authClose,
+        formAuthGroup,
+        authSubmitBtn,
+        authFooter,
+        authToggle,
+        passwordToggle,
+        errorMessage,
+        forgotPassBtn
+    } = styles;
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const { login, user } = useContext(AuthContext);
+    const { login } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -21,7 +39,7 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
     const [phone, setPhone] = useState('');
     const validateForm = () => {
         const newErrors = {};
- 
+
         // Validate email
         if (!email.trim()) {
             newErrors.email = 'Email là bắt buộc';
@@ -82,69 +100,49 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
         return Object.keys(newErrors).length === 0;
     };
     const handleAuthSubmit = async (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-        try {
-            if (isLogin) {
-                const result = await authService.login(email, password);
+  e.preventDefault();
 
-                if (result.status === 200) {
-                    // 🔹 Lấy user và token đúng từ data
-                    const user = result.user; // authService.login() đã fix trả về data.user
-                    const token = result.token;
+  if (!validateForm()) return;
 
-                    if (!user || !token) {
-                        toast.error("Không lấy được dữ liệu người dùng. Vui lòng thử lại.");
-                        return;
-                    }
+  setIsLoading(true);
 
-                    // 🔹 Nếu muốn gọi API chi tiết user (có avatar_url)
-                    const userRes = await authService.getUserById(user.id);
-                    const fullUser = userRes.user || user; // fallback nếu backend chưa có user chi tiết
+  try {
+    if (isLogin) {
+      const result = await authService.login(email, password);
 
-                    // 🔹 Lưu vào context & localStorage
-                    login(fullUser, token);
-                    toast.success('Đăng nhập thành công!');
-                    setIsAuthVisible(false);
-                    navigate('/');
-                }
-            } else {
-                const result = await authService.register({
-                    name,
-                    email,
-                    password,
-                    password_confirmation: confirmPassword,
-                    phone
-                });
-                if (result.status === 'success') {
-                    toast.success('Đăng ký thành công!');
-                    setIsLogin(true);
-                    // Reset form
-                    setEmail('');
-                    setPassword('');
-                    setConfirmPassword('');
-                    setName('');
-                    setPhone('');
-                    setErrors({});
-                }
-            }
-        } catch (error) {
-            console.error('Auth error:', error);
-            if (error.response?.data?.errors) {
-                // Handle validation errors from API
-                const apiErrors = error.response.data.errors;
-                const newErrors = {};
-                Object.keys(apiErrors).forEach(key => {
-                    newErrors[key] = Array.isArray(apiErrors[key]) ? apiErrors[key][0] : apiErrors[key];
-                });
-                setErrors(newErrors);
-                toast.error('Vui lòng kiểm tra lại thông tin');
-            } else {
-                toast.error(error.response?.data?.message || error.response?.data?.error || 'Có lỗi xảy ra');
-            }
-        }
+      // ❗ LẤY ĐÚNG KEY
+      login(result.user, result.token);
+
+      toast.success('Đăng nhập thành công!');
+      setIsAuthVisible(false);
+      navigate('/');
+    } else {
+      const result = await authService.register({
+        name,
+        email,
+        password,
+        password_confirmation: confirmPassword,
+        phone,
+      });
+
+      if (result.status === 'success') {
+        toast.success('Đăng ký thành công!');
+        setIsLogin(true);
+      }
     }
+  } catch (error) {
+    if (error.response?.status === 403) {
+      toast.warn(error.response.data.message);
+    } else if (error.response?.status === 401) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error(error.message || 'Có lỗi xảy ra');
+    }
+  } finally {
+    setIsLoading(false);
+  }
 };
+
 
     const handleForgotPasswordSubmit = async (e) => {
         e.preventDefault();
@@ -159,7 +157,7 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length > 0) return;
-
+        setIsLoading(true);
         try {
             const result = await authService.forgotPassword(forgotEmail);
             if (result.status === 200 || result.status === 'success') {
@@ -174,6 +172,8 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
         } catch (error) {
             console.error('Forgot password error:', error);
             toast.error(error.response?.data?.message || 'Lỗi khi gửi email');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -216,13 +216,13 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
     };
 
     return (
-        <div className="auth-popup ">
-            <div className="auth-overlay" onClick={() => setIsAuthVisible(false)}></div>
-            <div className="auth-container">
-                <div className="auth-header">
+        <div className={authPopup}>
+            <div className={authOverlay} onClick={() => setIsAuthVisible(false)}></div>
+            <div className={authContainer}>
+                <div className={authHeader}>
                     <h3>{isForgotPassword ? 'Quên mật khẩu' : isLogin ? 'Đăng nhập' : 'Đăng ký'}</h3>
                     <button
-                        className="auth-close"
+                        className={authClose}
                         onClick={() => setIsAuthVisible(false)}
                     >
                         ×
@@ -230,7 +230,7 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                 </div>
                 {isForgotPassword ? (
                     <form onSubmit={handleForgotPasswordSubmit} className="auth-form">
-                        <div className="formAuth-group">
+                        <div className={formAuthGroup}>
                             <label htmlFor="forgotEmail">Email</label>
                             <input
                                 type="forgotEmail"
@@ -241,13 +241,13 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                                 required
                                 className={errors.forgotEmail ? 'error' : ''}
                             />
-                            {errors.forgotEmail && <span className="error-message">{errors.forgotEmail}</span>}
+                            {errors.forgotEmail && <span className={errorMessage}>{errors.forgotEmail}</span>}
                         </div>
-                        <button type="submit" className="auth-submit-btn">
-                            Gửi email đặt lại mật khẩu
+                        <button type="submit" className={authSubmitBtn}>
+                            {isLoading ? <LoaderButton /> : 'Gửi email đặt lại mật khẩu'}
                         </button>
                         <div
-                            className="auth-toggle"
+                            className={authToggle}
                             style={{
                                 textAlign: "center",
                                 marginTop: "12px",
@@ -259,10 +259,8 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                         </div>
                     </form>
                 ) : (
-                    // Toàn bộ form đăng nhập / đăng ký ban đầu của bạn giữ nguyên ở đây
                     <form onSubmit={handleAuthSubmit} className="auth-form" noValidate>
-                        {/* Các input gốc của bạn */}
-                        <div className="formAuth-group">
+                        <div className={formAuthGroup}>
                             <label htmlFor="email">Email</label>
                             <input
                                 type="email"
@@ -273,11 +271,11 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                                 required
                                 className={errors.email ? 'error' : ''}
                             />
-                            {errors.email && <span className="error-message">{errors.email}</span>}
+                            {errors.email && <span className={errorMessage}>{errors.email}</span>}
                         </div>
 
                         {!isLogin && (
-                            <div className="formAuth-group">
+                            <div className={formAuthGroup}>
                                 <label htmlFor="name">Họ và tên</label>
                                 <input
                                     type="text"
@@ -287,12 +285,12 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                                     onChange={(e) => handleInputChange('name', e.target.value)}
                                     className={errors.name ? 'error' : ''}
                                 />
-                                {errors.name && <span className="error-message">{errors.name}</span>}
+                                {errors.name && <span className={errorMessage}>{errors.name}</span>}
                             </div>
                         )}
 
                         {!isLogin && (
-                            <div className="formAuth-group">
+                            <div className={formAuthGroup}>
                                 <label htmlFor="phone">Số điện thoại</label>
                                 <input
                                     type="tel"
@@ -302,11 +300,11 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                                     onChange={(e) => handleInputChange('phone', e.target.value)}
                                     className={errors.phone ? 'error' : ''}
                                 />
-                                {errors.phone && <span className="error-message">{errors.phone}</span>}
+                                {errors.phone && <span className={errorMessage}>{errors.phone}</span>}
                             </div>
                         )}
 
-                        <div className="formAuth-group">
+                        <div className={formAuthGroup}>
                             <label htmlFor="password">Mật khẩu</label>
                             <input
                                 type={showPassword ? "text" : "password"}
@@ -319,7 +317,7 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                             />
                             <button
                                 type="button"
-                                className="password-toggle"
+                                className={passwordToggle}
                                 onClick={togglePasswordVisibility}
                             >
                                 {showPassword ? (
@@ -329,13 +327,13 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                                 )}
                             </button>
                             {errors.password && (
-                                <span className="error-message">{errors.password}</span>
+                                <span className={errorMessage}>{errors.password}</span>
                             )}
                         </div>
 
                         {isLogin && (
                             <div
-                                className="forgotPass-btn"
+                                className={forgotPassBtn}
                                 onClick={() => setIsForgotPassword(true)}
                             >
                                 Quên mật khẩu
@@ -343,7 +341,7 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                         )}
 
                         {!isLogin && (
-                            <div className="formAuth-group">
+                            <div className={formAuthGroup}>
                                 <label htmlFor="confirmPassword">Xác nhận mật khẩu</label>
                                 <input
                                     type={showConfirmPassword ? "text" : "password"}
@@ -355,7 +353,7 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                                 />
                                 <button
                                     type="button"
-                                    className="password-toggle"
+                                    className={passwordToggle}
                                     onClick={toggleConfirmPasswordVisibility}
                                 >
                                     {showConfirmPassword ? (
@@ -365,13 +363,13 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                                     )}
                                 </button>
                                 {errors.confirmPassword && (
-                                    <span className="error-message">{errors.confirmPassword}</span>
+                                    <span className={errorMessage}>{errors.confirmPassword}</span>
                                 )}
                             </div>
                         )}
 
-                        <button type="submit" className="auth-submit-btn">
-                            {isLogin ? 'Đăng nhập' : 'Đăng ký'}
+                        <button type="submit" className={authSubmitBtn}>
+                            {isLoading ? <LoaderButton /> : (isLogin ? 'Đăng nhập' : 'Đăng ký')}
                         </button>
 
                         <GoogleLoginButton
@@ -384,10 +382,10 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                 )}
 
                 {!isForgotPassword && (
-                    <div className="auth-footer">
+                    <div className={authFooter}>
                         <p>
                             {isLogin ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'}
-                            <span className="auth-toggle" onClick={toggleAuthMode}>
+                            <span className={authToggle} onClick={toggleAuthMode}>
                                 {isLogin ? ' Đăng ký ngay' : ' Đăng nhập ngay'}
                             </span>
                         </p>
@@ -395,7 +393,6 @@ const Auth = ({ setIsAuthVisible, isLogin, setIsLogin }) => {
                 )}
             </div>
         </div>
-
     )
 }
 

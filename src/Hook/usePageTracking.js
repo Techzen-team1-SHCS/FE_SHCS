@@ -9,12 +9,12 @@ export const usePageTracking = (pageName) => {
   // Track page view khi mount
   useEffect(() => {
     logBehavior("page_view", { page: pageName });
-  }, [pageName]);
+  }, [pageName, logBehavior]);
 
   // Track query change (filter / pagination)
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    const page = Number(searchParams.get("page")) || 1;
+    // const page = Number(searchParams.get("page")) || 1;
     const filters = searchParams.get("filters")
       ? JSON.parse(searchParams.get("filters"))
       : [];
@@ -23,8 +23,6 @@ export const usePageTracking = (pageName) => {
       logBehavior("filter_change", { page: pageName, filters });
     }
 
-    if (page > 1) {
-      logBehavior("page_change", { page: pageName, pageNumber: page });
-    }
-  }, [location.search, pageName]);
+  
+  }, [location.search, pageName, logBehavior]);
 };

@@ -1,8 +1,9 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import styles from './RightPanel.module.css';
 import GuestSatisfactionChart from '../Charts/GuestSatisfactionChart/GuestSatisfactionChart';
+import { dashboardService } from '../../../services/dashBoardService';
 
-const RightPanel = ({ hotelStats, upcomingReservations,satisfactionData }) => {
+const RightPanel = () => {
     const {
         rightPanel,
         section,
@@ -25,8 +26,33 @@ const RightPanel = ({ hotelStats, upcomingReservations,satisfactionData }) => {
         title,
         time
     } = styles;
+     const [hotelStats, setHotelStats] = useState(null);
+    const [upcomingReservations] = useState([]); // nếu có API riêng
+    const [satisfactionData, setSatisfactionData] = useState(null);
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await dashboardService.getBookingStats();
+            if (data) {
+                setHotelStats({
+                    occupancyRate: data.occupancyRate,
+                    pendingReservations: data.pendingReservations,
+                    averageRating: data.averageRating
+                });
+                setSatisfactionData({
+                    data: [
+                        data.guestSatisfaction.excellent,
+                        data.guestSatisfaction.good,
+                        data.guestSatisfaction.poor
+                    ],
+                    labels: ['Excellent', 'Good', 'Poor'],
+                    total: data.pendingReservations + data.guestSatisfaction.excellent + data.guestSatisfaction.good + data.guestSatisfaction.poor
+                });
+            }
+        };
 
-    return (
+        fetchData();
+    }, []);
+     return (
         <div className={rightPanel}>
             {/* Hotel Manager Stats */}
             <div className={section}>
@@ -34,22 +60,22 @@ const RightPanel = ({ hotelStats, upcomingReservations,satisfactionData }) => {
                 <div className={statsGrid}>
                     <div className={statItem}>
                         <span className={statLabel}>Occupancy Rate</span>
-                        <span className={statValue}>{hotelStats?.occupancyRate}</span>
+                        <span className={statValue}>{hotelStats?.occupancyRate || '0%'}</span>
                     </div>
-                    <hr className={divider}></hr>
+                    <hr className={divider} />
                     <div className={statItem}>
                         <span className={statLabel}>Pending Reservations</span>
-                        <span className={statValue}>{hotelStats?.pendingReservations}</span>
+                        <span className={statValue}>{hotelStats?.pendingReservations ?? 0}</span>
                     </div>
-                    <hr className={divider}></hr>
+                    <hr className={divider} />
                     <div className={statItem}>
                         <span className={statLabel}>Average Rating</span>
-                        <span className={statValue}>{hotelStats?.averageRating}</span>
+                        <span className={statValue}>{hotelStats?.averageRating ?? 0}</span>
                     </div>
                 </div>
-                <hr className={divider2}></hr>
-
+                <hr className={divider2} />
             </div>
+
             {/* Reservations */}
             <div className={section}>
                 <h3 className={title}>Reservations</h3>
@@ -69,15 +95,16 @@ const RightPanel = ({ hotelStats, upcomingReservations,satisfactionData }) => {
                                     </div>
                                 </div>
                             </div>
-
-                            <hr className={divider2}></hr>
+                            <hr className={divider2} />
                         </div>
                     ))}
                 </div>
             </div>
 
             {/* Guest Satisfaction */}
-            <GuestSatisfactionChart satisfactionData={satisfactionData}/>
+            {satisfactionData && (
+                <GuestSatisfactionChart satisfactionData={satisfactionData} />
+            )}
         </div>
     );
 };

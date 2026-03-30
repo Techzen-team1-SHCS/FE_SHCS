@@ -4547,6 +4547,7 @@ blockquote {
   -webkit-transition: all 500ms ease;
   -o-transition: all 500ms ease;
   transition: all 500ms ease;
+  overflow: hidden;
 }
 
 .main-header .header-upper {
@@ -4557,7 +4558,11 @@ blockquote {
   -o-transition: all 500ms ease;
   transition: all 500ms ease;
 }
-
+@media (max-width: 768px) {
+  .main-header .header-upper {
+    max-height: 60px;
+  }
+}
 .main-header .logo-outer {
   -webkit-box-flex: 0;
   -ms-flex: none;
@@ -4956,6 +4961,52 @@ blockquote {
   .main-header.header-one.fixed-header .header-upper {
     padding-top: 10px;
     padding-bottom: 10px;
+  }
+}
+
+/* Enable pure-CSS hover dropdown for desktop (replaces JS hover) */
+@media only screen and (min-width: 992px) {
+  .main-menu .navbar-collapse li:hover > ul,
+  .main-menu .navbar-collapse li:hover > .megamenu {
+    /* show submenu with transition handled by opacity/transform */
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* ensure nested dropdowns are positioned correctly and animate nicely */
+  .main-menu .navbar-collapse li ul,
+  .main-menu .navbar-collapse li .megamenu {
+    display: block; /* keep in layout for desktop animations */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    pointer-events: none;
+    -webkit-transition: opacity 220ms ease, transform 220ms ease;
+    transition: opacity 220ms ease, transform 220ms ease;
+  }
+}
+
+/* Dropdown indicator using CSS (no extra DOM) */
+@media only screen and (min-width: 992px) {
+  .main-menu .navbar-collapse .navigation>li.dropdown > a {
+    position: relative;
+    padding-right: 12px; /* room for the arrow */
+  }
+
+  .main-menu .navbar-collapse .navigation>li.dropdown > a::after {
+    display: none !important;
+  }
+
+  /* Rotate arrow when submenu is visible (hover) */
+  .main-menu .navbar-collapse .navigation>li.dropdown:hover > a::after {
+    transform: translateY(-2px);
+  }
+
+  /* Hide legacy .dropdown-btn if still present */
+  .main-menu .navbar-collapse li.dropdown .dropdown-btn {
+    display: none !important;
   }
 }
 
@@ -5736,6 +5787,14 @@ blockquote {
   padding: 20px  10px;
   -webkit-box-shadow: 10px 4px 60px rgba(197, 197, 197, 0.25);
   box-shadow: 10px 4px 60px rgba(197, 197, 197, 0.25);
+}
+
+/* Reset z-index on mobile to avoid conflict with filter drawer */
+@media (max-width: 991px) {
+  .search-filter-inner {
+    z-index: auto;
+    position: relative;
+  }
 }
 
 @media only screen and (max-width: 1299px) {
@@ -7451,7 +7510,24 @@ blockquote {
 .count-text.m-plus:after {
   content: 'm+';
 }
-
+@media only screen and (max-width: 768px) {
+  .count-text.k-plus {
+    display: flex;
+    justify-content: center;
+  }
+  .count-text.m-plus {
+    display: flex;
+    justify-content: center;
+  }
+  .counter-title{
+    display: flex;
+    justify-content: center;
+  }
+  .theme-btn.mt-10.style-two {
+    display: flex;
+    justify-content: center;
+  }
+}
 /*******************************************************/
 /******************** ## About Area ********************/
 /*******************************************************/
@@ -7893,14 +7969,33 @@ blockquote {
   max-width: 500px;
 }
 
+.features-customer-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  text-align: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
 @media only screen and (min-width: 768px) {
   .features-customer-box {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    text-align: left;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
   }
 }
 
@@ -7921,6 +8016,7 @@ blockquote {
 }
 
 .features-customer-box .content {
+  width:100%;
   margin-left: -20%;
   background: white;
   border-radius: 20px;
@@ -11679,9 +11775,9 @@ blockquote .blockquote-footer:before {
 
 .newsletter-form {
   padding: 10px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-
+  display: flex;
+  align-items: center;
+  gap: 0;
   background: #fff;
   position: relative;
   border-radius: 35px;
@@ -11690,6 +11786,9 @@ blockquote .blockquote-footer:before {
 .newsletter-form input {
   border: 0;
   padding: 11px 5px 11px 30px;
+  flex: 1;
+  min-width: 0;
+  outline: none;
 }
 
 @media only screen and (max-width: 375px) {
@@ -11699,12 +11798,26 @@ blockquote .blockquote-footer:before {
 }
 
 .newsletter-form .theme-btn {
-  -webkit-box-flex: 0;
-  -ms-flex: none;
-  flex: none;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding: 12px 20px;
 }
 
 @media only screen and (max-width: 479px) {
+  .newsletter-form {
+    padding: 6px;
+  }
+  
+  .newsletter-form input {
+    padding: 10px 4px 10px 20px;
+    font-size: 14px;
+  }
+  
+  .newsletter-form .theme-btn {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
   .newsletter-form .theme-btn i {
     display: none;
   }
@@ -11755,4 +11868,65 @@ blockquote .blockquote-footer:before {
 
 .footer-bottom-nav li {
   margin: 0 13px 5px;
+}
+/* Thêm vào file CSS chính hoặc Header.module.css */
+
+/* Hiệu ứng cho subMenu items */
+.navigation > li > ul > li > a {
+  position: relative;
+  overflow: hidden;
+}
+
+.navigation > li > ul > li > a:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 1px;
+  background: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.navigation > li > ul > li > a:hover:after {
+  width: 100%;
+}
+
+/* Gradient border cho subMenu */
+.navigation > li > ul {
+  background: linear-gradient(135deg, white 0%, #f8f9fa 100%);
+}
+
+/* Hiệu ứng shadow khi hover vào menu chính */
+.navigation > li:hover > a {
+  text-shadow: 0 0 8px rgba(var(--primary-rgb), 0.3);
+}
+
+/* Hiệu ứng ripple cho menu items */
+.navigation > li > ul > li > a:active {
+  transform: scale(0.98);
+}
+
+/* Custom scrollbar cho subMenu (nếu có nhiều items) */
+.navigation > li > ul {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.navigation > li > ul::-webkit-scrollbar {
+  width: 6px;
+}
+
+.navigation > li > ul::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.navigation > li > ul::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 3px;
+}
+
+.navigation > li > ul::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
 }

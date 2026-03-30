@@ -1,292 +1,351 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect, useRef } from 'react';
 import styles from './Notification.module.css';
+import '../../config/echo';
+import { useNavigate } from 'react-router-dom';
+import PartLoading from '../Loading/PartLoading';
+import api from '../../services/api';
 
-const Notification = () => {
-    const {
-        notificationContainer,
-        notificationButton,
-        notificationIcon,
-        notificationBadge,
-        dropdown,
-        dropdownHeader,
-        dropdownTitle,
-        notificationList,
-        notificationItem,
-        notificationContent,
-        notificationTitle,
-        notificationMessage,
-        notificationTime,
-        notificationDivider,
-        unreadDot,
-        hotelName,
-        bookingInfo,
-        loadingState,
-        errorState,
-        emptyState
-    } = styles;
-
+const Notification = ({ userId }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
-    // Fetch notifications from API
-    const fetchNotifications = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            
-            const response = await fetch('/api/notifications', {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to fetch notifications');
+    const [hasFetched, setHasFetched] = useState(false);
+    const dropdownRef = useRef(null);
+    const listRef = useRef(null);
+    const navigate = useNavigate();
+    
+    // Click outside to close
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
             }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    // Auto scroll to top when dropdown opens
+    useEffect(() => {
+        if (isOpen && listRef.current) {
+            listRef.current.scrollTop = 0;
+        }
+    }, [isOpen]);
+
+    // ✅ FETCH NGAY KHI COMPONENT MOUNT
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            // Chỉ fetch nếu chưa fetch lần nào
+            if (hasFetched) return;
             
-            const data = await response.json();
-            setNotifications(data.notifications || []);
-        } catch (err) {
-            setError(err.message);
-            console.error('Error fetching notifications:', err);
-        } finally {
-            setLoading(false);
+            console.log("📨 Fetching notifications on mount");
+            setLoading(true);
+            try {
+                const res = await api.get('/auth/notifications');
+                setNotifications(res.data.notifications || []);
+                setHasFetched(true);
+            } catch (err) {
+                console.error('Notification fetch error:', err);
+                setError('Không thể tải thông báo');
+                // Vẫn đánh dấu đã fetch để không thử lại liên tục
+                setHasFetched(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (userId) {
+            fetchNotifications();
+        }
+    }, [userId, hasFetched]); // Chỉ chạy khi hasFetched thay đổi
+
+    // ✅ Realtime notifications - Kết nối ngay khi có userId
+    useEffect(() => {
+        if (!userId || !window.Echo) return;
+
+        console.log("📡 Connecting to realtime notification channel");
+        const channel = window.Echo.private(`user.${userId}`);
+        
+        channel.listen('NotificationSuccess', (data) => {
+            console.log("🔔 New realtime notification received");
+            setNotifications(prev => [data, ...prev]);
+            
+            // Hiển thị toast/thông báo mới (tùy chọn)
+            if (data.title && data.message) {
+                showNewNotificationToast(data.title, data.message);
+            }
+        });
+
+        // Lắng nghe các sự kiện khác nếu có
+        channel.listen('.notification.created', (data) => {
+            console.log("🔔 Notification created event received");
+            setNotifications(prev => [data.notification, ...prev]);
+        });
+
+        return () => {
+            if (channel) {
+                console.log("📡 Disconnecting from notification channel");
+                window.Echo.leave(`user.${userId}`);
+            }
+        };
+    }, [userId]); // Chỉ cần userId
+
+    // ✅ Hàm hiển thị toast thông báo mới (tùy chọn)
+    const showNewNotificationToast = (title, message) => {
+        // Sử dụng thư viện toast hoặc custom implementation
+        if (window.showToast) {
+            window.showToast({
+                type: 'info',
+                title: title,
+                message: message,
+                duration: 5000
+            });
+        }
+        
+        // Hoặc phát âm thanh thông báo
+        try {
+            const audio = new Audio('/notification-sound.mp3');
+            audio.volume = 0.3;
+            audio.play().catch(e => console.log("Audio play failed:", e));
+        } catch (e) {
+            console.log("Audio error:", e);
         }
     };
 
-    // Mark notification as read
-    const markAsRead = async (notificationId) => {
+    const unreadCount = notifications.filter(n => !n.is_read).length;
+
+    // ✅ Toggle dropdown
+    const toggleDropdown = () => {
+        const newState = !isOpen;
+        setIsOpen(newState);
+        
+        // Nếu đang mở và có thông báo chưa đọc, có thể đánh dấu đọc tất cả
+        if (newState && unreadCount > 0) {
+            // Có thể tự động đánh dấu đọc khi mở
+            // markAllAsRead();
+        }
+        
+        console.log(`🔔 Notification dropdown ${newState ? 'opened' : 'closed'}`);
+    };
+
+    // Mark as read
+    const markAsRead = async (id) => {
         try {
-            await fetch(`/api/notifications/${notificationId}/read`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            // Update local state
-            setNotifications(prev => 
-                prev.map(noti => 
-                    noti.id === notificationId ? { ...noti, unread: false } : noti
-                )
-            );
+            await api.put(`/auth/notifications/${id}/read`);
+            setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
         } catch (err) {
-            console.error('Error marking notification as read:', err);
+            console.error(err);
         }
     };
 
     // Mark all as read
     const markAllAsRead = async () => {
         try {
-            await fetch('/api/notifications/mark-all-read', {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            setNotifications(prev => 
-                prev.map(noti => ({ ...noti, unread: false }))
-            );
+            await api.put('/auth/notifications/mark-all-read');
+            setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
         } catch (err) {
-            console.error('Error marking all as read:', err);
+            console.error(err);
         }
     };
 
-    // Fetch notifications when component mounts and dropdown opens
-    useEffect(() => {
-        if (isOpen) {
-            fetchNotifications();
-        }
-    }, [isOpen]);
-
-    const unreadCount = notifications.filter(noti => noti.unread).length;
-
-    const handleNotificationClick = (notification) => {
-        if (notification.unread) {
-            markAsRead(notification.id);
-        }
-        // Handle notification click logic - navigate to booking details
-        if (notification.bookingId) {
-            window.location.href = `/bookings/${notification.bookingId}`;
-        }
+    // Refresh notifications
+    const refreshNotifications = async () => {
+        setHasFetched(false); // Reset để fetch lại
+        setLoading(true);
     };
 
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
+    const handleClickNotification = (n) => {
+        // Mark read
+        if (!n.is_read) markAsRead(n.id);
+
+        // Parse JSON data nếu có
+        let parsedData = null;
+        try {
+            parsedData = n.data ? JSON.parse(n.data) : null;
+        } catch (e) {
+            console.error("Invalid JSON in notification.data");
+        }
+
+        // Điều hướng theo loại
+        if (n.type === 'booking' && parsedData?.booking_id) {
+            navigate(`/booking/${parsedData.booking_id}`);
+            setIsOpen(false);
+        }
+
+        if (n.type === 'payment') {
+            navigate('/profile?tab=payment');
+            setIsOpen(false);
+        }
+
+        if (n.type === 'discount') {
+            navigate('/discount');
+            setIsOpen(false);
+        }
+
+        if (n.type === 'message' && parsedData?.chat_id) {
+            navigate(`/messages/${parsedData.chat_id}`);
+            setIsOpen(false);
+        }
+
+        // Đóng dropdown sau khi click
+        // setIsOpen(false);
     };
 
     const formatTime = (timeString) => {
         if (!timeString) return '';
-        
         const time = new Date(timeString);
         const now = new Date();
-        const diffInHours = Math.floor((now - time) / (1000 * 60 * 60));
+        const diffMs = now - time;
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
         
-        if (diffInHours < 1) return 'Just now';
-        if (diffInHours < 24) return `${diffInHours} hours ago`;
-        return `${Math.floor(diffInHours / 24)} days ago`;
+        if (diffMins < 1) return 'Vừa xong';
+        if (diffMins < 60) return `${diffMins} phút trước`;
+        if (diffHrs < 24) return `${diffHrs} giờ trước`;
+        return `${Math.floor(diffHrs/24)} ngày trước`;
     };
 
-    // Sample data for hotel booking notifications (replace with actual API data)
-    const sampleNotifications = [
-        {
-            id: 1,
-            type: 'new_booking',
-            title: 'New Booking Received',
-            hotelName: 'Hilton DaNang',
-            message: 'New booking for 2 guests in Deluxe Room',
-            bookingInfo: 'Check-in: 15 Jan 2024 • 2 nights',
-            time: '2 hours ago',
-            unread: true,
-            bookingId: 'BK001'
-        },
-        {
-            id: 2,
-            type: 'cancellation',
-            title: 'Booking Cancelled',
-            hotelName: 'Sheraton Hanoi',
-            message: 'Booking #BK202 has been cancelled by guest',
-            bookingInfo: 'Refund processed',
-            time: '5 hours ago',
-            unread: true,
-            bookingId: 'BK202'
-        },
-        {
-            id: 3,
-            type: 'checkin_reminder',
-            title: 'Check-in Reminder',
-            hotelName: 'Intercontinental Nha Trang',
-            message: 'Guest checking in today at 2:00 PM',
-            bookingInfo: 'Room 301 • 3 guests',
-            time: '1 day ago',
-            unread: false,
-            bookingId: 'BK305'
-        },
-        {
-            id: 4,
-            type: 'payment_received',
-            title: 'Payment Received',
-            hotelName: 'Marriott Saigon',
-            message: 'Payment confirmed for booking #BK410',
-            bookingInfo: 'Amount: $250 • Credit Card',
-            time: '2 days ago',
-            unread: false,
-            bookingId: 'BK410'
-        }
-    ];
+    // Get notification type
+    const getNotificationType = (notification) => {
+        if (notification.type) return notification.type;
+        const message = notification.message?.toLowerCase() || '';
+        if (message.includes('thành công') || message.includes('success') || message.includes('đã xác nhận')) 
+            return 'success';
+        if (message.includes('cảnh báo') || message.includes('warning') || message.includes('chú ý')) 
+            return 'warning';
+        if (message.includes('lỗi') || message.includes('error') || message.includes('failed')) 
+            return 'error';
+        return 'info';
+    };
 
-    // Use sample data if no API data (for demo)
-    const displayNotifications = notifications.length > 0 ? notifications : sampleNotifications;
+    // Format số lượng thông báo
+    const formatBadgeCount = (count) => {
+        if (count > 99) return '99+';
+        return count;
+    };
 
     return (
-        <div className={notificationContainer}>
+        <div className={styles.notificationContainer} ref={dropdownRef}>
             <button 
-                className={notificationButton}
-                onClick={toggleDropdown}
+                onClick={toggleDropdown} 
+                className={styles.notificationButton}
+                title="Thông báo"
+                aria-label={`Thông báo ${unreadCount > 0 ? `có ${unreadCount} thông báo chưa đọc` : ''}`}
             >
-                <svg 
-                    className={notificationIcon}
-                    width="20" 
-                    height="20" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2"
-                >
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                </svg>
+                <span className={styles.bellIcon}>🔔</span>
                 {unreadCount > 0 && (
-                    <span className={notificationBadge}>
-                        {unreadCount > 99 ? '99+' : unreadCount}
+                    <span className={styles.notificationBadge}>
+                        {formatBadgeCount(unreadCount)}
                     </span>
                 )}
             </button>
 
-            {isOpen && (
-                <div className={`${dropdown} ${isOpen ? styles.show : ''}`}>
-                    <div className={dropdownHeader}>
-                        <h3 className={dropdownTitle}>Booking Notifications</h3>
+            <div className={`${styles.dropdown} ${isOpen ? styles.show : ''}`}>
+                <div className={styles.dropdownHeader}>
+                    <h3>Thông báo</h3>
+                    <div className={styles.headerActions}>
                         {unreadCount > 0 && (
                             <button 
-                                className={styles.markAllReadButton}
+                                className={styles.markAllReadButton} 
                                 onClick={markAllAsRead}
+                                disabled={loading}
+                                title="Đánh dấu tất cả đã đọc"
                             >
-                                Mark all as read
+                                Đánh dấu đã đọc
                             </button>
                         )}
-                    </div>
-                    <div className={notificationList}>
-                        {loading && (
-                            <div className={loadingState}>Loading notifications...</div>
-                        )}
-                        
-                        {/* {error && (
-                            <div className={errorState}>
-                                Failed to load notifications
-                                <button 
-                                    className={styles.retryButton}
-                                    onClick={fetchNotifications}
-                                >
-                                    Retry
-                                </button>
-                            </div>
-                        )} */}
-                        
-                        {!loading && !error && displayNotifications.length === 0 && (
-                            <div className={emptyState}>No new notifications</div>
-                        )}
-                        
-                        {!loading  && displayNotifications.map((notification, index) => (  //Có thể bỏ !Error để xem dữ liệu mẫu
-                            <div key={notification.id}>
-                                <div 
-                                    className={notificationItem}
-                                    data-type={notification.type}
-                                    onClick={() => handleNotificationClick(notification)}
-                                >
-                                    <div className={notificationContent}>
-                                        <div className={notificationTitle}>
-                                            {notification.unread && (
-                                                <span className={unreadDot}></span>
-                                            )}
-                                            {notification.title}
-                                        </div>
-                                        
-                                        {notification.hotelName && (
-                                            <div className={hotelName}>
-                                                {notification.hotelName}
-                                            </div>
-                                        )}
-                                        
-                                        <div className={notificationMessage}>
-                                            {notification.message}
-                                        </div>
-                                        
-                                        {notification.bookingInfo && (
-                                            <div className={bookingInfo}>
-                                                {notification.bookingInfo}
-                                            </div>
-                                        )}
-                                        
-                                        <div className={notificationTime}>
-                                            {notification.time || formatTime(notification.createdAt)}
-                                        </div>
-                                    </div>
-                                </div>
-                                {index < displayNotifications.length - 1 && (
-                                    <div className={notificationDivider}></div>
-                                )}
-                            </div>
-                        ))}
+                        <button 
+                            className={styles.refreshButton}
+                            onClick={refreshNotifications}
+                            disabled={loading}
+                            title="Làm mới thông báo"
+                        >
+                            ↻
+                        </button>
                     </div>
                 </div>
-            )}
+
+                <div className={styles.notificationList} ref={listRef}>
+                    {/* Loading state */}
+                    {loading && !hasFetched && (
+                        <div className={styles.loadingState}>
+                            <PartLoading />
+                            <p className={styles.loadingText}>Đang tải thông báo...</p>
+                        </div>
+                    )}
+                    
+                    {/* Error state */}
+                    {error && !loading && (
+                        <div className={styles.errorState}>
+                            <p>{error}</p>
+                            <button 
+                                onClick={refreshNotifications}
+                                className={styles.retryButton}
+                            >
+                                Thử lại
+                            </button>
+                        </div>
+                    )}
+                    
+                    {/* Empty state */}
+                    {!loading && hasFetched && notifications.length === 0 && (
+                        <div className={styles.emptyState}>
+                            <div className={styles.emptyIcon}>📭</div>
+                            <p>Không có thông báo</p>
+                            <small>Thông báo mới sẽ xuất hiện tại đây</small>
+                        </div>
+                    )}
+
+                    {/* Notifications list */}
+                    {hasFetched && notifications.map(notification => {
+                        const type = getNotificationType(notification);
+                        const isUnread = !notification.is_read;
+                        
+                        return (
+                            <div
+                                key={notification.id || notification.created_at}
+                                className={`${styles.notificationItem} ${
+                                    isUnread ? styles.unread : styles.read
+                                }`}
+                                onClick={() => handleClickNotification(notification)}
+                                data-type={type}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        handleClickNotification(notification);
+                                    }
+                                }}
+                            >
+                                <div className={styles.notificationContent}>
+                                    <div 
+                                        className={styles.notificationTitle}
+                                        data-type={type}
+                                    >
+                                        {isUnread && <span className={styles.unreadDot}></span>}
+                                        {notification.title}
+                                    </div>
+                                    <div className={styles.notificationMessage}>
+                                        {notification.message}
+                                    </div>
+                                    <div className={styles.notificationFooter}>
+                                        <span className={styles.notificationTime}>
+                                            {formatTime(notification.created_at)}
+                                        </span>
+                                        <span className={`${styles.statusText} ${isUnread ? styles.statusUnread : styles.statusRead}`}>
+                                            {isUnread ? "• Chưa đọc" : "Đã đọc"}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
         </div>
     );
 };

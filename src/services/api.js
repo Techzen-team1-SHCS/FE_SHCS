@@ -13,7 +13,7 @@ const api = axios.create({
 // Request interceptor để thêm token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -21,14 +21,23 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
+///
 // Response interceptor để xử lý lỗi
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('API Error:', error.response?.status, error.config?.url);
     if (error.response?.status === 401) {
-      localStorage.removeItem('auth_token');
-      window.location.href = '/';
+      const hasToken = localStorage.getItem('token');
+      if (hasToken) {
+        console.warn('Unauthorized! Clearing storage and redirecting...');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        // Chỉ redirect nếu không phải đang ở trang chủ để tránh loop
+        if (window.location.pathname !== '/') {
+          window.location.href = '/';
+        }
+      }
     }
     return Promise.reject(error);
   }

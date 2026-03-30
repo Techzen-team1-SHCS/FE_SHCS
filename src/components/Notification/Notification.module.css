@@ -12,139 +12,99 @@
     border-radius: 8px;
     transition: background-color 0.2s ease;
 }
-
+@media (max-width: 991px) {
+    .notificationContainer {
+        display: flex;
+        justify-content: flex-end;
+    }
+}
 .notificationButton:hover {
     background-color: #f5f5f5;
 }
-
-.notificationIcon {
-    color: #333;
+.notificationTime{
+    height: 16px;
+    display: flex;
+    justify-content: space-between;
 }
-
 .notificationBadge {
+    padding: 9px;
     position: absolute;
-    top: 2px;
-    right: 2px;
+    top: 0;
+    right: 0;
     background-color: #dc3545;
     color: white;
     border-radius: 50%;
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
     font-size: 10px;
     font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid white;
 }
 
 .dropdown {
+    
     position: absolute;
     top: 100%;
     right: 0;
-    width: 600px;
+    width: 400px;
     background: white;
     border: 1px solid #e0e0e0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     z-index: 1000;
     margin-top: 8px;
     opacity: 0;
+    visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
     pointer-events: none;
+    max-height: 500px; /* Thêm max-height cho container */
+    display: flex;
+    flex-direction: column;
 }
+
 .dropdown.show {
     opacity: 1;
+    visibility: visible;
     transform: translateY(0);
     pointer-events: all;
 }
+
 .dropdownHeader {
-    padding: 16px 20px;
+    border-radius: 10px;
+    padding: 12px 16px;
     border-bottom: 1px solid #e0e0e0;
     background-color: #fafafa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0; /* Không bị co lại khi scroll */
 }
 
-.dropdownTitle {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
+.markAllReadButton {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.markAllReadButton:hover {
+    background-color: #e3f2fd;
 }
 
 .notificationList {
-    max-height: 400px;
+    
+    max-height: 300px;
     overflow-y: auto;
-}
-
-.notificationItem {
-    padding: 16px 20px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    border-left: 3px solid transparent;
-}
-
-.notificationItem:hover {
-    background-color: #f8f9fa;
-    border-left-color: #007bff;
-}
-
-.notificationContent {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.notificationTitle {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.unreadDot {
-    width: 8px;
-    height: 8px;
-    background-color: #007bff;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-.hotelName {
-    font-size: 13px;
-    color: #007bff;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.bookingInfo {
-    font-size: 12px;
-    color: #28a745;
-    font-weight: 500;
-    margin-top: 4px;
-}
-
-.notificationMessage {
-    font-size: 13px;
-    color: #555;
-    line-height: 1.4;
-    margin-top: 4px;
-}
-
-.notificationTime {
-    font-size: 12px;
-    color: #888;
-    margin-top: 4px;
-}
-
-.notificationDivider {
-    height: 1px;
-    background-color: #f0f0f0;
-    margin: 0 20px;
-}
-
-.notificationDivider:last-child {
-    display: none;
+    scroll-behavior: smooth;
+    flex: 1; /* Chiếm toàn bộ không gian còn lại */
 }
 
 /* Scrollbar styling */
@@ -163,55 +123,125 @@
 }
 
 .notificationList::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
+    background: #888;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .dropdown {
-        width: 320px;
-        right: -50px;
-    }
+.notificationList {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
 }
 
-@media (max-width: 480px) {
-    .dropdown {
-        width: 280px;
-        right: -80px;
-    }
-    
-    .notificationItem {
-        padding: 12px 16px;
-    }
-    
-    .dropdownHeader {
-        padding: 12px 16px;
-    }
-}
-.markAllReadButton {
-    background: none;
-    border: none;
-    color: #007bff;
-    font-size: 12px;
+/* Notification Item Styles */
+.notificationItem {
+    padding: 12px 16px;
     cursor: pointer;
-    text-decoration: underline;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid #f0f0f0;
+    background-color: white;
 }
 
-.markAllReadButton:hover {
-    color: #0056b3;
+/* Chưa đọc - màu nền sáng và viền màu xanh */
+.notificationItem.unread {
+    background-color: #f8fbff;
+    border-left-color: #007bff;
+    border-bottom-color: #e3f2fd;
 }
 
-.retryButton {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 4px;
+.notificationItem.unread:hover {
+    background-color: #e3f2fd;
+    border-left-color: #0056b3;
+}
+
+/* Đã đọc - màu nền bình thường */
+.notificationItem.read {
+    background-color: white;
+    border-left-color: transparent;
+}
+
+.notificationItem.read:hover {
+    background-color: #f8f9fa;
+    border-left-color: #6c757d;
+}
+
+/* Phân biệt theo loại thông báo */
+.notificationItem[data-type="success"] {
+    border-left-color: #28a745;
+}
+
+.notificationItem[data-type="warning"] {
+    border-left-color: #ffc107;
+}
+
+.notificationItem[data-type="error"] {
+    border-left-color: #dc3545;
+}
+
+.notificationItem[data-type="info"] {
+    border-left-color: #17a2b8;
+}
+
+.notificationContent {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.notificationTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Dot cho thông báo chưa đọc */
+.unreadDot {
+    width: 8px;
+    height: 8px;
+    background-color: #007bff;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.notificationMessage {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.4;
+}
+
+.notificationTime {
     font-size: 12px;
-    cursor: pointer;
-    margin-left: 8px;
+    color: #888;
+    font-style: italic;
 }
 
+/* Màu sắc cho tiêu đề theo loại */
+.notificationTitle[data-type="success"] {
+    color: #28a745;
+}
+
+.notificationTitle[data-type="warning"] {
+    color: #e0a800;
+}
+
+.notificationTitle[data-type="error"] {
+    color: #dc3545;
+}
+
+.notificationTitle[data-type="info"] {
+    color: #17a2b8;
+}
+
+/* Loading, Error, Empty state */
 .loadingState,
 .errorState,
 .emptyState {
@@ -224,60 +254,31 @@
 .errorState {
     color: #dc3545;
 }
-/* Thêm màu sắc theo loại thông báo */
-.notificationItem[data-type="new_booking"] {
-    border-left-color: #28a745;
-}
-
-.notificationItem[data-type="cancellation"] {
-    border-left-color: #dc3545;
-}
-
-.notificationItem[data-type="checkin_reminder"] {
-    border-left-color: #ffc107;
-}
-
-.notificationItem[data-type="payment_received"] {
-    border-left-color: #17a2b8;
-}
-.loadingState {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.loadingState::before {
-    content: "";
-    width: 16px;
-    height: 16px;
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid #007bff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.errorState {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-}
 
 .emptyState {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
     color: #999;
 }
 
-.emptyState::before {
-    content: "🔔";
-    font-size: 24px;
+/* Responsive */
+@media (max-width: 768px) {
+    .dropdown {
+        width: 300px;
+        right: -20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dropdown {
+        width: 200px;
+        right: -10px;
+    }
+    
+    .notificationItem {
+        padding: 10px 12px;
+    }
+    
+    .dropdownHeader {
+        padding: 10px 12px;
+
+    }
 }

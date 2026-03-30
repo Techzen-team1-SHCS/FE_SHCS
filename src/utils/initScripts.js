@@ -119,10 +119,9 @@ export const initScripts = () => {
         const submenu = dropdown.querySelector('ul');
 
         if (link && submenu) {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
-            });
+            // No click-to-toggle behavior: submenu visibility is controlled
+            // via CSS :hover on desktop. We intentionally do not attach a
+            // click handler here to avoid opening submenus on mobile.
         }
     });
 

@@ -1,24 +1,40 @@
-import axios from 'axios';
 import api from './api';
 
 export const authService = {
   // 🔹 LOGIN
   login: async (email, password) => {
-    const response = await axios.post('/api/auth/login', { email, password });
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      const { status, data, message } = response.data;
 
-    if (response.data.status === 200) {
-      const token = response.data.data?.access_token;
-      const user = response.data.data?.user;
+      if (status !== 200) {
+        throw new Error(message || 'Đăng nhập thất bại');
+      }
 
-      // ✅ Lưu token & user vào localStorage
-      localStorage.setItem('token', token);
+      const { access_token, user } = data;
+      localStorage.setItem('token', access_token);
       localStorage.setItem('user', JSON.stringify(user));
 
-      // ✅ Trả về gọn gàng để dùng trong AuthContext.login()
-      return { status: 200, token, user };
-    }
+      return {
+        status: 200,
+        user,
+        token: access_token,
+      };
+    } catch (err) {
+      const serverError = err.response?.data;
+      if (serverError) {
+        // validation errors (422)
+        if (serverError.errors) {
+          const firstError = Object.values(serverError.errors)
+            .flat()
+            .filter(Boolean)[0];
+          throw new Error(firstError || serverError.message || 'Đăng nhập thất bại');
+        }
+        throw new Error(serverError.message || 'Đăng nhập thất bại');
+      }
 
-    return response.data;
+      throw new Error(err.message || 'Đăng nhập thất bại');
+    }
   },
   //Login với google
   loginGoogle: async (idToken) => {
@@ -48,32 +64,26 @@ export const authService = {
   },
   getUserById: async (id) => {
     try {
-        const response = await api.get(`/auth/user/${id}`);
-        
-        console.log('🔵 RAW getUserById RESPONSE:', response.data);
-        
-        // Backend trả về data trong field 'data'
-        const userData = response.data.data || response.data;
-        
-        console.log('🟢 Extracted user data:', userData);
-        return userData;
-        
+      const response = await api.get(`/auth/user/${id}`);
+      const userData = response.data.data || response.data;
+      return userData;
+
     } catch (error) {
-        console.error('❌ Error in getUserById:', error);
-        throw error;
+      console.error('❌ Error in getUserById:', error);
+      throw error;
     }
-},
+  },
   // 🔹 REGISTER
   register: async (userData) => {
     const response = await api.post('/auth/register', userData);
     return response.data;
   },
-  forgotPassword:async(email)=>{
-    const response = await api.post('/auth/forgot-password', {email});
+  forgotPassword: async (email) => {
+    const response = await api.post('/auth/forgot-password', { email });
     return response.data;
   },
-  resetPassword:async(data)=>{
-    const response=await api.post('/auth/reset-password',data);
+  resetPassword: async (data) => {
+    const response = await api.post('/auth/reset-password', data);
     return response.data;
   },
   // 🔹 LOGOUT
@@ -127,10 +137,10 @@ export const authService = {
   uploadAvatar: async (userId, file) => {
     const formData = new FormData();
     formData.append('avatar', file);
-    const token=localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     const response = await api.post(`/auth/user/upload-avatar/${userId}`, formData, {
       headers: {
-        Authorization:`Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
       },
     });
@@ -147,6 +157,64 @@ export const authService = {
   getUserProfile: async (userId) => {
     const response = await api.get(`/auth/user/${userId}/profile`);
     return response.data;
+  },
+  getAllUsers: async () => {
+    const response = await api.get('/auth/user');
+    return response.data.data;
+  },
+  async blockUser(id) {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication no token not found')
+      }
+      const response = await api.post(`/auth/users/${id}/block`, {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error.response?.data?.message || "Failed to block user");
+    }
+  },
+  async unblockUser(id) {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication no token not found')
+      }
+      const response = await api.post(`/auth/users/${id}/unblock`, {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error.response?.data?.message || "Failed to block user");
+    }
+  },
+  async updateUser(id, userData) {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication no token not found')
+      }
+      const response = await api.post(`/auth/user/update/${id}`, userData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Update user error:', error.response?.data);
+      throw new Error(error.response?.data?.message || "Failed to update user");
+    }
   }
-
 };

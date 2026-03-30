@@ -1,6 +1,43 @@
-/* UserManage.module.css */
 .container {
     background: white;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+
+.headerStats {
+    display: flex;
+    gap: 24px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.statNumber {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.statLabel {
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .tableContainer {
@@ -17,60 +54,18 @@
 }
 
 .tableHeader {
-    background: #f8f9fa;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .th {
-    padding: 16px;
-    text-align: center;
+    padding: 16px 12px;
+    text-align: left;
     font-weight: 600;
-    color: #2c3e50;
-    border-bottom: 2px solid #e9ecef;
+    color: white;
+    border-bottom: none;
     font-size: 14px;
     font-family: 'Inter', sans-serif;
     white-space: nowrap;
-}
-
-/* Điều chỉnh chiều rộng từng cột với 8 cột */
-.th:nth-child(1), .td:nth-child(1) { /* Username */
-    width: 120px;
-    min-width: 120px;
-}
-
-.th:nth-child(2), .td:nth-child(2) { /* Email */
-    width: 180px;
-    min-width: 180px;
-}
-
-.th:nth-child(3), .td:nth-child(3) { /* Role */
-    width: 100px;
-    min-width: 100px;
-}
-
-.th:nth-child(4), .td:nth-child(4) { /* Join Date */
-    width: 120px;
-    min-width: 120px;
-}
-
-.th:nth-child(5), .td:nth-child(5) { /* Last Login */
-    width: 150px;
-    min-width: 150px;
-}
-
-.th:nth-child(6), .td:nth-child(6) { /* Status */
-    width: 120px;
-    min-width: 120px;
-}
-
-.th:nth-child(7), .td:nth-child(7) { /* Actions (Ban/Unban) */
-    width: 100px;
-    min-width: 100px;
-    text-align: center;
-}
-
-.th:nth-child(8), .td:nth-child(8) { /* Actions (Delete) */
-    width: 80px;
-    min-width: 80px;
 }
 
 .tableBody {
@@ -78,13 +73,14 @@
 }
 
 .tr {
-    text-align: center;
-    transition: background-color 0.2s ease;
+    transition: all 0.3s ease;
     border-bottom: 1px solid #e9ecef;
 }
 
 .tr:hover {
     background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .tr:last-child {
@@ -92,120 +88,154 @@
 }
 
 .td {
-    padding: 16px;
+    padding: 16px 12px;
     color: #495057;
     font-size: 14px;
     font-family: 'Inter', sans-serif;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    
+    vertical-align: middle;
 }
 
-/* User Status Colors */
-.statusActive {
-    background-color: rgba(157, 243, 194, 0.5);
-    border: 1px solid #41BC63;
-    color: black;
-    padding: 0px 12px;
+/* User Info Styles */
+.userInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatarContainer {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.userAvatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatarPlaceholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.userName {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.userEmail {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+/* User Details */
+.userDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.detailItem {
+    font-size: 13px;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.address {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Role Badges */
+.roleBadge {
+    padding: 6px 12px;
     border-radius: 20px;
     font-size: 12px;
-    font-weight: 400;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    display: inline-block;
-    width: 100px;
+}
+
+.roleAdmin {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.roleUser {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* Status Badges */
+.statusBadge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.statusActive {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
 }
 
 .statusInactive {
-    background-color: rgba(255, 184, 0, 0.5);
-    border: 1px solid #CD8124;
-    color: black;
-    padding: 0px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: inline-block;
-    width: 100px;
+    background-color: #e2e3e5;
+    color: #383d41;
+    border: 1px solid #d6d8db;
 }
 
 .statusSuspended {
-    background-color: rgba(255, 115, 115, 0.5);
-    border: 1px solid #F20808;
-    color: black;
-    padding: 0px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: inline-block;
-    width: 100px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f1b0b7;
 }
 
 .statusPending {
-    background-color: rgba(98, 180, 245, 0.5);
-    border: 1px solid #51A7FD;
-    color: black;
-    padding: 0px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: inline-block;
-    width: 100px;
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
 }
 
-/* Ban/Unban Buttons */
-.banButton {
-    background: #dc3545;
-    color: white;
+/* Action Buttons */
+.actionCell {
+    text-align: center;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+
+.actionButton {
+    padding: 8px;
     border: none;
-    padding: 0px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: all 0.2s ease;
-    width: 60px;
-    margin: 0 auto; 
-    display: block;
-}
-
-.banButton:hover {
-    background: #c82333;
-    transform: scale(1.05);
-}
-
-.unbanButton {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 0px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: all 0.2s ease;
-    width: 60px;
-    margin: 0 auto; 
-    display: block;
-}
-
-.unbanButton:hover {
-    background: #218838;
-    transform: scale(1.05);
-}
-
-/* Delete Button */
-.deleteButton {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 6px;
     border-radius: 6px;
-    transition: all 0.2s ease;
+    cursor: pointer;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -213,28 +243,58 @@
     height: 32px;
 }
 
-.deleteButton:hover {
-    background-color: #f8d7da;
+.viewButton {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.viewButton:hover {
+    background-color: #bbdefb;
     transform: scale(1.1);
 }
 
-.deleteIcon {
-    width: 16px;
-    height: 16px;
-    color: #dc3545;
-    transition: color 0.2s ease;
+.editButton {
+    background-color: #fff3e0;
+    color: #f57c00;
 }
 
-.deleteButton:hover .deleteIcon {
-    color: #c82333;
+.editButton:hover {
+    background-color: #ffe0b2;
+    transform: scale(1.1);
 }
 
-/* Action cell styling */
-.actionCell {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.banButton {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
 
+.banButton:hover {
+    background-color: #ffcdd2;
+    transform: scale(1.1);
+}
+
+.unbanButton {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.unbanButton:hover {
+    background-color: #c8e6c9;
+    transform: scale(1.1);
+}
+
+.deleteButton {
+    background-color: #fbe9e7;
+    color: #d84315;
+}
+
+.deleteButton:hover {
+    background-color: #ffccbc;
+    transform: scale(1.1);
+}
+
+.buttonIcon {
+    font-size: 14px;
 }
 
 /* Responsive Design */
@@ -244,38 +304,48 @@
         margin: 16px 0;
     }
     
+    .title {
+        font-size: 20px;
+    }
+    
+    .headerStats {
+        gap: 12px;
+    }
+    
+    .stat {
+        padding: 8px 12px;
+    }
+    
+    .statNumber {
+        font-size: 18px;
+    }
+    
     .th, .td {
         padding: 12px 8px;
         font-size: 13px;
     }
     
-    .table {
-        min-width: 800px;
+    .userInfo {
+        gap: 8px;
     }
     
-    /* Điều chỉnh lại chiều rộng cho mobile với 8 cột */
-    .th:nth-child(1), .td:nth-child(1) { width: 100px; min-width: 100px; }
-    .th:nth-child(2), .td:nth-child(2) { width: 150px; min-width: 150px; }
-    .th:nth-child(3), .td:nth-child(3) { width: 80px; min-width: 80px; }
-    .th:nth-child(4), .td:nth-child(4) { width: 100px; min-width: 100px; }
-    .th:nth-child(5), .td:nth-child(5) { width: 130px; min-width: 130px; }
-    .th:nth-child(6), .td:nth-child(6) { width: 100px; min-width: 100px; }
-    .th:nth-child(7), .td:nth-child(7) { width: 90px; min-width: 90px; }
-    .th:nth-child(8), .td:nth-child(8) { width: 70px; min-width: 70px; }
-    
-    .banButton, .unbanButton {
-        width: 50px;
-        padding: 4px 8px;
-        font-size: 11px;
+    .avatarContainer {
+        width: 40px;
+        height: 40px;
     }
     
-    .statusActive,
-    .statusInactive,
-    .statusSuspended,
-    .statusPending {
-        width: 70px;
-        padding: 4px 8px;
-        font-size: 11px;
+    .buttonGroup {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .actionButton {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .buttonIcon {
+        font-size: 12px;
     }
 }
 
@@ -291,6 +361,21 @@
     }
 }
 
-.container {
-    animation: fadeIn 0.5s ease-out;
+/* Custom scrollbar for table */
+.tableContainer::-webkit-scrollbar {
+    height: 6px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }

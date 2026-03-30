@@ -1,5 +1,5 @@
 // components/Payment/VNPayPayment.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import styles from './Payment.module.css';
 const PaymentButton = ({ amount, bookingInfo }) => {
@@ -9,31 +9,6 @@ const PaymentButton = ({ amount, bookingInfo }) => {
   const [password, setPassword] = useState('');
   const [showOTPModal, setShowOTPModal] = useState(false)
   const [otp, setOtp] = useState('');
-  // const handlePayment = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const payload = {
-  //       amount: amount,
-  //       orderInfo: `Thanh toán booking ${bookingInfo?.hotelName || 'Khách sạn'}`,
-  //       phoneNumber: phoneNumber,
-  //       // Trong thực tế, mật khẩu nên được mã hóa trước khi gửi
-  //     };
-
-  //     const response = await axios.post('http://localhost:8000/api/payment/create-payment', payload);
-
-  //     if (response.data.paymentUrl) {
-  //       // Redirect đến VNPAY
-  //       window.location.href = response.data.paymentUrl;
-  //     } else {
-  //       alert('Không thể tạo link thanh toán');
-  //     }
-  //   } catch (error) {
-  //     console.error('Payment error:', error);
-  //     alert('Lỗi khi khởi tạo thanh toán: ' + (error.response?.data?.message || error.message));
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,14 +34,14 @@ const PaymentButton = ({ amount, bookingInfo }) => {
     setLoading(true);
     try {
       // TRƯỚC TIÊN: XÁC THỰC PASSWORD
-      const authResponse = await axios.post('http://localhost:8000/api/payment/authenticate', {
+      const authResponse = await axios.post(import.meta.env.VITE_API_URL + '/payment/authenticate', {
         phoneNumber: phoneNumber,
         password: password
       });
 
       if (authResponse.data.success) {
         // NẾU PASSWORD ĐÚNG: GỬI OTP
-        const otpResponse = await axios.post('http://localhost:8000/api/payment/send-otp', {
+        const otpResponse = await axios.post(import.meta.env.VITE_API_URL + '/payment/send-otp', {
           phoneNumber: phoneNumber,
         });
 
@@ -126,8 +101,7 @@ const PaymentButton = ({ amount, bookingInfo }) => {
         phoneNumber: phoneNumber,
         otp: otpCode
       };
-
-      const response = await axios.post('http://localhost:8000/api/payment/verify-otp', payload);
+      const response = await axios.post(import.meta.env.VITE_API_URL + '/payment/verify-otp', payload);
 
       if (response.data.success) {
         alert('Thanh toán thành công!');
