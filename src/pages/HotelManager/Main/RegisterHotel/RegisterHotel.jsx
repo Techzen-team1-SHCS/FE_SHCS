@@ -23,6 +23,10 @@ function RegisterHotel() {
     description: '',
     price: '',
     name_nearby_place: '',
+    address: '',
+    zip: '',
+    latitude: null,
+    longitude: null,
     hotel_class: '',
     styles: [],
     amenities: [],
@@ -39,8 +43,12 @@ function RegisterHotel() {
       .filter(item => item)
       .join(', ');
     const zipInfo = merged.zip ? ` (Mã ZIP: ${merged.zip})` : '';
-    
-    const locationText = `Địa chỉ khách sạn: ${addressInfo}${zipInfo}`;
+    const coordsInfo =
+      merged.latitude != null && merged.longitude != null
+        ? ` (Tọa độ: ${merged.latitude}, ${merged.longitude})`
+        : "";
+
+    const locationText = `Địa chỉ khách sạn: ${addressInfo}${zipInfo}${coordsInfo}`;
     // Loại bỏ HTML tags từ CKEditor description nhưng giữ lại xuống dòng
     const plainDescription = (merged.description || "")
       .replace(/<br\s*\/?>/gi, '\n')

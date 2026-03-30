@@ -9,8 +9,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { hotelService } from "../../../../services/hotelService";
 import Swal from "sweetalert2";
 import getStatusStyles from "../../Constants/Hotel/hotelStatus";
-import { formatDateTime } from "../../../../utils/dateUtils";
+import { formatDateTime, formatVND } from "../../../../utils/dateUtils";
 import { toast } from "react-toastify";
+import CustomPagination from "../../Components/CustomPagination";
 export default function HotelManagement() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -100,10 +101,10 @@ export default function HotelManagement() {
                 <td>{hotel.name}</td>
                 <td>{hotel.hotelId || hotel.id}</td>
                 <td>{hotel.hotel_class || "-"}</td>
-                <td>{hotel.revenue || "-"}</td>
-                <td>{hotel.totalRooms || "-"}</td>
-                <td>{hotel.availableRooms || "-"}</td>
-                <td>{formatDateTime(hotel.created_at) || "-"}</td>
+                <td>{hotel.revenue ? formatVND(hotel.revenue) : 0}</td>
+                <td>{hotel.totalRooms || 0}</td>
+                <td>{hotel.rooms.available_status? hotel.rooms.available_status : 'available'}</td>
+                <td>{formatDateTime(hotel.created_at) || 0}</td>
                 <td>
                   <div
                     className={`${styles.status} ${statusStyles[hotel.status] || ""}`}
@@ -146,35 +147,11 @@ export default function HotelManagement() {
       </div>
 
       <div className={styles.pagination}>
-        <button
-          className={styles.prev}
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((prev) => prev - 1)}
-        >
-          Previous
-        </button>
-
-        <div className={styles.pages}>
-          {getPaginationPages(totalPages).map((num) => (
-            <button
-              key={num}
-              className={`${styles.pageBtn} ${
-                num === currentPage ? styles.activePage : ""
-              }`}
-              onClick={() => setCurrentPage(num)}
-            >
-              {num}
-            </button>
-          ))}
-        </div>
-
-        <button
-          className={styles.next}
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage((prev) => prev + 1)}
-        >
-          Next
-        </button>
+          <CustomPagination 
+            count={totalPages} 
+            page={currentPage} 
+            onChange={(event, value) => setCurrentPage(value)} 
+          />
       </div>
     </div>
   );
