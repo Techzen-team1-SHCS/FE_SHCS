@@ -1,0 +1,60 @@
+.notfound-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: #fff;
+    text-align: center;
+  }
+  
+  .notfound-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .notfound-title {
+    font-size: 120px;
+    font-weight: 800;
+    color: #e46b6b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .notfound-title span {
+    display: inline-block;
+  }
+  
+  .notfound-image {
+    width: 400px;
+    height: auto;
+    position: relative;
+    top: -10px;
+  }
+  
+  .notfound-text {
+    font-size: 24px;
+    font-weight: 500;
+    color: #222;
+    margin-top: 10px;
+  }
+  
+  .back-home-btn {
+    margin-top: 20px;
+    background-color: #ffeaea;
+    color: #e46b6b;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .back-home-btn:hover {
+    background-color: #e46b6b;
+    color: #fff;
+  }
+  

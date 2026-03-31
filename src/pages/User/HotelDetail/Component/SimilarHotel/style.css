@@ -1,0 +1,116 @@
+.similar-hotels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.similar-hotels .container {
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.similar-hotels .container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+.content1 span:first-child {
+  display: block;
+  font-weight: 600;
+  font-size: 18px;
+  color: #222;
+  margin-bottom: 10px;
+
+  /* Thêm đoạn này để cắt chữ + hiển thị dấu "..." */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.similar-hotels-img {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.similar-hotels-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.similar-hotels .container:hover img {
+  transform: scale(1.05);
+}
+
+/* Nội dung dưới ảnh */
+.content1 {
+  padding: 20px;
+  text-align: left;
+}
+
+.content1 span:first-child {
+  display: block;
+  font-weight: 600;
+  font-size: 18px;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+/* Thông tin khách và diện tích */
+.content3 {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.content3 .guest,
+.content3 .ft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #666;
+}
+
+.content3 img {
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
+}
+
+/* Mô tả */
+.content1 span:last-child {
+  display: block;
+  font-size: 14px;
+  color: #777;
+  line-height: 1.5;
+ 
+}
+
+/* Nút */
+
+
+.contentDescription{
+  display: -webkit-box;        /* Cho phép cắt theo box */
+    -webkit-line-clamp: 2;       /* Chỉ hiển thị 2 dòng */
+    -webkit-box-orient: vertical;/* Chiều hướng box */
+    overflow: hidden;            /* Ẩn phần vượt quá */
+    text-overflow: ellipsis; 
+}
+
+/* Tiêu đề khu vực */
+.similar-hotels-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 25px;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+}

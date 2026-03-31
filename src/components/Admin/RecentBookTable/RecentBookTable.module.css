@@ -1,0 +1,252 @@
+.container {
+    width: 100%;
+    background: white;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f1f3f4;
+    transition: box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.title {
+    color: #2c3e50;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.tableContainer {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    text-align: center;
+
+}
+
+.tableHeader {
+    background: #f8f9fa;
+}
+
+.th {
+    padding: 16px;
+    text-align: center;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #e9ecef;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+}
+
+.tableBody {
+    background: white;
+}
+
+.tr {
+    text-align: center;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tr:hover {
+    background-color: #f8f9fa;
+}
+
+.tr:last-child {
+    border-bottom: none;
+}
+
+.td {
+    padding: 16px;
+    line-height: 2;
+    color: #495057;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+}
+
+/* Status Colors */
+.statusAvailable {
+    background-color: rgba(157, 243, 194, 0.5);
+    border: 1px solid #41BC63;
+}
+
+.statusOccupied {
+    background-color: rgba(98, 180, 245, 0.5);
+    border: 1px solid #51A7FD;
+}
+
+.statusMaintenance {
+    background-color: rgba(151, 71, 255, 0.3);
+    border: 1px solid rgba(151, 71, 255, 0.8);
+}
+
+.statusCleaning {
+    background-color: rgba(255, 115, 115, 0.5);
+    border: 1px solid #F20808;
+}
+
+/* Status Select */
+.statusSelect {
+    width: 120px;
+    padding: 8px 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+    text-align: center;
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 8px;
+}
+
+/* Select colors based on status */
+.statusSelect.statusAvailable {
+    background-color: rgba(157, 243, 194, 0.5);
+    border: 1px solid #41BC63;
+    color: black;
+}
+
+.statusSelect.statusOccupied {
+    background-color: rgba(98, 180, 245, 0.5);
+    border: 1px solid #51A7FD;
+    color: black;
+}
+
+.statusSelect.statusMaintenance {
+    background-color: rgba(151, 71, 255, 0.3);
+    border: 1px solid rgba(151, 71, 255, 0.8);
+    color: black;
+}
+
+.statusSelect.statusCleaning {
+    background-color: rgba(255, 115, 115, 0.5);
+    border: 1px solid #F20808;
+    color: black;
+}
+/* User Status Colors */
+.statusAvailable {
+    background-color: rgba(157, 243, 194, 0.5);
+    border: 1px solid #41BC63;
+    color: black;
+    padding: 0px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    width: 120px;
+}
+
+.statusOccupied {
+    background-color: rgba(98, 180, 245, 0.5);
+    border: 1px solid rgba(81, 167, 253, 1);
+    color: black;
+    padding: 0px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    width: 120px;
+}
+
+.statusMaintenance {
+    background-color: rgba(151, 71, 255, 0.3);
+    border: 1px solid rgba(151, 71, 255, 0.8);
+    color: black;
+    padding: 0px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    width: 120px;
+}
+
+.statusCleaning {
+    background-color: rgba(255, 115, 115, 0.5);
+    border: 1px solid rgba(242, 8, 8, 0.8);
+    color: black;
+    padding: 0px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    width: 120px;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .statusSelect {
+        width: 100px;
+        padding: 6px 8px;
+        font-size: 11px;
+        background-position: right 8px center;
+    }
+    
+    .container {
+        padding: 16px;
+        margin: 16px 0;
+    }
+    
+    .th, .td {
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+    
+    .table {
+        min-width: 600px;
+    }
+    
+    /* Điều chỉnh lại chiều rộng cho mobile */
+    .th:nth-child(1), .td:nth-child(1) { width: 140px; min-width: 140px; }
+    .th:nth-child(2), .td:nth-child(2) { width: 90px; min-width: 90px; }
+    .th:nth-child(3), .td:nth-child(3) { width: 120px; min-width: 120px; }
+    .th:nth-child(4), .td:nth-child(4) { width: 130px; min-width: 130px; }
+    .th:nth-child(5), .td:nth-child(5) { width: 110px; min-width: 110px; }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    animation: fadeIn 0.5s ease-out;
+}

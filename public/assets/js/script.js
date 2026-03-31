@@ -7,8 +7,8 @@
 
     Note: This is Main JS File.
 -----------------------------------------------------------------------------------
-	CSS INDEX
-	===================
+    CSS INDEX
+    ===================
     ## Header Style
     ## Dropdown menu
     ## Submenu
@@ -58,81 +58,73 @@
             }
         }
         headerStyle();
-        
-        
+
+
         // ## Dropdown menu
+        // NOTE: hover behavior is handled by CSS now. JS hover logic removed
+        // to avoid double toggling and to use pure-CSS :hover for desktop.
         var mobileWidth = 992;
         var navcollapse = $('.navigation li.dropdown');
 
-        navcollapse.hover(function () {
-            if ($(window).innerWidth() >= mobileWidth) {
-                $(this).children('ul').stop(true, false, true).slideToggle(300);
-                $(this).children('.megamenu').stop(true, false, true).slideToggle(300);
-            }
-        });
-        
+        // Previously we used jQuery hover to slideToggle submenus on mouseenter/leave.
+        // That logic is intentionally disabled in favor of CSS :hover rules.
+        // If you need JS-driven animations on hover, re-enable here.
+
         // ## Submenu Dropdown Toggle
         if ($('.main-header .navigation li.dropdown ul').length) {
-            $('.main-header .navigation li.dropdown').append('<div class="dropdown-btn"><span class="far fa-angle-down"></span></div>');
+            // NOTE: visual arrow indicator is now provided by CSS (::after on the link)
+            // so we no longer append a `.dropdown-btn` element here.
 
-            //Dropdown Button
-            $('.main-header .navigation li.dropdown .dropdown-btn').on('click', function () {
-                $(this).prev('ul').slideToggle(500);
-                $(this).prev('.megamenu').slideToggle(800);
-            });
-            
-            //Disable dropdown parent link
-            $('.navigation li.dropdown > a').on('click', function (e) {
-                e.preventDefault();
-            });
+            // No click-to-toggle behavior: parent links should behave normally.
+            $('.navigation li.dropdown > a').off('click');
         }
-        
+
         //Submenu Dropdown Toggle
         if ($('.main-header .main-menu').length) {
             $('.main-header .main-menu .navbar-toggle').click(function () {
                 $(this).prev().prev().next().next().children('li.dropdown').hide();
             });
         }
-        
-         
+
+
         // ## Menu Hidden Sidebar Content Toggle
-        if($('.menu-sidebar').length){
+        if ($('.menu-sidebar').length) {
             //Show Form
-            $('.menu-sidebar').on('click', function(e) {
+            $('.menu-sidebar').on('click', function (e) {
                 e.preventDefault();
                 $('body').toggleClass('side-content-visible');
             });
             //Hide Form
-            $('.hidden-bar .inner-box .cross-icon,.form-back-drop,.close-menu').on('click', function(e) {
+            $('.hidden-bar .inner-box .cross-icon,.form-back-drop,.close-menu').on('click', function (e) {
                 e.preventDefault();
                 $('body').removeClass('side-content-visible');
             });
             //Dropdown Menu
-            $('.fullscreen-menu .navigation li.dropdown > a').on('click', function() {
+            $('.fullscreen-menu .navigation li.dropdown > a').on('click', function () {
                 $(this).next('ul').slideToggle(500);
             });
         }
-         
-        
+
+
         // ## Search Box
-		$('.nav-search > button').on('click', function () {
-			$('.nav-search form').toggleClass('hide');
-		});
-        
-        
+        $('.nav-search > button').on('click', function () {
+            $('.nav-search form').toggleClass('hide');
+        });
+
+
         // Hide Box Search WHEN CLICK OUTSIDE
-		if ($(window).width() > 767){
-			$('body').on('click', function (event) {
-				if ($('.nav-search > button').has(event.target).length == 0 && !$('.nav-search > button').is(event.target)
-					&& $('.nav-search form').has(event.target).length == 0 && !$('.nav-search form').is(event.target)) {
-					if ($('.nav-search form').hasClass('hide') == false) {
-						$('.nav-search form').toggleClass('hide');
-					};
-				}
-			});
-		}
-        
-        
+        if ($(window).width() > 767) {
+            $('body').on('click', function (event) {
+                if ($('.nav-search > button').has(event.target).length == 0 && !$('.nav-search > button').is(event.target)
+                    && $('.nav-search form').has(event.target).length == 0 && !$('.nav-search form').is(event.target)) {
+                    if ($('.nav-search form').hasClass('hide') == false) {
+                        $('.nav-search form').toggleClass('hide');
+                    }
+                }
+            });
+        }
+
+
         // ## Sidebar Menu
         if ($('.sidebar-menu li.dropdown ul').length) {
             $('.sidebar-menu li.dropdown').append('<div class="dropdown-btn"><span class="far fa-angle-down"></span></div>');
@@ -143,7 +135,7 @@
                 $(this).prev('.megamenu').slideToggle(800);
                 $(this).parent('li.dropdown').toggleClass('active');
             });
-            
+
             //Disable dropdown parent link
             $('.sidebar-menu li.dropdown > a').on('click', function (e) {
                 e.preventDefault();
@@ -151,8 +143,8 @@
                 $(this).parent('li.dropdown').toggleClass('active');
             });
         }
-        
-  
+
+
         // ## Video Popup
         if ($('.video-play').length) {
             $('.video-play').magnificPopup({
@@ -160,7 +152,7 @@
             });
         }
 
-        
+
         // ## Testimonial Slider
         if ($('.testimonials-active').length) {
             $('.testimonials-active').slick({
@@ -176,7 +168,7 @@
             });
         }
 
-        
+
         // ## Destination Carousel
         if ($('.destination-active').length) {
             $('.destination-active').slick({
@@ -218,8 +210,8 @@
                 ]
             });
         }
-        
-        
+
+
         // ## Client Logo Carousel
         if ($('.client-logo-active').length) {
             $('.client-logo-active').slick({
@@ -254,8 +246,8 @@
                 ]
             });
         }
-        
- 
+
+
         // ## Hot Deals Carousel
         if ($('.hot-deals-active').length) {
             $('.hot-deals-active').slick({
@@ -284,7 +276,7 @@
                 ]
             });
         }
-        
+
 
         // ## Gallery Slider
         if ($('.gallery-slider-active').length) {
@@ -321,8 +313,8 @@
                 ]
             });
         }
-        
-        
+
+
         // ## Product Slider
         if ($('.product-slider').length) {
             $('.product-slider').slick({
@@ -358,8 +350,8 @@
                 ]
             });
         }
-        
-        
+
+
         // ## Gallery Popup
         $('.gallery a').magnificPopup({
             type: 'image',
@@ -368,8 +360,8 @@
                 navigateByImgClick: true,
             },
         });
-        
-        
+
+
         // ## Instagram Gallery 
         $('.instagram-item').magnificPopup({
             type: 'image',
@@ -378,8 +370,8 @@
                 navigateByImgClick: true,
             },
         });
-        
-        
+
+
         // ## SkillBar
         if ($('.skillbar').length) {
             $('.skillbar').appear(function () {
@@ -390,12 +382,12 @@
                 });
             });
         }
-        
-        
-         /* ## Fact Counter + Text Count - Our Success */
+
+
+        /* ## Fact Counter + Text Count - Our Success */
         if ($('.counter-text-wrap').length) {
             $('.counter-text-wrap').appear(function () {
-                
+
                 var $t = $(this),
                     n = $t.find(".count-text").attr("data-stop"),
                     r = parseInt($t.find(".count-text").attr("data-speed"), 10);
@@ -422,30 +414,30 @@
                 accY: 0
             });
         }
-        
-        
+
+
         // ## Destinations Filter
         $('.destinations-active').imagesLoaded(function () {
-			var items = $('.destinations-active').isotope({
-				itemSelector: '.item',
-				percentPosition: true,
-			});
-			// items on button click
-			$('.destinations-nav').on('click', 'li', function () {
-				var filterValue = $(this).attr('data-filter');
-				items.isotope({
-					filter: filterValue
-				});
-			});
-			// menu active class
-			$('.destinations-nav li').on('click', function (event) {
-				$(this).siblings('.active').removeClass('active');
-				$(this).addClass('active');
-				event.preventDefault();
-			});
-		});
-        
-        
+            var items = $('.destinations-active').isotope({
+                itemSelector: '.item',
+                percentPosition: true,
+            });
+            // items on button click
+            $('.destinations-nav').on('click', 'li', function () {
+                var filterValue = $(this).attr('data-filter');
+                items.isotope({
+                    filter: filterValue
+                });
+            });
+            // menu active class
+            $('.destinations-nav li').on('click', function (event) {
+                $(this).siblings('.active').removeClass('active');
+                $(this).addClass('active');
+                event.preventDefault();
+            });
+        });
+
+
         // ## Price Range Fliter jQuery UI
         if ($('.price-slider-range').length) {
             $(".price-slider-range").slider({
@@ -460,18 +452,18 @@
             $("#price").val("$ " + $(".price-slider-range").slider("values", 0) +
                 " - $ " + $(".price-slider-range").slider("values", 1));
         }
-        
-        
+
+
         // ## Hover Content
         $('.hover-content').hover(
-            function(){
+            function () {
                 $(this).find('.inner-content').slideDown();
-            }, function() {
+            }, function () {
                 $(this).find('.inner-content').slideUp();
             }
         );
-        
-        
+
+
         // ## Scroll to Top
         if ($('.scroll-to-target').length) {
             $(".scroll-to-target").on('click', function () {
@@ -483,19 +475,19 @@
 
             });
         }
-        
-        
+
+
         // ## Nice Select
         $('select').niceSelect();
-        
-        
+
+
         // ## AOS Animation
         AOS.init();
-        
- 
+
+
     });
-    
-    
+
+
     /* ==========================================================================
        When document is resize, do
     ========================================================================== */
@@ -548,7 +540,7 @@
             }
         }
         handlePreloader();
-        
+
     });
 
 })(window.jQuery);

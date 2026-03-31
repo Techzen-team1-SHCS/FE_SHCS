@@ -1,0 +1,81 @@
+.sidebar {
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 16px;
+    background: #fff;
+    font-family: Arial, sans-serif;
+  }
+  
+  .title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .filterGroup {
+    margin-bottom: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+  }
+  
+  .groupTitle {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .optionList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .optionItem {
+    margin-bottom: 6px;
+  }
+  
+  .label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  
+  .checkbox {
+    transform: scale(1.4);
+    margin-right: 10px;
+    cursor: pointer;
+    accent-color: #0071c2; /* màu xanh giống Booking */
+  }
+  
+  .optionText {
+    flex: 1;
+    font-size: 14px;
+    color: #222;
+  }
+  
+  .count {
+    font-size: 13px;
+    color: #777;
+    margin-left: 8px;
+  }
+  
+  .showMore {
+    background: none;
+    border: none;
+    color: #0071c2;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 0;
+  }
+  
+  .showMore:hover {
+    text-decoration: underline;
+  }
+  
+  .arrow {
+    margin-left: 4px;
+    font-size: 12px;
+  }

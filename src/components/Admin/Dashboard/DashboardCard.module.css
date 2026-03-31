@@ -1,0 +1,61 @@
+.container{
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding: auto;
+}
+
+.card{
+    flex: 0 0 32%;
+    min-width: 200px;
+    width: 100%;
+    background-color: white;
+    height: 200px;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.cardLogo img{
+    width: 53px;
+    height: 53px;
+}
+.cardTitle{
+    color: #6c757d;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.cardAmount{
+    color: #2c3e50;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.cardGrowth{
+    color: #28a745;
+    font-size: 14px;
+    font-weight: 600;
+}
+.positive {
+    color: #28a745; /* Màu xanh cho số dương */
+}
+
+.negative {
+    color: #dc3545; /* Màu đỏ cho số âm */
+}
+
+.cardGrowth {
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}

@@ -1,0 +1,128 @@
+.container {
+  padding: 24px;
+  background: #f5f7fb;
+  min-height: 100vh;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  width: 100px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.activeTab {
+  background: #e6f0ff;
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  border: 1px solid #e5e7eb;
+}
+
+.leftIcon {
+  font-size: 28px;
+  margin-right: 16px;
+}
+
+.content {
+  flex: 1;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h4 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.date {
+  font-size: 12px;
+  color: #888;
+}
+
+.content p {
+  margin: 6px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.time {
+  font-size: 12px;
+  color: #999;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: #3b82f6;
+  border-radius: 50%;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.pagination {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prev,
+.next {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #f3f4f6;
+  cursor: pointer;
+}
+
+.pages {
+  display: flex;
+  gap: 8px;
+}
+
+.pageBtn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.activePage {
+  background: #e5e7eb;
+}

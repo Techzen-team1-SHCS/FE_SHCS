@@ -1,0 +1,1 @@
+export const BOOKING_TABS = ["active", "past", "cancelled"];
