@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import AddRoomForm from "../../Components/RoomManagement/AddRoomForm";
+import RoomNumberModal from "../../Components/RoomManagement/RoomNumberModal";
 import { useAddRoom } from "../../hooks/useAddRoom";
 import styles from "./AddRoom.module.css";
 
@@ -9,15 +10,25 @@ const AddRoom = () => {
   const {
     form,
     errors,
-    successMessage,
+    loading,
+    hotels,
+    hotelsLoading,
+    showRoomNumberModal,
+    createdRoom,
     roomAmenities,
-    roomAccessibility,
     handleInputChange,
     toggleCheckbox,
     handleSubmit,
-    handleUpload,
-    removeImage,
+    handleCreateRoomNumbers,
+    closeModal,
   } = useAddRoom();
+
+  const handleGenerateSuccess = async (quantity) => {
+    const success = await handleCreateRoomNumbers(quantity);
+    if (success) {
+      navigate("/hotel-manager/rooms");
+    }
+  };
 
   return (
     <div className={styles.pageContainer}>
@@ -31,19 +42,31 @@ const AddRoom = () => {
         </button>
         <h2 className={styles.title}>Add a new room</h2>
       </div>
+
       <AddRoomForm
         form={form}
         errors={errors}
-        successMessage={successMessage}
+        loading={loading}
+        hotels={hotels}
+        hotelsLoading={hotelsLoading}
         roomAmenities={roomAmenities}
-        roomAccessibility={roomAccessibility}
         handleInputChange={handleInputChange}
-        handleUpload={handleUpload}
-        removeImage={removeImage}
         toggleCheckbox={toggleCheckbox}
         handleSubmit={handleSubmit}
         onCancel={() => navigate("/hotel-manager/rooms")}
       />
+
+      {showRoomNumberModal && (
+        <RoomNumberModal
+          room={createdRoom}
+          onGenerate={handleGenerateSuccess}
+          onClose={() => {
+            closeModal();
+            navigate("/hotel-manager/rooms");
+          }}
+          loading={loading}
+        />
+      )}
     </div>
   );
 };

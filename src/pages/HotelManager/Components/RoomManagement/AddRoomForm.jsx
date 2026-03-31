@@ -1,142 +1,159 @@
+import PropTypes from "prop-types";
 import styles from "../../Main/Room/AddRoom.module.css";
 
 const AddRoomForm = ({
   form,
   errors,
-  successMessage,
+  loading,
+  hotels,
+  hotelsLoading,
   roomAmenities,
-  roomAccessibility,
   handleInputChange,
-  handleUpload,
-  removeImage,
   toggleCheckbox,
   handleSubmit,
   onCancel,
+  submitLabel = "Create Room",
+  loadingLabel = "Creating...",
 }) => {
   return (
-    <form className={styles.form} onSubmit={(e) => handleSubmit(e, onCancel)}>
+    <form className={styles.form} onSubmit={handleSubmit}>
+      {/* Hotel Selection */}
       <section className={styles.card}>
-        <h3>Room Picture</h3>
+        <h3>Select Hotel</h3>
         <p className={styles.smallText}>
-          Tải lên ảnh phòng để hiển thị tốt hơn trong quản lý.
+          Chọn khách sạn bạn muốn thêm/cập nhật phòng.
         </p>
-        <div className={styles.imageGrid}>
-          <label className={styles.uploadBox}>
-            <span>Add image</span>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={(event) => handleUpload(event.target.files)}
-            />
-          </label>
-        </div>
-
-        <div className={styles.previewBox}>
-          {form.images.length === 0 ? (
-            <span className={styles.previewPlaceholder}>
-              No images selected
-            </span>
+        <div className={styles.fieldItem}>
+          <label htmlFor="hotel_id">Hotel *</label>
+          {hotelsLoading ? (
+            <p className={styles.smallText}>Loading hotels...</p>
           ) : (
-            form.images.map((img, index) => (
-              <div key={index} className={styles.imageItem}>
-                <img src={img.preview} alt={`room-${index + 1}`} />
-                <button
-                  type="button"
-                  className={styles.removeBtn}
-                  onClick={() => removeImage(index)}
-                >
-                  ✕
-                </button>
-              </div>
-            ))
+            <select
+              id="hotel_id"
+              value={form.hotel_id}
+              onChange={(e) => handleInputChange("hotel_id", e.target.value)}
+              className={!form.hotel_id ? styles.selectPlaceholder : ""}
+            >
+              <option value="">-- Select a hotel --</option>
+              {hotels.map((hotel) => (
+                <option key={hotel.id} value={hotel.id}>
+                  {hotel.name}
+                </option>
+              ))}
+            </select>
+          )}
+          {errors.hotel_id && (
+            <p className={styles.errorText}>{errors.hotel_id}</p>
           )}
         </div>
       </section>
 
+      {/* Room Details */}
       <section className={styles.card}>
         <h3>Room Details</h3>
         <div className={styles.rowGroup}>
           <div className={styles.fieldItem}>
-            <label>Room number *</label>
-            <input
-              value={form.roomNo}
-              onChange={(e) => handleInputChange("roomNo", e.target.value)}
-              placeholder="room number"
-            />
-            {errors.roomNo && (
-              <p className={styles.errorText}>{errors.roomNo}</p>
+            <label htmlFor="room_type">Room Type *</label>
+            <select
+              id="room_type"
+              value={form.room_type}
+              onChange={(e) => handleInputChange("room_type", e.target.value)}
+            >
+              <option value="Normal">Normal</option>
+              <option value="Standard">Standard</option>
+              <option value="Deluxe">Deluxe</option>
+            </select>
+            {errors.room_type && (
+              <p className={styles.errorText}>{errors.room_type}</p>
             )}
           </div>
           <div className={styles.fieldItem}>
-            <label>Reservation status *</label>
+            <label htmlFor="availability_status">Availability Status</label>
             <select
-              value={form.status}
-              onChange={(e) => handleInputChange("status", e.target.value)}
+              id="availability_status"
+              value={form.availability_status}
+              onChange={(e) =>
+                handleInputChange("availability_status", e.target.value)
+              }
             >
-              <option value="Vacant">Vacant</option>
-              <option value="Reserved">Reserved</option>
-              <option value="Occupied">Occupied</option>
-              <option value="Cleaning">Cleaning</option>
+              <option value="available">Available</option>
+              <option value="unavailable">Unavailable</option>
             </select>
           </div>
         </div>
-        <div className={styles.fieldItem}>
-          <label>Room type *</label>
-          <select
-            value={form.type}
-            onChange={(e) => handleInputChange("type", e.target.value)}
-          >
-            <option value="Deluxe">Deluxe</option>
-            <option value="Standard">Standard</option>
-            <option value="Luxury">Luxury</option>
-          </select>
-        </div>
+
         <div className={styles.rowGroup}>
           <div className={styles.fieldItem}>
-            <label>Room capacity *</label>
+            <label htmlFor="max_guest">Max Guests *</label>
             <input
+              id="max_guest"
               type="number"
-              value={form.capacity}
-              onChange={(e) => handleInputChange("capacity", e.target.value)}
-              placeholder="2-4 guests"
+              value={form.max_guest}
+              onChange={(e) => handleInputChange("max_guest", e.target.value)}
+              placeholder="e.g. 2"
               min={1}
             />
-            {errors.capacity && (
-              <p className={styles.errorText}>{errors.capacity}</p>
+            {errors.max_guest && (
+              <p className={styles.errorText}>{errors.max_guest}</p>
             )}
           </div>
           <div className={styles.fieldItem}>
-            <label>Room price per night *</label>
+            <label htmlFor="price">Price per Night *</label>
             <input
+              id="price"
               type="number"
-              value={form.pricePerNight}
-              onChange={(e) =>
-                handleInputChange("pricePerNight", e.target.value)
-              }
-              placeholder="$ price"
+              value={form.price}
+              onChange={(e) => handleInputChange("price", e.target.value)}
+              placeholder="e.g. 150"
               min={0}
             />
-            {errors.pricePerNight && (
-              <p className={styles.errorText}>{errors.pricePerNight}</p>
+            {errors.price && (
+              <p className={styles.errorText}>{errors.price}</p>
+            )}
+          </div>
+          <div className={styles.fieldItem}>
+            <label htmlFor="quantity">Quantity *</label>
+            <input
+              id="quantity"
+              type="number"
+              value={form.quantity}
+              onChange={(e) => handleInputChange("quantity", e.target.value)}
+              placeholder="e.g. 1"
+              min={1}
+            />
+            {errors.quantity && (
+              <p className={styles.errorText}>{errors.quantity}</p>
             )}
           </div>
         </div>
 
-        <div className={styles.fieldItemWide}>
-          <label>Room description *</label>
-          <textarea
-            value={form.description}
-            onChange={(e) => handleInputChange("description", e.target.value)}
-            placeholder="room description"
-            rows={4}
-          />
-          {errors.description && (
-            <p className={styles.errorText}>{errors.description}</p>
-          )}
+        <div className={styles.rowGroup}>
+          <div className={styles.fieldItem}>
+            <label htmlFor="available_from">Available From</label>
+            <input
+              id="available_from"
+              type="date"
+              value={form.available_from}
+              onChange={(e) =>
+                handleInputChange("available_from", e.target.value)
+              }
+            />
+          </div>
+          <div className={styles.fieldItem}>
+            <label htmlFor="available_to">Available To</label>
+            <input
+              id="available_to"
+              type="date"
+              value={form.available_to}
+              onChange={(e) =>
+                handleInputChange("available_to", e.target.value)
+              }
+            />
+          </div>
         </div>
       </section>
 
+      {/* Amenities */}
       <section className={styles.card}>
         <h3>Amenities</h3>
         <p className={styles.smallText}>Chọn tất cả các tiện nghi có sẵn.</p>
@@ -154,37 +171,37 @@ const AddRoomForm = ({
         </div>
       </section>
 
-      <section className={styles.card}>
-        <h3>Accessibility Features</h3>
-        <p className={styles.smallText}>
-          Hỗ trợ khả năng tiếp cận cho khách hàng.
-        </p>
-        <div className={styles.checkboxGrid}>
-          {roomAccessibility.map((item) => (
-            <label key={item} className={styles.checkboxItem}>
-              <input
-                type="checkbox"
-                checked={form.accessibility.includes(item)}
-                onChange={() => toggleCheckbox("accessibility", item)}
-              />
-              {item}
-            </label>
-          ))}
-        </div>
-      </section>
-
-      {successMessage && <p className={styles.successText}>{successMessage}</p>}
-
+      {/* Actions */}
       <div className={styles.actionRow}>
-        <button type="submit" className={styles.saveBtn}>
-          Save Changes
+        <button type="submit" className={styles.saveBtn} disabled={loading}>
+          {loading ? loadingLabel : submitLabel}
         </button>
-        <button type="button" className={styles.cancelBtn} onClick={onCancel}>
+        <button
+          type="button"
+          className={styles.cancelBtn}
+          onClick={onCancel}
+          disabled={loading}
+        >
           Cancel
         </button>
       </div>
     </form>
   );
+};
+
+AddRoomForm.propTypes = {
+  form: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+  loading: PropTypes.bool.isRequired,
+  hotels: PropTypes.array.isRequired,
+  hotelsLoading: PropTypes.bool.isRequired,
+  roomAmenities: PropTypes.array.isRequired,
+  handleInputChange: PropTypes.func.isRequired,
+  toggleCheckbox: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  submitLabel: PropTypes.string,
+  loadingLabel: PropTypes.string,
 };
 
 export default AddRoomForm;
