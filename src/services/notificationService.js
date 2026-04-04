@@ -1,8 +1,8 @@
 import api from './api';
 
 export const notificationService = {
-  // Dùng cho trang Admin - lấy tất cả thông báo
-  async getNotifications() {
+  // Dùng cho trang Admin - lấy tất cả thông báo (đúng endpoint)
+  async getAllNotifications() {
     try {
       const response = await api.get('/auth/Allnotifications');
       return response.data?.data || [];

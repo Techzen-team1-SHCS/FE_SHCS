@@ -65,7 +65,7 @@ const Sidebar = () => {
             // refresh
             notificationService.getUnreadCount()
                 .then(res => setUnreadCount(res.unread_count || 0))
-                .catch(() => {});
+                .catch(() => { });
         };
 
         window.addEventListener('notifications-read', handleUnreadUpdate);
@@ -81,30 +81,33 @@ const Sidebar = () => {
     const menuItems = [
         { path: "/hotel-manager/hotel", label: "Hotel", icon: <FaHotel /> },
         { path: "/hotel-manager/rooms", label: "Rooms", icon: <FaBed /> },
-        { path: "/hotel-manager/registerhotel", label: "RegisterHotel", icon: <MdAddBusiness />  },
-        { path: "/hotel-manager/analysis", label: "Analysis", icon: <FaChartBar />  },
+        { path: "/hotel-manager/registerhotel", label: "RegisterHotel", icon: <MdAddBusiness /> },
+        { path: "/hotel-manager/analysis", label: "Analysis", icon: <FaChartBar /> },
+        { path: "/hotel-manager/chat", label: "Chat HM", icon: <span>💬</span> },
         { path: "/hotel-manager/housekeeping", label: "HouseKeeping", icon: <FiTool /> },
-        { path: "/hotel-manager/notification", label: "Notifications", icon: (
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-                <FiBell />
-                {unreadCount > 0 && (
-                    <span style={{
-                        position: 'absolute',
-                        top: '-8px',
-                        right: '-8px',
-                        background: '#ff4d4f',
-                        color: 'white',
-                        borderRadius: '50%',
-                        padding: '2px 6px',
-                        fontSize: '10px',
-                        fontWeight: 'bold',
-                        lineHeight: 1
-                    }}>
-                        {unreadCount > 99 ? '99+' : unreadCount}
-                    </span>
-                )}
-            </div>
-        ) },
+        {
+            path: "/hotel-manager/notification", label: "Notifications", icon: (
+                <div style={{ position: 'relative', display: 'inline-block' }}>
+                    <FiBell />
+                    {unreadCount > 0 && (
+                        <span style={{
+                            position: 'absolute',
+                            top: '-8px',
+                            right: '-8px',
+                            background: '#ff4d4f',
+                            color: 'white',
+                            borderRadius: '50%',
+                            padding: '2px 6px',
+                            fontSize: '10px',
+                            fontWeight: 'bold',
+                            lineHeight: 1
+                        }}>
+                            {unreadCount > 99 ? '99+' : unreadCount}
+                        </span>
+                    )}
+                </div>
+            )
+        },
     ];
 
     return (
@@ -134,10 +137,10 @@ const Sidebar = () => {
                             </NavLink>
                         </li>
                     ))}
-                    
+
                     {/* Logout Button */}
                     <li className={navItem}>
-                        <button 
+                        <button
                             className={`${navLink} ${logoutButton}`}
                             onClick={handleLogout}
                         >

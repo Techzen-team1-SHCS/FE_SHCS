@@ -93,11 +93,11 @@ const Notification = () => {
       await new Promise(resolve => setTimeout(resolve, 1500));
 
       const [notificationsData, hotelsData] = await Promise.all([
-        notificationService.getNotifications(),
+        notificationService.getAllNotifications(),
         notificationService.getPendingHotels()
       ]);
 
-      setNotifications(notificationsData || []);
+      setNotifications(Array.isArray(notificationsData) ? notificationsData : []);
       setPendingHotels(hotelsData || []);
     } catch (error) {
       console.error("Fetch data error:", error);

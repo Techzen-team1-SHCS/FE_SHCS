@@ -14,7 +14,7 @@ const RoomDetailSidebar = ({ roomId, isOpen, onClose }) => {
     if (isOpen && roomId) {
       fetchRoomDetail();
     }
-  }, [isOpen, roomId]);
+  });
 
   const fetchRoomDetail = async () => {
     setLoading(true);
