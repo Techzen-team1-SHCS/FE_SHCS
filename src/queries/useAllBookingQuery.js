@@ -7,7 +7,7 @@ export const useAllBookingQuery = () => {
 
     queryFn: async () => {
       const res = await bookingService.getAllBookings();
-      return res?.data || res;
+      return res?.data || [];
     },
 
     staleTime: 1000 * 60 * 30, // Cache 5 phút

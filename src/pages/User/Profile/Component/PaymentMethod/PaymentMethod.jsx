@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import styles from './PaymentMethod.module.css'
 import { formatVND } from '../../../../../utils/dateUtils';
 import paymentService from '../../../../../services/paymentService';
-import { authService } from '../../../../../services/authService';
 import CurrentTime from '../CurrentTime/CurrentTime';
 import { useQuery } from '@tanstack/react-query';
 
@@ -15,18 +14,11 @@ const PaymentMethod = ({ user }) => {
             const res = await paymentService.getMyPayments();
             return Array.isArray(res.data) ? res.data : [];
         },
+        enabled: !!user?.id,
         staleTime: 1000 * 60 * 3, // 3 phút cache
     });
 
-    // ⚡ Query 2: Get user info
-    const { data: userData, isLoading: loadingUser } = useQuery({
-        queryKey: ["user-info", user?.id],
-        queryFn: () => authService.getUserById(user.id),
-        enabled: !!user?.id,
-        staleTime: 1000 * 60 * 3,
-    });
-
-    const loading = loadingPayments || loadingUser;
+    const loading = loadingPayments;
 
     // ⚡ Tính totalAmount cực nhanh
     const totalAmount = useMemo(() => {
@@ -50,7 +42,7 @@ const PaymentMethod = ({ user }) => {
         );
     }
 
-    const walletBalance = parseFloat(userData?.wallet_balance) || 0;
+    const walletBalance = parseFloat(user?.wallet_balance) || 0;
 
     return (
         <div className={styles.profileContainer}>

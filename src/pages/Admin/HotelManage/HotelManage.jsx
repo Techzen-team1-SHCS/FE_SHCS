@@ -89,7 +89,7 @@ const HotelManage = () => {
         try {
             setLoading(true);
             const response = await hotelService.getAllHotels();
-            setHotelsData(response || []);
+            setHotelsData(response?.content || []);
         } catch (error) {
             console.error('Fetch hotels error:', error);
             toast.error('Không thể tải danh sách khách sạn');

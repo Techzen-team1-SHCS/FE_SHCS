@@ -108,9 +108,11 @@ export const hotelService = {
       throw error;
     }
   },
-  async getAllHotels() {
-    const response = await api.get("/auth/hotel");
-    return response.data.content;
+  async getAllHotels(params = {}) {
+    const response = await api.get("/auth/hotel", {
+      params: { per_page: 200, ...params },
+    });
+    return response.data;
   },
   async getRecommendedHotels() {
     try {

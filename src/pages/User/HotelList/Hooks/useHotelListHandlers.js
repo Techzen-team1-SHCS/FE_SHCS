@@ -1,7 +1,5 @@
 export const useHotelListHandlers = ({
   viewMode,
-  refetchInfinite,
-  refetchPagination,
   setSelectedFilters,
   setCurrentPage,
   setViewMode,
@@ -18,13 +16,6 @@ export const useHotelListHandlers = ({
     sentinelTriggeredRef.current = false;
     lastLoadTimeRef.current = 0;
 
-    setTimeout(() => {
-      if (viewMode === "infinite") {
-        refetchInfinite();
-      } else {
-        refetchPagination();
-      }
-    }, 0);
   };
 
   const handlePageChange = (page) => {

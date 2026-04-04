@@ -57,22 +57,22 @@ const ChatWidget = () => {
 
       const data = await response.json();
 
-      if (data.status === 200 && data.hotels && Array.isArray(data.hotels) && data.hotels.length > 0) {
-        // ✅ Cập nhật tin nhắn với hotels từ JSON
+      if (data.status === 200) {
+        // ✅ Cập nhật tin nhắn với cả lời nói (reply) và danh sách hotels
         setMessages(prev =>
           prev.map(msg =>
             msg.id === botMsgId
               ? {
                 ...msg,
-                text: `Tìm thấy ${data.hotels.length} khách sạn phù hợp:`,
+                text: data.reply || (data.hotels?.length > 0 ? `Tìm thấy ${data.hotels.length} khách sạn phù hợp:` : "Không tìm thấy khách sạn phù hợp với yêu cầu của bạn."),
                 isTyping: false,
-                hotels: data.hotels
+                hotels: Array.isArray(data.hotels) ? data.hotels : []
               }
               : msg
           )
         );
       } else {
-        // ❌ Nếu không có hotels, hiển thị thông báo
+        // ❌ Hiển thị thông báo lỗi từ server
         setMessages(prev =>
           prev.map(msg =>
             msg.id === botMsgId

@@ -28,7 +28,9 @@ export const useHotelQueries = ({
     },
     initialPageParam: 1,
     enabled: viewMode === "infinite",
-    staleTime: 60000
+    staleTime: 120000,
+    gcTime: 600000,
+    refetchOnWindowFocus: false
   });
 
   const fetchHotelsPagination = async () => {
@@ -44,7 +46,9 @@ export const useHotelQueries = ({
     queryKey: [...queryKeyBase, "pagination", currentPage],
     queryFn: fetchHotelsPagination,
     enabled: viewMode === "pagination",
-    staleTime: 60000
+    staleTime: 120000,
+    gcTime: 600000,
+    refetchOnWindowFocus: false
   });
 
   return {

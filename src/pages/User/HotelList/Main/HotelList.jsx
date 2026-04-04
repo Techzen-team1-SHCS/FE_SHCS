@@ -112,8 +112,6 @@ function HotelList() {
     handleViewModeChange
   } = useHotelListHandlers({
     viewMode,
-    refetchInfinite,
-    refetchPagination,
     setSelectedFilters,
     setCurrentPage,
     setViewMode,

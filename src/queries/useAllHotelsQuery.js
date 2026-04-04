@@ -7,7 +7,7 @@ export const useAllHotelsQuery = () => {
 
     queryFn: async () => {
       const res = await hotelService.getAllHotels();
-      return res?.data || res;
+      return res?.content || [];
     },
 
     staleTime: 1000 * 60 * 30, // Cache 5 phút

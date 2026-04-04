@@ -45,7 +45,7 @@ const UserManage = () => {
         try {
             setLoading(true);
             const response = await authService.getAllUsers();
-            setUsersData(response || []);
+            setUsersData(response?.data || []);
         } catch (error) {
             console.error('Fetch users error:', error);
             setUsersData([]);

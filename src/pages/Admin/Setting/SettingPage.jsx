@@ -34,17 +34,17 @@ const SettingPage = () => {
         try {
             setLoading(true);
             // Lấy thông tin từ các service
-            const [users, revenue, bookings, hotels] = await Promise.all([
-                authService.getAllUsers(),
+            const [usersRes, revenue, bookingsRes, hotelsRes] = await Promise.all([
+                authService.getAllUsers({ per_page: 1 }),
                 dashboardService.getDashboardRevenue(),
-                bookingService.getAllBookings(),
-                hotelService.getAllHotels()
+                bookingService.getAllBookings({ per_page: 1 }),
+                hotelService.getAllHotels({ per_page: 1 })
             ]);
             
             setSystemStats({
-                totalUsers: users?.length || 0,
-                totalHotels: hotels?.length || 0,
-                totalBookings: bookings?.data?.length || bookings?.length || 0,
+                totalUsers: usersRes?.pagination?.total || usersRes?.data?.length || 0,
+                totalHotels: hotelsRes?.pagination?.total || hotelsRes?.content?.length || 0,
+                totalBookings: bookingsRes?.pagination?.total || bookingsRes?.data?.length || 0,
                 totalRevenue: revenue || 0
             });
         } catch (error) {

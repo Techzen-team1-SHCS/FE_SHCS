@@ -14,7 +14,7 @@ const HotelCard2 = ({ PopularHotel, aosDelay, index,onClick }) => {
     const colClass = index === 2 || index === 3 ||index ===6 || index === 7 ? "col-md-6" : "col-xl-3 col-md-6";
 
     return (
-        <div className={colClass}>
+        <div className={colClass} >
             <div
             className={`${destinationItem} ${styleTwo}`}
             data-aos="flip-up"

@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import styles from "./ManageBookingCard.module.css";
 import { useNavigate } from "react-router-dom";
 import { formatDateTime,getCancelPolicy } from "../../../../../utils/dateUtils.js";
@@ -8,6 +9,31 @@ import { bookingService } from "../../../../../services/bookingService.js";
 const ManageBookingCard = ({ booking, onViewDetails, onReBook, onCancelSuccess }) => {
     const { card, cardBody, cardGroup, cardName, cardInfo, status, hotelInfo } = styles;
     const navigate = useNavigate();
+    const [nowMs, setNowMs] = useState(Date.now());
+
+    useEffect(() => {
+        if (booking?.status !== "pending") return;
+
+        const timer = setInterval(() => {
+            setNowMs(Date.now());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [booking?.status]);
+
+    const remainingSeconds = useMemo(() => {
+        if (booking?.status !== "pending" || !booking?.created_at) return null;
+        const createdAtMs = new Date(booking.created_at).getTime();
+        const expiresAtMs = createdAtMs + 15 * 60 * 1000;
+        return Math.max(0, Math.floor((expiresAtMs - nowMs) / 1000));
+    }, [booking?.status, booking?.created_at, nowMs]);
+
+    const countdownText = useMemo(() => {
+        if (remainingSeconds === null) return "";
+        const minutes = Math.floor(remainingSeconds / 60);
+        const seconds = remainingSeconds % 60;
+        return `Còn ${minutes} phút ${seconds.toString().padStart(2, "0")} giây sẽ tự hủy`;
+    }, [remainingSeconds]);
     const getBookContent = (status) => {
         switch (status) {
             case "pending":
@@ -96,6 +122,11 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook, onCancelSuccess }
                                     <span className={status} style={{ color: getStatusColor(booking.status) }}>{getBookContent(booking.status)}
                                     </span>
                                 </div>
+                                {booking?.status === "pending" && (
+                                    <div style={{ color: remainingSeconds === 0 ? "#dc3545" : "#ff8c00", fontSize: "13px", marginBottom: "8px" }}>
+                                        {remainingSeconds === 0 ? "Booking đã quá hạn, hệ thống sẽ tự hủy." : countdownText}
+                                    </div>
+                                )}
                                 <div className="d-flex" style={{ gap: "10px" }}>
                                     {(() => {
                                         const now = new Date();
@@ -107,11 +138,18 @@ const ManageBookingCard = ({ booking, onViewDetails, onReBook, onCancelSuccess }
                                         switch (booking?.status) {
                                             case "pending":
                                                 return (
-                                                    <ButtonDetail
-                                                        text="Tiếp Tục"
-                                                        color="green"
-                                                        onClick={handleSeeDetailClick}
-                                                    />
+                                                    <>
+                                                        <ButtonDetail
+                                                            text="Tiếp Tục"
+                                                            color="green"
+                                                            onClick={handleSeeDetailClick}
+                                                        />
+                                                        <ButtonCancel
+                                                            text="Hủy Phòng"
+                                                            color="red"
+                                                            onClick={() => handleCancelBooking(booking?.id)}
+                                                        />
+                                                    </>
                                                 );
 
                                             case "completed":

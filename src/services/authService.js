@@ -158,8 +158,16 @@ export const authService = {
     const response = await api.get(`/auth/user/${userId}/profile`);
     return response.data;
   },
-  getAllUsers: async () => {
-    const response = await api.get('/auth/user');
+  getAllUsers: async (params = {}) => {
+    const response = await api.get('/auth/user', {
+      params: { per_page: 200, ...params },
+    });
+    return response.data;
+  },
+  getAllUsersList: async (params = {}) => {
+    const response = await api.get('/auth/user', {
+      params: { per_page: 200, ...params },
+    });
     return response.data.data;
   },
   async blockUser(id) {

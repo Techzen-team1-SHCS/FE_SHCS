@@ -2,14 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import { hotelService } from "../services/hotelService";
 
 const provinceImages = {
-  "Hà nội": "assets/images/destinations/haNoi.jpg",
-  "Đà nẵng": "assets/images/destinations/daNang.jpg",
-  "Hồ chí minh": "assets/images/destinations/hoChiMinh.jpg",
-  "Nha trang": "assets/images/destinations/nhaTrang.jpg",
-  "Huế": "assets/images/destinations/hue.jpg",
-  "Hải phòng": "assets/images/destinations/haiPhong.jpg",
-  "Đà Lạt": "assets/images/destinations/dalat.jpg",
-  "Phú Quốc": "assets/images/destinations/phuquoc.jpg"
+  "hà nội": "assets/images/destinations/haNoi.jpg",
+  "đà nẵng": "assets/images/destinations/daNang.jpg",
+  "hồ chí minh": "assets/images/destinations/hoChiMinh.jpg",
+  "nha trang": "assets/images/destinations/nhaTrang.jpg",
+  "huế": "assets/images/destinations/hue.jpg",
+  "hải phòng": "assets/images/destinations/haiPhong.jpg",
+  "đà lạt": "assets/images/destinations/dalat.jpg",
+  "phú quốc": "assets/images/destinations/phuquoc.jpg"
 };
 
 export const usePopularDestinationsQuery = () => {
@@ -25,7 +25,7 @@ export const usePopularDestinationsQuery = () => {
         title: item.province,
         hotels: `${item.count} hotels`,
         hotelCount: item.count,
-        img: provinceImages[item.province] || "assets/images/destinations/default.jpg",
+        img: provinceImages[item.province?.toLowerCase()] || "assets/images/destinations/default.jpg",
         delay: index * 100,
       }));
     },

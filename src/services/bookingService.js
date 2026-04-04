@@ -1,9 +1,11 @@
 import api from './api';
 
 export const bookingService={
-   async getAllBookings() {
+   async getAllBookings(params = {}) {
     try {
-      const response=await api.get('auth/booking');
+      const response = await api.get('auth/booking', {
+        params: { per_page: 200, ...params }
+      });
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to fetch bookings');

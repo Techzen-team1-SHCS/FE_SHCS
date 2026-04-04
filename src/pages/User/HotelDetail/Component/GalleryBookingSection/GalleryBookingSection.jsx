@@ -18,7 +18,7 @@ const GalleryBookingSection = ({
     <div className={styles.galleryBookingGrid}>
 
       {/* Gallery */}
-      <div>
+      <div className={styles.galleryGridWrapper}>
 
         <div className={styles.galleryGrid}>
 
@@ -39,7 +39,7 @@ const GalleryBookingSection = ({
             onClick={() => setShowAllPhotos(!showAllPhotos)}
             className={styles.btnTogglePhotos}
           >
-            <i className={`fas fa-${showAllPhotos ? "minus" : "plus"}`}></i>
+            <i className={`fas fa-${showAllPhotos ? "minus" : "image"}`}></i>
 
             {showAllPhotos
               ? "Ẩn bớt ảnh"
