@@ -27,7 +27,6 @@ a:hover{
     color: white;
 }
 .navList{
-    height: calc(100vh - 90px);
     display: flex;
     flex-direction: column;
     gap: 10px;

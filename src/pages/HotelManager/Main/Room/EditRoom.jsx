@@ -1,7 +1,6 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { FiChevronRight, FiEdit3, FiInfo, FiTag, FiClock, FiCheck, FiX, FiShield } from "react-icons/fi";
+import { FiChevronRight, FiEdit3, FiInfo, FiTag, FiClock, FiShield } from "react-icons/fi";
 import { useEditRoom } from "../../hooks/useEditRoom";
-import { formatVND } from "../../../../utils/dateUtils";
 import styles from "./EditRoom.module.css";
 
 const EditRoom = () => {
@@ -13,7 +12,6 @@ const EditRoom = () => {
     errors,
     loading,
     hotels,
-    hotelsLoading,
     roomAmenities,
     handleInputChange,
     toggleCheckbox,

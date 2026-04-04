@@ -35,6 +35,7 @@ import Hotel from "./pages/HotelManager/Main/Hotel/Hotel";
 import Notifications from "./pages/HotelManager/Main/Notification/Notifcation";
 import Analysis from "./pages/HotelManager/Main/Analysis/Analysis";
 import RegisterHotel from "./pages/HotelManager/Main/RegisterHotel/RegisterHotel";
+import HotelManagerChatDashboard from "./pages/HotelManager/Main/Chat/HotelManagerChatDashboard";
 import AddRoom from "./pages/HotelManager/Main/Room/AddRoom";
 import EditRoom from "./pages/HotelManager/Main/Room/EditRoom";
 import AuthPage from "./pages/HotelManager/Main/Auth/AuthPage";
@@ -111,6 +112,10 @@ function App() {
                 <Route
                   path="/hotel-manager/notification"
                   element={<Notifications />}
+                />
+                <Route
+                  path="/hotel-manager/chat"
+                  element={<HotelManagerChatDashboard />}
                 />
               </Route>
             </Route>

@@ -20,6 +20,7 @@ import HotelDescriptionSection from '../Component/HotelDescriptionSection/HotelD
 import RoomTypesSection from '../Component/RoomTypesSection/RoomTypesSection.jsx';
 import AmenitiesSection from '../Component/AmenitiesSection/AmenitiesSection.jsx';
 import HotelStylesSection from '../Component/HotelStylesSection/HotelStylesSection.jsx';
+import HotelManagerChat from '../../../../components/HotelChat/HotelManagerChat.jsx';
 
 const HotelDetail = () => {
   const { hotelId } = useParams();
@@ -111,6 +112,9 @@ const HotelDetail = () => {
           searchAvailableRoomsMutation={searchAvailableRoomsMutation}
           availableRoomsSectionRef={availableRoomsSectionRef}
         />
+
+        {/* Chat trực tiếp khách hàng <-> Hotel Manager */}
+        <HotelManagerChat hotelId={hotelId} />
 
         {/* Room Types Grid */}
         <RoomTypesSection
