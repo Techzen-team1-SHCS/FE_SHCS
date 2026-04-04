@@ -1,7 +1,13 @@
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 import styles from "../../Main/Room/RoomManagement.module.css";
 import { ROOM_TABLE_COLUMNS } from "../../Constants/Hotel/roomTableColumns";
-import { getRoomStatusClass } from "../../Helpers/RoomHelpers";
+import {
+  getRoomStatusClass,
+  getAvailabilityLabel,
+} from "../../Helpers/RoomHelpers";
 import { FiEye, FiMoreHorizontal } from "react-icons/fi";
+import { formatVND } from "../../../../utils/dateUtils";
 
 const RoomTable = ({
   rooms,
@@ -9,7 +15,9 @@ const RoomTable = ({
   toggleSelectedRoom,
   selectAll,
   allSelected,
+  onView,
 }) => {
+  const navigate = useNavigate();
   return (
     <div className={styles.tableWrap}>
       <table className={styles.table}>
@@ -30,13 +38,19 @@ const RoomTable = ({
         <tbody>
           {rooms.length === 0 ? (
             <tr>
-              <td colSpan={ROOM_TABLE_COLUMNS.length + 1} className={styles.noData}>
+              <td
+                colSpan={ROOM_TABLE_COLUMNS.length + 1}
+                className={styles.noData}
+              >
                 No rooms found
               </td>
             </tr>
           ) : (
             rooms.map((room) => {
-              const statusClass = getRoomStatusClass(room.availability);
+              const statusClass = getRoomStatusClass(room.availability_status);
+              const statusLabel = getAvailabilityLabel(
+                room.availability_status,
+              );
               return (
                 <tr key={room.id}>
                   <td>
@@ -46,20 +60,47 @@ const RoomTable = ({
                       onChange={() => toggleSelectedRoom(room.id)}
                     />
                   </td>
-                  <td>{room.roomNo}</td>
-                  <td>{room.roomType}</td>
-                  <td>{room.capacity}</td>
+                  <td>{room.id}</td>
+                  <td>{room.hotel?.name || "-"}</td>
+                  <td>{room.room_type || room.roomType}</td>
+                  <td>{room.max_guest}</td>
+                  <td>{formatVND(room.price) || "-"}</td>
                   <td>
                     <span className={`${styles.status} ${styles[statusClass]}`}>
-                      {room.availability}
+                      {statusLabel}
                     </span>
                   </td>
-                  <td>{room.description}</td>
                   <td>
-                    <button className={styles.actionBtn} title="View">
+                    {(() => {
+                      const am = room.amenities;
+                      if (!am) return "-";
+                      if (Array.isArray(am)) return am.join(", ");
+                      if (typeof am === "string" && am.startsWith("[")) {
+                        try {
+                          const parsed = JSON.parse(am);
+                          return Array.isArray(parsed) ? parsed.join(", ") : am;
+                        } catch (e) {
+                          return e.message;
+                        }
+                      }
+                      return am;
+                    })()}
+                  </td>
+                  <td>
+                    <button
+                      className={styles.actionBtn}
+                      title="View"
+                      onClick={() => onView(room.id)}
+                    >
                       <FiEye />
                     </button>
-                    <button className={styles.actionBtn} title="More">
+                    <button
+                      className={styles.actionBtn}
+                      title="Edit"
+                      onClick={() =>
+                        navigate(`/hotel-manager/rooms/edit/${room.id}`)
+                      }
+                    >
                       <FiMoreHorizontal />
                     </button>
                   </td>
@@ -71,6 +112,15 @@ const RoomTable = ({
       </table>
     </div>
   );
+};
+
+RoomTable.propTypes = {
+  rooms: PropTypes.array.isRequired,
+  isRoomSelected: PropTypes.func.isRequired,
+  toggleSelectedRoom: PropTypes.func.isRequired,
+  selectAll: PropTypes.func.isRequired,
+  allSelected: PropTypes.bool.isRequired,
+  onView: PropTypes.func.isRequired,
 };
 
 export default RoomTable;

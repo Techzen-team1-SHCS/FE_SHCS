@@ -1,19 +1,36 @@
 import { useMemo, useState } from "react";
-import { hotelRooms } from "../Mock/roomData";
+import { useQuery } from "@tanstack/react-query";
+import { hotelService } from "../../../services/hotelService";
 import { filterRoomsByTab, searchRooms } from "../Helpers/RoomHelpers";
 import { getPaginationPages } from "../Helpers/HotelHelpers";
 
 export const useRoomManagement = (itemsPerPage = 10) => {
-  const [rooms] = useState(hotelRooms);
   const [activeTab, setActiveTab] = useState("All");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRoomIds, setSelectedRoomIds] = useState([]);
 
-  const filteredByTab = useMemo(() => filterRoomsByTab(rooms, activeTab), [rooms, activeTab]);
-  const searchedRooms = useMemo(() => searchRooms(filteredByTab, search), [filteredByTab, search]);
+  // Fetch rooms từ API
+  const { data: allRooms = [], isLoading: loading } = useQuery({
+    queryKey: ["hotel-manager-rooms"],
+    queryFn: () => hotelService.getHotelManagerRooms(),
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
 
-  const totalPages = Math.max(1, Math.ceil(searchedRooms.length / itemsPerPage));
+  const filteredByTab = useMemo(
+    () => filterRoomsByTab(allRooms, activeTab),
+    [allRooms, activeTab],
+  );
+  const searchedRooms = useMemo(
+    () => searchRooms(filteredByTab, search),
+    [filteredByTab, search],
+  );
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(searchedRooms.length / itemsPerPage),
+  );
 
   const currentRooms = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -26,7 +43,7 @@ export const useRoomManagement = (itemsPerPage = 10) => {
 
   const toggleSelectedRoom = (id) => {
     setSelectedRoomIds((prev) =>
-      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id],
     );
   };
 
@@ -40,6 +57,7 @@ export const useRoomManagement = (itemsPerPage = 10) => {
 
   return {
     rooms: currentRooms,
+    loading,
     activeTab,
     setActiveTab,
     search,

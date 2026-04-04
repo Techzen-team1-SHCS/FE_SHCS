@@ -14,11 +14,16 @@ const HotelCardRecommendation = ({
         amenitiesArray = amenities;
     } else if (typeof amenities === "string") {
         try {
-        amenitiesArray = JSON.parse(amenities);
+            if (amenities.trim().startsWith('[') && amenities.trim().endsWith(']')) {
+                amenitiesArray = JSON.parse(amenities);
+            } else {
+                amenitiesArray = amenities.split(',').map(item => item.trim()).filter(Boolean);
+            }
         } catch (e) {
-        amenitiesArray = [];
+            console.error("Error parsing amenities:", e);
+            amenitiesArray = [];
         }
-    }    
+    }
     return (
         <div className={styles.hotelCard}>
             <div className={styles.hotelImage}>

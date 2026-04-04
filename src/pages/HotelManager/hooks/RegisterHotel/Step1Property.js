@@ -1,12 +1,17 @@
 import { useState } from "react";
 import { cityData } from "../../Constants/RegisterHotel/CityData";
 
-export function usePropertyForm() {
-
-  const [city, setCity] = useState("Da Nang");
-  const [district, setDistrict] = useState("");
-  const [address, setAddress] = useState("");
-  const [zip, setZip] = useState("");
+export function usePropertyForm(initial = {}) {
+  const [city, setCity] = useState(() => initial.province || "Da Nang");
+  const [district, setDistrict] = useState(() => initial.name_nearby_place || "");
+  const [address, setAddress] = useState(() => initial.address || "");
+  const [zip, setZip] = useState(() => initial.zip || "");
+  const [latitude, setLatitude] = useState(() =>
+    initial.latitude != null ? Number(initial.latitude) : null
+  );
+  const [longitude, setLongitude] = useState(() =>
+    initial.longitude != null ? Number(initial.longitude) : null
+  );
 
   const districts = cityData[city];
 
@@ -20,10 +25,14 @@ export function usePropertyForm() {
     district,
     address,
     zip,
+    latitude,
+    longitude,
     districts,
     setDistrict,
     setAddress,
     setZip,
+    setLatitude,
+    setLongitude,
     handleCityChange
   };
 }

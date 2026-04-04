@@ -1,10 +1,12 @@
 export const filterRoomsByTab = (rooms, activeTab) => {
   if (activeTab === "All") return rooms;
 
-  if (activeTab === "Available") return rooms.filter((room) => room.availability === "Vacant");
+  if (activeTab === "Available")
+    return rooms.filter((room) => room.availability_status === "available");
   if (activeTab === "Booked")
-    return rooms.filter((room) => ["Occupied", "Reserved"].includes(room.availability));
-  if (activeTab === "Needs Cleaning") return rooms.filter((room) => room.availability === "Dirty");
+    return rooms.filter((room) => room.availability_status === "unavailable");
+  if (activeTab === "Needs Cleaning")
+    return rooms.filter((room) => room.availability_status === "dirty");
 
   return rooms;
 };
@@ -12,26 +14,38 @@ export const filterRoomsByTab = (rooms, activeTab) => {
 export const searchRooms = (rooms, search) => {
   if (!search) return rooms;
   const term = search.trim().toLowerCase();
-  return rooms.filter((room) =>
-    room.roomNo.toLowerCase().includes(term) || room.roomType.toLowerCase().includes(term) || room.description.toLowerCase().includes(term)
-  );
+  return rooms.filter((room) => {
+    const roomId = (room.id || "").toString().toLowerCase();
+    const roomType = (room.room_type || "").toLowerCase();
+    const amenities = Array.isArray(room.amenities)
+      ? room.amenities.join(", ").toLowerCase()
+      : (room.amenities || "").toLowerCase();
+    return roomId.includes(term) || roomType.includes(term) || amenities.includes(term);
+  });
 };
 
 export const getRoomStatusClass = (status) => {
   switch (status) {
-    case "Vacant":
+    case "available":
       return "vacant";
-    case "Occupied":
+    case "unavailable":
       return "occupied";
-    case "Reserved":
-      return "reserved";
-    case "Dirty":
+    case "dirty":
       return "dirty";
-    case "Out of stock":
-      return "outOfStock";
-    case "Pending":
-      return "pending";
     default:
       return "";
+  }
+};
+
+export const getAvailabilityLabel = (status) => {
+  switch (status) {
+    case "available":
+      return "Available";
+    case "unavailable":
+      return "Unavailable";
+    case "dirty":
+      return "Needs Cleaning";
+    default:
+      return status || "Unknown";
   }
 };

@@ -39,7 +39,6 @@ import AuthPage from './pages/HotelManager/Main/Auth/AuthPage';
 import Register from './pages/HotelManager/Components/Auth/Register/Register';
 import RoomManagement from './pages/HotelManager/Main/Room/RoomManagement';
 import Housekeeping from './pages/HotelManager/Main/Housekeeping/Housekeeping';
-import StaffManagement from './pages/HotelManager/Main/Staff/StaffManagement';
 
 const queryClient = new QueryClient();
 
@@ -57,7 +56,10 @@ function App() {
               <Route path="*" element={<NotFoundPage />} />
               <Route path="/BlogList" element={<BlogList />} />
               <Route path="/hotel/:hotelId" element={<HotelDetail />} />
-              <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route
+                path="/reset-password/:token"
+                element={<ResetPassword />}
+              />
               <Route path="/HotelsRecommend" element={<HotelsRecommend />} />
               <Route path="/booking/:bookingId" element={<Booking />} />
               <Route path="/payment-result" element={<PaymentResult />} />
@@ -68,7 +70,7 @@ function App() {
               <Route path="/discounts" element={<DiscountList />} />
               <Route path="/discount/:id" element={<DiscountDetail />} />
             </Route>
-            
+
             {/* Route admin */}
             <Route path="/admin/login" element={<LoginPage />} />
             <Route element={<AdminLayout />}>
@@ -89,13 +91,12 @@ function App() {
               <Route path="/hotel-manager/registerhotel" element={<RegisterHotel />} />
               <Route path="/hotel-manager/analysis" element={<Analysis />} />
               <Route path="/hotel-manager/notification" element={<Notifications />} />
-              <Route path="/hotel-manager/staff" element={<StaffManagement />} />
             </Route>
-            
+
             <Route path="/hotel-manager/login" element={<AuthPage />} />
             <Route path="/hotel-manager/register" element={<Register />} />
           </Routes>
-          
+
           <ToastContainer
             position="top-right"
             autoClose={3000}

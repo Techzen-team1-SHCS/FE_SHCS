@@ -6,7 +6,8 @@ export default function PasswordInput({
   value,
   onChange,
   show,
-  toggle
+  toggle,
+  error
 }) {
   return (
     <div>
@@ -18,6 +19,7 @@ export default function PasswordInput({
           value={value}
           onChange={onChange}
           placeholder="••••••••"
+          style={error ? { borderColor: "#dc3545", borderWidth: "1px" } : {}}
         />
         <span
           onClick={toggle}
@@ -26,6 +28,7 @@ export default function PasswordInput({
           {show ? <FaEyeSlash /> : <FaEye />}
         </span>
       </div>
+      {error && <span style={{ color: "#dc3545", fontSize: "12px", marginTop: "3px", display: "block" }}>{error}</span>}
     </div>
   );
 }
