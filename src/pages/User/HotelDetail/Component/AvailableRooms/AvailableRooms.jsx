@@ -16,7 +16,6 @@ import {
   FaCheck,
   FaUsers,
   FaHotel,
-  FaMoneyBillWave,
   FaShoppingCart,
   FaCalendarAlt,
   FaArrowRight,

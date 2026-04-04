@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './Recently.module.css';
 import hueImage from '../../../../public/assets/images/destinations/hue.jpg';  
 

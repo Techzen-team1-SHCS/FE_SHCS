@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../../../../services/api";
 import { toast } from "react-toastify";
 
 export const useRegister = () => {
-  const navigate = useNavigate();
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",

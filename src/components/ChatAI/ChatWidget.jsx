@@ -42,10 +42,12 @@ const ChatWidget = () => {
 
     try {
       // 🎯 Gọi API để lấy JSON response
-      const url = `${import.meta.env.VITE_API_URL}/auth/chat/stream`;
+      const apiBase = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+      const url = `${apiBase}/api/auth/chat/stream`;
       const response = await fetch(url, {
         method: 'post',
         headers: {
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message: userMessage })
@@ -201,9 +203,9 @@ const ChatWidget = () => {
         </div>
       </div>
     );
-    };
+  };
   // Render message theo type
-    function renderMessage(message) {
+  function renderMessage(message) {
     if (message.sender === 'bot' && message.isTyping) {
       return <TypingIndicator />;
     }
