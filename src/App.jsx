@@ -39,6 +39,7 @@ import AuthPage from './pages/HotelManager/Main/Auth/AuthPage';
 import Register from './pages/HotelManager/Components/Auth/Register/Register';
 import RoomManagement from './pages/HotelManager/Main/Room/RoomManagement';
 import Housekeeping from './pages/HotelManager/Main/Housekeeping/Housekeeping';
+import StaffManagement from './pages/HotelManager/Main/Staff/StaffManagement';
 
 const queryClient = new QueryClient();
 
@@ -88,6 +89,7 @@ function App() {
               <Route path="/hotel-manager/registerhotel" element={<RegisterHotel />} />
               <Route path="/hotel-manager/analysis" element={<Analysis />} />
               <Route path="/hotel-manager/notification" element={<Notifications />} />
+              <Route path="/hotel-manager/staff" element={<StaffManagement />} />
             </Route>
             
             <Route path="/hotel-manager/login" element={<AuthPage />} />
