@@ -42,6 +42,7 @@ import AuthPage from "./pages/HotelManager/Main/Auth/AuthPage";
 import Register from "./pages/HotelManager/Components/Auth/Register/Register";
 import RoomManagement from "./pages/HotelManager/Main/Room/RoomManagement";
 import Housekeeping from "./pages/HotelManager/Main/Housekeeping/Housekeeping";
+import StaffManagement from "./pages/HotelManager/Main/Staff/StaffManagement";
 import RequireHotelManagerAuth from "./components/RequireHotelManagerAuth";
 
 const queryClient = new QueryClient();
@@ -117,6 +118,7 @@ function App() {
                   path="/hotel-manager/chat"
                   element={<HotelManagerChatDashboard />}
                 />
+                <Route path="/hotel-manager/staff" element={<StaffManagement />} />
               </Route>
             </Route>
 

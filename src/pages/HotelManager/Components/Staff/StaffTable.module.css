@@ -1,0 +1,111 @@
+.tableContainer {
+    width: 100%;
+    overflow-x: auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    font-family: inherit;
+    border: 1px solid #e5e7eb;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.table th {
+    padding: 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+    border-bottom: 2px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+.headerCell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sortIcon {
+    color: #9ca3af;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.tableRow {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.tableRow:last-child {
+    border-bottom: none;
+}
+
+.table td {
+    padding: 16px;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.nameCell {
+    font-weight: 700;
+    color: #111827;
+}
+
+.normalCell {
+    font-weight: 600;
+    color: #374151;
+}
+
+.boldCell {
+    font-weight: 700;
+    color: #111827;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.actionBtnDark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    background-color: #1f2937;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.actionBtnDark:hover {
+    background-color: #374151;
+}
+
+.actionBtnGrey {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    background-color: #9ca3af;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.actionBtnGrey:hover {
+    background-color: #6b7280;
+}
+
+.emptyMessage {
+    text-align: center;
+    color: #6b7280;
+    padding: 24px !important;
+}

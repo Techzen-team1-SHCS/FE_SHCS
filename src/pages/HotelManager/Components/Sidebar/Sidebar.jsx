@@ -9,6 +9,7 @@ import { FaHotel } from "react-icons/fa";
 import { MdAddBusiness } from "react-icons/md";
 import { FaBed } from "react-icons/fa";
 import { FiTool } from "react-icons/fi";
+import { FaUsers } from "react-icons/fa";
 import { notificationService } from '../../../../services/notificationService';
 import '../../../../config/echo';
 
@@ -85,6 +86,8 @@ const Sidebar = () => {
         { path: "/hotel-manager/analysis", label: "Analysis", icon: <FaChartBar /> },
         { path: "/hotel-manager/chat", label: "Chat HM", icon: <span>💬</span> },
         { path: "/hotel-manager/housekeeping", label: "HouseKeeping", icon: <FiTool /> },
+        { path: "/hotel-manager/notification", label: "Notifications", icon: <FiBell /> },
+        { path: "/hotel-manager/staff", label: "Staff", icon: <FaUsers /> },
         {
             path: "/hotel-manager/notification", label: "Notifications", icon: (
                 <div style={{ position: 'relative', display: 'inline-block' }}>
