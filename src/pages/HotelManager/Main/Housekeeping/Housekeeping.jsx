@@ -1,117 +1,446 @@
+import { useState } from "react";
 import styles from "./Housekeeping.module.css";
-import HousekeepingChart from "../../Components/Housekeeping/HousekeepingChart";
-import HousekeepingTable from "../../Components/Housekeeping/HousekeepingTable";
 import { useHousekeepingManagement } from "../../hooks/useHousekeepingManagement";
-import { HOUSEKEEPING_TABS } from "../../Constants/Housekeeping/housekeepingTabs";
-import { housekeepingStatistics } from "../../Mock/housekeepingData";
+import {
+  HK_TABS,
+  HK_STATUS_CONFIG,
+  TASK_STATUS_CONFIG,
+} from "../../Constants/Housekeeping/housekeepingConstants";
 
+// Components
+import HousekeepingChart from "../../Components/Housekeeping/HousekeepingChart";
+import TaskBoardView from "../../Components/Housekeeping/TaskBoardView";
+import RoomStatusGrid from "../../Components/Housekeeping/RoomStatusGrid";
+import MaintenanceIssuesTable from "../../Components/Housekeeping/MaintenanceIssuesTable";
+import TaskFormModal from "../../Components/Housekeeping/TaskFormModal";
+import IssueFormModal from "../../Components/Housekeeping/IssueFormModal";
+
+// Icons
+import {
+  FiRefreshCw,
+  FiPlus,
+  FiCalendar,
+  FiFilter,
+  FiUsers,
+  FiZap,
+  FiClipboard,
+  FiGrid,
+  FiTool,
+  FiCheckCircle,
+  FiClock,
+  FiAlertOctagon,
+  FiHome,
+} from "react-icons/fi";
+
+// ─── Stat Card ──────────────────────────────────────────────────────────────
+const StatCard = ({ label, value, color, bg, icon: Icon, sub, loading }) => (
+  <div className={styles.statCard}>
+    <div className={styles.statIconWrap} style={{ background: bg }}>
+      <Icon size={20} color={color} />
+    </div>
+    <div className={styles.statBody}>
+      <p className={styles.statLabel}>{label}</p>
+      <p className={styles.statValue} style={{ color }}>
+        {loading ? <span className={styles.pulse}>—</span> : (value ?? 0)}
+      </p>
+      {sub && <p className={styles.statSub}>{sub}</p>}
+    </div>
+  </div>
+);
+
+// ─── Main Page ───────────────────────────────────────────────────────────────
 const HousekeepingPage = () => {
-  const {
-    schedules,
-    activeTab,
-    setActiveTab,
-    search,
-    setSearch,
-    currentPage,
-    setCurrentPage,
-    pages,
-    totalPages,
-  } = useHousekeepingManagement(10);
+  const [activeTab, setActiveTab] = useState("tasks");
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
+  const [editTask, setEditTask] = useState(null);
+  const [issueModalOpen, setIssueModalOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const managementColors = ["#10b981", "#fbbf24", "#ef4444", "#d1d5db"];
-  const cleanlinessColors = ["#10b981", "#fbbf24", "#ef4444", "#9ca3af"];
+  const {
+    dashboard,
+    loadingDashboard,
+    tasks,
+    tasksMeta,
+    loadingTasks,
+    rooms,
+    loadingRooms,
+    issues,
+    issuesMeta,
+    loadingIssues,
+    staff,
+    taskFilters,
+    setTaskFilters,
+    issueFilters,
+    setIssueFilters,
+    roomFilter,
+    setRoomFilter,
+    fetchTasks,
+    createTask,
+    updateTask,
+    deleteTask,
+    fetchRooms,
+    updateRoomStatus,
+    fetchIssues,
+    createIssue,
+    updateIssueStatus,
+    refreshAll,
+  } = useHousekeepingManagement();
+
+  // ── Handlers
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refreshAll();
+    setRefreshing(false);
+  };
+
+  const handleUpdateTaskStatus = async (id, newStatus) => {
+    await updateTask(id, { task_status: newStatus });
+  };
+
+  const handleEditTask = (task) => {
+    setEditTask(task);
+    setTaskModalOpen(true);
+  };
+
+  const handleTaskSubmit = async (payload) => {
+    if (editTask) await updateTask(editTask.id, payload);
+    else await createTask(payload);
+  };
+
+  const handleDeleteTask = async (id) => {
+    if (window.confirm("Bạn có chắc muốn xóa nhiệm vụ này không?")) {
+      await deleteTask(id);
+    }
+  };
+
+  const handleOpenTaskModal = () => {
+    setEditTask(null);
+    setTaskModalOpen(true);
+  };
+
+  const handleTaskFilterChange = (key, value) => {
+    const f = { ...taskFilters, [key]: value, page: 1 };
+    setTaskFilters(f);
+    fetchTasks(f);
+  };
+
+  const handleIssueFilterChange = (newFilters) => {
+    setIssueFilters(newFilters);
+    fetchIssues(newFilters);
+  };
+
+  // ── Compute chart data from dashboard
+  const hkStats = dashboard?.hk_status || {};
+  const todayTasks = dashboard?.tasks_today || {};
+  const issStats = dashboard?.issues || {};
+
+  const hkChartData = {
+    "🟢 Sạch":       Number(hkStats.clean      || 0),
+    "🟡 Đang dọn":   Number(hkStats.cleaning   || 0),
+    "🔴 Cần dọn":    Number(hkStats.dirty      || 0),
+    "⚫ Bảo trì":    Number(hkStats["out-of-order"] || 0),
+  };
+  const taskChartData = {
+    "✅ Xong":        Number(todayTasks.completed  || 0),
+    "🔄 Đang làm":   Number(todayTasks["in-progress"] || 0),
+    "⏳ Chờ":         Number(todayTasks.pending   || 0),
+    "⏭️ Bỏ qua":     Number(todayTasks.skipped   || 0),
+  };
+
+  const hkColors  = ["#10b981", "#f59e0b", "#ef4444", "#6b7280"];
+  const taskColors = ["#10b981", "#3b82f6", "#f59e0b", "#9ca3af"];
+
+  const totalTasksToday = Object.values(todayTasks).reduce((a, b) => a + Number(b), 0);
+  const completedToday  = Number(todayTasks.completed  || 0);
+  const inProgress      = Number(todayTasks["in-progress"] || 0);
+  const openIssues      = Number(issStats.open || 0);
+  const cleanRooms      = Number(hkStats.clean || 0);
+  const dirtyRooms      = Number(hkStats.dirty || 0);
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.pageTitle}>House keeping</h1>
+    <div className={styles.page}>
 
-      {/* Charts Section */}
-      <div className={styles.chartsGrid}>
-        <HousekeepingChart
-          title="House keeping management"
-          data={housekeepingStatistics.management}
-          colors={managementColors}
-        />
-        <HousekeepingChart
-          title="Cleanliness score"
-          data={housekeepingStatistics.cleanliness}
-          colors={cleanlinessColors}
-        />
-      </div>
-
-      {/* Tabs and Actions */}
-      <div className={styles.headerRow}>
-        <div className={styles.tabs}>
-          {HOUSEKEEPING_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              className={`${styles.tab} ${activeTab === tab.id ? styles.activeTab : ""}`}
-              onClick={() => {
-                setActiveTab(tab.id);
-                setCurrentPage(1);
-              }}
-            >
-              {tab.label} ({tab.count})
-            </button>
-          ))}
+      {/* ══════════════ PAGE HEADER ══════════════ */}
+      <div className={styles.pageHeader}>
+        <div className={styles.pageTitleGroup}>
+          <h1 className={styles.pageTitle}>Housekeeping</h1>
+          <p className={styles.pageSubtitle}>
+            Quản lý vệ sinh phòng · Phân công nhân viên · Theo dõi sự cố
+          </p>
         </div>
-        <div className={styles.actions}>
-          <button className={styles.filterBtn}>🔽 Filter</button>
-          <button className={styles.addBtn}>+ Add new schedule</button>
-        </div>
-      </div>
 
-      {/* Search */}
-      <div className={styles.searchRow}>
-        <input
-          className={styles.searchInput}
-          type="text"
-          placeholder="Search schedule..."
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setCurrentPage(1);
-          }}
-        />
-      </div>
-
-      {/* Table */}
-      <HousekeepingTable schedules={schedules} />
-
-      {/* Pagination */}
-      <div className={styles.pagination}>
-        <span className={styles.pageInfo}>
-          1 - 10 / 100
-        </span>
-        <span className={styles.recordsPerPage}>
-          Records per page: <select><option>10</option></select>
-        </span>
-        <div className={styles.paginationButtons}>
+        <div className={styles.headerButtons}>
+          {/* Refresh */}
           <button
-            disabled={currentPage <= 1}
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className={styles.btnOutline}
+            onClick={handleRefresh}
+            disabled={refreshing}
+            title="Làm mới dữ liệu"
           >
-            Previous
+            <FiRefreshCw size={14} className={refreshing ? styles.spin : ""} />
+            <span>Làm mới</span>
           </button>
-          <div className={styles.pages}>
-            {pages.map((page) => (
-              <button
-                key={page}
-                className={currentPage === page ? styles.activePage : ""}
-                onClick={() => setCurrentPage(page)}
-              >
-                {page}
-              </button>
-            ))}
+
+          {/* Issue report — muted red */}
+          <button
+            className={styles.btnDanger}
+            onClick={() => setIssueModalOpen(true)}
+          >
+            <FiAlertOctagon size={14} />
+            <span>Báo sự cố</span>
+          </button>
+
+          {/* Create task — primary blue */}
+          <button
+            className={styles.btnPrimary}
+            onClick={handleOpenTaskModal}
+          >
+            <FiPlus size={15} />
+            <span>Tạo nhiệm vụ</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ══════════════ CHARTS ROW ══════════════ */}
+      <div className={styles.chartsRow}>
+        <HousekeepingChart
+          title="Trạng thái phòng hôm nay"
+          subtitle={`${dashboard?.total_rooms ?? 0} phòng`}
+          data={hkChartData}
+          colors={hkColors}
+          loading={loadingDashboard}
+        />
+        <HousekeepingChart
+          title="Nhiệm vụ trong ngày"
+          subtitle={`${totalTasksToday} tasks`}
+          data={taskChartData}
+          colors={taskColors}
+          loading={loadingDashboard}
+        />
+
+        {/* Mini stat cards on right */}
+        <div className={styles.miniStats}>
+          <StatCard label="Hoàn thành"     value={completedToday} color="#10b981" bg="#f0fdf4" icon={FiCheckCircle} loading={loadingDashboard} />
+          <StatCard label="Đang thực hiện" value={inProgress}     color="#3b82f6" bg="#eff6ff" icon={FiClock}       loading={loadingDashboard} />
+          <StatCard label="Sự cố đang mở"  value={openIssues}     color="#ef4444" bg="#fef2f2" icon={FiAlertOctagon} loading={loadingDashboard} />
+          <StatCard
+            label="Phòng sạch"
+            value={`${cleanRooms}/${(dashboard?.total_rooms ?? 0)}`}
+            color="#0ea5e9"
+            bg="#f0f9ff"
+            icon={FiHome}
+            loading={loadingDashboard}
+            sub={`${dirtyRooms} phòng cần dọn`}
+          />
+        </div>
+      </div>
+
+      {/* ══════════════ TAB NAV ══════════════ */}
+      <div className={styles.tabNav}>
+        <div className={styles.tabGroup}>
+          <button
+            className={`${styles.tabItem} ${activeTab === "tasks" ? styles.tabActive : ""}`}
+            onClick={() => setActiveTab("tasks")}
+          >
+            <FiClipboard size={15} />
+            <span>Task Board</span>
+            {totalTasksToday > 0 && (
+              <span className={styles.tabBadge} style={activeTab === "tasks" ? { background: "#fff", color: "#2563eb" } : {}}>
+                {totalTasksToday}
+              </span>
+            )}
+          </button>
+
+          <button
+            className={`${styles.tabItem} ${activeTab === "rooms" ? styles.tabActive : ""}`}
+            onClick={() => setActiveTab("rooms")}
+          >
+            <FiGrid size={15} />
+            <span>Trạng thái phòng</span>
+            {dirtyRooms > 0 && (
+              <span className={styles.tabBadgeDanger} style={activeTab === "rooms" ? { background: "#fff", color: "#ef4444" } : {}}>
+                {dirtyRooms}
+              </span>
+            )}
+          </button>
+
+          <button
+            className={`${styles.tabItem} ${activeTab === "issues" ? styles.tabActive : ""}`}
+            onClick={() => setActiveTab("issues")}
+          >
+            <FiTool size={15} />
+            <span>Sự cố bảo trì</span>
+            {openIssues > 0 && (
+              <span className={styles.tabBadgeDanger} style={activeTab === "issues" ? { background: "#fff", color: "#ef4444" } : {}}>
+                {openIssues}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Date picker — chỉ hiện khi ở tab tasks */}
+        {activeTab === "tasks" && (
+          <div className={styles.tabDatePicker}>
+            <FiCalendar size={13} color="#64748b" />
+            <input
+              type="date"
+              className={styles.datePicker}
+              value={taskFilters.date}
+              onChange={(e) => handleTaskFilterChange("date", e.target.value)}
+            />
           </div>
-          <button
-            disabled={currentPage >= totalPages}
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          >
-            Next
-          </button>
-        </div>
+        )}
       </div>
+
+      {/* ══════════════ CONTENT AREA ══════════════ */}
+      <div className={styles.contentCard}>
+
+        {/* ── TASKS TAB ─────────────────────────── */}
+        {activeTab === "tasks" && (
+          <>
+            {/* Filter bar */}
+            <div className={styles.filterBar}>
+              <div className={styles.filterBarLeft}>
+                {/* Status filter pills */}
+                <div className={styles.statusPills}>
+                  <button
+                    className={`${styles.pill} ${taskFilters.status === "" ? styles.pillActive : ""}`}
+                    onClick={() => handleTaskFilterChange("status", "")}
+                  >
+                    Tất cả
+                  </button>
+                  {Object.entries(TASK_STATUS_CONFIG).map(([k, v]) => (
+                    <button
+                      key={k}
+                      className={`${styles.pill} ${taskFilters.status === k ? styles.pillActive : ""}`}
+                      style={
+                        taskFilters.status === k
+                          ? { background: v.bg, color: v.color, borderColor: v.color }
+                          : {}
+                      }
+                      onClick={() => handleTaskFilterChange("status", taskFilters.status === k ? "" : k)}
+                    >
+                      {v.labelVi}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.filterBarRight}>
+                {/* Staff dropdown */}
+                <div className={styles.filterField}>
+                  <FiUsers size={13} className={styles.filterIcon} />
+                  <select
+                    className={styles.filterDropdown}
+                    value={taskFilters.staff_id}
+                    onChange={(e) => handleTaskFilterChange("staff_id", e.target.value)}
+                  >
+                    <option value="">Nhân viên</option>
+                    {staff.map((s) => (
+                      <option key={s.id} value={s.id}>{s.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Priority dropdown */}
+                <div className={styles.filterField}>
+                  <FiZap size={13} className={styles.filterIcon} />
+                  <select
+                    className={styles.filterDropdown}
+                    value={taskFilters.priority}
+                    onChange={(e) => handleTaskFilterChange("priority", e.target.value)}
+                  >
+                    <option value="">Ưu tiên</option>
+                    <option value="urgent">🔴 Khẩn cấp</option>
+                    <option value="high">🟠 Cao</option>
+                    <option value="normal">🔵 Bình thường</option>
+                    <option value="low">⚪ Thấp</option>
+                  </select>
+                </div>
+
+                {/* Task count badge */}
+                <span className={styles.countBadge}>
+                  {tasksMeta.total ?? tasks.length} tasks
+                </span>
+              </div>
+            </div>
+
+            <TaskBoardView
+              tasks={tasks}
+              loadingTasks={loadingTasks}
+              onUpdateStatus={handleUpdateTaskStatus}
+              onEdit={handleEditTask}
+              onDelete={handleDeleteTask}
+            />
+
+            {/* Pagination */}
+            {tasksMeta.last_page > 1 && (
+              <div className={styles.pagination}>
+                <span className={styles.paginationInfo}>
+                  Trang {tasksMeta.current_page}/{tasksMeta.last_page} · {tasksMeta.total} nhiệm vụ
+                </span>
+                <div className={styles.paginationBtns}>
+                  <button
+                    className={styles.pageBtn}
+                    disabled={tasksMeta.current_page <= 1}
+                    onClick={() => handleTaskFilterChange("page", tasksMeta.current_page - 1)}
+                  >
+                    ← Trước
+                  </button>
+                  <button
+                    className={styles.pageBtn}
+                    disabled={tasksMeta.current_page >= tasksMeta.last_page}
+                    onClick={() => handleTaskFilterChange("page", tasksMeta.current_page + 1)}
+                  >
+                    Tiếp →
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ── ROOMS TAB ─────────────────────────── */}
+        {activeTab === "rooms" && (
+          <RoomStatusGrid
+            rooms={rooms}
+            loadingRooms={loadingRooms}
+            onUpdateRoomStatus={updateRoomStatus}
+            roomFilter={roomFilter}
+            setRoomFilter={setRoomFilter}
+          />
+        )}
+
+        {/* ── ISSUES TAB ────────────────────────── */}
+        {activeTab === "issues" && (
+          <MaintenanceIssuesTable
+            issues={issues}
+            loadingIssues={loadingIssues}
+            issueFilters={issueFilters}
+            setIssueFilters={handleIssueFilterChange}
+            onUpdateStatus={updateIssueStatus}
+            onCreateIssue={() => setIssueModalOpen(true)}
+          />
+        )}
+      </div>
+
+      {/* ══════════════ MODALS ══════════════ */}
+      <TaskFormModal
+        isOpen={taskModalOpen}
+        onClose={() => { setTaskModalOpen(false); setEditTask(null); }}
+        onSubmit={handleTaskSubmit}
+        rooms={rooms}
+        staff={staff}
+        editTask={editTask}
+      />
+
+      <IssueFormModal
+        isOpen={issueModalOpen}
+        onClose={() => setIssueModalOpen(false)}
+        onSubmit={createIssue}
+        rooms={rooms}
+        staff={staff}
+      />
     </div>
   );
 };
