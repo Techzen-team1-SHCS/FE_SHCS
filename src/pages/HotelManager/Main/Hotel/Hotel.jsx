@@ -2,7 +2,7 @@ import styles from "./HotelManagement.module.css";
 import { HOTEL_TABS } from "../../Constants/Hotel/hotelTabs";
 import { HOTEL_TABLE_COLUMNS } from "../../Constants/Hotel/hotelTableColumns";
 import { useHotelManagement } from "../../hooks/useHotelManagement";
-import { disableButton, getPaginationPages } from "../../Helpers/HotelHelpers";
+import { disableButton} from "../../Helpers/HotelHelpers";
 import PartLoading from "../../../../components/Loading/PartLoading";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

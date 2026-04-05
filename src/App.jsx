@@ -35,12 +35,14 @@ import Hotel from "./pages/HotelManager/Main/Hotel/Hotel";
 import Notifications from "./pages/HotelManager/Main/Notification/Notifcation";
 import Analysis from "./pages/HotelManager/Main/Analysis/Analysis";
 import RegisterHotel from "./pages/HotelManager/Main/RegisterHotel/RegisterHotel";
+import HotelManagerChatDashboard from "./pages/HotelManager/Main/Chat/HotelManagerChatDashboard";
 import AddRoom from "./pages/HotelManager/Main/Room/AddRoom";
 import EditRoom from "./pages/HotelManager/Main/Room/EditRoom";
 import AuthPage from "./pages/HotelManager/Main/Auth/AuthPage";
 import Register from "./pages/HotelManager/Components/Auth/Register/Register";
 import RoomManagement from "./pages/HotelManager/Main/Room/RoomManagement";
 import Housekeeping from "./pages/HotelManager/Main/Housekeeping/Housekeeping";
+import StaffManagement from "./pages/HotelManager/Main/Staff/StaffManagement";
 import RequireHotelManagerAuth from "./components/RequireHotelManagerAuth";
 
 const queryClient = new QueryClient();
@@ -112,6 +114,11 @@ function App() {
                   path="/hotel-manager/notification"
                   element={<Notifications />}
                 />
+                <Route
+                  path="/hotel-manager/chat"
+                  element={<HotelManagerChatDashboard />}
+                />
+                <Route path="/hotel-manager/staff" element={<StaffManagement />} />
               </Route>
             </Route>
 

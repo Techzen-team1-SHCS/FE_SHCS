@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import {  useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { hotelService } from "../../../services/hotelService";
 
@@ -9,7 +9,7 @@ export const useHotelManagement = (itemsPerPage = 5) => {
 
   // Fetch hotels từ API
   const { data: allHotels = [], isLoading: loading } = useQuery({
-    queryKey: ["hotel-manager-list"],
+    queryKey: ['hotel-manager-list'],
     queryFn: () => hotelService.getHotelManagerHotels(),
     staleTime: 5 * 60 * 1000,
     retry: 2,
@@ -24,7 +24,7 @@ export const useHotelManagement = (itemsPerPage = 5) => {
       result = result.filter((h) => {
         const status = h.status || "";
         if (activeTab === "Open") return status === "approved";
-        if (activeTab === "Close") return status === "close";
+        if (activeTab === "Close") return status === "rejected";
         if (activeTab === "Pending") return status === "pending";
         return true;
       });
@@ -33,7 +33,7 @@ export const useHotelManagement = (itemsPerPage = 5) => {
     // search
     if (search) {
       result = result.filter((h) =>
-        h.name.toLowerCase().includes(search.toLowerCase()),
+        h.name.toLowerCase().includes(search.toLowerCase())
       );
     }
 

@@ -145,6 +145,15 @@
 .weight{
     font-weight: bold;
 }
+.roomBadge {
+    display: inline-block;
+    background-color: #e7f3ff;
+    color: #0071c2;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-top: 4px;
+}
 
 /* Responsive breakpoint: tablet and up */
 @media (min-width: 768px) {

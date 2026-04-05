@@ -1,60 +1,44 @@
-import { useMemo, useState } from "react";
-import { hotelRooms } from "../Mock/roomData";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import {
   ROOM_AMENITIES,
-  ROOM_ACCESSIBILITY_FEATURES,
 } from "../Constants/Room/roomConstants";
 import { validateRoomForm } from "../Helpers/roomFormHelpers";
+import { hotelService } from "../../../services/hotelService";
 
 const initialFormState = {
-  roomNo: "",
-  floor: "",
-  status: "Vacant",
-  type: "Deluxe",
-  capacity: "",
-  pricePerNight: "",
-  description: "",
+  hotel_id: "",
+  room_type: "Deluxe",
+  price: "",
+  max_guest: "",
+  quantity: 1,
   amenities: [],
-  accessibility: [],
-  images: [],
+  availability_status: "available",
+  available_from: "",
+  available_to: "",
 };
 
 export const useAddRoom = () => {
   const [form, setForm] = useState(initialFormState);
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [createdRoom, setCreatedRoom] = useState(null);
+  const [showRoomNumberModal, setShowRoomNumberModal] = useState(false);
+  const queryClient = useQueryClient();
 
-  const selectedAmenities = useMemo(() => form.amenities, [form.amenities]);
-  const selectedAccessibility = useMemo(
-    () => form.accessibility,
-    [form.accessibility],
-  );
+  // Fetch danh sách hotel của hotel manager
+  const { data: hotels = [], isLoading: hotelsLoading } = useQuery({
+    queryKey: ["hotel-manager-list"],
+    queryFn: () => hotelService.getHotelManagerHotels(),
+    staleTime: 5 * 60 * 1000,
+  });
 
   const handleInputChange = (key, value) => {
-    if (key === "images") {
-      setForm((prev) => ({ ...prev, images: value }));
-      return;
-    }
-
     setForm((prev) => ({ ...prev, [key]: value }));
     if (errors[key]) {
       setErrors((prevErr) => ({ ...prevErr, [key]: undefined }));
     }
-  };
-
-  const handleUpload = (files) => {
-    const newPreview = Array.from(files).map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }));
-    setForm((prev) => ({ ...prev, images: [...prev.images, ...newPreview] }));
-  };
-
-  const removeImage = (index) => {
-    setForm((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index),
-    }));
   };
 
   const toggleCheckbox = (key, item) => {
@@ -67,7 +51,7 @@ export const useAddRoom = () => {
     });
   };
 
-  const handleSubmit = async (event, onSuccess) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const validation = validateRoomForm(form);
     if (Object.keys(validation).length > 0) {
@@ -75,62 +59,84 @@ export const useAddRoom = () => {
       return;
     }
 
-    const saved = localStorage.getItem("hotelRooms");
-    let existingRooms = [];
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) existingRooms = parsed;
-      } catch {
-        existingRooms = [];
-      }
+    setLoading(true);
+    try {
+      const payload = {
+        hotel_id: form.hotel_id,
+        room_type: form.room_type,
+        price: Number(form.price),
+        max_guest: Number(form.max_guest),
+        amenities: JSON.stringify([...form.amenities]),
+        availability_status: form.availability_status,
+        quantity: Number(form.quantity) || 1,
+      };
+
+      if (form.available_from) payload.available_from = form.available_from;
+      if (form.available_to) payload.available_to = form.available_to;
+
+      const response = await hotelService.createHotelManagerRoom(form.hotel_id, payload);
+
+      const roomData = response?.data || response;
+      setCreatedRoom(roomData);
+      setShowRoomNumberModal(true);
+      toast.success("Tạo phòng thành công!");
+
+      // Invalidate cache
+      queryClient.invalidateQueries({ queryKey: ["hotel-manager-rooms"] });
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || "Lỗi tạo phòng";
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const baseRooms = existingRooms.length > 0 ? existingRooms : hotelRooms;
-    const newRoom = {
-      id: Date.now(),
-      roomNo: form.roomNo,
-      floor: form.floor,
-      availability: form.status,
-      status: form.status,
-      roomType: form.type,
-      type: form.type,
-      capacity: form.capacity,
-      price: form.pricePerNight,
-      pricePerNight: form.pricePerNight,
-      description: form.description,
-      amenities: form.amenities,
-      accessibility: form.accessibility,
-      images: form.images,
-    };
+  const handleCreateRoomNumbers = async (quantity) => {
+    if (!createdRoom?.id) return;
 
-    localStorage.setItem("hotelRooms", JSON.stringify([...baseRooms, newRoom]));
+    setLoading(true);
+    try {
+      const response = await hotelService.createRoomNumbers(createdRoom.id, quantity);
+      toast.success(response?.message || `Tạo ${quantity} room numbers thành công!`);
+      setShowRoomNumberModal(false);
 
-    setSuccessMessage("Tạo phòng mới thành công");
-    setTimeout(() => {
-      onSuccess?.();
-    }, 600);
+      // Invalidate cache
+      queryClient.invalidateQueries({ queryKey: ["hotel-manager-rooms"] });
+
+      return true; // signal success
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || "Lỗi tạo room numbers";
+      toast.error(message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const closeModal = () => {
+    setShowRoomNumberModal(false);
   };
 
   const resetForm = () => {
     setForm(initialFormState);
     setErrors({});
-    setSuccessMessage("");
+    setCreatedRoom(null);
   };
 
   return {
     form,
     errors,
-    successMessage,
-    selectedAmenities,
-    selectedAccessibility,
+    loading,
+    hotels,
+    hotelsLoading,
+    createdRoom,
+    showRoomNumberModal,
     roomAmenities: ROOM_AMENITIES,
-    roomAccessibility: ROOM_ACCESSIBILITY_FEATURES,
     handleInputChange,
-    handleUpload,
-    removeImage,
     toggleCheckbox,
     handleSubmit,
+    handleCreateRoomNumbers,
+    closeModal,
     resetForm,
   };
 };

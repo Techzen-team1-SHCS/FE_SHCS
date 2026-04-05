@@ -1,4 +1,3 @@
-import React from 'react';
 import Pagination from '@mui/material/Pagination';
 import PaginationItem from '@mui/material/PaginationItem';
 import Box from '@mui/material/Box';

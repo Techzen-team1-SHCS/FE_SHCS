@@ -133,9 +133,21 @@ export const useHotelDetail = (hotelId) => {
 
   // Derived data
   const galleryImages = hotelData?.images || [];
-  const amenitiesArray = hotelData?.amenities
-    ? JSON.parse(hotelData.amenities)
-    : [];
+  const amenitiesArray = (() => {
+    const data = hotelData?.amenities;
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (typeof data !== 'string') return [];
+    try {
+      if (data.trim().startsWith('[') && data.trim().endsWith(']')) {
+        return JSON.parse(data);
+      }
+      return data.split(',').map(item => item.trim()).filter(Boolean);
+    } catch (e) {
+      console.error("Error parsing amenities:", e);
+      return [];
+    }
+  })();
   const roomArray = hotelData?.rooms || [];
   const styleArray = hotelData?.styles || [];
 

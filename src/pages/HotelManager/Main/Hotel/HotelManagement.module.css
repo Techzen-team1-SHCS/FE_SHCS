@@ -3,7 +3,7 @@
   background-color: #f5f7fb;
   min-height: 100vh;
 }
-.tr {
+.tr{
   text-align: center;
 }
 .title {
@@ -51,7 +51,7 @@
   background: white;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #e7eef8;
+  border: 1px solid #E7EEF8;
 }
 
 .table {
@@ -67,35 +67,21 @@
 .table th {
   padding: 14px;
   text-align: center;
-  border-bottom: 1px dashed #edf2f9;
+  border-bottom: 1px dashed #EDF2F9;
   font-weight: 600;
 }
-.deleteButton:disabled {
-  background-color: #cccccc;
-  color: #666666;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
+
 .table td {
-  cursor: pointer;
   text-align: center;
   padding: 14px;
-  border-bottom: 1px dashed #edf2f9;
-}
-tr:hover td {
-  background-color: lightcyan;
+  border-bottom: 1px dashed #EDF2F9;
 }
 
 .status {
-  display: inline-flex; /* Xịn hơn inline-block rất nhiều */
-  justify-content: center; /* Căn giữa chữ theo chiều ngang */
-  align-items: center; /* Căn giữa chữ theo chiều dọc */
-  min-width: 100px; /* Độ rộng tối thiểu, bạn tự chỉnh cho vừa mắt */
-  padding: 6px 12px;
+  padding: 4px 14px;
   border-radius: 20px;
   font-size: 12px;
-  font-weight: 700;
-  text-transform: capitalize; /* Bonus: Tự động viết hoa chữ cái đầu (VD: approved -> Approved) */
+  font-weight: 500;
 }
 
 .open {
@@ -103,14 +89,14 @@ tr:hover td {
   color: #065f46;
 }
 
-.pending {
+.close {
   background-color: #fee2e2;
   color: #991b1b;
 }
 
-.close {
-  background-color: gray;
-  color: white;
+.pending {
+  background-color: #fef3c7;
+  color: #92400e;
 }
 
 .pagination {
@@ -148,6 +134,7 @@ tr:hover td {
 
 .deleteButton {
   padding: 5px 10px;
+  border: 1px solid #dc2626;
   background-color: #ef4444;
   color: white;
   border-radius: 4px;

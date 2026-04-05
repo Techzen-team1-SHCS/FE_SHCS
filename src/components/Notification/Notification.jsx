@@ -211,6 +211,10 @@ const Notification = ({ userId }) => {
 
     // Get notification type
     const getNotificationType = (notification) => {
+        if (notification.priority) {
+            if (notification.priority === 'critical') return 'error';
+            return notification.priority; // warning, info, success
+        }
         if (notification.type) return notification.type;
         const message = notification.message?.toLowerCase() || '';
         if (message.includes('thành công') || message.includes('success') || message.includes('đã xác nhận')) 

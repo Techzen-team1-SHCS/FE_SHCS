@@ -1,19 +1,14 @@
 import { useState } from "react";
-import {
-  createPreviewImages,
-  removeImageByIndex,
-} from "../../Helpers/RegisterHotel/Step3";
-import { formatHotelClass } from "../../Helpers/HotelHelpers";
+import { createPreviewImages, removeImageByIndex } from "../../Helpers/RegisterHotel/Step3";
 
 export function useHotelInfoForm(initial = {}, onSubmit) {
+
   const [hotelName, setHotelName] = useState(initial.name || "");
   const [description, setDescription] = useState(initial.description || "");
   const [detailInfo, setDetailInfo] = useState(initial.detailInfo || "");
   const [price, setPrice] = useState(initial.price || "");
   const [hotelClass, setHotelClass] = useState(initial.hotel_class || "");
-  const [nameNearbyPlace, setNameNearbyPlace] = useState(
-    initial.name_nearby_place || "",
-  );
+  const [nameNearbyPlace, setNameNearbyPlace] = useState(initial.name_nearby_place || "");
   const [images, setImages] = useState(initial.images || []);
 
   const handleUpload = (files) => {
@@ -31,7 +26,7 @@ export function useHotelInfoForm(initial = {}, onSubmit) {
     }
 
     const parsedPrice = parseFloat(price);
-    const hotelClassNumber = formatHotelClass(hotelClass);
+    const hotelClassNumber = parseFloat(hotelClass);
 
     const normalizedHotelClass = Number.isFinite(hotelClassNumber)
       ? hotelClassNumber.toFixed(1)
@@ -40,11 +35,11 @@ export function useHotelInfoForm(initial = {}, onSubmit) {
     await onSubmit({
       name: hotelName,
       description,
-      text: detailInfo,
-      price: parsedPrice,
+      detail_info: detailInfo,
+      price: Number.isFinite(parsedPrice) ? parsedPrice : price,
       hotel_class: normalizedHotelClass,
       name_nearby_place: nameNearbyPlace,
-      images,
+      images
     });
   };
   return {
