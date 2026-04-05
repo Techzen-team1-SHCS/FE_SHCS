@@ -11,3 +11,6 @@ export function filterHotels(hotels, activeTab) {
 export const renderStars = (rating) => {
   return "⭐".repeat(rating);
 };
+export const disableButton = (status) => {
+  return status === 'pending';
+};
