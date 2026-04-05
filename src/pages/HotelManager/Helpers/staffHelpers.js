@@ -6,31 +6,30 @@
 export const validateStaffForm = (formData) => {
     const errors = {};
 
-    // Validate First Name
-    if (!formData.firstName || formData.firstName.trim().length < 2) {
-        errors.firstName = "First Name must be at least 2 characters long.";
+    if (!formData.name || formData.name.trim().length < 2) {
+        errors.name = "Name must be at least 2 characters long.";
     }
 
-    // Validate Last Name
-    if (!formData.lastName || formData.lastName.trim().length < 2) {
-        errors.lastName = "Last Name must be at least 2 characters long.";
+    if (!formData.age || isNaN(formData.age) || formData.age < 18) {
+        errors.age = "Staff must be at least 18 years old.";
     }
 
-    // Validate Address
     if (!formData.address || formData.address.trim().length < 5) {
         errors.address = "Address is required and must be at least 5 characters.";
     }
 
-    // Validate Email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email || !emailRegex.test(formData.email)) {
         errors.email = "Please enter a valid email address.";
     }
 
-    // Validate Contact Number (Allows digits, spaces, parentheses, plus, and dashes)
     const phoneRegex = /^[\d\s()+-]{8,15}$/;
-    if (!formData.contactNumber || !phoneRegex.test(formData.contactNumber)) {
-        errors.contactNumber = "Please enter a valid contact number.";
+    if (!formData.phone || !phoneRegex.test(formData.phone)) {
+        errors.phone = "Please enter a valid contact number.";
+    }
+
+    if (!formData.avatar) {
+        errors.avatar = "Please upload an avatar.";
     }
 
     return errors;

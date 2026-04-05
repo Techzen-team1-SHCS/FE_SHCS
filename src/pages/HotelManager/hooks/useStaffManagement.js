@@ -1,37 +1,111 @@
 import { useState, useEffect } from "react";
-import { staffListMock } from "../Mock/staffData";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export const useStaffManagement = () => {
-    const [staffList, setStaffList] = useState([]);
-    const [searchId, setSearchId] = useState("");
-    
-    useEffect(() => {
-        setStaffList(staffListMock);
-    }, []);
+  const [staffList, setStaffList] = useState([]);
+  const [searchId, setSearchId] = useState("");
 
-    const deleteStaff = (id) => {
-        setStaffList(prev => prev.filter(staff => staff.id !== id));
-    };
+  const tokenAdmin = localStorage.getItem("tokenAdmin"); // Standard token admin used. If normal token, it would be token.
+  const token = localStorage.getItem("token");
+  const activeToken = tokenAdmin || token;
 
-    const addStaff = (newStaff) => {
-        const id = staffList.length ? Math.max(...staffList.map(s => s.id)) + 1 : 1;
-        setStaffList(prev => [...prev, { ...newStaff, id }]);
-    };
+  const fetchStaff = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8000/api/auth/hotel-manager/staff",
+        {
+          headers: {
+            Authorization: `Bearer ${activeToken}`,
+          },
+        },
+      );
+      if (res.data.status === 200) {
+        setStaffList(res.data.data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    const editStaff = (id, updatedStaff) => {
-        setStaffList(prev => prev.map(staff => staff.id === id ? { ...updatedStaff, id } : staff));
-    };
+  useEffect(() => {
+    fetchStaff();
+  }, []);
 
-    const displayList = staffList.filter(staff => 
-        staff.id.toString().includes(searchId)
-    );
+  const deleteStaff = async (id) => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:8000/api/auth/hotel-manager/staff/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${activeToken}`,
+          },
+        },
+      );
+      if (res.data.status === 200) {
+        setStaffList((prev) => prev.filter((staff) => staff.id !== id));
+        toast.success("Xóa nhân viên thành công!");
+      }
+    } catch (error) {
+      toast.error("Lỗi khi xóa nhân viên!");
+      console.error(error);
+    }
+  };
 
-    return {
-        staffList: displayList,
-        searchId,
-        setSearchId,
-        deleteStaff,
-        addStaff,
-        editStaff
-    };
+  const addStaff = async (newStaff) => {
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/auth/hotel-manager/staff`,
+        newStaff,
+        {
+          headers: {
+            Authorization: `Bearer ${activeToken}`,
+          },
+        },
+      );
+      if (res.data.status === 200) {
+        fetchStaff();
+        toast.success("Thêm nhân viên thành công!");
+      }
+    } catch (error) {
+      toast.error("Lỗi khi thêm nhân viên!");
+      console.error(error);
+    }
+  };
+
+  const editStaff = async (id, updatedStaff) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:8000/api/auth/hotel-manager/staff/${id}`,
+        updatedStaff,
+        {
+          headers: {
+            Authorization: `Bearer ${activeToken}`,
+          },
+        },
+      );
+      if (res.data.status === 200) {
+        fetchStaff();
+        toast.success("Cập nhật nhân viên thành công!");
+      }
+    } catch (error) {
+      toast.error("Lỗi khi cập nhật nhân viên!");
+      console.error(error);
+    }
+  };
+
+  const displayList = staffList.filter(
+    (staff) =>
+      staff.id.toString().includes(searchId) ||
+      staff.name?.toLowerCase().includes(searchId.toLowerCase()),
+  );
+
+  return {
+    staffList: displayList,
+    searchId,
+    setSearchId,
+    deleteStaff,
+    addStaff,
+    editStaff,
+  };
 };

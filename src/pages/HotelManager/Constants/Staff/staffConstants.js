@@ -1,9 +1,10 @@
 export const STAFF_TABLE_HEADERS = [
     { id: 'id', label: 'ID' },
-    { id: 'firstName', label: 'First Name' },
-    { id: 'lastName', label: 'Last Name' },
-    { id: 'address', label: 'Address' },
+    { id: 'avatar', label: 'Avatar' },
+    { id: 'name', label: 'Name' },
+    { id: 'age', label: 'Age' },
     { id: 'email', label: 'Email' },
-    { id: 'contactNumber', label: 'Contact Number' },
+    { id: 'phone', label: 'Phone' },
+    { id: 'address', label: 'Address' },
     { id: 'action', label: 'Action' }
 ];

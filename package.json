@@ -23,6 +23,7 @@
     "crypto-js": "^4.2.0",
     "env": "^0.0.2",
     "formik": "^2.4.6",
+    "imagekitio-react": "^4.3.0",
     "jwt-decode": "^4.0.0",
     "laravel-echo": "^2.2.4",
     "leaflet": "^1.9.4",
