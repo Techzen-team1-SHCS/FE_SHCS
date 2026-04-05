@@ -1,28 +1,25 @@
 import styles from "./HotelManagement.module.css";
 import { HOTEL_TABS } from "../../Constants/Hotel/hotelTabs";
 import { HOTEL_TABLE_COLUMNS } from "../../Constants/Hotel/hotelTableColumns";
+import { HOTEL_STATUS } from "../../Constants/Hotel/hotelStatus";
 import { useHotelManagement } from "../../hooks/useHotelManagement";
-import { disableButton, getPaginationPages } from "../../Helpers/HotelHelpers";
+import { getPaginationPages } from "../../Helpers/HotelHelpers";
 import PartLoading from "../../../../components/Loading/PartLoading";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { hotelService } from "../../../../services/hotelService";
-import Swal from "sweetalert2";
-import getStatusStyles from "../../Constants/Hotel/hotelStatus";
-import { formatDateTime, formatVND } from "../../../../utils/dateUtils";
-import { toast } from "react-toastify";
-import CustomPagination from "../../Components/CustomPagination";
+
 export default function HotelManagement() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
   const deleteHotelMutation = useMutation({
     mutationFn: (hotelId) => hotelService.deleteHotelManagerHotel(hotelId),
     onSuccess: () => {
       queryClient.invalidateQueries(["hotel-manager-list"]);
-      toast.success("xóa khách sạn thành công");
     },
     onError: () => {
-      toast.error("Xóa khách sạn thất bại. Vui lòng thử lại.");
+      alert("Xóa khách sạn thất bại. Vui lòng thử lại.");
     },
   });
 
@@ -51,7 +48,7 @@ export default function HotelManagement() {
       </div>
     );
   }
-  const statusStyles = getStatusStyles(styles);
+
   return (
     <div className={styles.container}>
       <div className={styles.topBar}>
@@ -59,9 +56,8 @@ export default function HotelManagement() {
           {HOTEL_TABS.map((tab) => (
             <button
               key={tab}
-              className={`${styles.tab} ${
-                activeTab === tab ? styles.activeTab : ""
-              }`}
+              className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ""
+                }`}
               onClick={() => {
                 setActiveTab(tab);
                 setCurrentPage(1);
@@ -100,42 +96,34 @@ export default function HotelManagement() {
               >
                 <td>{hotel.name}</td>
                 <td>{hotel.hotelId || hotel.id}</td>
-                <td>{hotel.hotel_class || "-"}</td>
-                <td>{hotel.revenue ? formatVND(hotel.revenue) : 0}</td>
-                <td>{hotel.totalRooms || 0}</td>
-                <td>{hotel.rooms.available_status? hotel.rooms.available_status : 'available'}</td>
-                <td>{formatDateTime(hotel.created_at) || 0}</td>
+                <td>{hotel.rating || "-"}</td>
+                <td>{hotel.revenue || "-"}</td>
+                <td>{hotel.totalRooms || "-"}</td>
+                <td>{hotel.availableRooms || "-"}</td>
+                <td>{hotel.date || "-"}</td>
                 <td>
-                  <div
-                    className={`${styles.status} ${statusStyles[hotel.status] || ""}`}
+                  <span
+                    className={`${styles.status} ${hotel.status === HOTEL_STATUS.OPEN
+                        ? styles.open
+                        : styles.close
+                      }`}
                   >
-                    {hotel.status}
-                  </div>
-                </td>
-                <td>
+                    {hotel.status || HOTEL_STATUS.CLOSE}
+                  </span>
+                </td>                <td>
                   <button
                     className={styles.deleteButton}
                     onClick={(event) => {
                       event.stopPropagation();
-                      Swal.fire({
-                        title: "Bạn có chắc chắn?",
-                        text: `Muốn xóa khách sạn "${hotel.name}" không thể hoàn tác!`,
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#d33",
-                        cancelButtonColor: "#3085d6",
-                        confirmButtonText: "Có, xóa ngay!",
-                        cancelButtonText: "Hủy",
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          deleteHotelMutation.mutate(hotel.id);
-                        }
-                      });
+                      if (
+                        window.confirm(
+                          `Bạn có chắc chắn muốn xóa khách sạn "${hotel.name}"?`
+                        )
+                      ) {
+                        deleteHotelMutation.mutate(hotel.id);
+                      }
                     }}
-                    disabled={
-                      deleteHotelMutation.isLoading ||
-                      disableButton(hotel.status)
-                    }
+                    disabled={deleteHotelMutation.isLoading}
                   >
                     {deleteHotelMutation.isLoading ? "Đang xóa..." : "Xóa"}
                   </button>
@@ -147,11 +135,34 @@ export default function HotelManagement() {
       </div>
 
       <div className={styles.pagination}>
-          <CustomPagination 
-            count={totalPages} 
-            page={currentPage} 
-            onChange={(event, value) => setCurrentPage(value)} 
-          />
+        <button
+          className={styles.prev}
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+        >
+          Previous
+        </button>
+
+        <div className={styles.pages}>
+          {getPaginationPages(totalPages).map((num) => (
+            <button
+              key={num}
+              className={`${styles.pageBtn} ${num === currentPage ? styles.activePage : ""
+                }`}
+              onClick={() => setCurrentPage(num)}
+            >
+              {num}
+            </button>
+          ))}
+        </div>
+
+        <button
+          className={styles.next}
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import styles from "./HotelManagerLayout.module.css";
 import { Outlet, useLocation } from 'react-router-dom';
-import Sidebar from "../../pages/HotelManager/Components/Sidebar/Sidebar";
-import { AuthContext } from '../../contexts/AuthContext';
+import Sidebar from "../Sidebar/Sidebar";
+import { AuthContext } from '../../../../contexts/AuthContext';
 
 const HotelManagerLayout = () => {
     const {
@@ -23,15 +23,9 @@ const HotelManagerLayout = () => {
     const getTitleFromPath = () => {
         const pathToTitle = {
             "/hotel-manager/hotel": "Hotel",
-            "/hotel-manager/rooms": "Rooms",
-            "/hotel-manager/housekeeping": "House keeping",
             "/hotel-manager/analysis": "Analysis",
             "/hotel-manager/notification": "Notifications",
         };
-
-        if (location.pathname.startsWith("/hotel-manager/hotel/") && location.pathname.split("/").length === 4) {
-            return "Hotel Detail";
-        }
 
         return pathToTitle[location.pathname] || "Hotel Manager Panel";
     };

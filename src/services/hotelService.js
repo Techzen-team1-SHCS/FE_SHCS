@@ -194,8 +194,7 @@ export const hotelService = {
       const token = localStorage.getItem('token');
       const formData = new FormData();
       imageFiles.forEach((file) => {
-        // Laravel expects array fields for multiple files, safest to send as images[]
-        formData.append('images[]', file);
+        formData.append('images', file);
       });
 
       const res = await api.post(`/auth/hotel-manager/hotels/${hotelId}/images`, formData, {
@@ -208,25 +207,6 @@ export const hotelService = {
       return res.data;
     } catch (error) {
       console.error('Lỗi uploadHotelImages', error);
-      throw error;
-    }
-  },
-
-  async deleteHotelManagerHotelImages(hotelId, imageIdentifiers = []) {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('Chưa có token');
-
-      const response = await api.delete(`/auth/hotel-manager/hotels/${hotelId}/images`, {
-        headers: { Authorization: `Bearer ${token}` },
-        data: {
-          images: imageIdentifiers,
-        },
-      });
-
-      return response.data;
-    } catch (error) {
-      console.error('Lỗi deleteHotelManagerHotelImages', error);
       throw error;
     }
   },
