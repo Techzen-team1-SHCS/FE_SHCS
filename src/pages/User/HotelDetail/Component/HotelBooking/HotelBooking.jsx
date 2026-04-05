@@ -75,7 +75,10 @@ const HotelBooking = ({ onBook, hotelId }) => {
 
   // Format date để hiển thị
   const formatDisplayDate = (dateString) => {
+    if (!dateString) return { day: "--", month: "---", year: "----" };
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return { day: "--", month: "---", year: "----" };
+    
     return {
       day: date.getDate(),
       month: date.toLocaleString("en-US", { month: "short" }),

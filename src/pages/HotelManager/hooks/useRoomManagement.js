@@ -1,29 +1,26 @@
 import { useMemo, useState } from "react";
-import { hotelRooms } from "../Mock/roomData";
+import { useQuery } from "@tanstack/react-query";
+import { hotelService } from "../../../services/hotelService";
 import { filterRoomsByTab, searchRooms } from "../Helpers/RoomHelpers";
 import { getPaginationPages } from "../Helpers/HotelHelpers";
 
 export const useRoomManagement = (itemsPerPage = 10) => {
-  const [rooms] = useState(() => {
-    const saved = localStorage.getItem("hotelRooms");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return Array.isArray(parsed) ? parsed : hotelRooms;
-      } catch {
-        return hotelRooms;
-      }
-    }
-    return hotelRooms;
-  });
   const [activeTab, setActiveTab] = useState("All");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRoomIds, setSelectedRoomIds] = useState([]);
 
+  // Fetch rooms từ API
+  const { data: allRooms = [], isLoading: loading } = useQuery({
+    queryKey: ["hotel-manager-rooms"],
+    queryFn: () => hotelService.getHotelManagerRooms(),
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
+
   const filteredByTab = useMemo(
-    () => filterRoomsByTab(rooms, activeTab),
-    [rooms, activeTab],
+    () => filterRoomsByTab(allRooms, activeTab),
+    [allRooms, activeTab],
   );
   const searchedRooms = useMemo(
     () => searchRooms(filteredByTab, search),
@@ -60,6 +57,7 @@ export const useRoomManagement = (itemsPerPage = 10) => {
 
   return {
     rooms: currentRooms,
+    loading,
     activeTab,
     setActiveTab,
     search,

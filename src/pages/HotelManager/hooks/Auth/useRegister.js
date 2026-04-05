@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../../../../services/api";
+import { toast } from "react-toastify";
 
 export const useRegister = () => {
-  const navigate = useNavigate();
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -11,29 +10,29 @@ export const useRegister = () => {
     phone: "",
     password: "",
     confirmPassword: "",
-    agree: false
+    agree: false,
   });
 
+  const [file, setFile] = useState(null);
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [errors, setErrors] = useState({});
-  const [setSuccess] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
     setForm({
       ...form,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     });
-    // Xóa error khi user bắt đầu nhập lại
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: null
-      });
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
     }
   };
 
@@ -51,45 +50,60 @@ export const useRegister = () => {
       return;
     }
 
+    if (!file) {
+      setError("Vui lòng tải lên Giấy phép kinh doanh (hình ảnh).");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setErrors({});
 
     try {
+      // 1. Upload ảnh giấy phép lên ImgBB
+      const imgBBApiKey = import.meta.env.VITE_IMGBB_API_KEY;
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const uploadResponse = await fetch(`https://api.imgbb.com/1/upload?key=${imgBBApiKey}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const imgData = await uploadResponse.json();
+
+      if (!imgData.success) {
+        throw new Error("Không thể tải lên giấy phép kinh doanh.");
+      }
+
+      const downloadURL = imgData.data.url;
+
+      // 2. Gọi API đăng ký kèm đường dẫn ảnh
       const data = {
         name: `${form.firstName} ${form.lastName}`.trim(),
         email: form.email,
         phone: form.phone,
         password: form.password,
-        password_confirmation: form.confirmPassword, // Laravel confirmed validation
-        role: 2 // Hotel manager role
+        password_confirmation: form.confirmPassword,
+        business_license_url: downloadURL,
+        role: 2,
       };
 
-      const response = await api.post('/auth/register', data);
+      const response = await api.post("/auth/hotel-manager/register", data);
 
-      setSuccess(true);
-      // Redirect to login after 1.5 seconds
-      setTimeout(() => {
-        navigate('/hotel-manager/login');
-      }, 1500);
-      console.log("Registration successful:", response.data);
+      if (response.data.status === "success") {
+        setSuccess(true);
+        toast.success("Đăng ký thành công!");
+        // setTimeout(() => navigate("/hotel-manager/login"), 3000);
+      }
     } catch (err) {
-      // Handle validation errors from backend
       if (err.response?.data?.errors) {
-        const validationErrors = err.response.data.errors;
-        // Flatten array errors to string
-        const formattedErrors = {};
-        Object.keys(validationErrors).forEach(key => {
-          if (Array.isArray(validationErrors[key])) {
-            formattedErrors[key] = validationErrors[key][0]; // Lấy lỗi đầu tiên
-          } else {
-            formattedErrors[key] = validationErrors[key];
-          }
-        });
-        setErrors(formattedErrors);
         setError(err.response.data.message || "Dữ liệu không hợp lệ");
+        setErrors(err.response.data.errors);
       } else {
-        setError(err.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại.");
+        setError(
+          err.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại.",
+        );
       }
       console.error("Registration error:", err);
     } finally {
@@ -99,14 +113,17 @@ export const useRegister = () => {
 
   return {
     form,
+    file,
     showPass,
     showConfirm,
     loading,
     error,
     errors,
+    success,
     handleChange,
+    handleFileChange,
     togglePass,
     toggleConfirm,
-    handleSubmit
+    handleSubmit,
   };
 };

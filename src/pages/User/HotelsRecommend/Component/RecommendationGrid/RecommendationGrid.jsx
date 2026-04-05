@@ -28,7 +28,21 @@ const RecommendationGrid = ({ hotels }) => {
             price={hotel.price}
             rating={(hotel.hotel_class / 10).toFixed(1)}
             detailsUrl={`/hotel/${hotel.id}`}
-            amenities={hotel.amenities ? JSON.parse(hotel.amenities) : []}
+            amenities={(() => {
+              const data = hotel.amenities;
+              if (!data) return [];
+              if (Array.isArray(data)) return data;
+              if (typeof data !== 'string') return [];
+              try {
+                if (data.trim().startsWith('[') && data.trim().endsWith(']')) {
+                  return JSON.parse(data);
+                }
+                return data.split(',').map(item => item.trim()).filter(Boolean);
+              } catch (e) {
+                console.error("Error parsing amenities:", e);
+                return [];
+              }
+            })()}
           />
 
         </div>

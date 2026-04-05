@@ -1,22 +1,23 @@
 import api from "./api";
 import qs from "qs";
 const formatDate = (dateString) => {
-  if (!dateString) return '';
+  if (!dateString) return "";
 
   // Nếu là Date object
   if (dateString instanceof Date) {
-    return dateString.toISOString().split('T')[0];
+    return dateString.toISOString().split("T")[0];
   }
 
   // Nếu là string date
   const date = new Date(dateString);
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 };
 export const hotelService = {
   async searchHotels(params = {}) {
     const response = await api.get("/auth/hotels/search", {
       params,
-      paramsSerializer: (p) => qs.stringify(p, { arrayFormat: "brackets", encode: true }),
+      paramsSerializer: (p) =>
+        qs.stringify(p, { arrayFormat: "brackets", encode: true }),
     });
 
     if (response.data.status === 200) {
@@ -35,7 +36,7 @@ export const hotelService = {
     return { hotels: [], pagination: {}, total: 0 };
   },
   async getDestinationsCount() {
-    return api.get('auth/destinations/count').then(res => res.data);
+    return api.get("auth/destinations/count").then((res) => res.data);
   },
   async getTopHotel() {
     const response = await api.get("/auth/tophotels");
@@ -43,22 +44,27 @@ export const hotelService = {
   },
   async getAvailableRooms(hotelId, checkIn, checkOut, guests = 1) {
     try {
-      const response = await api.get(`/auth/hotels/${hotelId}/available-rooms`, {
-        params: {
-          checkIn: formatDate(checkIn),
-          checkOut: formatDate(checkOut),
-          guests
-        }
-      });
+      const response = await api.get(
+        `/auth/hotels/${hotelId}/available-rooms`,
+        {
+          params: {
+            checkIn: formatDate(checkIn),
+            checkOut: formatDate(checkOut),
+            guests,
+          },
+        },
+      );
 
       // Dựa trên cấu trúc response của bạn
       if (response.data.status === 200 || response.data.success) {
         return response.data.data || []; // Trả về data từ API
       } else {
-        throw new Error(response.data.message || 'Failed to fetch available rooms');
+        throw new Error(
+          response.data.message || "Failed to fetch available rooms",
+        );
       }
     } catch (error) {
-      console.error('Error fetching available rooms:', error);
+      console.error("Error fetching available rooms:", error);
       throw error;
     }
   },
@@ -76,7 +82,7 @@ export const hotelService = {
   },
 
   async getHotelManagerHotelById(id) {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     const response = await api.get(`/auth/hotel-manager/hotels/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -88,7 +94,7 @@ export const hotelService = {
       const response = await api.delete(`/auth/hotel-manager/hotels/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Lỗi xóa khách sạn hotel manager', error);
+      console.error("Lỗi xóa khách sạn hotel manager", error);
       throw error;
     }
   },
@@ -98,7 +104,7 @@ export const hotelService = {
       const response = await api.post(`/auth/hotel-manager/hotels/${id}`, data);
       return response.data;
     } catch (error) {
-      console.error('Lỗi cập nhật khách sạn hotel manager', error);
+      console.error("Lỗi cập nhật khách sạn hotel manager", error);
       throw error;
     }
   },
@@ -110,9 +116,7 @@ export const hotelService = {
     try {
       const token = localStorage.getItem("token");
 
-      const headers = token
-        ? { Authorization: `Bearer ${token}` }
-        : {}; // không có token → guest
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}; // không có token → guest
 
       const response = await api.get("/auth/recommendations", { headers });
 
@@ -124,39 +128,39 @@ export const hotelService = {
   },
   async getDeleteHotel(id) {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error('Authentication no token not found')
+        throw new Error("Authentication no token not found");
       }
       const response = await api.delete(`/auth/hotel/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
     } catch (error) {
-      console.log('Không thể xóa người dùng');
+      console.log("Không thể xóa người dùng");
     }
   },
   async updateHotel(id, data) {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error('Authentication no token not found')
+        throw new Error("Authentication no token not found");
       }
       const response = await api.put(`auth/hotel/${id}`, data, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
     } catch (error) {
-      console.log('Không thể cập nhật khách sạn');
+      console.log("Không thể cập nhật khách sạn");
     }
   },
   async getHotelManagerHotels() {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('Chưa có token');
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Chưa có token");
 
-      const response = await api.get('/auth/hotel-manager/hotels', {
-        headers: { Authorization: `Bearer ${token}` }
+      const response = await api.get("/auth/hotel-manager/hotels", {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       // Hỗ trợ cả response theo 2 cách: { success: true } và { status: true } (hoặc status: 200)
@@ -170,43 +174,185 @@ export const hotelService = {
       }
       return [];
     } catch (error) {
-      console.error('Lỗi lấy hotel manager', error);
+      console.error("Lỗi lấy hotel manager", error);
       return [];
     }
   },
   async createHotelManagerHotel(payload) {
     try {
-      const token = localStorage.getItem('token');
-      const res = await api.post('/auth/hotel-manager/hotels', payload, {
+      const token = localStorage.getItem("token");
+      const res = await api.post("/auth/hotel-manager/hotels", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       // Return the hotel object directly, not wrapper
       return res.data?.data ?? res.data;
-    }
-    catch (error) {
-      console.error('Lỗi createHotelManagerHotel', error);
+    } catch (error) {
+      console.error("Lỗi createHotelManagerHotel", error);
       throw error;
     }
   },
   async uploadHotelImages(hotelId, imageFiles) {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const formData = new FormData();
       imageFiles.forEach((file) => {
-        formData.append('images', file);
+        // Laravel expects array fields for multiple files, safest to send as images[]
+        formData.append("images[]", file);
       });
 
-      const res = await api.post(`/auth/hotel-manager/hotels/${hotelId}/images`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
+      const res = await api.post(
+        `/auth/hotel-manager/hotels/${hotelId}/images`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
         },
-      });
+      );
 
       return res.data;
     } catch (error) {
-      console.error('Lỗi uploadHotelImages', error);
+      console.error("Lỗi uploadHotelImages", error);
+      throw error;
+    }
+  },
+
+  async getHotelManagerRooms() {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Chưa có token");
+
+      const response = await api.get("/auth/hotel-manager/rooms_all", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const success =
+        response.data?.success === true ||
+        response.data?.status === true ||
+        response.data?.status === 200;
+
+      if (success) {
+        return response.data?.data || [];
+      }
+      return [];
+    } catch (error) {
+      console.error("Lỗi lấy danh sách phòng", error);
+      return [];
+    }
+  },
+
+  async createHotelManagerRoom(hotelId, payload) {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Chưa có token");
+
+      const res = await api.post(
+        `/auth/hotel-manager/rooms/${hotelId}/store`,
+        payload,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      return res.data;
+    } catch (error) {
+      console.error("Lỗi tạo phòng", error);
+      throw error;
+    }
+  },
+
+  async createRoomNumbers(roomId, quantity, status = "available") {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Chưa có token");
+
+      const res = await api.post(
+        `/auth/hotel-manager/rooms/${roomId}/room-numbers`,
+        { quantity, status },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      return res.data;
+    } catch (error) {
+      console.error("Lỗi tạo room numbers", error);
+      throw error;
+    }
+  },
+
+  async getHotelManagerRoomById(roomId) {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Chưa có token");
+
+      const response = await api.get(`/auth/hotel-manager/rooms/${roomId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data?.data || response.data;
+    } catch (error) {
+      console.error("Lỗi lấy thông tin phòng", error);
+      throw error;
+    }
+  },
+
+  async updateHotelManagerRoom(roomId, payload) {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Chưa có token");
+
+      // Laravel thường dùng POST với _method=PUT hoặc PATCH nếu multipart
+      // Nhưng ở đây user ghi Route::post('/rooms/{id}')
+      const res = await api.post(
+        `/auth/hotel-manager/rooms/${roomId}/update`,
+        payload,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      return res.data;
+    } catch (error) {
+      console.error("Lỗi cập nhật phòng", error);
+      throw error;
+    }
+  },
+
+  async deleteHotelManagerHotelImages(hotelId, imageIdentifiers = []) {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Chưa có token");
+
+      const response = await api.delete(
+        `/auth/hotel-manager/hotels/${hotelId}/images`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          data: {
+            images: imageIdentifiers,
+          },
+        },
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error("Lỗi deleteHotelManagerHotelImages", error);
+      throw error;
+    }
+  },
+
+  async getRoomDetail(roomId) {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Chưa có token");
+
+      const response = await api.get(`/auth/hotel-manager/rooms_detail/${roomId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("Lỗi lấy chi tiết phòng", error);
       throw error;
     }
   },

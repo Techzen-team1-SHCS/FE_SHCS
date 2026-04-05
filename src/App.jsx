@@ -35,12 +35,15 @@ import Hotel from "./pages/HotelManager/Main/Hotel/Hotel";
 import Notifications from "./pages/HotelManager/Main/Notification/Notifcation";
 import Analysis from "./pages/HotelManager/Main/Analysis/Analysis";
 import RegisterHotel from "./pages/HotelManager/Main/RegisterHotel/RegisterHotel";
+import HotelManagerChatDashboard from "./pages/HotelManager/Main/Chat/HotelManagerChatDashboard";
 import AddRoom from "./pages/HotelManager/Main/Room/AddRoom";
 import EditRoom from "./pages/HotelManager/Main/Room/EditRoom";
 import AuthPage from "./pages/HotelManager/Main/Auth/AuthPage";
 import Register from "./pages/HotelManager/Components/Auth/Register/Register";
 import RoomManagement from "./pages/HotelManager/Main/Room/RoomManagement";
 import Housekeeping from "./pages/HotelManager/Main/Housekeeping/Housekeeping";
+import StaffManagement from "./pages/HotelManager/Main/Staff/StaffManagement";
+import RequireHotelManagerAuth from "./components/RequireHotelManagerAuth";
 
 const queryClient = new QueryClient();
 
@@ -84,32 +87,39 @@ function App() {
               <Route path="/admin/settings" element={<SettingPage />} />
             </Route>
 
-            {/* Route hotel manager */}
-            <Route element={<HotelManagerLayout />}>
-              <Route path="/hotel-manager/hotel" element={<Hotel />} />
-              <Route path="/hotel-manager/rooms" element={<RoomManagement />} />
-              <Route path="/hotel-manager/rooms/add" element={<AddRoom />} />
-              <Route
-                path="/hotel-manager/rooms/edit/:id"
-                element={<EditRoom />}
-              />
-              <Route
-                path="/hotel-manager/housekeeping"
-                element={<Housekeeping />}
-              />
-              <Route
-                path="/hotel-manager/hotel/:id"
-                element={<HotelManagerHotelDetail />}
-              />
-              <Route
-                path="/hotel-manager/registerhotel"
-                element={<RegisterHotel />}
-              />
-              <Route path="/hotel-manager/analysis" element={<Analysis />} />
-              <Route
-                path="/hotel-manager/notification"
-                element={<Notifications />}
-              />
+            {/* Route hotel manager — cần đăng nhập role hotel manager */}
+            <Route element={<RequireHotelManagerAuth />}>
+              <Route element={<HotelManagerLayout />}>
+                <Route path="/hotel-manager/hotel" element={<Hotel />} />
+                <Route path="/hotel-manager/rooms" element={<RoomManagement />} />
+                <Route path="/hotel-manager/rooms/add" element={<AddRoom />} />
+                <Route
+                  path="/hotel-manager/rooms/edit/:id"
+                  element={<EditRoom />}
+                />
+                <Route
+                  path="/hotel-manager/housekeeping"
+                  element={<Housekeeping />}
+                />
+                <Route
+                  path="/hotel-manager/hotel/:id"
+                  element={<HotelManagerHotelDetail />}
+                />
+                <Route
+                  path="/hotel-manager/registerhotel"
+                  element={<RegisterHotel />}
+                />
+                <Route path="/hotel-manager/analysis" element={<Analysis />} />
+                <Route
+                  path="/hotel-manager/notification"
+                  element={<Notifications />}
+                />
+                <Route
+                  path="/hotel-manager/chat"
+                  element={<HotelManagerChatDashboard />}
+                />
+                <Route path="/hotel-manager/staff" element={<StaffManagement />} />
+              </Route>
             </Route>
 
             <Route path="/hotel-manager/login" element={<AuthPage />} />
