@@ -1,9 +1,9 @@
 import styles from "../../Main/Housekeeping/Housekeeping.module.css";
 import { HOUSEKEEPING_TABLE_COLUMNS } from "../../Constants/Housekeeping/housekeepingTableColumns";
 import { getScheduleStatusClass } from "../../Helpers/HousekeepingHelpers";
-import { FiEye, FiMoreHorizontal } from "react-icons/fi";
+import { FiEye, FiMoreHorizontal, FiEdit2 } from "react-icons/fi";
 
-const HousekeepingTable = ({ schedules }) => {
+const HousekeepingTable = ({ schedules, onEdit }) => {
   return (
     <div className={styles.tableWrap}>
       <table className={styles.table}>
@@ -34,7 +34,7 @@ const HousekeepingTable = ({ schedules }) => {
                   <td>
                     <div className={styles.staffInfo}>
                       <div className={styles.staffAvatar}>
-                        {schedule.staffAssigned.split(" ").map((n) => n[0]).join("")}
+                        {schedule.staffAssigned && schedule.staffAssigned.includes(" ") ? schedule.staffAssigned.split(" ").map((n) => n[0]).join("") : schedule.staffAssigned ? schedule.staffAssigned[0] : ""}
                       </div>
                       <span>{schedule.staffAssigned}</span>
                     </div>
@@ -49,6 +49,9 @@ const HousekeepingTable = ({ schedules }) => {
                   <td>
                     <button className={styles.actionBtn} title="View">
                       <FiEye size={16} />
+                    </button>
+                    <button className={styles.actionBtn} title="Edit" onClick={() => onEdit && onEdit(schedule)}>
+                      <FiEdit2 size={16} />
                     </button>
                     <button className={styles.actionBtn} title="More">
                       <FiMoreHorizontal size={16} />

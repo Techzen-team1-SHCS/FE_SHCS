@@ -88,7 +88,7 @@ function App() {
             </Route>
 
             {/* Route hotel manager — cần đăng nhập role hotel manager */}
-            <Route element={<RequireHotelManagerAuth />}>
+            {/* <Route element={<RequireHotelManagerAuth />}> */}
               <Route element={<HotelManagerLayout />}>
                 <Route path="/hotel-manager/hotel" element={<Hotel />} />
                 <Route path="/hotel-manager/rooms" element={<RoomManagement />} />
@@ -120,7 +120,7 @@ function App() {
                 />
                 <Route path="/hotel-manager/staff" element={<StaffManagement />} />
               </Route>
-            </Route>
+            {/* </Route> */}
 
             <Route path="/hotel-manager/login" element={<AuthPage />} />
             <Route path="/hotel-manager/register" element={<Register />} />

@@ -29,3 +29,13 @@ export const getScheduleStatusClass = (status) => {
       return "";
   }
 };
+
+export const validateHousekeepingForm = (formData) => {
+  const errors = {};
+  if (!formData.roomNo) errors.roomNo = "Room Number is required";
+  if (!formData.chores) errors.chores = "Chores are required";
+  if (!formData.staffAssigned) errors.staffAssigned = "Staff assignment is required";
+  if (!formData.startDate) errors.startDate = "Start date is required";
+  if (!formData.endDate) errors.endDate = "End date is required";
+  return errors;
+};

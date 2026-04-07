@@ -4,6 +4,7 @@ import HousekeepingTable from "../../Components/Housekeeping/HousekeepingTable";
 import { useHousekeepingManagement } from "../../hooks/useHousekeepingManagement";
 import { HOUSEKEEPING_TABS } from "../../Constants/Housekeeping/housekeepingTabs";
 import { housekeepingStatistics } from "../../Mock/housekeepingData";
+import HousekeepingModal from "../../Components/Housekeeping/HousekeepingModal";
 
 const HousekeepingPage = () => {
   const {
@@ -16,6 +17,12 @@ const HousekeepingPage = () => {
     setCurrentPage,
     pages,
     totalPages,
+    isModalOpen,
+    modalData,
+    handleOpenAddModal,
+    handleOpenEditModal,
+    handleCloseModal,
+    handleSaveSchedule,
   } = useHousekeepingManagement(10);
 
   const managementColors = ["#10b981", "#fbbf24", "#ef4444", "#d1d5db"];
@@ -57,7 +64,7 @@ const HousekeepingPage = () => {
         </div>
         <div className={styles.actions}>
           <button className={styles.filterBtn}>🔽 Filter</button>
-          <button className={styles.addBtn}>+ Add new schedule</button>
+          <button className={styles.addBtn} onClick={handleOpenAddModal}>+ Add new schedule</button>
         </div>
       </div>
 
@@ -76,7 +83,7 @@ const HousekeepingPage = () => {
       </div>
 
       {/* Table */}
-      <HousekeepingTable schedules={schedules} />
+      <HousekeepingTable schedules={schedules} onEdit={handleOpenEditModal} />
 
       {/* Pagination */}
       <div className={styles.pagination}>
@@ -112,6 +119,13 @@ const HousekeepingPage = () => {
           </button>
         </div>
       </div>
+
+      <HousekeepingModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSaveSchedule}
+        initialData={modalData}
+      />
     </div>
   );
 };
