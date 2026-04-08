@@ -1,111 +1,101 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useStaffManagement = () => {
-  const [staffList, setStaffList] = useState([]);
   const [searchId, setSearchId] = useState("");
+  const queryClient = useQueryClient();
 
-  const tokenAdmin = localStorage.getItem("tokenAdmin"); // Standard token admin used. If normal token, it would be token.
+  const tokenAdmin = localStorage.getItem("tokenAdmin");
   const token = localStorage.getItem("token");
   const activeToken = tokenAdmin || token;
 
-  const fetchStaff = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:8000/api/auth/hotel-manager/staff",
-        {
-          headers: {
-            Authorization: `Bearer ${activeToken}`,
-          },
-        },
-      );
-      if (res.data.status === 200) {
-        setStaffList(res.data.data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // ─── 1. Query Data ────────────────────────────────────────────────────────
+  const { data: staffList = [], isLoading } = useQuery({
+    queryKey: ["staff"],
+    queryFn: async () => {
+      const res = await axios.get("http://localhost:8000/api/auth/hotel-manager/staff", {
+        headers: { Authorization: `Bearer ${activeToken}` },
+      });
+      return res.data.status === 200 ? res.data.data : [];
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
-  useEffect(() => {
-    fetchStaff();
-  }, []);
-
-  const deleteStaff = async (id) => {
-    try {
-      const res = await axios.delete(
-        `http://localhost:8000/api/auth/hotel-manager/staff/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${activeToken}`,
-          },
-        },
-      );
-      if (res.data.status === 200) {
-        setStaffList((prev) => prev.filter((staff) => staff.id !== id));
-        toast.success("Xóa nhân viên thành công!");
-      }
-    } catch (error) {
+  // ─── 2. Mutations ─────────────────────────────────────────────────────────
+  const deleteMutation = useMutation({
+    mutationFn: async (id) => {
+      const res = await axios.delete(`http://localhost:8000/api/auth/hotel-manager/staff/${id}`, {
+        headers: { Authorization: `Bearer ${activeToken}` },
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
+      toast.success("Xóa nhân viên thành công!");
+    },
+    onError: (error) => {
       toast.error("Lỗi khi xóa nhân viên!");
       console.error(error);
-    }
-  };
+    },
+  });
 
-  const addStaff = async (newStaff) => {
-    try {
-      const res = await axios.post(
-        `http://localhost:8000/api/auth/hotel-manager/staff`,
-        newStaff,
-        {
-          headers: {
-            Authorization: `Bearer ${activeToken}`,
-          },
-        },
-      );
-      if (res.data.status === 200) {
-        fetchStaff();
-        toast.success("Thêm nhân viên thành công!");
-      }
-    } catch (error) {
+  const addMutation = useMutation({
+    mutationFn: async (newStaff) => {
+      const res = await axios.post("http://localhost:8000/api/auth/hotel-manager/staff", newStaff, {
+        headers: { Authorization: `Bearer ${activeToken}` },
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
+      toast.success("Thêm nhân viên thành công!");
+    },
+    onError: (error) => {
       toast.error("Lỗi khi thêm nhân viên!");
       console.error(error);
-    }
-  };
+    },
+  });
 
-  const editStaff = async (id, updatedStaff) => {
-    try {
-      const res = await axios.put(
-        `http://localhost:8000/api/auth/hotel-manager/staff/${id}`,
-        updatedStaff,
-        {
-          headers: {
-            Authorization: `Bearer ${activeToken}`,
-          },
-        },
-      );
-      if (res.data.status === 200) {
-        fetchStaff();
-        toast.success("Cập nhật nhân viên thành công!");
-      }
-    } catch (error) {
+  const editMutation = useMutation({
+    mutationFn: async ({ id, updatedStaff }) => {
+      const res = await axios.put(`http://localhost:8000/api/auth/hotel-manager/staff/${id}`, updatedStaff, {
+        headers: { Authorization: `Bearer ${activeToken}` },
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
+      toast.success("Cập nhật nhân viên thành công!");
+    },
+    onError: (error) => {
       toast.error("Lỗi khi cập nhật nhân viên!");
       console.error(error);
-    }
-  };
+    },
+  });
 
+  // ─── 3. Helper wrappers ───────────────────────────────────────────────────
+  const deleteStaff = (id) => deleteMutation.mutate(id);
+  const addStaff = (newStaff) => addMutation.mutate(newStaff);
+  const editStaff = (id, updatedStaff) => editMutation.mutate({ id, updatedStaff });
+
+  // ─── 4. Filters ───────────────────────────────────────────────────────────
   const displayList = staffList.filter(
     (staff) =>
       staff.id.toString().includes(searchId) ||
-      staff.name?.toLowerCase().includes(searchId.toLowerCase()),
+      (staff.name?.toLowerCase().includes(searchId.toLowerCase())) ||
+      (staff.email?.toLowerCase().includes(searchId.toLowerCase()))
   );
 
   return {
-    staffList: displayList,
+    staffList,
+    displayList,
     searchId,
     setSearchId,
     deleteStaff,
     addStaff,
     editStaff,
+    loading: isLoading, // Added loading state for UI
   };
 };
