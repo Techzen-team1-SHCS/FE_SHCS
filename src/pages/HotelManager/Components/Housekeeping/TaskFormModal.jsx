@@ -96,12 +96,16 @@ const TaskFormModal = ({ isOpen, onClose, onSubmit, rooms, staff, editTask }) =>
               onChange={(e) => set("room_number_id", e.target.value)}
             >
               <option value="">-- Chọn phòng --</option>
-              {rooms.map((r) => (
-                <option key={r.id} value={r.id}>
-                  Phòng {r.room_number}
-                  {r.room?.room_type ? ` (${r.room.room_type})` : ""}
-                  {r.do_not_disturb ? " 🚫DND" : ""}
-                </option>
+              {rooms.map((hotelGroup) => (
+                <optgroup key={hotelGroup.hotel_id} label={hotelGroup.hotel_name}>
+                  {hotelGroup.rooms.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      Phòng {r.room_number}
+                      {r.room?.room_type ? ` (${r.room.room_type})` : ""}
+                      {r.do_not_disturb ? " 🚫DND" : ""}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
             {errors.room_number_id && <p className={styles.errMsg}>{errors.room_number_id}</p>}

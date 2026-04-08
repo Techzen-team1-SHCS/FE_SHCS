@@ -234,7 +234,9 @@ export const hotelService = {
         response.data?.status === 200;
 
       if (success) {
-        return response.data?.data || [];
+        const data = response.data?.data;
+        // Handle both paginated ({ data: [...] }) and plain array responses
+        return Array.isArray(data) ? data : (data?.data || []);
       }
       return [];
     } catch (error) {

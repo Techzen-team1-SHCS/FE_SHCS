@@ -19,7 +19,15 @@ const TaskCard = ({ task, onUpdateStatus, onEdit, onDelete }) => {
   const dnd = task.room_number?.do_not_disturb;
 
   return (
-    <div className={styles.card} data-priority={task.priority}>
+    <div
+      className={styles.card}
+      data-priority={task.priority}
+      draggable
+      onDragStart={(e) => {
+        e.dataTransfer.setData("text/plain", task.id);
+        e.dataTransfer.effectAllowed = "move";
+      }}
+    >
       {/* Header */}
       <div className={styles.cardHeader}>
         <div className={styles.roomBadge}>
@@ -130,6 +138,7 @@ const TaskCard = ({ task, onUpdateStatus, onEdit, onDelete }) => {
 
 const TaskBoardView = ({ tasks, loadingTasks, onUpdateStatus, onEdit, onDelete }) => {
   const [collapsed, setCollapsed] = useState({});
+  const [dragOverCol, setDragOverCol] = useState(null);
 
   const grouped = COLUMNS.reduce((acc, col) => {
     acc[col] = tasks.filter((t) => t.task_status === col);
@@ -159,7 +168,31 @@ const TaskBoardView = ({ tasks, loadingTasks, onUpdateStatus, onEdit, onDelete }
             </div>
 
             {!isCollapsed && (
-              <div className={styles.columnBody}>
+              <div
+                className={styles.columnBody}
+                style={dragOverCol === col ? { backgroundColor: cfg.bg, outline: `2px dashed ${cfg.color}`, outlineOffset: "-4px" } : {}}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = "move";
+                  if (dragOverCol !== col) setDragOverCol(col);
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  if (e.currentTarget.contains(e.relatedTarget)) return;
+                  setDragOverCol(null);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOverCol(null);
+                  const taskId = e.dataTransfer.getData("text/plain");
+                  if (taskId) {
+                    const task = tasks.find((t) => t.id == taskId);
+                    if (task && task.task_status !== col) {
+                      onUpdateStatus(taskId, col);
+                    }
+                  }
+                }}
+              >
                 {loadingTasks ? (
                   <div className={styles.skeleton}>
                     {[1, 2].map((i) => (

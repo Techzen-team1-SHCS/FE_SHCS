@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const BASE = `${import.meta.env.VITE_API_URL}/auth/hotel-manager/housekeeping`;
 
@@ -10,22 +11,9 @@ const getHeaders = () => {
 };
 
 export const useHousekeepingManagement = () => {
-  // ─── State ────────────────────────────────────────────────────────────────
-  const [dashboard, setDashboard] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const [tasksMeta, setTasksMeta] = useState({});
-  const [rooms, setRooms] = useState([]);
-  const [issues, setIssues] = useState([]);
-  const [issuesMeta, setIssuesMeta] = useState({});
-  const [logs, setLogs] = useState([]);
-  const [staff, setStaff] = useState([]);
+  const queryClient = useQueryClient();
 
-  const [loadingDashboard, setLoadingDashboard] = useState(false);
-  const [loadingTasks, setLoadingTasks] = useState(false);
-  const [loadingRooms, setLoadingRooms] = useState(false);
-  const [loadingIssues, setLoadingIssues] = useState(false);
-
-  // ─── Filters ──────────────────────────────────────────────────────────────
+  // ─── Filters State ────────────────────────────────────────────────────────
   const [taskFilters, setTaskFilters] = useState({
     status: "",
     date: new Date().toISOString().split("T")[0],
@@ -37,228 +25,194 @@ export const useHousekeepingManagement = () => {
   const [issueFilters, setIssueFilters] = useState({ status: "", page: 1, per_page: 15 });
   const [roomFilter, setRoomFilter] = useState("");
 
-  // ─── 1. Dashboard ─────────────────────────────────────────────────────────
-  const fetchDashboard = useCallback(async () => {
-    setLoadingDashboard(true);
-    try {
+  // ─── 1. Dashboard Query ───────────────────────────────────────────────────
+  const { data: dashboard = null, isLoading: loadingDashboard } = useQuery({
+    queryKey: ["hk_dashboard"],
+    queryFn: async () => {
       const res = await axios.get(`${BASE}/dashboard`, { headers: getHeaders() });
-      if (res.data.status) setDashboard(res.data.data);
-    } catch (err) {
-      console.error("Dashboard fetch error:", err);
-    } finally {
-      setLoadingDashboard(false);
-    }
-  }, []);
+      return res.data.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
-  // ─── 2. Tasks ─────────────────────────────────────────────────────────────
-  const fetchTasks = useCallback(async (filters = taskFilters) => {
-    setLoadingTasks(true);
-    try {
-      const params = Object.fromEntries(
-        Object.entries(filters).filter(([, v]) => v !== "" && v !== null)
-      );
+  // ─── 2. Tasks Query ───────────────────────────────────────────────────────
+  const { data: tasksData = { data: [], total: 0 }, isLoading: loadingTasks } = useQuery({
+    queryKey: ["hk_tasks", taskFilters],
+    queryFn: async () => {
+      const params = Object.fromEntries(Object.entries(taskFilters).filter(([, v]) => v !== "" && v !== null));
       const res = await axios.get(`${BASE}/tasks`, { headers: getHeaders(), params });
-      if (res.data.status) {
-        setTasks(res.data.data.data || []);
-        setTasksMeta(res.data.data || {});
-      }
-    } catch (err) {
-      console.error("Tasks fetch error:", err);
-    } finally {
-      setLoadingTasks(false);
-    }
-  }, []);
+      return res.data.data;
+    },
+    staleTime: 2 * 60 * 1000,
+  });
 
-  const createTask = async (payload) => {
-    try {
+  // ─── 3. Rooms Query ───────────────────────────────────────────────────────
+  const { data: rooms = [], isLoading: loadingRooms } = useQuery({
+    queryKey: ["hk_rooms", roomFilter],
+    queryFn: async () => {
+      const params = roomFilter ? { hk_status: roomFilter } : {};
+      const res = await axios.get(`${BASE}/rooms`, { headers: getHeaders(), params });
+      return res.data.data;
+    },
+    staleTime: 2 * 60 * 1000,
+  });
+
+  // ─── 4. Issues Query ──────────────────────────────────────────────────────
+  const { data: issuesData = { data: [], total: 0 }, isLoading: loadingIssues } = useQuery({
+    queryKey: ["hk_issues", issueFilters],
+    queryFn: async () => {
+      const params = Object.fromEntries(Object.entries(issueFilters).filter(([, v]) => v !== ""));
+      const res = await axios.get(`${BASE}/issues`, { headers: getHeaders(), params });
+      return res.data.data;
+    },
+    staleTime: 2 * 60 * 1000,
+  });
+
+  // ─── 5. Staff Query ───────────────────────────────────────────────────────
+  const { data: staff = [] } = useQuery({
+    queryKey: ["hk_staff"],
+    queryFn: async () => {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/auth/hotel-manager/staff`, { headers: getHeaders() });
+      return res.data.status === 200 ? res.data.data : [];
+    },
+    staleTime: 10 * 60 * 1000,
+  });
+
+  // ─── 6. Mutations ─────────────────────────────────────────────────────────
+  const InvalidateAll = () => {
+    queryClient.invalidateQueries({ queryKey: ["hk_dashboard"] });
+    queryClient.invalidateQueries({ queryKey: ["hk_tasks"] });
+    queryClient.invalidateQueries({ queryKey: ["hk_rooms"] });
+    queryClient.invalidateQueries({ queryKey: ["hk_issues"] });
+  };
+
+  const createTaskMut = useMutation({
+    mutationFn: async (payload) => {
       const res = await axios.post(`${BASE}/tasks`, payload, { headers: getHeaders() });
-      if (res.data.status) {
-        toast.success("✅ Tạo nhiệm vụ thành công!");
-        await Promise.all([fetchTasks(), fetchDashboard()]);
-        return res.data.data;
-      }
-    } catch (err) {
+      return res.data.data;
+    },
+    onSuccess: () => {
+      toast.success("✅ Tạo nhiệm vụ thành công!");
+      InvalidateAll();
+    },
+    onError: (err) => {
       const msg = err.response?.data?.message || "Lỗi khi tạo nhiệm vụ";
       toast.error(`❌ ${msg}`);
-      throw err;
-    }
-  };
+    },
+  });
 
-  const updateTask = async (id, payload) => {
-    try {
+  const updateTaskMut = useMutation({
+    mutationFn: async ({ id, payload }) => {
       const res = await axios.put(`${BASE}/tasks/${id}`, payload, { headers: getHeaders() });
-      if (res.data.status) {
-        toast.success("✅ Cập nhật nhiệm vụ thành công!");
-        await Promise.all([fetchTasks(), fetchDashboard(), fetchRooms()]);
-        return res.data.data;
+      return res.data;
+    },
+    onMutate: async ({ id, payload }) => {
+      await queryClient.cancelQueries({ queryKey: ["hk_tasks"] });
+      const previousTasks = queryClient.getQueryData(["hk_tasks", taskFilters]);
+
+      // Cập nhật mảng data trực tiếp trước khi API chạy xong
+      if (previousTasks && previousTasks.data) {
+        queryClient.setQueryData(["hk_tasks", taskFilters], {
+          ...previousTasks,
+          data: previousTasks.data.map((task) =>
+            task.id == id ? { ...task, ...payload } : task
+          ),
+        });
       }
-    } catch (err) {
+      return { previousTasks };
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(["hk_tasks", taskFilters], context.previousTasks);
+      }
       toast.error("❌ Lỗi khi cập nhật nhiệm vụ");
-      throw err;
-    }
-  };
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["hk_tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["hk_dashboard"] });
+    },
+    onSuccess: (data, variables) => {
+      // Chỉ hiện toast khi chỉnh sửa form, đối với thao tác kéo thả thì giảm ồn ào UI
+      if (!variables.payload.task_status || Object.keys(variables.payload).length > 1) {
+        toast.success("✅ Cập nhật nhiệm vụ thành công!");
+      }
+    },
+  });
 
-  const deleteTask = async (id) => {
-    try {
+  const deleteTaskMut = useMutation({
+    mutationFn: async (id) => {
       await axios.delete(`${BASE}/tasks/${id}`, { headers: getHeaders() });
+    },
+    onSuccess: () => {
       toast.success("🗑️ Xóa nhiệm vụ thành công!");
-      await Promise.all([fetchTasks(), fetchDashboard()]);
-    } catch (err) {
-      toast.error("❌ Lỗi khi xóa nhiệm vụ");
-    }
-  };
+      InvalidateAll();
+    },
+    onError: () => toast.error("❌ Lỗi khi xóa nhiệm vụ"),
+  });
 
-  // ─── 3. Rooms ─────────────────────────────────────────────────────────────
-  const fetchRooms = useCallback(async (hkStatus = "", hotelId = "") => {
-    setLoadingRooms(true);
-    try {
-      const params = {};
-      if (hkStatus) params.hk_status = hkStatus;
-      if (hotelId)  params.hotel_id  = hotelId;
-      const res = await axios.get(`${BASE}/rooms`, { headers: getHeaders(), params });
-      // API now returns grouped-by-hotel array
-      if (res.data.status) setRooms(res.data.data);
-    } catch (err) {
-      console.error("Rooms fetch error:", err);
-    } finally {
-      setLoadingRooms(false);
-    }
-  }, []);
+  const updateRoomStatusMut = useMutation({
+    mutationFn: async ({ id, payload }) => {
+      const res = await axios.put(`${BASE}/rooms/${id}/status`, payload, { headers: getHeaders() });
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success("✅ Cập nhật trạng thái phòng thành công!");
+      InvalidateAll();
+    },
+    onError: () => toast.error("❌ Lỗi khi cập nhật trạng thái phòng"),
+  });
 
-  const updateRoomStatus = async (id, payload) => {
-    try {
-      const res = await axios.put(`${BASE}/rooms/${id}/status`, payload, {
-        headers: getHeaders(),
-      });
-      if (res.data.status) {
-        toast.success("✅ Cập nhật trạng thái phòng thành công!");
-        await Promise.all([fetchRooms(), fetchDashboard()]);
-        return res.data.data;
-      }
-    } catch (err) {
-      toast.error("❌ Lỗi khi cập nhật trạng thái phòng");
-      throw err;
-    }
-  };
-
-  // ─── 4. Issues ────────────────────────────────────────────────────────────
-  const fetchIssues = useCallback(async (filters = issueFilters) => {
-    setLoadingIssues(true);
-    try {
-      const params = Object.fromEntries(
-        Object.entries(filters).filter(([, v]) => v !== "")
-      );
-      const res = await axios.get(`${BASE}/issues`, { headers: getHeaders(), params });
-      if (res.data.status) {
-        setIssues(res.data.data.data || []);
-        setIssuesMeta(res.data.data || {});
-      }
-    } catch (err) {
-      console.error("Issues fetch error:", err);
-    } finally {
-      setLoadingIssues(false);
-    }
-  }, []);
-
-  const createIssue = async (payload) => {
-    try {
+  const createIssueMut = useMutation({
+    mutationFn: async (payload) => {
       const res = await axios.post(`${BASE}/issues`, payload, { headers: getHeaders() });
-      if (res.data.status) {
-        toast.success("✅ Báo cáo sự cố thành công!");
-        await Promise.all([fetchIssues(), fetchDashboard(), fetchRooms()]);
-        return res.data.data;
-      }
-    } catch (err) {
-      toast.error("❌ Lỗi khi báo cáo sự cố");
-      throw err;
-    }
-  };
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success("✅ Báo cáo sự cố thành công!");
+      InvalidateAll();
+    },
+    onError: () => toast.error("❌ Lỗi khi báo cáo sự cố"),
+  });
 
-  const updateIssueStatus = async (id, payload) => {
-    try {
+  const updateIssueStatusMut = useMutation({
+    mutationFn: async ({ id, payload }) => {
       const res = await axios.put(`${BASE}/issues/${id}`, payload, { headers: getHeaders() });
-      if (res.data.status) {
-        toast.success("✅ Cập nhật sự cố thành công!");
-        await Promise.all([fetchIssues(), fetchDashboard(), fetchRooms()]);
-        return res.data.data;
-      }
-    } catch (err) {
-      toast.error("❌ Lỗi khi cập nhật sự cố");
-      throw err;
-    }
-  };
-
-  // ─── 5. Staff (for assignment dropdowns) ──────────────────────────────────
-  const fetchStaff = useCallback(async () => {
-    try {
-      const token = localStorage.getItem("tokenAdmin") || localStorage.getItem("token");
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/auth/hotel-manager/staff`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (res.data.status === 200) setStaff(res.data.data);
-    } catch (err) {
-      console.error("Staff fetch error:", err);
-    }
-  }, []);
-
-  // ─── 6. Logs ──────────────────────────────────────────────────────────────
-  const fetchLogs = useCallback(async (roomNumberId = "") => {
-    try {
-      const params = roomNumberId ? { room_number_id: roomNumberId } : {};
-      const res = await axios.get(`${BASE}/logs`, { headers: getHeaders(), params });
-      if (res.data.status) setLogs(res.data.data.data || []);
-    } catch (err) {
-      console.error("Logs fetch error:", err);
-    }
-  }, []);
-
-  // ─── Init ─────────────────────────────────────────────────────────────────
-  useEffect(() => {
-    fetchDashboard();
-    fetchTasks();
-    fetchRooms();
-    fetchIssues();
-    fetchStaff();
-  }, []);
-
-  // ─── Refresh all ──────────────────────────────────────────────────────────
-  const refreshAll = () =>
-    Promise.all([fetchDashboard(), fetchTasks(), fetchRooms(), fetchIssues()]);
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success("✅ Cập nhật sự cố thành công!");
+      InvalidateAll();
+    },
+    onError: () => toast.error("❌ Lỗi khi cập nhật sự cố"),
+  });
 
   return {
-    // Data
     dashboard,
-    tasks,
-    tasksMeta,
+    tasks: tasksData.data,
+    tasksMeta: tasksData,
     rooms,
-    issues,
-    issuesMeta,
-    logs,
+    issues: issuesData.data,
+    issuesMeta: issuesData,
     staff,
-    // Loading
+    logs: [], // logs logic simplified or moved if needed
     loadingDashboard,
     loadingTasks,
     loadingRooms,
     loadingIssues,
-    // Filters
-    taskFilters,
-    setTaskFilters,
-    issueFilters,
-    setIssueFilters,
-    roomFilter,
-    setRoomFilter,
-    // Actions
-    fetchTasks,
-    createTask,
-    updateTask,
-    deleteTask,
-    fetchRooms,
-    updateRoomStatus,
-    fetchIssues,
-    createIssue,
-    updateIssueStatus,
-    fetchLogs,
-    refreshAll,
+    taskFilters, setTaskFilters,
+    issueFilters, setIssueFilters,
+    roomFilter, setRoomFilter,
+
+    fetchTasks: () => queryClient.invalidateQueries({ queryKey: ["hk_tasks"] }),
+    fetchRooms: () => queryClient.invalidateQueries({ queryKey: ["hk_rooms"] }),
+    fetchIssues: () => queryClient.invalidateQueries({ queryKey: ["hk_issues"] }),
+    refreshAll: InvalidateAll,
+
+    createTask: createTaskMut.mutateAsync,
+    updateTask: (id, payload) => updateTaskMut.mutateAsync({ id, payload }),
+    deleteTask: deleteTaskMut.mutateAsync,
+    updateRoomStatus: (id, payload) => updateRoomStatusMut.mutateAsync({ id, payload }),
+    createIssue: createIssueMut.mutateAsync,
+    updateIssueStatus: (id, payload) => updateIssueStatusMut.mutateAsync({ id, payload }),
   };
 };

@@ -32,21 +32,8 @@ import {
   FiHome,
 } from "react-icons/fi";
 
-// ─── Stat Card ──────────────────────────────────────────────────────────────
-const StatCard = ({ label, value, color, bg, icon: Icon, sub, loading }) => (
-  <div className={styles.statCard}>
-    <div className={styles.statIconWrap} style={{ background: bg }}>
-      <Icon size={20} color={color} />
-    </div>
-    <div className={styles.statBody}>
-      <p className={styles.statLabel}>{label}</p>
-      <p className={styles.statValue} style={{ color }}>
-        {loading ? <span className={styles.pulse}>—</span> : (value ?? 0)}
-      </p>
-      {sub && <p className={styles.statSub}>{sub}</p>}
-    </div>
-  </div>
-);
+import TaskFilterBar from "../../Components/Housekeeping/TaskFilterBar";
+import StatCard from "../../Components/Housekeeping/StatCard";
 
 // ─── Main Page ───────────────────────────────────────────────────────────────
 const HousekeepingPage = () => {
@@ -121,12 +108,10 @@ const HousekeepingPage = () => {
   const handleTaskFilterChange = (key, value) => {
     const f = { ...taskFilters, [key]: value, page: 1 };
     setTaskFilters(f);
-    fetchTasks(f);
   };
 
   const handleIssueFilterChange = (newFilters) => {
     setIssueFilters(newFilters);
-    fetchIssues(newFilters);
   };
 
   // ── Compute chart data from dashboard
@@ -299,71 +284,13 @@ const HousekeepingPage = () => {
         {activeTab === "tasks" && (
           <>
             {/* Filter bar */}
-            <div className={styles.filterBar}>
-              <div className={styles.filterBarLeft}>
-                {/* Status filter pills */}
-                <div className={styles.statusPills}>
-                  <button
-                    className={`${styles.pill} ${taskFilters.status === "" ? styles.pillActive : ""}`}
-                    onClick={() => handleTaskFilterChange("status", "")}
-                  >
-                    Tất cả
-                  </button>
-                  {Object.entries(TASK_STATUS_CONFIG).map(([k, v]) => (
-                    <button
-                      key={k}
-                      className={`${styles.pill} ${taskFilters.status === k ? styles.pillActive : ""}`}
-                      style={
-                        taskFilters.status === k
-                          ? { background: v.bg, color: v.color, borderColor: v.color }
-                          : {}
-                      }
-                      onClick={() => handleTaskFilterChange("status", taskFilters.status === k ? "" : k)}
-                    >
-                      {v.labelVi}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className={styles.filterBarRight}>
-                {/* Staff dropdown */}
-                <div className={styles.filterField}>
-                  <FiUsers size={13} className={styles.filterIcon} />
-                  <select
-                    className={styles.filterDropdown}
-                    value={taskFilters.staff_id}
-                    onChange={(e) => handleTaskFilterChange("staff_id", e.target.value)}
-                  >
-                    <option value="">Nhân viên</option>
-                    {staff.map((s) => (
-                      <option key={s.id} value={s.id}>{s.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Priority dropdown */}
-                <div className={styles.filterField}>
-                  <FiZap size={13} className={styles.filterIcon} />
-                  <select
-                    className={styles.filterDropdown}
-                    value={taskFilters.priority}
-                    onChange={(e) => handleTaskFilterChange("priority", e.target.value)}
-                  >
-                    <option value="">Ưu tiên</option>
-                    <option value="urgent">🔴 Khẩn cấp</option>
-                    <option value="high">🟠 Cao</option>
-                    <option value="normal">🔵 Bình thường</option>
-                    <option value="low">⚪ Thấp</option>
-                  </select>
-                </div>
-
-                {/* Task count badge */}
-                <span className={styles.countBadge}>
-                  {tasksMeta.total ?? tasks.length} tasks
-                </span>
-              </div>
-            </div>
+            <TaskFilterBar
+              taskFilters={taskFilters}
+              handleTaskFilterChange={handleTaskFilterChange}
+              staff={staff}
+              tasksMeta={tasksMeta}
+              tasks={tasks}
+            />
 
             <TaskBoardView
               tasks={tasks}
@@ -408,6 +335,8 @@ const HousekeepingPage = () => {
             onUpdateRoomStatus={updateRoomStatus}
             roomFilter={roomFilter}
             setRoomFilter={setRoomFilter}
+            globalHkStats={hkStats}
+            totalRooms={dashboard?.total_rooms ?? 0}
           />
         )}
 

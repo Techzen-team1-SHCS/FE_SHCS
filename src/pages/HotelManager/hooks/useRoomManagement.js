@@ -11,19 +11,26 @@ export const useRoomManagement = (itemsPerPage = 10) => {
   const [selectedRoomIds, setSelectedRoomIds] = useState([]);
 
   // Fetch rooms từ API
-  const { data: allRooms = [], isLoading: loading } = useQuery({
+  const { data: rawRooms, isLoading: loading } = useQuery({
     queryKey: ["hotel-manager-rooms"],
     queryFn: () => hotelService.getHotelManagerRooms(),
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });
 
+  // Đảm bảo allRooms luôn là array dù API trả về paginated object hay plain array
+  const allRooms = Array.isArray(rawRooms)
+    ? rawRooms
+    : Array.isArray(rawRooms?.data)
+      ? rawRooms.data
+      : [];
+
   const filteredByTab = useMemo(
     () => filterRoomsByTab(allRooms, activeTab),
     [allRooms, activeTab],
   );
   const searchedRooms = useMemo(
-    () => searchRooms(filteredByTab, search),
+    () => searchRooms(filteredByTab, search) || [],
     [filteredByTab, search],
   );
 

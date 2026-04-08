@@ -1,81 +1,42 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { NOTIFICATION_ITEMS_PER_PAGE } from "../Constants/notifications/notificationConstants";
 import { toast } from "react-toastify";
 import { notificationService } from "../../../services/notificationService";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import "../../../config/echo";
 
 export function useNotifications(user) {
   const [activeTab, setActiveTab] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const [notifications, setNotifications] = useState([]);
-  const [totalItems, setTotalItems] = useState(0);
-  const [loading, setLoading] = useState(false);
-
   const itemsPerPage = NOTIFICATION_ITEMS_PER_PAGE || 10;
+  const queryClient = useQueryClient();
 
-  const fetchNotifications = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = {
-        page: currentPage,
-        limit: itemsPerPage,
-      };
+  // ─── 1. Query Data ────────────────────────────────────────────────────────
+  const { data = { currentItems: [], totalItems: 0 }, isLoading: loading } = useQuery({
+    queryKey: ["notifications", currentPage, activeTab],
+    queryFn: async () => {
+      const params = { page: currentPage, limit: itemsPerPage };
 
       if (activeTab === "Unread") {
         params.unread = 1;
       } else if (activeTab !== "All" && activeTab !== "Read") {
-        // Just in case we support filtering by priority matching tab names
         params.priority = activeTab.toLowerCase();
       }
 
       const res = await notificationService.getNotifications(params);
       
-      // Handle the data structure (Laravel pagination response)
       if (res.data) {
-        setNotifications(res.data);
-        setTotalItems(res.meta?.total || res.data.length);
+        return { currentItems: res.data, totalItems: res.meta?.total || res.data.length };
       } else {
-        // Fallback
-        setNotifications(res);
-        setTotalItems(res.length);
+        return { currentItems: res, totalItems: res.length };
       }
-    } catch (err) {
-      console.error(err);
-      toast.error("Không thể tải thông báo");
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage, itemsPerPage, activeTab]);
+    },
+    staleTime: 60 * 1000,
+    keepPreviousData: true,
+  });
 
-  useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications]);
-
-  // Realtime
-  useEffect(() => {
-    if (!user?.id || !window.Echo) return;
-
-    const channel = window.Echo.private(`user.${user.id}`);
-    
-    channel.listen('NotificationSuccess', (data) => {
-      // Refresh list to keep pagination correct, or just prepend if on first page
-      if (currentPage === 1 && activeTab === 'All') {
-        setNotifications(prev => [data, ...prev].slice(0, itemsPerPage));
-        setTotalItems(prev => prev + 1);
-      } else if (currentPage === 1 && activeTab === 'Unread') {
-        setNotifications(prev => [data, ...prev].slice(0, itemsPerPage));
-        setTotalItems(prev => prev + 1);
-      }
-    });
-
-    return () => {
-      if (channel) {
-        window.Echo.leave(`user.${user.id}`);
-      }
-    };
-  }, [user?.id, currentPage, activeTab, itemsPerPage]);
-
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const { currentItems, totalItems } = data;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
   // Fix page when filter reduces total pages
   useEffect(() => {
@@ -84,69 +45,86 @@ export function useNotifications(user) {
     }
   }, [totalPages, currentPage]);
 
-  const markAsRead = async (id) => {
-    const item = notifications.find(n => n.id === id);
-    if (!item || item.is_read) return;
+  // ─── 2. Realtime Echo Updates ──────────────────────────────────────────────
+  useEffect(() => {
+    if (!user?.id || !window.Echo) return;
 
-    try {
-      await notificationService.markAsRead(id);
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
-      );
+    const channel = window.Echo.private(`user.${user.id}`);
+    
+    channel.listen('NotificationSuccess', () => {
+      queryClient.invalidateQueries(["notifications"]);
+    });
+
+    return () => {
+      if (channel) {
+        window.Echo.leave(`user.${user.id}`);
+      }
+    };
+  }, [user?.id, queryClient]);
+
+  // ─── 3. Mutations ─────────────────────────────────────────────────────────
+  const markAsReadMut = useMutation({
+    mutationFn: (id) => notificationService.markAsRead(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["notifications"]);
       window.dispatchEvent(new Event('notifications-read'));
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error(error);
       toast.error("Không thể đánh dấu đã đọc");
     }
-  };
+  });
 
-  const markAllAsRead = async () => {
-    try {
-      await notificationService.markAllAsRead();
-      fetchNotifications();
+  const markAllAsReadMut = useMutation({
+    mutationFn: () => notificationService.markAllAsRead(),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["notifications"]);
       window.dispatchEvent(new Event('notifications-read'));
       toast.success("Đã đánh dấu tất cả là đã đọc");
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error(error);
       toast.error("Lỗi khi đánh dấu tất cả đã đọc");
     }
-  };
+  });
 
-  const deleteNotification = async (id) => {
-    try {
-      await notificationService.deleteNotification(id);
-      fetchNotifications();
+  const deleteNotificationMut = useMutation({
+    mutationFn: (id) => notificationService.deleteNotification(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["notifications"]);
       window.dispatchEvent(new Event('notifications-read'));
       toast.success("Đã xóa thông báo");
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error(error);
       toast.error("Không thể xóa thông báo");
     }
-  };
+  });
 
-  const clearReadNotifications = async () => {
-    try {
-      await notificationService.clearReadNotifications();
-      fetchNotifications();
+  const clearReadNotificationsMut = useMutation({
+    mutationFn: () => notificationService.clearReadNotifications(),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["notifications"]);
       window.dispatchEvent(new Event('notifications-read'));
       toast.success("Đã dọn dẹp các thông báo cũ");
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error(error);
       toast.error("Lỗi khi dọn dẹp thông báo");
     }
-  };
+  });
 
   return {
     activeTab,
     setActiveTab,
     currentPage,
     setCurrentPage,
-    currentItems: notifications,
+    currentItems,
     totalPages,
     loading,
-    markAsRead,
-    markAllAsRead,
-    deleteNotification,
-    clearReadNotifications
+    markAsRead: markAsReadMut.mutateAsync,
+    markAllAsRead: markAllAsReadMut.mutateAsync,
+    deleteNotification: deleteNotificationMut.mutateAsync,
+    clearReadNotifications: clearReadNotificationsMut.mutateAsync
   };
 }
