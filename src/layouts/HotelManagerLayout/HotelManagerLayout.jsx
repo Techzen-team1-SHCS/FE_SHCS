@@ -24,7 +24,9 @@ const HotelManagerLayout = () => {
     const pathToTitle = {
       "/hotel-manager/hotel": "Hotel",
       "/hotel-manager/rooms": "Rooms",
+      "/hotel-manager/registerhotel": "Register",
       "/hotel-manager/housekeeping": "House keeping",
+      "/hotel-manager/staff": "Staff",
       "/hotel-manager/analysis": "Analysis",
       "/hotel-manager/notification": "Notifications",
     };
@@ -40,7 +42,7 @@ const HotelManagerLayout = () => {
   };
 
   const getRoleText = (role) => {
-    return role === 2 ? "Chủ khách sạn ngu" : "Người dùng";
+    return role === 2 ? "Chủ khách sạn" : "Người dùng";
   };
 
   return (

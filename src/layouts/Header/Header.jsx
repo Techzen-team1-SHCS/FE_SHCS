@@ -11,7 +11,7 @@ const Header = () => {
     const { authAppear, authWrapper, btnRegister, content, triangleUp, dangky, linkLogin, userMenu, userHeader, userAvatar, menuItem, menuDivider, logoutBtn, authT, customFaUser, customFaDown, authUser } = styles;
     const { user, logout } = useContext(AuthContext);
     const [isAuthVisible, setIsAuthVisible] = useState(false);
-    const [setIsScrolled] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
     const [isAuthAppear, setIsAuthAppear] = useState(false);
     const [isLogin, setIsLogin] = useState('');
     const [mobileOpen, setMobileOpen] = useState(false);

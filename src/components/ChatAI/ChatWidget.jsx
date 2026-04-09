@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const ChatWidget = () => {
   const [open, setOpen] = useState(false);
@@ -25,32 +25,40 @@ const ChatWidget = () => {
       sender: "user",
       isTyping: false,
       type: "text",
-      hotels: []
+      hotels: [],
     };
-    setMessages(prev => [...prev, newUserMessage]);
+    setMessages((prev) => [...prev, newUserMessage]);
 
     const userMessage = inputValue;
     setInputValue("");
 
     // 🤖 Tạo tin nhắn bot với typing animation
     const botMsgId = Date.now() + 1;
-    setMessages(prev => [
+    setMessages((prev) => [
       ...prev,
-      { id: botMsgId, text: "", sender: "bot", isTyping: true, type: "text", hotels: [] }
+      {
+        id: botMsgId,
+        text: "",
+        sender: "bot",
+        isTyping: true,
+        type: "text",
+        hotels: [],
+      },
     ]);
     setIsBotTyping(true);
 
     try {
       // 🎯 Gọi API để lấy JSON response
-      const apiBase = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
-      const url = `${apiBase}/api/auth/chat/stream`;
+      const apiBase =
+        import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+      const url = `${apiBase}/auth/chat/stream`;
       const response = await fetch(url, {
-        method: 'post',
+        method: "post",
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: userMessage })
+        body: JSON.stringify({ message: userMessage }),
       });
 
       if (!response.ok) {
@@ -59,48 +67,56 @@ const ChatWidget = () => {
 
       const data = await response.json();
 
-      if (data.status === 200 && data.hotels && Array.isArray(data.hotels) && data.hotels.length > 0) {
+      if (
+        data.status === 200 &&
+        data.hotels &&
+        Array.isArray(data.hotels) &&
+        data.hotels.length > 0
+      ) {
         // ✅ Cập nhật tin nhắn với hotels từ JSON
-        setMessages(prev =>
-          prev.map(msg =>
+        setMessages((prev) =>
+          prev.map((msg) =>
             msg.id === botMsgId
               ? {
-                ...msg,
-                text: `Tìm thấy ${data.hotels.length} khách sạn phù hợp:`,
-                isTyping: false,
-                hotels: data.hotels
-              }
-              : msg
-          )
+                  ...msg,
+                  text: `Tìm thấy ${data.hotels.length} khách sạn phù hợp:`,
+                  isTyping: false,
+                  hotels: data.hotels,
+                }
+              : msg,
+          ),
         );
       } else {
         // ❌ Nếu không có hotels, hiển thị thông báo
-        setMessages(prev =>
-          prev.map(msg =>
+        setMessages((prev) =>
+          prev.map((msg) =>
             msg.id === botMsgId
               ? {
-                ...msg,
-                text: data.message || "Không tìm thấy khách sạn phù hợp với yêu cầu của bạn.",
-                isTyping: false,
-                hotels: []
-              }
-              : msg
-          )
+                  ...msg,
+                  text:
+                    data.reply ||
+                    data.message ||
+                    "Không tìm thấy khách sạn phù hợp với yêu cầu của bạn.",
+                  isTyping: false,
+                  hotels: [],
+                }
+              : msg,
+          ),
         );
       }
     } catch (error) {
-      console.error('Error fetching hotels:', error);
-      setMessages(prev =>
-        prev.map(msg =>
+      console.error("Error fetching hotels:", error);
+      setMessages((prev) =>
+        prev.map((msg) =>
           msg.id === botMsgId
             ? {
-              ...msg,
-              text: "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại.",
-              isTyping: false,
-              hotels: []
-            }
-            : msg
-        )
+                ...msg,
+                text: "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại.",
+                isTyping: false,
+                hotels: [],
+              }
+            : msg,
+        ),
       );
     } finally {
       setIsBotTyping(false);
@@ -120,7 +136,7 @@ const ChatWidget = () => {
     "Khách sạn 5 sao tốt nhất",
     "Khách sạn có hồ bơi",
     "Gợi ý khách sạn cho gia đình",
-    "Khách sạn view biển đẹp"
+    "Khách sạn view biển đẹp",
   ];
 
   const handleSampleQuestion = (question) => {
@@ -138,29 +154,45 @@ const ChatWidget = () => {
 
   // Tạo ID từ tên khách sạn (fallback nếu không có hotel.id)
   const generateHotelId = (name) => {
-    return name.toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
   };
   const HotelCard = ({ hotel }) => {
     // Sử dụng hotel.id trực tiếp nếu là number, hoặc generate từ name nếu không có
-    const hotelId = hotel.id ? (typeof hotel.id === 'number' ? hotel.id : hotel.id.toString()) : generateHotelId(hotel.name || '');
+    const hotelId = hotel.id
+      ? typeof hotel.id === "number"
+        ? hotel.id
+        : hotel.id.toString()
+      : generateHotelId(hotel.name || "");
 
     return (
       <div className="hotel-card">
         <div className="hotel-card-header">
           <div className="hotel-avatar">
-            <img src="https://cdn-icons-png.flaticon.com/512/619/619005.png" alt="Hotel" />
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/619/619005.png"
+              alt="Hotel"
+            />
           </div>
           <div className="hotel-title">
             <Link to={`/hotel/${hotelId}`} className="hotel-link">
               <h3>{hotel.name}</h3>
             </Link>
             <div className="hotel-actions">
-              <button className="btn-view" onClick={() => window.open(`/hotel/${hotelId}`, '_blank')}>
+              <button
+                className="btn-view"
+                onClick={() => window.open(`/hotel/${hotelId}`, "_blank")}
+              >
                 👁️ Xem
               </button>
-              <button className="btn-book" onClick={() => window.open(`/hotel/${hotelId}?tab=booking`, '_blank')}>
+              <button
+                className="btn-book"
+                onClick={() =>
+                  window.open(`/hotel/${hotelId}?tab=booking`, "_blank")
+                }
+              >
                 📅 Đặt ngay
               </button>
             </div>
@@ -206,11 +238,11 @@ const ChatWidget = () => {
   };
   // Render message theo type
   function renderMessage(message) {
-    if (message.sender === 'bot' && message.isTyping) {
+    if (message.sender === "bot" && message.isTyping) {
       return <TypingIndicator />;
     }
 
-    if (message.sender === 'bot') {
+    if (message.sender === "bot") {
       const hotels = message.hotels || [];
 
       return (
@@ -251,12 +283,15 @@ const ChatWidget = () => {
     <>
       {/* Nút Chat với hiệu ứng */}
       <div
-        className={`chat-icon ${open ? 'open' : ''}`}
+        className={`chat-icon ${open ? "open" : ""}`}
         onClick={() => setOpen(!open)}
         title="Mở hộp chat"
       >
         <div className="chat-icon-inner">
-          <img src="https://cdn-icons-png.flaticon.com/512/4711/4711986.png" alt="AI Assistant" />
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/4711/4711986.png"
+            alt="AI Assistant"
+          />
         </div>
         <span className="chat-pulse"></span>
       </div>
@@ -267,17 +302,38 @@ const ChatWidget = () => {
           <div className="chat-header">
             <div className="chat-header-info">
               <div className="chat-avatar">
-                <img src="https://cdn-icons-png.flaticon.com/512/4711/4711986.png" alt="AI Assistant" />
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/4711/4711986.png"
+                  alt="AI Assistant"
+                />
               </div>
               <div className="chat-title">
                 <h3>Trợ lý Khách sạn AI</h3>
-                <p>{isBotTyping ? 'Đang nhập...' : 'Đang trực tuyến'}</p>
+                <p>{isBotTyping ? "Đang nhập..." : "Đang trực tuyến"}</p>
               </div>
             </div>
             <button className="chat-close" onClick={() => setOpen(false)}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6L6 18"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M6 6L18 18"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
           </div>
@@ -288,8 +344,14 @@ const ChatWidget = () => {
               <div className="msg-content">
                 <div className="msg-text">
                   <strong>🏨 Chào bạn! 👋</strong>
-                  <p>Tôi là trợ lý AI chuyên về khách sạn Việt Nam. Tôi có thể giúp bạn tìm khách sạn phù hợp!</p>
-                  <p className="hint-text">💡 <strong>Gợi ý:</strong> Hỏi theo địa điểm, giá cả, tiện nghi...</p>
+                  <p>
+                    Tôi là trợ lý AI chuyên về khách sạn Việt Nam. Tôi có thể
+                    giúp bạn tìm khách sạn phù hợp!
+                  </p>
+                  <p className="hint-text">
+                    💡 <strong>Gợi ý:</strong> Hỏi theo địa điểm, giá cả, tiện
+                    nghi...
+                  </p>
                 </div>
                 <div className="msg-time">Bây giờ</div>
               </div>
@@ -299,16 +361,17 @@ const ChatWidget = () => {
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`msg ${message.sender} ${message.sender === 'bot' ? 'fade-in' : 'slide-in'}`}
+                className={`msg ${message.sender} ${message.sender === "bot" ? "fade-in" : "slide-in"}`}
               >
                 <div className="msg-content">
-                  <div className="msg-text">
-                    {renderMessage(message)}
-                  </div>
+                  <div className="msg-text">{renderMessage(message)}</div>
                   <div className="msg-time">
-                    {message.sender === 'user' || !message.isTyping ?
-                      new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) :
-                      'Đang nhập...'}
+                    {message.sender === "user" || !message.isTyping
+                      ? new Date().toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "Đang nhập..."}
                   </div>
                 </div>
               </div>
@@ -316,7 +379,9 @@ const ChatWidget = () => {
 
             {/* Câu hỏi mẫu */}
             <div className="sample-questions">
-              <p><strong>💬 Bạn có thể hỏi:</strong></p>
+              <p>
+                <strong>💬 Bạn có thể hỏi:</strong>
+              </p>
               <div className="questions-container">
                 {sampleQuestions.map((question, index) => (
                   <button
@@ -354,15 +419,35 @@ const ChatWidget = () => {
                     <span className="sending-dot"></span>
                   </div>
                 ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M22 2L11 13"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M22 2L15 22L11 13L2 9L22 2Z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 )}
               </button>
             </div>
             <p className="chat-hint">
-              {isBotTyping ? 'AI đang trả lời...' : 'Nhấn Enter để gửi, Shift+Enter để xuống dòng'}
+              {isBotTyping
+                ? "AI đang trả lời..."
+                : "Nhấn Enter để gửi, Shift+Enter để xuống dòng"}
             </p>
           </div>
         </div>
@@ -392,7 +477,11 @@ const ChatWidget = () => {
           right: 30px;
           width: 70px;
           height: 70px;
-          background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+          background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--secondary-color)
+          );
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -482,7 +571,11 @@ const ChatWidget = () => {
 
         /* Header */
         .chat-header {
-          background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+          background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--secondary-color)
+          );
           color: white;
           padding: 20px;
           display: flex;
@@ -715,10 +808,12 @@ const ChatWidget = () => {
 
         /* Hotel Card */
         .hotel-card {
-          display:block!important;
+          display: block !important;
           background: white;
           border-radius: 16px;
-          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+          box-shadow:
+            0 2px 12px rgba(0, 0, 0, 0.08),
+            0 0 0 1px rgba(0, 0, 0, 0.04);
           border: 2px solid #e9ecef;
           overflow: hidden;
           transition: var(--transition);
@@ -727,7 +822,9 @@ const ChatWidget = () => {
 
         .hotel-card:hover {
           transform: translateY(-3px);
-          box-shadow: 0 8px 24px rgba(67, 97, 238, 0.15), 0 0 0 1px rgba(67, 97, 238, 0.1);
+          box-shadow:
+            0 8px 24px rgba(67, 97, 238, 0.15),
+            0 0 0 1px rgba(67, 97, 238, 0.1);
           border-color: var(--primary-light);
         }
 
@@ -742,7 +839,11 @@ const ChatWidget = () => {
         .hotel-avatar {
           width: 40px;
           height: 40px;
-          background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+          background: linear-gradient(
+            135deg,
+            var(--primary-light),
+            var(--primary-color)
+          );
           border-radius: 10px;
           display: flex;
           align-items: center;
@@ -758,8 +859,8 @@ const ChatWidget = () => {
         }
 
         .hotel-title {
-          gap:20px;
-          flex-direction:column;
+          gap: 20px;
+          flex-direction: column;
           flex: 1;
           display: flex;
           justify-content: space-between;
@@ -788,7 +889,8 @@ const ChatWidget = () => {
           gap: 8px;
         }
 
-        .btn-view, .btn-book {
+        .btn-view,
+        .btn-book {
           padding: 6px 12px;
           border-radius: 20px;
           font-size: 12px;
@@ -813,7 +915,11 @@ const ChatWidget = () => {
         }
 
         .btn-book {
-          background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+          background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--secondary-color)
+          );
           color: white;
         }
 
@@ -839,7 +945,7 @@ const ChatWidget = () => {
           font-size: 13px;
           line-height: 1.6;
           padding: 6px 0;
-      }
+        }
 
         .hotel-detail:last-child {
           margin-bottom: 0;
@@ -890,15 +996,21 @@ const ChatWidget = () => {
           animation: typing 1.4s infinite ease-in-out;
         }
 
-        .typing-indicator .dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator .dot:nth-child(2) { animation-delay: -0.16s; }
+        .typing-indicator .dot:nth-child(1) {
+          animation-delay: -0.32s;
+        }
+        .typing-indicator .dot:nth-child(2) {
+          animation-delay: -0.16s;
+        }
 
         @keyframes typing {
-          0%, 80%, 100% { 
+          0%,
+          80%,
+          100% {
             transform: scale(0.8);
             opacity: 0.5;
           }
-          40% { 
+          40% {
             transform: scale(1);
             opacity: 1;
           }
@@ -920,15 +1032,21 @@ const ChatWidget = () => {
           animation: sending 1.4s infinite ease-in-out;
         }
 
-        .sending-dot:nth-child(1) { animation-delay: -0.32s; }
-        .sending-dot:nth-child(2) { animation-delay: -0.16s; }
+        .sending-dot:nth-child(1) {
+          animation-delay: -0.32s;
+        }
+        .sending-dot:nth-child(2) {
+          animation-delay: -0.16s;
+        }
 
         @keyframes sending {
-          0%, 80%, 100% { 
+          0%,
+          80%,
+          100% {
             transform: scale(0.8);
             opacity: 0.5;
           }
-          40% { 
+          40% {
             transform: scale(1);
             opacity: 1;
           }
@@ -1015,7 +1133,11 @@ const ChatWidget = () => {
         .send-btn {
           width: 50px;
           height: 50px;
-          background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+          background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--primary-light)
+          );
           color: white;
           border: none;
           border-radius: 50%;
@@ -1054,22 +1176,23 @@ const ChatWidget = () => {
             right: 2.5vw;
             left: 2.5vw;
           }
-          
+
           .chat-icon {
             bottom: 20px;
             right: 20px;
           }
-          
+
           .msg.user {
             max-width: 85%;
           }
-          
+
           .hotel-actions {
             flex-direction: column;
             gap: 4px;
           }
-          
-          .btn-view, .btn-book {
+
+          .btn-view,
+          .btn-book {
             padding: 4px 8px;
             font-size: 11px;
           }

@@ -2,12 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { hotelService } from "../services/hotelService";
 
 const provinceImages = {
-  "Hà nội": "assets/images/destinations/haNoi.jpg",
-  "Đà nẵng": "assets/images/destinations/daNang.jpg",
-  "Hồ chí minh": "assets/images/destinations/hoChiMinh.jpg",
-  "Nha trang": "assets/images/destinations/nhaTrang.jpg",
+  "Hà Nội": "assets/images/destinations/haNoi.jpg",
+  "Đà Nẵng": "assets/images/destinations/daNang.jpg",
+  "Hồ Chí Minh": "assets/images/destinations/hoChiMinh.jpg",
+  "Nha Trang": "assets/images/destinations/nhaTrang.jpg",
   "Huế": "assets/images/destinations/hue.jpg",
-  "Hải phòng": "assets/images/destinations/haiPhong.jpg",
+  "Hải Phòng": "assets/images/destinations/haiPhong.jpg",
   "Đà Lạt": "assets/images/destinations/dalat.jpg",
   "Phú Quốc": "assets/images/destinations/phuquoc.jpg"
 };
