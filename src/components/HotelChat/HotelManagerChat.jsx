@@ -446,8 +446,11 @@ const HotelManagerChat = ({ hotelId }) => {
                     border-radius: 20px;
                     font-size: 14px;
                     line-height: 1.6;
+                    white-space: normal;
                     word-wrap: break-word;
-                    overflow-wrap: break-word;
+                    overflow-wrap: anywhere;
+                    word-break: break-word;
+                    max-width: 100%;
                 }
 
                 .hotel-msg.hotel-hm .hotel-msg-text {

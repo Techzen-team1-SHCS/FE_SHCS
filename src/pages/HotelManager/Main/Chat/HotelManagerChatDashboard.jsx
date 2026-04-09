@@ -7,8 +7,8 @@ const HotelManagerChatDashboard = () => {
     const [messageText, setMessageText] = useState('');
     const [loadingThread, setLoadingThread] = useState(false);
     const [sending, setSending] = useState(false);
+    const [loadingThreads, setLoadingThreads] = useState(false);
     const [error, setError] = useState(null);
-
     const apiBase = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
     const token = localStorage.getItem('token');
     const scrollRef = useRef(null);
@@ -19,6 +19,7 @@ const HotelManagerChatDashboard = () => {
             return;
         }
 
+        setLoadingThreads(true);
         try {
             const res = await fetch(`${apiBase}/api/auth/hotel-chats/hm/threads`, {
                 headers: {
@@ -38,7 +39,9 @@ const HotelManagerChatDashboard = () => {
             setSelectedThread((prevThread) => prevThread || data.threads?.[0] || null);
         } catch (err) {
             console.error('Load HM threads error', err);
-            setError(err.message || 'Lỗi tải hội thoại');
+            setError('Lỗi tải hội thoại');
+        } finally {
+            setLoadingThreads(false);
         }
     }, [token, apiBase]);
 
@@ -137,25 +140,56 @@ const HotelManagerChatDashboard = () => {
         <div style={{ display: 'flex', gap: 1, height: 'calc(100vh - 90px)' }}>
             <div style={{ width: 320, border: '1px solid #ddd', background: '#fff', padding: 12 }}>
                 <h3>Danh sách chat</h3>
-                {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
-                {threads.length === 0 && <p>Không có thread nào</p>}
+                {error && (
+                    <div
+                        style={{
+                            color: '#b00020',
+                            marginBottom: 8,
+                            border: '1px solid #f44336',
+                            background: '#fdecea',
+                            padding: '8px 10px',
+                            borderRadius: 6,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                        }}
+                    >
+                        {error}
+                    </div>
+                )}
+                {loadingThreads && <p>Đang tải danh sách chat...</p>}
+                {!loadingThreads && threads.length === 0 && <p>Không có thread nào</p>}
                 <div style={{ display: 'grid', gap: 8 }}>
                     {threads.map((t) => (
                         <button
                             key={t.id}
                             style={{
+                                width: '100%',
                                 textAlign: 'left',
                                 padding: 10,
                                 borderRadius: 8,
                                 border: t.id === selectedThread?.id ? '2px solid #2f80ed' : '1px solid #ccc',
                                 background: t.id === selectedThread?.id ? '#eaf2ff' : '#fff',
                                 cursor: 'pointer',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 4,
+                                minWidth: 0,
                             }}
                             onClick={() => setSelectedThread(t)}
                         >
                             <div><strong>Hotel:</strong> {t.hotel?.name || 'N/A'}</div>
                             <div><strong>Khách:</strong> {t.user?.name || 'Không tên'}</div>
-                            <div style={{ fontSize: 12, color: '#666' }}>{t.last_message || 'Chưa có tin nhắn'}</div>
+                            <div style={{
+                                fontSize: 12,
+                                color: '#666',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                maxWidth: '100%',
+                            }}>
+                                {t.last_message || 'Chưa có tin nhắn'}
+                            </div>
                         </button>
                     ))}
                 </div>
@@ -172,11 +206,21 @@ const HotelManagerChatDashboard = () => {
                 </div>
 
                 <div style={{ flex: 1, overflowY: 'auto', padding: 12 }} ref={scrollRef}>
+                    {loadingThreads && <div>Đang tải danh sách để lấy chat...</div>}
                     {loadingThread && <div>Đang tải tin nhắn...</div>}
-                    {!loadingThread && messages.length === 0 && <div>Chưa có tin nhắn. Gửi một tin nhắn để bắt đầu.</div>}
                     {messages.map((msg) => (
-                        <div key={msg.id} style={{ marginBottom: 10, display: 'flex', flexDirection: 'column', alignItems: msg.sender_type === 'hm' ? 'flex-end' : 'flex-start' }}>
-                            <div style={{ background: msg.sender_type === 'hm' ? '#e8f0ff' : '#f3f4f6', padding: '8px 10px', borderRadius: 8, maxWidth: '70%' }}>{msg.content}</div>
+                        <div key={msg.id} style={{ marginBottom: 10, display: 'flex', flexDirection: 'column', alignItems: msg.sender_type === 'hm' ? 'flex-end' : 'flex-start', maxWidth: '100%', minWidth: 0 }}>
+                            <div style={{
+                                background: msg.sender_type === 'hm' ? '#e8f0ff' : '#f3f4f6',
+                                padding: '8px 10px',
+                                borderRadius: 8,
+                                maxWidth: '70%',
+                                wordBreak: 'break-word',
+                                overflowWrap: 'anywhere',
+                                whiteSpace: 'pre-wrap',
+                            }}>
+                                {msg.content}
+                            </div>
                             <span style={{ fontSize: 11, color: '#666', marginTop: 2 }}>{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                         </div>
                     ))}
