@@ -58,53 +58,62 @@ const BookingsContent = ({
   }
 
   return (
-    <div className={styles.bookingsGrid}>
-      {filteredBookings.map((booking) => {
+    <div className={styles.bookingsContainer}>
+      <div className={styles.gridHeader}>
+        <h3>Danh sách đặt phòng của bạn</h3>
+        <p>Theo dõi và quản lý các giao dịch đặt phòng gần đây</p>
+      </div>
+      
+      <div className={styles.bookingsGrid}>
+        {filteredBookings.map((booking) => {
+          const statusConfig = getStatusConfig(booking.status);
 
-        const statusConfig = getStatusConfig(booking.status);
-
-        return (
-          <div
-            key={booking.id}
-            className={styles.bookingCardWrapper}
-            style={{
-              borderLeft: `4px solid ${statusConfig.borderColor}`,
-              backgroundColor: statusConfig.bgColor
-            }}
-          >
-            <div className={styles.bookingStatusHeader}>
-
-              <div className={`${styles.statusBadge} ${statusConfig.badgeStyle}`}>
-                <span className={styles.badgeIcon}>
-                  {statusConfig.icon}
-                </span>
-
-                <span className={styles.badgeText}>
-                  {statusConfig.label}
-                </span>
+          return (
+            <div
+              key={booking.id}
+              className={`${styles.bookingCardWrapper} ${styles.fadeIn}`}
+              style={{
+                '--accent-color': statusConfig.borderColor,
+                '--bg-soft': statusConfig.bgColor
+              }}
+            >
+              <div className={styles.cardHeaderArea}>
+                <div className={`${styles.statusBadge} ${statusConfig.badgeStyle}`}>
+                  <span className={styles.badgeIcon}>{statusConfig.icon}</span>
+                  <span className={styles.badgeText}>{statusConfig.label}</span>
+                </div>
+                
+                <div className={styles.bookingRef}>
+                  REF: <span>#{booking.payment_code || booking.id}</span>
+                </div>
               </div>
 
-              <div className={styles.bookingDate}>
-                {new Date(
-                  new Date(booking.check_out).setDate(
-                    new Date(booking.check_out).getDate() + 1
-                  )
-                ).toLocaleDateString("vi-VN")}
+              <div className={styles.cardMainContent}>
+                <ManageBookingCard
+                  booking={booking}
+                  onViewDetails={handleViewDetails}
+                  onReBook={handleReBook}
+                  onCancelSuccess={fetchAllBookings}
+                  statusConfig={statusConfig}
+                />
               </div>
 
+              <div className={styles.cardFooterArea}>
+                <div className={styles.dateInfo}>
+                  <span className={styles.label}>Ngày trả phòng:</span>
+                  <span className={styles.value}>
+                    {new Date(booking.check_out).toLocaleDateString("vi-VN", {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </span>
+                </div>
+              </div>
             </div>
-
-            <ManageBookingCard
-              booking={booking}
-              onViewDetails={handleViewDetails}
-              onReBook={handleReBook}
-              onCancelSuccess={fetchAllBookings}
-              statusConfig={statusConfig}
-            />
-
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };

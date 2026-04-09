@@ -1,93 +1,165 @@
-/* ---- Card ---- */
 .card {
-  background: #ffffff;
-  border-radius: 10px;
-  width: 90%;
-  box-shadow:1px 2px 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: all 0.3s ease;
-  border: 1px solid #cfcfcf;
-  height: auto;
-}
-.card:hover {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px);
-}
-.hotelInfo{
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  height: 100%;
-  padding-left: 50px;
-}
-.cardBody {
-  display: flex;
-  gap: 15px;
-  flex: 0 0 65%;
-}
-.cardGroup{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.menuWrapper img {
-  width: auto;
-  height: 100%;
-  border-radius: 15px;
-  object-fit: cover;
-}
-
-
-
-.cardName{
-  color: black;
-  font-size: 35px;
-  font-weight: bold;
-}
-.cardInfo{
-  display: flex;
-  margin-right: 5px;
-  font-weight: 300;
-  font-size: 18px;
-  color: #5C5C5C;
-}
-.status{
-  font-weight: 600;
-  margin: auto;
-  font-size: 17px;
-}
-.btn{
-  margin-top: 20px;
-  border-radius: 10px;
-  margin-bottom: 0px;
-  background: none;
-  display: flex;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  border: 1px solid black;
-  padding: 2px 20px;
-  font-size: 17px;
-}
-
-
-.menuWrapper {
-  flex: 0 0 35%;
   width: 100%;
+  padding: 20px 25px;
+  background: transparent;
+}
+
+.hotelInfo {
+  display: flex;
+  gap: 30px;
+  align-items: stretch;
+}
+
+.cardBody {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: space-between;
 }
 
-.menu {
-  position: absolute;
-  top: 15%;
-  right: 0%;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  z-index: 10;
-  min-width: 120px;
+.cardGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
+.cardName {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dateGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  background: #f8fafc;
+  padding: 12px 18px;
+  border-radius: 12px;
+  margin: 5px 0;
+}
+
+.dateItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dateLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.dateValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.totalSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 5px;
+}
+
+.totalLabel {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.totalValue {
+  font-size: 22px;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.actionArea {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+/* ---- Image Wrapper ---- */
+.menuWrapper {
+  width: 320px;
+  height: 200px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.menuWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.menuWrapper:hover img {
+  transform: scale(1.1);
+}
+
+/* ---- Cancel Policy ---- */
+.policyBox {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background: #fffafa;
+  border-radius: 8px;
+  border-left: 3px solid #ff5a5f;
+  font-size: 12px;
+}
+
+.policyTitle {
+  font-weight: 700;
+  color: #e11d48;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.policyText {
+  color: #666;
+  line-height: 1.4;
+}
+
+/* ---- Timer Styling ---- */
+.timerBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #fff7ed;
+  color: #c2410c;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #ffedd5;
+}
+
+@media (max-width: 768px) {
+  .hotelInfo {
+    flex-direction: column;
+  }
+  
+  .menuWrapper {
+    width: 100%;
+    height: 180px;
+  }
+}

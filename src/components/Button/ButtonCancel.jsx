@@ -40,7 +40,7 @@ const StyledWrapper = styled.div`
     align-items: center;
     background: red;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
     background: ${props => props.isCompleted ? '#10B981' : '#e62222'};
   }
@@ -53,7 +53,8 @@ const StyledWrapper = styled.div`
     margin-left: -20px;
     transform: translateX(35px);
     color: white;
-    font-weight: bold;
+    font-size: 17px;
+    font-weight: 600;
   }
 
   button .icon {

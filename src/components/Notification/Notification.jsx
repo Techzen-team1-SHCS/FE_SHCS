@@ -46,7 +46,7 @@ const Notification = ({ userId }) => {
             setLoading(true);
             try {
                 const res = await api.get('/auth/notifications');
-                setNotifications(res.data.notifications || []);
+                setNotifications(res.data.data || []);
                 setHasFetched(true);
             } catch (err) {
                 console.error('Notification fetch error:', err);

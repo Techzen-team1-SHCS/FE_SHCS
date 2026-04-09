@@ -14,17 +14,19 @@ const ButtonDetail = ({text,color, onClick,disabled}) => {
 const StyledWrapper = styled.div`
   button {
    display: inline-block;
-   border-radius: 4px;
+   border-radius: 8px;
    background-color: #3d405b;
    border: none;
    color: #FFFFFF;
    text-align: center;
    font-size: 17px;
-   padding: 16px;
-   width: 130px;
+   font-weight: 600;
+   padding: 0;
+   width: 150px;
+   height: 50px;
    transition: all 0.5s;
    cursor: pointer;
-   margin: 5px;
+   margin: 0;
   }
 
   button span {

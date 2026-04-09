@@ -112,7 +112,7 @@ const Notification = () => {
     try {
       await notificationService.markAsRead(id);
       setNotifications(prev =>
-        prev.map(n => n.id === id ? { ...n, read: true } : n)
+        prev.map(n => n.id === id ? { ...n, is_read: true } : n)
       );
     } catch (error) {
       console.error("Mark as read error:", error);
@@ -123,7 +123,7 @@ const Notification = () => {
     try {
       await notificationService.markAllAsRead();
       setNotifications(prev =>
-        prev.map(n => ({ ...n, read: true }))
+        prev.map(n => ({ ...n, is_read: true }))
       );
     } catch (error) {
       console.error("Mark all as read error:", error);
@@ -220,7 +220,7 @@ const Notification = () => {
               <button
                 className={markAllReadBtn}
                 onClick={markAllAsRead}
-                disabled={notifications.every(n => n.read)}
+                disabled={notifications.every(n => n.is_read)}
               >
                 Mark all as read
               </button>
@@ -410,11 +410,11 @@ const Notification = () => {
         ) : (
           notifications.map((notification) => (
             <div
-              className={`${notificationCard} ${!notification.read ? unreadCard : ""
+              className={`${notificationCard} ${!notification.is_read ? unreadCard : ""
                 }`}
               key={notification.id || notification._id}
-              onClick={() => !notification.read && markAsRead(notification.id)}
-              style={{ cursor: !notification.read ? "pointer" : "default" }}
+              onClick={() => !notification.is_read && markAsRead(notification.id)}
+              style={{ cursor: !notification.is_read ? "pointer" : "default" }}
             >
               <div className={cardLeft}>
                 <div
@@ -438,7 +438,7 @@ const Notification = () => {
                     </span>
                   </div>
                   <p className={notificationDescription}>
-                    {notification.desc || notification.description}
+                    {notification.message || notification.desc || notification.description}
                   </p>
                   <div className={notificationMeta}>
                     <span className={notificationDate}>
@@ -452,9 +452,9 @@ const Notification = () => {
               </div>
 
               <div className={cardRight}>
-                {!notification.read && <div className={unreadDot}></div>}
+                {!notification.is_read && <div className={unreadDot}></div>}
                 <div className={readStatus}>
-                  {notification.read ? "Read" : "Unread"}
+                  {notification.is_read ? "Read" : "Unread"}
                 </div>
               </div>
             </div>

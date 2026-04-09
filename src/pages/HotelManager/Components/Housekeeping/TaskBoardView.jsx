@@ -6,7 +6,14 @@ import {
   HK_STATUS_CONFIG,
 } from "../../Constants/Housekeeping/housekeepingConstants";
 import styles from "./TaskBoardView.module.css";
-import { FiEdit2, FiTrash2, FiUser, FiClock, FiAlertCircle } from "react-icons/fi";
+import {
+  FiEdit2,
+  FiTrash2,
+  FiUser,
+  FiClock,
+  FiAlertCircle,
+} from "react-icons/fi";
+import { formatDateTime } from "../../../../utils/dateUtils";
 
 const COLUMNS = ["pending", "in-progress", "completed", "skipped"];
 
@@ -32,17 +39,25 @@ const TaskCard = ({ task, onUpdateStatus, onEdit, onDelete }) => {
       <div className={styles.cardHeader}>
         <div className={styles.roomBadge}>
           <span className={styles.roomNo}>
-            {task.room_number?.room_number || "—"}
+            Room {task.room_number?.room_number || "—"}
           </span>
           <span className={styles.roomType}>
-            {task.room_number?.room?.room_type || ""}
+            Type: {task.room_number?.room?.room_type || ""}
           </span>
         </div>
         <div className={styles.cardActions}>
-          <button className={styles.iconBtn} onClick={() => onEdit(task)} title="Chỉnh sửa">
+          <button
+            className={styles.iconBtn}
+            onClick={() => onEdit(task)}
+            title="Chỉnh sửa"
+          >
             <FiEdit2 size={13} />
           </button>
-          <button className={styles.iconBtn} onClick={() => onDelete(task.id)} title="Xóa">
+          <button
+            className={styles.iconBtn}
+            onClick={() => onDelete(task.id)}
+            title="Xóa"
+          >
             <FiTrash2 size={13} />
           </button>
         </div>
@@ -71,7 +86,11 @@ const TaskCard = ({ task, onUpdateStatus, onEdit, onDelete }) => {
         {task.room_number?.hk_status && (
           <span
             className={styles.badge}
-            style={{ background: hkCfg.bg, color: hkCfg.color, fontSize: "10px" }}
+            style={{
+              background: hkCfg.bg,
+              color: hkCfg.color,
+              fontSize: "10px",
+            }}
           >
             {hkCfg.dot} {hkCfg.label}
           </span>
@@ -84,7 +103,11 @@ const TaskCard = ({ task, onUpdateStatus, onEdit, onDelete }) => {
         {task.assigned_staff ? (
           <div className={styles.staffInfo}>
             {task.assigned_staff.avatar ? (
-              <img src={task.assigned_staff.avatar} alt="" className={styles.avatar} />
+              <img
+                src={task.assigned_staff.avatar}
+                alt=""
+                className={styles.avatar}
+              />
             ) : (
               <div className={styles.avatarInitial}>
                 {task.assigned_staff.name?.[0]?.toUpperCase()}
@@ -100,10 +123,14 @@ const TaskCard = ({ task, onUpdateStatus, onEdit, onDelete }) => {
       {/* Date */}
       <div className={styles.dateRow}>
         <FiClock size={12} className={styles.icon} />
-        <span>{task.scheduled_date}</span>
+        <span>{formatDateTime(task.scheduled_date)}</span>
         {task.completed_at && (
           <span className={styles.completedAt}>
-            ✓ {new Date(task.completed_at).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}
+            ✓{" "}
+            {new Date(task.completed_at).toLocaleTimeString("vi-VN", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </span>
         )}
       </div>
@@ -136,7 +163,13 @@ const TaskCard = ({ task, onUpdateStatus, onEdit, onDelete }) => {
   );
 };
 
-const TaskBoardView = ({ tasks, loadingTasks, onUpdateStatus, onEdit, onDelete }) => {
+const TaskBoardView = ({
+  tasks,
+  loadingTasks,
+  onUpdateStatus,
+  onEdit,
+  onDelete,
+}) => {
   const [collapsed, setCollapsed] = useState({});
   const [dragOverCol, setDragOverCol] = useState(null);
 
@@ -157,20 +190,35 @@ const TaskBoardView = ({ tasks, loadingTasks, onUpdateStatus, onEdit, onDelete }
             <div
               className={styles.columnHeader}
               style={{ borderTopColor: cfg.color }}
-              onClick={() => setCollapsed((prev) => ({ ...prev, [col]: !prev[col] }))}
+              onClick={() =>
+                setCollapsed((prev) => ({ ...prev, [col]: !prev[col] }))
+              }
             >
               <div className={styles.colTitle}>
-                <span className={styles.colDot} style={{ background: cfg.color }} />
+                <span
+                  className={styles.colDot}
+                  style={{ background: cfg.color }}
+                />
                 <span style={{ color: cfg.color }}>{cfg.labelVi}</span>
               </div>
               <span className={styles.colCount}>{items.length}</span>
-              <span className={styles.colToggle}>{isCollapsed ? "▼" : "▲"}</span>
+              <span className={styles.colToggle}>
+                {isCollapsed ? "▼" : "▲"}
+              </span>
             </div>
 
             {!isCollapsed && (
               <div
                 className={styles.columnBody}
-                style={dragOverCol === col ? { backgroundColor: cfg.bg, outline: `2px dashed ${cfg.color}`, outlineOffset: "-4px" } : {}}
+                style={
+                  dragOverCol === col
+                    ? {
+                        backgroundColor: cfg.bg,
+                        outline: `2px dashed ${cfg.color}`,
+                        outlineOffset: "-4px",
+                      }
+                    : {}
+                }
                 onDragOver={(e) => {
                   e.preventDefault();
                   e.dataTransfer.dropEffect = "move";
