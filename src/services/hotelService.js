@@ -108,9 +108,15 @@ export const hotelService = {
       throw error;
     }
   },
-  async getAllHotels() {
-    const response = await api.get("/auth/hotel");
-    return response.data.content;
+  async getAllHotels(page = 1, perPage = 20) {
+    const response = await api.get("/auth/hotel", {
+      params: {
+        page: page,
+        per_page: perPage
+      }
+    });
+    // Backend response: { status, data: [...], pagination: {...} }
+    return response;
   },
   async getRecommendedHotels() {
     try {

@@ -69,9 +69,17 @@ const HotelManage = () => {
     const [hotelsData, setHotelsData] = useState([]);
     const [selectedHotel, setSelectedHotel] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [ setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 20;
+    const [paginationData, setPaginationData] = useState({
+        current_page: 1,
+        last_page: 1,
+        per_page: 20,
+        total: 0
+    });
     const [editForm, setEditForm] = useState({
         name: '',
         province: '',
@@ -85,13 +93,20 @@ const HotelManage = () => {
     const [newAmenity, setNewAmenity] = useState('');
 
     // Fetch hotels
-    const fetchHotels = async () => {
+    const fetchHotels = async (page = 1) => {
         try {
             setLoading(true);
-            const response = await hotelService.getAllHotels();
-            setHotelsData(response || []);
+            const response = await hotelService.getAllHotels(page);
+
+            // Backend trả về: { status, data: [...], pagination: {...} }
+            const resData = response.data;
+            if (resData && resData.data && resData.pagination) {
+                setHotelsData(resData.data);
+                setPaginationData(resData.pagination);
+            } else {
+                setHotelsData([]);
+            }
         } catch (error) {
-            console.error('Fetch hotels error:', error);
             toast.error('Không thể tải danh sách khách sạn');
             setHotelsData([]);
         } finally {
@@ -100,13 +115,25 @@ const HotelManage = () => {
     };
 
     useEffect(() => {
-        fetchHotels();
-    }, []);
+        fetchHotels(currentPage);
+    }, [currentPage]);
+
+    // ========== PAGINATION LOGIC ==========
+    // Use pagination data from API
+    const totalPages = paginationData.last_page || 1;
+    const totalResults = paginationData.total || 0;
+
+    // Handle page change
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
 
     // Xử lý hotel_class từ server (có thể là 40 = 4 sao, hoặc 4 = 4 sao)
     const parseHotelClassFromServer = (hotelClass) => {
         if (!hotelClass) return '';
-        
+
         // Nếu giá trị >= 10, chia cho 10 để lấy số sao
         if (hotelClass >= 10) {
             return (hotelClass / 10).toString();
@@ -134,10 +161,10 @@ const HotelManage = () => {
                 toast.error("Không lấy được thông tin khách sạn");
                 return;
             }
-            
+
             setSelectedHotel(hotel);
             setIsSidebarOpen(true);
-            
+
             // Nếu là edit mode, load dữ liệu vào form
             if (shouldEdit) {
                 setTimeout(() => {
@@ -172,7 +199,7 @@ const HotelManage = () => {
     };
 
     // Bắt đầu chế độ chỉnh sửa
-    
+
 
     // Handle Delete
     const handleDelete = async (hotelId) => {
@@ -189,13 +216,10 @@ const HotelManage = () => {
             });
 
             if (!result.isConfirmed) return;
-            
+
             const res = await hotelService.getDeleteHotel(hotelId);
 
             if (res.status === 200) {
-                // Update state
-                setHotelsData(prev => prev.filter(h => h.id !== hotelId));
-
                 // Close Sidebar nếu đang xem hotel này
                 if (selectedHotel?.id === hotelId) {
                     setSelectedHotel(null);
@@ -208,7 +232,10 @@ const HotelManage = () => {
                     res.message,
                     'success'
                 );
-                fetchHotels();
+
+                // Reload list from API
+                setCurrentPage(1);
+                fetchHotels(1);
             }
 
         } catch (error) {
@@ -237,12 +264,12 @@ const HotelManage = () => {
             toast.error("Vui lòng nhập tiện nghi");
             return;
         }
-        
+
         if (editForm.amenities.includes(trimmed)) {
             toast.error("Tiện nghi này đã tồn tại");
             return;
         }
-        
+
         setEditForm(prev => ({
             ...prev,
             amenities: [...prev.amenities, trimmed]
@@ -305,28 +332,10 @@ const HotelManage = () => {
 
             // Call API
             const response = await hotelService.updateHotel(selectedHotel.id, updateData);
-            
-            // Cập nhật hiển thị hotel_class cho state (giữ nguyên định dạng server)
-            const updatedHotelData = {
-                ...selectedHotel,
-                ...updateData,
-                // Cập nhật để hiển thị đúng trên UI
-                hotel_class: starRating * 10 // Hoặc starRating tùy server
-            };
-            
-            // Update state
-            setHotelsData(prev => prev.map(hotel => 
-                hotel.id === selectedHotel.id 
-                    ? updatedHotelData
-                    : hotel
-            ));
-            
-            // Update selected hotel
-            setSelectedHotel(updatedHotelData);
-            
+
             // Exit edit mode
             setIsEditMode(false);
-            
+
             // Show success message
             Swal.fire({
                 icon: 'success',
@@ -335,10 +344,10 @@ const HotelManage = () => {
                 timer: 2000,
                 showConfirmButton: false
             });
-            
-            // Refresh list
-            fetchHotels();
-            
+
+            // Reload list from API
+            fetchHotels(currentPage);
+
         } catch (error) {
             console.error("Update error:", error);
             Swal.fire({
@@ -400,7 +409,7 @@ const HotelManage = () => {
         } else {
             starRating = hotelClass; // Nếu là 4 thì giữ nguyên
         }
-        
+
         const stars = [];
         for (let i = 1; i <= 5; i++) {
             stars.push(
@@ -425,29 +434,29 @@ const HotelManage = () => {
 
     const getStatusBadge = (hotel) => {
         if (!hotel?.rooms) return statusAvailable;
-        
+
         const totalRooms = hotel.rooms.reduce((total, room) => total + (room.quantity || 0), 0) || 0;
         const occupiedRooms = hotel.rooms.reduce((total, room) => total + (room.occupied || 0), 0) || 0;
-        
+
         if (occupiedRooms === 0) return statusAvailable;
-        if (30-totalRooms===0) return statusOccupied;
+        if (30 - totalRooms === 0) return statusOccupied;
         return statusAvailable;
     };
 
     const getStatusText = (hotel) => {
         if (!hotel?.rooms) return "Trống";
-        
+
         const totalRooms = hotel.rooms.reduce((total, room) => total + (room.quantity || 0), 0) || 0;
         const occupiedRooms = hotel.rooms.reduce((total, room) => total + (room.occupied || 0), 0) || 0;
-        
+
         if (occupiedRooms === 0) return "Trống";
-        if (30-totalRooms===0) return "Hết phòng";
+        if (30 - totalRooms === 0) return "Hết phòng";
         return "Còn phòng";
     };
 
     const getRoomStats = (hotel) => {
         if (!hotel?.rooms) return { totalRooms: 0, occupiedRooms: 0, availableRooms: 0 };
-        
+
         const totalRooms = hotel.rooms.reduce((total, room) => total + (room.quantity || 0), 0) || 0;
         const occupiedRooms = hotel.rooms.reduce((total, room) => total + (room.occupied || 0), 0) || 0;
         const availableRooms = totalRooms - occupiedRooms;
@@ -458,7 +467,6 @@ const HotelManage = () => {
     if (loading) {
         return <div className='mt-40'><PartLoading /></div>;
     }
-
     return (
         <div className={container}>
             <div className={tableContainer}>
@@ -480,8 +488,8 @@ const HotelManage = () => {
                                     <td className={td}>
                                         <div className={hotelInfo}>
                                             <div className={imageContainer}>
-                                                <img 
-                                                    src={hotel?.firstimage?.url|| '/default-hotel.jpg'} 
+                                                <img
+                                                    src={hotel?.firstimage?.url || '/default-hotel.jpg'}
                                                     alt={hotel.name}
                                                     className={hotelImage}
                                                     onError={(e) => {
@@ -505,7 +513,7 @@ const HotelManage = () => {
                                     </td>
                                     <td className={td}>
                                         <div className={statsContainer}>
-                                            <div className={statItem}>                                               
+                                            <div className={statItem}>
                                                 <div className={statLabel}>Tổng phòng</div>
                                                 <div className={statValue}>
                                                     30
@@ -537,21 +545,21 @@ const HotelManage = () => {
                                     <td className={td}>
                                         <div className={actionCell}>
                                             <div className={buttonGroup}>
-                                                <button 
+                                                <button
                                                     className={`${actionButton} ${viewButton}`}
                                                     onClick={() => handleView(hotel.id)}
                                                     title="Xem chi tiết"
                                                 >
                                                     <span className={buttonIcon}>👁️</span>
                                                 </button>
-                                                <button 
+                                                <button
                                                     className={`${actionButton} ${editButton}`}
                                                     onClick={() => handleEdit(hotel.id)}
                                                     title="Chỉnh sửa"
                                                 >
                                                     <span className={buttonIcon}>✏️</span>
                                                 </button>
-                                                <button 
+                                                <button
                                                     className={`${actionButton} ${deleteButton}`}
                                                     onClick={() => handleDelete(hotel.id)}
                                                     title="Xóa"
@@ -572,12 +580,135 @@ const HotelManage = () => {
                         )}
                     </tbody>
                 </table>
+                {/* Custom Pagination */}
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', marginTop: '20px', padding: '20px', flexWrap: 'wrap' }}>
+                    <div style={{ fontSize: '14px', color: '#666' }}>
+                        Hiển thị {(paginationData.current_page - 1) * paginationData.per_page + 1} - {Math.min(paginationData.current_page * paginationData.per_page, totalResults)} của {totalResults} kết quả
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <button
+                            onClick={() => handlePageChange(paginationData.current_page - 1)}
+                            disabled={paginationData.current_page === 1 || loading}
+                            style={{
+                                padding: '8px 12px',
+                                border: '1px solid #ddd',
+                                backgroundColor: paginationData.current_page === 1 ? '#f0f0f0' : '#fff',
+                                cursor: paginationData.current_page === 1 ? 'not-allowed' : 'pointer',
+                                borderRadius: '4px',
+                                fontSize: '14px'
+                            }}
+                        >
+                            ← Trước
+                        </button>
+
+                        <div style={{ display: 'flex', gap: '4px' }}>
+                            {Array.from({ length: paginationData.last_page }, (_, i) => i + 1).map(page => {
+                                const isCurrentPage = page === paginationData.current_page;
+                                const isNearby = Math.abs(page - paginationData.current_page) <= 2;
+                                const isFirstOrLast = page === 1 || page === paginationData.last_page;
+
+                                if (!isNearby && !isFirstOrLast) {
+                                    if (page === 2 || page === paginationData.last_page - 1) {
+                                        return <span key={`dots-${page}`} style={{ color: '#999', padding: '0 4px' }}>...</span>;
+                                    }
+                                    return null;
+                                }
+
+                                return (
+                                    <button
+                                        key={page}
+                                        onClick={() => handlePageChange(page)}
+                                        disabled={loading}
+                                        style={{
+                                            padding: '8px 12px',
+                                            border: isCurrentPage ? '2px solid #0085ff' : '1px solid #ddd',
+                                            backgroundColor: isCurrentPage ? '#0085ff' : '#fff',
+                                            color: isCurrentPage ? '#fff' : '#333',
+                                            cursor: 'pointer',
+                                            borderRadius: '4px',
+                                            fontSize: '14px',
+                                            fontWeight: isCurrentPage ? 'bold' : 'normal',
+                                            minWidth: '36px'
+                                        }}
+                                    >
+                                        {page}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <button
+                            onClick={() => handlePageChange(paginationData.current_page + 1)}
+                            disabled={paginationData.current_page === paginationData.last_page || loading}
+                            style={{
+                                padding: '8px 12px',
+                                border: '1px solid #ddd',
+                                backgroundColor: paginationData.current_page === paginationData.last_page ? '#f0f0f0' : '#fff',
+                                cursor: paginationData.current_page === paginationData.last_page ? 'not-allowed' : 'pointer',
+                                borderRadius: '4px',
+                                fontSize: '14px'
+                            }}
+                        >
+                            Sau →
+                        </button>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginLeft: '20px' }}>
+                        <span style={{ fontSize: '14px', color: '#666' }}>Đến trang:</span>
+                        <input
+                            type="number"
+                            min="1"
+                            max={paginationData.last_page}
+                            defaultValue={paginationData.current_page}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    const page = parseInt(e.target.value);
+                                    if (page >= 1 && page <= paginationData.last_page) {
+                                        handlePageChange(page);
+                                    } else {
+                                        toast.error(`Vui lòng nhập trang từ 1 đến ${paginationData.last_page}`);
+                                    }
+                                }
+                            }}
+                            style={{
+                                padding: '6px 8px',
+                                border: '1px solid #ddd',
+                                borderRadius: '4px',
+                                width: '60px',
+                                fontSize: '14px'
+                            }}
+                        />
+                        <button
+                            onClick={() => {
+                                const input = event.target.parentElement.querySelector('input');
+                                const page = parseInt(input.value);
+                                if (page >= 1 && page <= paginationData.last_page) {
+                                    handlePageChange(page);
+                                } else {
+                                    toast.error(`Vui lòng nhập trang từ 1 đến ${paginationData.last_page}`);
+                                }
+                            }}
+                            style={{
+                                padding: '6px 12px',
+                                backgroundColor: '#0085ff',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                            }}
+                        >
+                            Đi
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {/* Sidebar chi tiết */}
             {isSidebarOpen && selectedHotel && (
                 <>
-                    <div 
+                    <div
                         className={sidebarOverlay}
                         onClick={handleCloseSidebar}
                     />
@@ -586,14 +717,14 @@ const HotelManage = () => {
                             <h2 className={sidebarTitle}>
                                 {isEditMode ? 'Chỉnh sửa khách sạn' : 'Chi tiết khách sạn'}
                             </h2>
-                            <button 
+                            <button
                                 className={closeButton}
                                 onClick={handleCloseSidebar}
                             >
                                 ×
                             </button>
                         </div>
-                        
+
                         <div className={sidebarContent}>
                             {isEditMode ? (
                                 // FORM CHỈNH SỬA
@@ -609,7 +740,7 @@ const HotelManage = () => {
                                             placeholder="Nhập tên khách sạn"
                                         />
                                     </div>
-                                    
+
                                     <div className={formGroup}>
                                         <label className={formLabel}>Tỉnh/Thành phố</label>
                                         <input
@@ -621,7 +752,7 @@ const HotelManage = () => {
                                             placeholder="Nhập tỉnh/thành phố"
                                         />
                                     </div>
-                                    
+
                                     <div className={formGroup}>
                                         <label className={formLabel}>Giá từ (VND) *</label>
                                         <input
@@ -634,7 +765,7 @@ const HotelManage = () => {
                                             min="0"
                                         />
                                     </div>
-                                    
+
                                     <div className={formGroup}>
                                         <label className={formLabel}>Hạng sao (1-5) *</label>
                                         <input
@@ -652,7 +783,7 @@ const HotelManage = () => {
                                             Ví dụ: 3.5 = 3.5 sao, 4 = 4 sao
                                         </small>
                                     </div>
-                                    
+
                                     <div className={formGroup}>
                                         <label className={formLabel}>Địa điểm gần</label>
                                         <input
@@ -664,7 +795,7 @@ const HotelManage = () => {
                                             placeholder="Nhập địa điểm gần"
                                         />
                                     </div>
-                                    
+
                                     <div className={formGroup}>
                                         <label className={formLabel}>Mô tả ngắn</label>
                                         <textarea
@@ -676,7 +807,7 @@ const HotelManage = () => {
                                             rows="3"
                                         />
                                     </div>
-                                    
+
                                     <div className={formGroup}>
                                         <label className={formLabel}>Mô tả chi tiết</label>
                                         <textarea
@@ -688,7 +819,7 @@ const HotelManage = () => {
                                             rows="5"
                                         />
                                     </div>
-                                    
+
                                     <div className={formGroup}>
                                         <label className={formLabel}>Tiện nghi</label>
                                         <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
@@ -715,11 +846,11 @@ const HotelManage = () => {
                                                 Thêm
                                             </button>
                                         </div>
-                                        
+
                                         {/* Danh sách tiện nghi */}
-                                        <div style={{ 
-                                            display: 'flex', 
-                                            flexWrap: 'wrap', 
+                                        <div style={{
+                                            display: 'flex',
+                                            flexWrap: 'wrap',
                                             gap: '8px',
                                             padding: '8px',
                                             backgroundColor: '#f5f5f5',
@@ -767,7 +898,7 @@ const HotelManage = () => {
                                             )}
                                         </div>
                                     </div>
-                                    
+
                                     <div className={formActions}>
                                         <button
                                             onClick={handleCancelEdit}
@@ -788,8 +919,8 @@ const HotelManage = () => {
                                 <>
                                     {/* Ảnh chính */}
                                     <div className={image2Container}>
-                                        <img 
-                                            src={selectedHotel?.firstimage?.url || '/default-hotel.jpg'} 
+                                        <img
+                                            src={selectedHotel?.firstimage?.url || '/default-hotel.jpg'}
                                             alt={selectedHotel.name}
                                             className={hotelImage}
                                         />
@@ -818,7 +949,7 @@ const HotelManage = () => {
                                             <div className={detailItem}>
                                                 <div className={detailLabel}>Hạng sao</div>
                                                 <div className={detailValue}>
-                                                    {renderStars(selectedHotel.hotel_class)} 
+                                                    {renderStars(selectedHotel.hotel_class)}
                                                     ({getStarText(selectedHotel.hotel_class)})
                                                 </div>
                                             </div>

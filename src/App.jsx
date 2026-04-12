@@ -45,6 +45,8 @@ import Housekeeping from "./pages/HotelManager/Main/Housekeeping/Housekeeping";
 import StaffManagement from "./pages/HotelManager/Main/Staff/StaffManagement";
 import RequireHotelManagerAuth from "./components/RequireHotelManagerAuth";
 
+import Maintenance from "./pages/Maintenance/Maintenance";
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -53,6 +55,7 @@ function App() {
       <BehaviorProvider>
         <Router>
           <Routes>
+            <Route path="/maintenance" element={<Maintenance />} />
             {/* Routes có dùng MainLayout */}
             <Route element={<MainLayout />}>
               <Route path="/" element={<Home />} />

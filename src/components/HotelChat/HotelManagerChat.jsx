@@ -19,7 +19,7 @@ const HotelManagerChat = ({ hotelId }) => {
         const fetchThread = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`${apiBase}/api/auth/hotel-chats/hotels/${hotelId}/thread`, {
+                const res = await fetch(`${apiBase}/auth/hotel-chats/hotels/${hotelId}/thread`, {
                     headers: {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ const HotelManagerChat = ({ hotelId }) => {
                 if (!isMounted) return;
                 setThread(data.thread);
 
-                const messagesRes = await fetch(`${apiBase}/api/auth/hotel-chats/threads/${data.thread.id}/messages`, {
+                const messagesRes = await fetch(`${apiBase}/auth/hotel-chats/threads/${data.thread.id}/messages`, {
                     headers: {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ const HotelManagerChat = ({ hotelId }) => {
         setSending(true);
         try {
             const payload = { content: input.trim() };
-            const res = await fetch(`${apiBase}/api/auth/hotel-chats/threads/${thread.id}/messages`, {
+            const res = await fetch(`${apiBase}/auth/hotel-chats/threads/${thread.id}/messages`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

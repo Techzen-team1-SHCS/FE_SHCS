@@ -5,7 +5,7 @@ import { authService } from '../../../services/authService';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../../../contexts/AuthContext';
 const LoginPage = () => {
-  const navigate = useNavigate()
+    const navigate = useNavigate()
     const { login } = useContext(AuthContext)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -36,11 +36,11 @@ const LoginPage = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault()
-        
+
         if (!validateForm()) return
 
         setIsLoading(true)
-        
+
         try {
             const result = await authService.login(email, password)
 
@@ -70,7 +70,7 @@ const LoginPage = () => {
             }
         } catch (error) {
             console.error('Admin login error:', error)
-            
+
             if (error.response?.data?.errors) {
                 const apiErrors = error.response.data.errors
                 const newErrors = {}
@@ -80,7 +80,7 @@ const LoginPage = () => {
                 setErrors(newErrors)
                 toast.error('Vui lòng kiểm tra lại thông tin đăng nhập')
             } else {
-                toast.error(error.response?.data?.message || error.response?.data?.error || 'Có lỗi xảy ra khi đăng nhập')
+                toast.error(error.response?.data?.message || error.response?.data?.error || 'Tài khoản hoặc mật khẩu không đúng vui lòng kiểm tra lại')
             }
         } finally {
             setIsLoading(false)
@@ -169,8 +169,8 @@ const LoginPage = () => {
                             )}
                         </div>
 
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             className={`admin-login-btn ${isLoading ? 'loading' : ''}`}
                             disabled={isLoading}
                         >

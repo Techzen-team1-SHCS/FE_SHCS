@@ -34,7 +34,8 @@ const UserManage = () => {
         roleBadge,
         roleAdmin,
         roleUser,
-        statusBadge
+        statusBadge,
+        roleManager
     } = styles;
 
     const [usersData, setUsersData] = useState([]);
@@ -64,11 +65,19 @@ const UserManage = () => {
     };
 
     const getRoleText = (role) => {
-        return role === 1 ? 'Quản trị viên' : 'Người dùng';
+        switch (role) {
+            case 1:
+                return 'Quản trị viên';
+            case 2:
+                return 'Quản lý khách sạn';
+            default:
+                return 'Người dùng';
+        }
     };
-
     const getRoleClass = (role) => {
-        return role === 1 ? roleAdmin : roleUser;
+        if (role === 1) return roleAdmin;
+        if (role === 2) return roleManager; // Thêm class cho Quản lý
+        return roleUser;
     };
 
     const getStatusInfo = (user) => {

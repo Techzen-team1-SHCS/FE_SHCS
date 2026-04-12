@@ -19,16 +19,53 @@ const SettingPage = () => {
         siteName: 'SHCS Hotel Booking',
         supportEmail: 'vit76404@gmail.com',
         supportPhone: '0774594729',
-        maintenanceMode: false,
         maxUploadSize: 5
     });
 
+    const [maintenanceMode, setMaintenanceMode] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchSystemStats();
+        fetchMaintenanceStatus();
     }, []);
+
+    const fetchMaintenanceStatus = async () => {
+        try {
+            const { default: api } = await import('../../../services/api.js');
+            const res = await api.get('/auth/maintenance/status');
+            setMaintenanceMode(res.data.is_maintenance);
+        } catch (error) {
+            console.error('Failed to fetch maintenance status:', error);
+        }
+    };
+
+    const handleToggleMaintenance = async () => {
+        const result = await Swal.fire({
+            title: maintenanceMode ? 'Tắt bảo trì?' : 'Bật chế độ bảo trì?',
+            text: maintenanceMode
+                ? 'Hệ thống sẽ hoạt động bình thường, người dùng có thể truy cập.'
+                : 'CHÚ Ý: Tất cả người dùng sẽ không thể truy cập hệ thống ngoài Admin!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: maintenanceMode ? '#28a745' : '#d33',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: maintenanceMode ? 'Tắt ngay' : 'Bật ngay',
+            cancelButtonText: 'Hủy'
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            const { default: api } = await import('../../../services/api.js');
+            const res = await api.post('auth/admin/maintenance/toggle');
+            setMaintenanceMode(res.data.is_maintenance);
+            toast.success(res.data.message);
+        } catch (error) {
+            toast.error('Lỗi: ' + error.message);
+        }
+    };
 
     const fetchSystemStats = async () => {
         try {
@@ -40,10 +77,10 @@ const SettingPage = () => {
                 bookingService.getAllBookings(),
                 hotelService.getAllHotels()
             ]);
-            
+
             setSystemStats({
                 totalUsers: users?.length || 0,
-                totalHotels: hotels?.length || 0,
+                totalHotels: hotels?.data?.data?.length || hotels?.data?.length || 0,
                 totalBookings: bookings?.data?.length || bookings?.length || 0,
                 totalRevenue: revenue || 0
             });
@@ -70,8 +107,6 @@ const SettingPage = () => {
         if (!result.isConfirmed) return;
 
         try {
-            // TODO: Gọi API save settings
-            // await authService.saveSystemSettings(settings);
             toast.success('Lưu cài đặt thành công!');
             setIsEditing(false);
         } catch (error) {
@@ -190,16 +225,28 @@ const SettingPage = () => {
                         />
                     </div>
 
-                    <div className={styles.formGroup}>
-                        <label className={styles.checkboxLabel}>
-                            <input
-                                type="checkbox"
-                                checked={settings.maintenanceMode}
-                                onChange={(e) => setSettings({ ...settings, maintenanceMode: e.target.checked })}
-                                disabled={!isEditing}
-                            />
-                            <span>Bật chế độ bảo trì</span>
-                        </label>
+                    <div className={styles.formGroup} style={{ borderTop: '1px solid #eee', paddingTop: '20px', marginTop: '20px' }}>
+                        <h3 style={{ marginBottom: '15px', color: maintenanceMode ? '#d33' : '#333' }}>
+                            Trạng thái hệ thống: {maintenanceMode ? 'ĐANG BẢO TRÌ' : 'HOẠT ĐỘNG BÌNH THƯỜNG'}
+                        </h3>
+                        <p style={{ color: '#666', marginBottom: '15px' }}>
+                            Lưu ý: Tính năng này thay đổi ngay trạng thái website. Quản trị viên (Admin) vẫn có thể truy cập hệ thống để kiểm tra trong suốt quá trình cài đặt.
+                        </p>
+                        <button
+                            className={styles.button}
+                            style={{
+                                background: maintenanceMode ? '#d33' : '#28a745',
+                                color: 'white',
+                                border: 'none',
+                                padding: '10px 20px',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold'
+                            }}
+                            onClick={handleToggleMaintenance}
+                        >
+                            {maintenanceMode ? 'Tắt Bảo Trì (Mở Lại Web)' : 'Bật Bảo Trì Hệ Thống'}
+                        </button>
                     </div>
                 </div>
 
@@ -209,7 +256,7 @@ const SettingPage = () => {
                             className={styles.saveButton}
                             onClick={handleSaveSettings}
                         >
-                            💾 Lưu
+                            💾 Lưu Thông Tin
                         </button>
                         <button
                             className={styles.cancelButton}

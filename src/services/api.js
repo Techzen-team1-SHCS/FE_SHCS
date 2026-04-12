@@ -28,6 +28,14 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     console.error("API Error:", error.response?.status, error.config?.url);
+    if (error.response?.status === 503 && error.response?.data?.is_maintenance) {
+      if (window.location.pathname !== "/maintenance") {
+        localStorage.setItem("lastPathBeforeMaintenance", window.location.pathname + window.location.search);
+        window.location.href = "/maintenance";
+      }
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401) {
       const hasToken = localStorage.getItem("token");
       if (hasToken) {
