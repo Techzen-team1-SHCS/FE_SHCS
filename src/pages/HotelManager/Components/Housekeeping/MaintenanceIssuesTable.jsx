@@ -117,9 +117,7 @@ const MaintenanceIssuesTable = ({
                     </td>
                     <td>
                       {issue.image_url ? (
-                        <a href={issue.image_url} target="_blank" rel="noopener noreferrer">
-                          <FiImage size={18} color="#3b82f6" />
-                        </a>
+                        <img src={issue.image_url} alt="" className={styles.issueImage} />
                       ) : (
                         <span className={styles.noImage}>—</span>
                       )}

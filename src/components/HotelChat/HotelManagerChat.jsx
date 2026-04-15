@@ -68,6 +68,13 @@ const HotelManagerChat = ({ hotelId }) => {
         };
     }, [open, hotelId, apiBase, token]);
 
+    // Đảm bảo Echo header luôn có token mới nhất
+    useEffect(() => {
+        if (token && window.Echo?.connector?.options?.auth) {
+            window.Echo.connector.options.auth.headers.Authorization = `Bearer ${token}`;
+        }
+    }, [token]);
+
     useEffect(() => {
         if (!thread?.id) return;
         if (!window.Echo || !window.Pusher) return;
@@ -76,7 +83,11 @@ const HotelManagerChat = ({ hotelId }) => {
 
         channel.listen('.HotelChatMessageSent', (event) => {
             if (!event?.message) return;
-            setMessages((prev) => [...prev, event.message]);
+            setMessages((prev) => {
+                const isDuplicate = prev.some(m => String(m.id) === String(event.message.id));
+                if (isDuplicate) return prev;
+                return [...prev, event.message];
+            });
         });
 
         return () => {
@@ -91,6 +102,7 @@ const HotelManagerChat = ({ hotelId }) => {
         }
     }, [messages, loading]);
 
+    // Mở rộng logic sendMessage để lọc trùng lặp
     const sendMessage = async () => {
         if (!input.trim() || !thread) return;
         setSending(true);
@@ -108,7 +120,12 @@ const HotelManagerChat = ({ hotelId }) => {
             const data = await res.json();
 
             if (!res.ok) throw new Error(data.message || 'Gửi tin nhắn thất bại');
-            setMessages((prev) => [...prev, data.data]);
+            
+            setMessages((prev) => {
+                const isDuplicate = prev.some(m => String(m.id) === String(data.data.id));
+                if (isDuplicate) return prev;
+                return [...prev, data.data];
+            });
             setInput('');
         } catch (err) {
             console.error('HotelManagerChat sendMessage', err);

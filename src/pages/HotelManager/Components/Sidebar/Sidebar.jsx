@@ -49,12 +49,19 @@ const Sidebar = () => {
     fetchUnread();
 
     if (window.Echo) {
+      console.log("🔔 Đang lắng nghe thông báo trên channel:", `user.${user.id}`);
       const channel = window.Echo.private(`user.${user.id}`);
-      channel.listen("NotificationSuccess", () => {
+      
+      channel.listen(".NotificationSuccess", (data) => {
+        console.log("🚀 Nhận thông báo realtime:", data);
         setUnreadCount((prev) => prev + 1);
+        
+        // Tùy chọn: Phát một event window để các component khác biết
+        window.dispatchEvent(new CustomEvent("new-notification", { detail: data }));
       });
 
       return () => {
+        console.log("🔕 Ngừng lắng nghe channel:", `user.${user.id}`);
         window.Echo.leave(`user.${user.id}`);
       };
     }

@@ -116,3 +116,39 @@
 }
 .submitBtn:hover:not(:disabled) { opacity: 0.88; }
 .submitBtn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.imageUploadSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.uploadGroup {
+  display: flex;
+  align-items: center;
+}
+
+.uploadBtn {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #f1f5f9;
+  border: 1px dashed #94a3b8;
+  border-radius: 6px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  width: 100%;
+}
+
+.uploadBtn:hover:not(.disabled) {
+  background: #e2e8f0;
+  border-color: #64748b;
+}
+
+.uploadBtn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

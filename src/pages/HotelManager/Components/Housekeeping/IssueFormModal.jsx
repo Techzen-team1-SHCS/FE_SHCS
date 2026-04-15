@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import styles from "./IssueFormModal.module.css";
 import { FiX, FiAlertTriangle } from "react-icons/fi";
+import { IKContext, IKUpload } from 'imagekitio-react';
+import { toast } from 'react-toastify';
+
+const publicKey = import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY;
+const urlEndpoint = import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT;
+const authenticationEndpoint = import.meta.env.VITE_IMAGEKIT_AUTHENTICATION_ENDPOINT;
 
 const IssueFormModal = ({ isOpen, onClose, onSubmit, rooms, staff }) => {
   const [form, setForm] = useState({
@@ -10,14 +16,31 @@ const IssueFormModal = ({ isOpen, onClose, onSubmit, rooms, staff }) => {
     image_url: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (!isOpen) {
       setForm({ room_number_id: "", reported_by: "", description: "", image_url: "" });
       setErrors({});
+      setIsUploading(false);
     }
   }, [isOpen]);
+
+  const authenticator = async () => {
+    try {
+      const response = await fetch(authenticationEndpoint);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+      }
+      const data = await response.json();
+      const { signature, expire, token } = data;
+      return { signature, expire, token };
+    } catch (error) {
+      throw new Error(`Authentication request failed: ${error.message}`);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -25,9 +48,6 @@ const IssueFormModal = ({ isOpen, onClose, onSubmit, rooms, staff }) => {
     const e = {};
     if (!form.room_number_id) e.room_number_id = "Vui lòng chọn phòng";
     if (!form.description.trim()) e.description = "Vui lòng mô tả sự cố";
-    if (form.image_url && !/^https?:\/\//i.test(form.image_url)) {
-      e.image_url = "URL ảnh không hợp lệ (phải bắt đầu bằng http/https)";
-    }
     return e;
   };
 
@@ -120,18 +140,40 @@ const IssueFormModal = ({ isOpen, onClose, onSubmit, rooms, staff }) => {
             {errors.description && <p className={styles.errMsg}>{errors.description}</p>}
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload */}
           <div className={styles.field}>
-            <label className={styles.label}>🖼️ Link ảnh sự cố (tuỳ chọn)</label>
-            <input
-              type="text"
-              className={`${styles.input} ${errors.image_url ? styles.error : ""}`}
-              placeholder="https://ik.imagekit.io/..."
-              value={form.image_url}
-              onChange={(e) => set("image_url", e.target.value)}
-            />
-            {errors.image_url && <p className={styles.errMsg}>{errors.image_url}</p>}
-            {form.image_url && /^https?:\/\//i.test(form.image_url) && (
+            <label className={styles.label}>🖼️ Ảnh sự cố (tuỳ chọn)</label>
+            <div className={styles.imageUploadSection}>
+              <IKContext 
+                publicKey={publicKey} 
+                urlEndpoint={urlEndpoint} 
+                authenticator={authenticator}
+              >
+                <div className={styles.uploadGroup}>
+                  <label className={`${styles.uploadBtn} ${isUploading ? styles.disabled : ''}`}>
+                    {isUploading ? 'Đang tải lên...' : 'Thêm ảnh sự cố'}
+                    <IKUpload
+                      fileName={`issue-${Date.now()}.jpg`}
+                      folder="/housekeeping-issues"
+                      onSuccess={(res) => {
+                        setIsUploading(false);
+                        set("image_url", res.url);
+                        toast.success("Tải ảnh lên thành công!");
+                      }}
+                      onError={(err) => {
+                        setIsUploading(false);
+                        toast.error("Tải ảnh thất bại! Vui lòng thử lại.");
+                        console.error("Upload error:", err);
+                      }}
+                      onUploadStart={() => setIsUploading(true)}
+                      style={{ display: 'none' }}
+                      disabled={isUploading}
+                    />
+                  </label>
+                </div>
+              </IKContext>
+            </div>
+            {form.image_url && (
               <img src={form.image_url} alt="preview" className={styles.preview} />
             )}
           </div>
@@ -140,7 +182,7 @@ const IssueFormModal = ({ isOpen, onClose, onSubmit, rooms, staff }) => {
             <button type="button" className={styles.cancelBtn} onClick={onClose}>
               Hủy
             </button>
-            <button type="submit" className={styles.submitBtn} disabled={submitting}>
+            <button type="submit" className={styles.submitBtn} disabled={submitting || isUploading}>
               {submitting ? "Đang gửi..." : "⚠️ Báo cáo sự cố"}
             </button>
           </div>

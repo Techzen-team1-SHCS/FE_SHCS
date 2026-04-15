@@ -83,6 +83,14 @@ const HotelManagerChatDashboard = () => {
         }
     }, [selectedThread?.id, loadMessages]);
 
+    // Ensure Echo headers are up-to-date with current token
+    useEffect(() => {
+        if (token && window.Echo?.connector?.options?.auth) {
+            window.Echo.connector.options.auth.headers.Authorization = `Bearer ${token}`;
+        }
+    }, [token]);
+
+    // Lắng nghe tin nhắn mới cho thread đang chọn
     useEffect(() => {
         if (!selectedThread?.id) return;
         if (!window.Echo || !window.Pusher) return;
@@ -91,7 +99,11 @@ const HotelManagerChatDashboard = () => {
 
         channel.listen('.HotelChatMessageSent', (event) => {
             if (!event?.message) return;
-            setMessages((prev) => [...prev, event.message]);
+            setMessages((prev) => {
+                const isDuplicate = prev.some(m => String(m.id) === String(event.message.id));
+                if (isDuplicate) return prev;
+                return [...prev, event.message];
+            });
         });
 
         return () => {
@@ -99,6 +111,36 @@ const HotelManagerChatDashboard = () => {
             window.Echo.leave(`hotel-chat.${selectedThread.id}`);
         };
     }, [selectedThread?.id]);
+
+    // Lắng nghe tin nhắn mới cho tất cả các thread (để update sidebar)
+    useEffect(() => {
+        if (!threads.length || !window.Echo) return;
+
+        // Giả sử manager listener dùng ID của manager từ thread đầu tiên hoặc localstorage
+        const managerId = threads[0]?.hm_id;
+        if (!managerId) return;
+
+        const managerChannel = window.Echo.private(`hotel-manager.${managerId}`);
+
+        managerChannel.listen('.HotelChatMessageSent', (event) => {
+            if (!event?.message) return;
+
+            // Cập nhật last_message trong danh sách threads
+            setThreads((prevThreads) => {
+                return prevThreads.map((t) => {
+                    if (String(t.id) === String(event.thread_id || event.message.thread_id)) {
+                        return { ...t, last_message: event.message.content };
+                    }
+                    return t;
+                });
+            });
+        });
+
+        return () => {
+            managerChannel.stopListening('.HotelChatMessageSent');
+            window.Echo.leave(`hotel-manager.${managerId}`);
+        };
+    }, [threads.length]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -126,7 +168,11 @@ const HotelManagerChatDashboard = () => {
             }
 
             const data = await res.json();
-            setMessages((prev) => [...prev, data.data]);
+            setMessages((prev) => {
+                const isDuplicate = prev.some(m => String(m.id) === String(data.data.id));
+                if (isDuplicate) return prev;
+                return [...prev, data.data];
+            });
             setMessageText('');
         } catch (err) {
             console.error('Send message HM', err);
