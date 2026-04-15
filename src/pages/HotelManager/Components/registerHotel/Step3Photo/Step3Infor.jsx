@@ -60,6 +60,7 @@ export default function Step3HotelInfo({ prevStep, data, onSubmit }) {
 
         <input
           type="text"
+          placeholder="Nhập tên khách sạn của bạn (VD: Travelwise Hotel)"
           value={hotelName}
           onChange={(e) => setHotelName(e.target.value)}
         />
@@ -71,6 +72,7 @@ export default function Step3HotelInfo({ prevStep, data, onSubmit }) {
           type="number"
           min="0"
           value={price}
+          placeholder="Nhập giá phòng"
           onChange={(e) => setPrice(e.target.value)}
         />
       </div>
@@ -83,6 +85,7 @@ export default function Step3HotelInfo({ prevStep, data, onSubmit }) {
           max="5"
           step="0.1"
           value={hotelClass}
+          placeholder="Ví dụ: 4.5"
           onChange={(e) => setHotelClass(e.target.value)}
         />
       </div>
@@ -92,6 +95,7 @@ export default function Step3HotelInfo({ prevStep, data, onSubmit }) {
         <input
           type="text"
           value={nameNearbyPlace}
+          placeholder="Các địa điểm nổi tiếng xung quanh (VD: Hồ Gươm, Chùa Cầu)"
           onChange={(e) => setNameNearbyPlace(e.target.value)}
         />
       </div>

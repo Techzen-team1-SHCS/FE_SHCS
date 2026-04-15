@@ -1,5 +1,8 @@
 .container{
   padding:40px 60px;
+  box-sizing: border-box; /* Ép riêng thằng này tính padding vào trong */
+  width: 100%;
+  max-width: 85vw;
 }
 
 .title{
@@ -29,7 +32,25 @@
   padding:0 12px;
   font-size:14px;
 }
+/* Placeholder mặc định */
+.field input::placeholder,
+.field textarea::placeholder {
+  color: #94a3b8; /* Màu xám slate nhạt */
+  opacity: 0.7;    /* Độ mờ 50% */
+  transition: opacity 0.3s ease;
+}
 
+/* Khi hover vào ô input/textarea */
+.field input:hover::placeholder,
+.field textarea:hover::placeholder {
+  opacity: 0.3;    /* Mờ hơn nữa khi hover như bạn muốn */
+}
+
+/* Khi đang focus để gõ */
+.field input:focus::placeholder,
+.field textarea:focus::placeholder {
+  opacity: 0.2;
+}
 .field textarea{
   min-height:160px;
   border-radius:8px;
