@@ -1,0 +1,101 @@
+.wrapper {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px 24px 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  flex: 1;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chartTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin: 0;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.legendLine {
+  display: inline-block;
+  width: 26px;
+  height: 3px;
+  background: #0070f3;
+  border-radius: 2px;
+}
+
+.legendArea {
+  display: inline-block;
+  width: 18px;
+  height: 14px;
+  background: rgba(0, 112, 243, 0.18);
+  border-radius: 3px;
+  margin-left: 8px;
+}
+
+.legendText {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.peakBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.peakNumber {
+  font-size: 36px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.peakLabel {
+  font-size: 10px;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.chartArea {
+  margin-top: 4px;
+}
+
+/* Tooltip */
+.tooltip {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #334155;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.tooltipLabel {
+  font-weight: 600;
+  color: #0070f3;
+  margin: 0 0 6px;
+}
