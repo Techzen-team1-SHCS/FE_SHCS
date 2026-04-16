@@ -73,6 +73,7 @@ const AvailableRooms = ({ availableRooms, searchParams }) => {
   const [selectedRoomNumbers, setSelectedRoomNumbers] = useState([]); // Array of room numbers: {room_id, number}
   const [loading, setLoading] = useState({});
   const [roomQuantities, setRoomQuantities] = useState({});
+  const [heldRoomNumbers, setHeldRoomNumbers] = useState({});
   const [selectedRoomType, setSelectedRoomType] = useState(null);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -99,14 +100,63 @@ const AvailableRooms = ({ availableRooms, searchParams }) => {
     return () => window.Echo.leaveChannel("room-updates");
   }, []);
 
-  const handleRoomNumberToggle = useCallback((room, rn) => {
+  const refreshRoomStatus = useCallback(async () => {
+    try {
+      const statuses = await Promise.all(
+        roomsToDisplay.map(async (room) => {
+          const data = await bookingService.getRealtimeRoomStatus(room.id);
+          return {
+            roomId: room.id,
+            availableQuantity: data.available_quantity,
+            heldRoomNumbers: data.held_room_numbers || [],
+          };
+        }),
+      );
+
+      setRoomQuantities((prev) => {
+        const next = { ...prev };
+        statuses.forEach((status) => {
+          next[status.roomId] = status.availableQuantity;
+        });
+        return next;
+      });
+      setHeldRoomNumbers((prev) => {
+        const next = { ...prev };
+        statuses.forEach((status) => {
+          next[status.roomId] = status.heldRoomNumbers;
+        });
+        return next;
+      });
+    } catch (error) {
+      console.warn("Không thể tải trạng thái phòng realtime", error);
+    }
+  }, [roomsToDisplay]);
+
+  useEffect(() => {
+    if (roomsToDisplay.length > 0) {
+      refreshRoomStatus();
+    }
+  }, [roomsToDisplay, refreshRoomStatus]);
+
+  useEffect(() => {
+    if (!window.Echo) return;
+
+    const channel = window.Echo.channel("bookings");
+    channel.listen(".booking.cancelled", () => {
+      refreshRoomStatus();
+    });
+
+    return () => window.Echo.leaveChannel("bookings");
+  }, [refreshRoomStatus]);
+
+  const handleRoomNumberToggle = useCallback(async (room, rn) => {
     const roomId = room.id;
     const roomNumber = typeof rn === 'string' ? rn : rn.room_number;
     const status = (rn.status || 'available').toLowerCase();
-    
-    // Only allow selecting if available/active
-    if (!['available', 'active', 'ready'].includes(status)) {
-      return toast.warn('Phòng này hiện không sẵn sàng.');
+    const isHeld = (heldRoomNumbers[roomId] || []).includes(roomNumber);
+
+    if (!['available', 'active', 'ready'].includes(status) || isHeld) {
+      return toast.warn('Phòng này hiện không sẵn sàng hoặc đang được giữ.');
     }
 
     if (selectedRoomType && selectedRoomType !== roomId) {
@@ -114,24 +164,55 @@ const AvailableRooms = ({ availableRooms, searchParams }) => {
       return;
     }
 
-    setSelectedRoomNumbers(prev => {
-      const isAlreadySelected = prev.some(item => item.room_id === roomId && item.number === roomNumber);
-      let newSelection;
-      if (isAlreadySelected) {
-        newSelection = prev.filter(item => !(item.room_id === roomId && item.number === roomNumber));
-      } else {
-        newSelection = [...prev, { room_id: roomId, number: roomNumber }];
-      }
+    const isAlreadySelected = selectedRoomNumbers.some(item => item.room_id === roomId && item.number === roomNumber);
 
-      if (newSelection.length > 0) {
-        setSelectedRoomType(roomId);
-      } else {
-        setSelectedRoomType(null);
-      }
+    if (isAlreadySelected) {
+      setSelectedRoomNumbers(prev => prev.filter(item => !(item.room_id === roomId && item.number === roomNumber)));
+      await bookingService.releaseRoomNumber(roomId, roomNumber).catch(() => {});
+      setHeldRoomNumbers(prev => ({
+        ...prev,
+        [roomId]: (prev[roomId] || []).filter(n => n !== roomNumber),
+      }));
+      return;
+    }
 
-      return newSelection;
-    });
-  }, [selectedRoomType]);
+    try {
+      await bookingService.holdRoomNumber(roomId, roomNumber);
+      setSelectedRoomNumbers(prev => [...prev, { room_id: roomId, number: roomNumber }]);
+      setSelectedRoomType(roomId);
+      setHeldRoomNumbers(prev => ({
+        ...prev,
+        [roomId]: [...new Set([...(prev[roomId] || []), roomNumber])],
+      }));
+      toast.success(`Đã giữ phòng ${roomNumber}`);
+    } catch (error) {
+      toast.error(error.message || 'Không thể giữ phòng này');
+      await refreshRoomStatus();
+    }
+  }, [heldRoomNumbers, refreshRoomStatus, selectedRoomNumbers, selectedRoomType]);
+
+  const handleClearRoomSelection = useCallback(async (roomId) => {
+    const roomSelections = selectedRoomNumbers.filter(item => item.room_id === roomId);
+
+    if (roomSelections.length > 0) {
+      await Promise.all(
+        roomSelections.map(({ number }) =>
+          bookingService.releaseRoomNumber(roomId, number).catch(() => {}),
+        ),
+      );
+    }
+
+    setSelectedRoomNumbers(prev => prev.filter(item => item.room_id !== roomId));
+    setSelectedRoomType(null);
+    setHeldRoomNumbers(prev => ({
+      ...prev,
+      [roomId]: (prev[roomId] || []).filter(
+        (number) => !roomSelections.some((item) => item.number === number),
+      ),
+    }));
+
+    await refreshRoomStatus();
+  }, [refreshRoomStatus, selectedRoomNumbers]);
 
   const handleSelectRoom = useCallback(async (room) => {
     const currentSelected = selectedRoomNumbers.filter(item => item.room_id === room.id);
@@ -160,6 +241,10 @@ const AvailableRooms = ({ availableRooms, searchParams }) => {
         setRoomQuantities(prev => ({ ...prev, [room.id]: result.available_quantity }));
         setSelectedRoomNumbers([]);
         setSelectedRoomType(null);
+        setHeldRoomNumbers(prev => ({
+          ...prev,
+          [room.id]: (prev[room.id] || []).filter(() => false),
+        }));
         navigate(`/booking/${result.data.id}`);
       } else {
         throw new Error(result.message || 'Đặt phòng thất bại');
@@ -168,8 +253,9 @@ const AvailableRooms = ({ availableRooms, searchParams }) => {
       toast.error(error.message || "Số lượng phòng không đủ hoặc có lỗi xảy ra");
     } finally {
       setLoading((prev) => ({ ...prev, [room.id]: false }));
+      refreshRoomStatus();
     }
-  }, [selectedRoomNumbers, userId, searchParams, navigate]);
+  }, [refreshRoomStatus, selectedRoomNumbers, userId, searchParams, navigate]);
 
   const formatPrice = (price) =>
     new Intl.NumberFormat("vi-VN", {
@@ -183,6 +269,7 @@ const AvailableRooms = ({ availableRooms, searchParams }) => {
     const currentSelectedRooms = selectedRoomNumbers.filter(item => item.room_id === room.id);
     const selectedQty = currentSelectedRooms.length;
     const roomNums = room.room_numbers || room.roomNumbers || [];
+    const heldNumbers = heldRoomNumbers[room.id] || [];
     const isSelected = selectedRoomType === room.id;
     const isOtherSelected = selectedRoomType && selectedRoomType !== room.id;
 
@@ -192,7 +279,7 @@ const AvailableRooms = ({ availableRooms, searchParams }) => {
           <div className="selected-room-badge">
             <FaInfoCircle />
             <span>Đã chọn <strong>{selectedQty}</strong> phòng: {currentSelectedRooms.map(i => i.number).join(', ')}</span>
-            <button className="cancel-selection-btn" onClick={() => { setSelectedRoomNumbers([]); setSelectedRoomType(null); }}>Hủy chọn</button>
+            <button className="cancel-selection-btn" onClick={() => handleClearRoomSelection(room.id)}>Hủy chọn</button>
           </div>
         )}
         {isOtherSelected && (
@@ -245,18 +332,21 @@ const AvailableRooms = ({ availableRooms, searchParams }) => {
                 const number = rn.room_number || rn;
                 const status = (rn.status || 'available').toLowerCase();
                 const isReady = ['available', 'active', 'ready'].includes(status);
+                const isHeld = heldNumbers.includes(number);
                 const isSelectedByMe = selectedRoomNumbers.some(item => item.room_id === room.id && item.number === number);
+                const isDisabled = !isReady || isHeld;
                 
                 return (
                   <div 
                     key={idx} 
-                    className={`room-number-card ${isReady ? 'available' : 'unavailable'} ${isSelectedByMe ? 'selected' : ''}`}
-                    onClick={() => handleRoomNumberToggle(room, rn)}
-                    title={isReady ? (isSelectedByMe ? 'Hủy chọn' : 'Chọn phòng này') : 'Phòng không sẵn sàng'}
+                    className={`room-number-card ${isReady ? 'available' : 'unavailable'} ${isHeld ? 'held' : ''} ${isSelectedByMe ? 'selected' : ''}`}
+                    onClick={() => !isDisabled && handleRoomNumberToggle(room, rn)}
+                    title={isHeld ? 'Phòng đang được giữ tạm thời bởi người khác' : (isReady ? (isSelectedByMe ? 'Hủy chọn' : 'Chọn phòng này') : 'Phòng không sẵn sàng')}
                   >
-                    <span className="room-num-icon">{isSelectedByMe ? <FaCheck /> : (isReady ? <FaDoorOpen /> : <FaDoorClosed />)}</span>
+                    <span className="room-num-icon">{isSelectedByMe ? <FaCheck /> : (isHeld ? <FaExclamationTriangle /> : (isReady ? <FaDoorOpen /> : <FaDoorClosed />))}</span>
                     <span className="room-num-text">{number}</span>
                     <span className="status-dot"></span>
+                    {isHeld && <span className="held-badge">Đang giữ</span>}
                   </div>
                 );
               })}
@@ -268,6 +358,12 @@ const AvailableRooms = ({ availableRooms, searchParams }) => {
                 <span className="out-of-stock">Hiện tại không còn phòng trống cho đợt này.</span>
               )}
             </div>
+            {heldNumbers.length > 0 && (
+              <div className="room-hold-hint">
+                <FaExclamationTriangle />
+                <span>Có {heldNumbers.length} phòng đang được giữ tạm thời bởi người khác.</span>
+              </div>
+            )}
           </div>
         )}
 

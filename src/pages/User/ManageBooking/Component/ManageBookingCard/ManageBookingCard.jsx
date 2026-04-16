@@ -48,6 +48,7 @@ const ManageBookingCard = ({
       if (typeof onCancelSuccess === "function") {
         onCancelSuccess();
       }
+      window.dispatchEvent(new CustomEvent('booking-cancelled', { detail: { bookingId } }));
     } catch (error) {
       console.error("Lỗi khi hủy phòng:", error);
       Swal.fire("❌ Lỗi", error.message || "Không thể hủy phòng", "error");

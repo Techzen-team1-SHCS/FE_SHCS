@@ -59,6 +59,49 @@ export const bookingService={
   }
 },
 
+  async getRealtimeRoomStatus(id) {
+  try {
+    const response = await api.get(`auth/rooms/${id}/realtime`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch room status');
+  }
+},
+
+  async holdRoomNumber(roomId, roomNumber) {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('Authentication token not found');
+
+      const response = await api.post('auth/rooms/hold', {
+        room_id: roomId,
+        room_number: roomNumber,
+      }, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to hold room');
+    }
+  },
+
+  async releaseRoomNumber(roomId, roomNumber) {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('Authentication token not found');
+
+      const response = await api.post('auth/rooms/release-hold', {
+        room_id: roomId,
+        room_number: roomNumber,
+      }, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to release room');
+    }
+  },
+
    async getUserBookings() {
     try {
       const token=localStorage.getItem('token');
