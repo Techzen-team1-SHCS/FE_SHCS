@@ -1,6 +1,22 @@
 export const REGISTER_FIELDS = [
-  { name: "firstName", label: "First Name", placeholder: "Phan Minh" },
-  { name: "lastName", label: "Last Name", placeholder: "Van" },
-  { name: "email", label: "Email", placeholder: "minhvan@gmail.com" },
-  { name: "phone", label: "Phone Number", placeholder: "0905123456" }
+  { 
+    name: "firstName", 
+    label: "First Name", 
+    placeholder: "Nhập tên của bạn" 
+  },
+  { 
+    name: "lastName", 
+    label: "Last Name", 
+    placeholder: "Nhập họ và tên đệm" 
+  },
+  { 
+    name: "email", 
+    label: "Email", 
+    placeholder: "Nhập địa chỉ email cá nhân" 
+  },
+  { 
+    name: "phone", 
+    label: "Phone Number", 
+    placeholder: "Nhập số điện thoại " 
+  }
 ];
