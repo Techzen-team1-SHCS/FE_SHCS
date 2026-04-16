@@ -43,6 +43,7 @@ const ChatWidget = () => {
         isTyping: true,
         type: "text",
         hotels: [],
+        explanation: "",
       },
     ]);
     setIsBotTyping(true);
@@ -67,43 +68,24 @@ const ChatWidget = () => {
 
       const data = await response.json();
 
-      if (
-        data.status === 200 &&
-        data.hotels &&
-        Array.isArray(data.hotels) &&
-        data.hotels.length > 0
-      ) {
-        // ✅ Cập nhật tin nhắn với hotels từ JSON
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === botMsgId
-              ? {
-                  ...msg,
-                  text: `Tìm thấy ${data.hotels.length} khách sạn phù hợp:`,
-                  isTyping: false,
-                  hotels: data.hotels,
-                }
-              : msg,
-          ),
-        );
-      } else {
-        // ❌ Nếu không có hotels, hiển thị thông báo
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === botMsgId
-              ? {
-                  ...msg,
-                  text:
-                    data.reply ||
-                    data.message ||
-                    "Không tìm thấy khách sạn phù hợp với yêu cầu của bạn.",
-                  isTyping: false,
-                  hotels: [],
-                }
-              : msg,
-          ),
-        );
-      }
+      const hotels = Array.isArray(data.hotels) ? data.hotels : [];
+      const reply = data.reply || data.message || "Không tìm thấy khách sạn phù hợp với yêu cầu của bạn.";
+      const explanation = data.explanation || "";
+
+      // ✅ Cập nhật tin nhắn bot chỉ 1 lần để tránh bị lặp
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === botMsgId
+            ? {
+                ...msg,
+                text: reply,
+                explanation,
+                isTyping: false,
+                hotels,
+              }
+            : msg,
+        ),
+      );
     } catch (error) {
       console.error("Error fetching hotels:", error);
       setMessages((prev) =>
@@ -254,6 +236,13 @@ const ChatWidget = () => {
             </div>
           )}
 
+          {/* Hiển thị explanation nếu backend có trả */}
+          {message.explanation && message.explanation !== message.text && (
+            <div className="message-text">
+              <p>{message.explanation}</p>
+            </div>
+          )}
+
           {/* Hiển thị hotel cards từ JSON */}
           {hotels.length > 0 && (
             <div className="hotels-container">
@@ -262,13 +251,6 @@ const ChatWidget = () => {
                   <HotelCard key={hotel.id || idx} hotel={hotel} />
                 ))}
               </div>
-            </div>
-          )}
-
-          {/* Nếu không có hotels và có text, chỉ hiển thị text */}
-          {hotels.length === 0 && message.text && (
-            <div className="message-text">
-              <p>{message.text}</p>
             </div>
           )}
         </div>
