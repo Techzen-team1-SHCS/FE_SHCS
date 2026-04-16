@@ -99,7 +99,22 @@
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
+/* Màu mặc định cho placeholder */
+.input::placeholder {
+  color: #94a3b8; /* Màu xám nhạt (Slate 400) */
+  opacity: 0.6;    /* Làm nhạt thêm bằng độ trong suốt */
+  transition: opacity 0.3s ease; /* Hiệu ứng mượt mà */
+}
 
+/* Khi hover vào ô input, placeholder vẫn nhạt hoặc nhạt hơn nữa */
+.input:hover::placeholder {
+  opacity: 0.4; /* Nhạt hơn nữa khi hover nếu bạn muốn */
+}
+
+/* Khi focus (đang gõ), thường ta sẽ để placeholder biến mất hoặc cực nhạt */
+.input:focus::placeholder {
+  opacity: 0.3;
+}
 .input:focus {
   background-color: #ffffff;
   border-color: #3b82f6;

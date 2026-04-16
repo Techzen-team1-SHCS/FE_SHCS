@@ -1,144 +1,87 @@
+import React from "react";
 import styles from "./Analysis.module.css";
-import Select from "react-select";
-import { data } from "../../Mock/chartData";
-import { reasonOptions } from "../../Mock/reasonoption";
+import { useAIAnalysis } from "../../hooks/useAIAnalysis";
+import ForecastChart from "../../Components/AIAnalysis/ForecastChart";
+import AITrustPanel from "../../Components/AIAnalysis/AITrustPanel";
+import OperationAdvicePanel from "../../Components/AIAnalysis/OperationAdvicePanel";
+import RoomPricePanel from "../../Components/AIAnalysis/RoomPricePanel";
+import StaffPlanPanel from "../../Components/AIAnalysis/StaffPlanPanel";
+import HolidayPanel from "../../Components/AIAnalysis/HolidayPanel";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import {
-  BOOKING_CHART_RANGE,
-  BOOKING_CHART_COLOR,
-  ANALYSIS_SOLUTIONS,
-} from "../../Constants/Analysis/analysisConstants";
-import { selectStyles } from "../../Helpers/Analysis";
-import { useAnalysis } from "../../hooks/useAnalysis";
+  LABEL_RUN,
+  LABEL_PERIOD,
+  LABEL_SUB_TITLE,
+} from "../../Constants/Analysis/aiAnalysisConstants";
 
 export default function Analysis() {
-  const { selectedReason, setSelectedReason } = useAnalysis();
+  const {
+    selectedPeriod,
+    isRunning,
+    chartData,
+    peakForecast,
+    occupancyTarget,
+    handleRun,
+    handlePeriodChange,
+    periodOptions,
+  } = useAIAnalysis();
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>Analysis</h2>
-
-      {/* Booking Card */}
-      <div className={styles.card}>
-        <div className={styles.cardHeader}>
-          <span>Booking</span>
-          <div className={styles.navButtons}>
-            <button>{"<"}</button>
-            <span>Present</span>
-            <button>{">"}</button>
-          </div>
+    <div className={styles.page}>
+      {/* ── Top bar ── */}
+      <div className={styles.topBar}>
+        <div className={styles.titleGroup}>
+          <h1 className={styles.pageTitle}>Thống Kê Dự Báo Lượng Khách AI</h1>
+          <p className={styles.pageSubtitle}>{LABEL_SUB_TITLE}</p>
         </div>
 
-        <div style={{ width: "100%", height: 300 }}>
-          <ResponsiveContainer>
-            <BarChart
-              data={data}
-              margin={{ top: 10, right: 20, left: -10, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient
-                  id="bookingGradient"
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
-                  <stop offset="0%" stopColor={BOOKING_CHART_COLOR.START} />
-                  <stop offset="100%" stopColor={BOOKING_CHART_COLOR.END} />
-                </linearGradient>
-              </defs>
-
-              <CartesianGrid stroke="#e5e7eb" vertical={false} />
-
-              <XAxis
-                dataKey="day"
-                tick={{ fill: "#6b7280", fontSize: 14 }}
-                axisLine={false}
-                tickLine={false}
-              />
-
-              <YAxis
-                domain={BOOKING_CHART_RANGE}
-                tick={{ fill: "#6b7280", fontSize: 14 }}
-                axisLine={false}
-                tickLine={false}
-              />
-
-              <Tooltip
-                contentStyle={{
-                  borderRadius: "10px",
-                  border: "none",
-                  boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-                }}
-                cursor={{ fill: "rgba(0,0,0,0.04)" }}
-              />
-
-              <Bar
-                dataKey="booking"
-                fill="url(#bookingGradient)"
-                radius={[12, 12, 12, 12]}
-                barSize={35}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Reason */}
-      <div className={styles.reasonSection}>
-        <h3>Reason</h3>
-
-        <Select
-          options={reasonOptions}
-          value={selectedReason}
-          onChange={setSelectedReason}
-          styles={  selectStyles}
-        />
-      </div>
-
-      {/* Solution */}
-      <h3>Solution</h3>
-
-      <div className={styles.solutionCard}>
-        <div className={styles.solutionBox}>
-          <p>Suggested strategies based on data:</p>
-          <ol>
-            {ANALYSIS_SOLUTIONS.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ol>
-        </div>
-
-        <div className={styles.messageBox}>
-          <div
-            style={{
-              width: "800px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
+        <div className={styles.controls}>
+          <span className={styles.periodLabel}>{LABEL_PERIOD}</span>
+          <select
+            className={styles.periodSelect}
+            value={selectedPeriod.value}
+            onChange={(e) => {
+              const opt = periodOptions.find((o) => o.value === e.target.value);
+              if (opt) handlePeriodChange(opt);
             }}
           >
-            <input type="text" placeholder="Message" />
-            <button
-              style={{
-                marginLeft: "-50px",
-                width: "44px",
-                height: "44px",
-                justifyContent: "center",
-              }}
-            >
-              ➜
-            </button>
-          </div>
+            {periodOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+
+          <button
+            id="ai-run-btn"
+            className={styles.runBtn}
+            onClick={handleRun}
+            disabled={isRunning}
+          >
+            <span className={styles.runIcon}>▶</span>
+            {isRunning ? "Đang chạy…" : LABEL_RUN}
+          </button>
         </div>
+      </div>
+
+      {/* ── Main 2-column grid ── */}
+      <div className={styles.mainGrid}>
+        {/* Left: Forecast chart */}
+        <div className={styles.leftCol}>
+          <ForecastChart data={chartData} peakForecast={peakForecast} />
+        </div>
+
+        {/* Right: trust + advice panels */}
+        <div className={styles.rightCol}>
+          <AITrustPanel trustLevel="CAO" isStable={true} />
+          <OperationAdvicePanel />
+        </div>
+      </div>
+
+      {/* ── Bottom 3-column row ── */}
+      <div className={styles.bottomRow}>
+        <RoomPricePanel occupancyTarget={occupancyTarget} />
+        <StaffPlanPanel />
+        <HolidayPanel />
       </div>
     </div>
   );

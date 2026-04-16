@@ -1,0 +1,77 @@
+.panel {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.labelTop {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.staffIcon {
+  font-size: 18px;
+}
+
+.totalRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.totalNumber {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.totalLabel {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 4px 0;
+}
+
+.staffRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.staffName {
+  font-size: 12px;
+  color: #475569;
+}
+
+.staffValue {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.unit {
+  font-size: 11px;
+  font-weight: 400;
+  color: #94a3b8;
+  margin-left: 2px;
+}

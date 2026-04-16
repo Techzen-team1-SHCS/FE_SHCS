@@ -141,7 +141,28 @@
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
+/* Áp dụng cho tất cả input trong grid */
+.grid input::placeholder {
+  color: #94a3b8 !important; /* Màu xám Slate nhạt */
+  opacity: 0.6;             /* Độ nhạt 40% (có thể giảm xuống 0.3 nếu muốn nhạt nữa) */
+  transition: all 0.3s ease;
+}
 
+/* Hiệu ứng khi hover vào ô input */
+.grid input:hover::placeholder {
+  opacity: 1;            
+}
+
+/* Hiệu ứng khi đang gõ (focus) */
+.grid input:focus::placeholder {
+  opacity: 0.2;             /* Gần như biến mất để tập trung vào chữ đang gõ */
+}
+
+/* Đặc biệt cho các component PasswordInput nếu nó không nằm trực tiếp trong selector trên */
+.inputGroupFull input::placeholder {
+  color: #94a3b8;
+  opacity: 0.4;
+}
 .fileInput:hover {
   background-color: rgba(59, 130, 246, 0.1);
   border-color: #3b82f6;
