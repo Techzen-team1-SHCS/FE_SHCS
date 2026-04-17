@@ -1,0 +1,381 @@
+.container {
+    background: white;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+
+.headerStats {
+    display: flex;
+    gap: 24px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.statNumber {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.statLabel {
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tableContainer {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    min-width: 900px;
+}
+
+.tableHeader {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.th {
+    padding: 16px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: white;
+    border-bottom: none;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+}
+
+.tableBody {
+    background: white;
+}
+
+.tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tr:last-child {
+    border-bottom: none;
+}
+
+.td {
+    padding: 16px 12px;
+    color: #495057;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    vertical-align: middle;
+}
+
+/* User Info Styles */
+.userInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatarContainer {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.userAvatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatarPlaceholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.userName {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.userEmail {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+/* User Details */
+.userDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.detailItem {
+    font-size: 13px;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.address {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Role Badges */
+.roleBadge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.roleAdmin {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.roleUser {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* Status Badges */
+.statusBadge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.statusActive {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.statusInactive {
+    background-color: #e2e3e5;
+    color: #383d41;
+    border: 1px solid #d6d8db;
+}
+
+.statusSuspended {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f1b0b7;
+}
+
+.statusPending {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+/* Action Buttons */
+.actionCell {
+    text-align: center;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+
+.actionButton {
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.viewButton {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.viewButton:hover {
+    background-color: #bbdefb;
+    transform: scale(1.1);
+}
+
+.editButton {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.editButton:hover {
+    background-color: #ffe0b2;
+    transform: scale(1.1);
+}
+
+.banButton {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.banButton:hover {
+    background-color: #ffcdd2;
+    transform: scale(1.1);
+}
+
+.unbanButton {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.unbanButton:hover {
+    background-color: #c8e6c9;
+    transform: scale(1.1);
+}
+
+.deleteButton {
+    background-color: #fbe9e7;
+    color: #d84315;
+}
+
+.deleteButton:hover {
+    background-color: #ffccbc;
+    transform: scale(1.1);
+}
+
+.buttonIcon {
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+        margin: 16px 0;
+    }
+    
+    .title {
+        font-size: 20px;
+    }
+    
+    .headerStats {
+        gap: 12px;
+    }
+    
+    .stat {
+        padding: 8px 12px;
+    }
+    
+    .statNumber {
+        font-size: 18px;
+    }
+    
+    .th, .td {
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+    
+    .userInfo {
+        gap: 8px;
+    }
+    
+    .avatarContainer {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .buttonGroup {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .actionButton {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .buttonIcon {
+        font-size: 12px;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Custom scrollbar for table */
+.tableContainer::-webkit-scrollbar {
+    height: 6px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}

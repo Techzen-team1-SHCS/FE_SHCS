@@ -1,0 +1,160 @@
+/* Main container */
+.container {
+  padding: 30px;
+  background: #f5f6fa;
+  min-height: 100vh;
+  font-family: sans-serif;
+}
+
+/* Page title */
+.title {
+  margin-bottom: 20px;
+}
+
+/* Card layout */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  width: 830px;
+}
+.line{
+    width: 750px;
+    margin: 20px;
+    height: 2px;
+    background-color: #ccc;
+}
+/* Header inside card */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Week navigation buttons */
+.navButtons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.navButtons button {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Chart container */
+.chart {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap :100px;
+  height: 250px;
+  margin-top: 20px;
+}
+
+
+/* Each bar wrapper */
+.barWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* Background bar */
+.barBackground {
+  width: 20px;
+  height: 200px;
+  background: #e3e8f0;
+  border-radius: 10px;
+  position: absolute;
+  bottom: 20px;
+}
+
+/* Actual data bar */
+.bar {
+  width: 20px;
+  background: linear-gradient(180deg, #4f8df5, #2f66e0);
+  border-radius: 10px;
+  position: absolute;
+  bottom: 20px;
+  z-index: 2;
+}
+
+/* Day label */
+.barWrapper span {
+  margin-top: 210px;
+  font-size: 14px;
+}
+
+/* Reason section */
+.reasonSection {
+  margin-bottom: 20px;
+}
+
+/* Dropdown style */
+.dropdown {
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 250px;
+}
+
+/* Solution card */
+.solutionCard {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* AI solution box */
+.solutionBox {
+  background: linear-gradient(180deg, #5b8def, #6c8ef7);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 15px 0;
+  font-size: 14px;
+  width: 700px;
+  box-shadow: 0 3px 10px rgba(100, 99, 99, 0.5);
+}
+
+.solutionBox ol {
+  margin-top: 10px;
+  padding-left: 18px;
+}
+
+/* Message input area */
+.messageBox {
+  display: flex;
+  margin-top: 15px;
+  height: 60px;
+  justify-content: center;
+}
+
+.messageBox input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px 8px 8px 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  box-shadow: 0 3px 10px rgba(100, 99, 99, 0.5);
+}
+
+.messageBox button {
+  padding: 10px 15px;
+  border: none;
+  background: #1976d2;
+  color: white;
+  border-radius: 50px 50px 50px 50px;
+  cursor: pointer;
+}

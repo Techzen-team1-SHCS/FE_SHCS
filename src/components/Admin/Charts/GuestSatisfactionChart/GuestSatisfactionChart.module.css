@@ -1,0 +1,100 @@
+/* components/GuestSatisfactionChart/GuestSatisfactionChart.module.css */
+.section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.sectionTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 16px;
+    font-family: 'Inter', sans-serif;
+}
+
+.satisfactionCard {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.chartContainer {
+    height: 300px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Custom Legend Styles */
+.customLegend {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 20px;
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+}
+
+.legendColor {
+    width: 32px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.legendLabel {
+    font-size: 14px;
+    color: #495057;
+    font-family: 'Inter', sans-serif;
+    flex: 1;
+}
+
+.legendValue {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-family: 'Inter', sans-serif;
+}
+/* Custom styles for the chart */
+.chartContainer canvas {
+    max-width: 250px;
+    max-height: 250px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .section {
+        padding: 16px;
+    }
+    
+    .chartContainer {
+        height: 250px;
+    }
+    
+    .chartContainer canvas {
+        max-width: 200px;
+        max-height: 200px;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section {
+    animation: fadeIn 0.5s ease-out;
+}

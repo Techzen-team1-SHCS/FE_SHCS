@@ -1,0 +1,182 @@
+.container {
+  display: flex;
+  height: 100vh;
+  font-family: "Inter", sans-serif;
+  background: #f9fafb;
+}
+
+/* LEFT */
+.left {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.imageCard {
+  width: 70%;
+  background: #eee;
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+}
+
+.imageCard img {
+  width: 100%;
+}
+
+.dots {
+  margin-top: 10px;
+}
+
+.dots span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #ccc;
+  border-radius: 50%;
+  margin: 0 4px;
+}
+
+.dots .active {
+  width: 20px;
+  background: #3b5edb;
+}
+
+/* RIGHT */
+.right {
+  flex: 1;
+  padding: 50px 80px;
+}
+
+/* LOGO */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-right: -15px;
+
+}
+
+.logo img {
+  width: 150px;
+}
+
+/* TITLE */
+.title {
+  font-size: 32px;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin-bottom: 25px;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* INPUT */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputGroupFull {
+  grid-column: span 2;
+}
+
+label {
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+input:focus {
+  border-color: #3b5edb;
+}
+
+/* PASSWORD */
+.password {
+  position: relative;
+}
+
+.password span {
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  cursor: pointer;
+}
+
+/* TERMS */
+.terms {
+  margin: 15px 0;
+  font-size: 13px;
+}
+
+/* BUTTON */
+.registerBtn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: #3b5edb;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.registerBtn:hover {
+  background: #2f4fc7;
+}
+
+/* LOGIN */
+.link {
+  color: #FF8682;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+/* DIVIDER */
+.divider {
+  text-align: center;
+  margin: 20px 0;
+  color: #aaa;
+  font-size: 13px;
+}
+
+/* GOOGLE */
+.google {
+  display: flex;
+  justify-content: center;
+}
+
+.google > div {
+  width: 100% !important;
+}
+
+/* ERROR */
+.error {
+  color: #dc3545;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}

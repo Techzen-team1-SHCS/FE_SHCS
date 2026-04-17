@@ -1,0 +1,120 @@
+.reviewsList {
+  margin-top: 40px;
+  padding: 20px 0;
+}
+
+.reviewItem {
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  background: #fff;
+}
+.reviewICard{
+      transition: all 0.3s ease;
+
+}
+.reviewICard:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.reviewHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.userAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 16px;
+  object-fit: cover;
+  border: 2px solid #f0f0f0;
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.reviewDate {
+  font-size: 14px;
+  color: #666;
+}
+
+.reviewRating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ratingStars {
+  color: #ffc107;
+  font-size: 20px;
+  margin-right: 12px;
+}
+
+
+.reviewComment {
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 15px;
+}
+
+.loadingText {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.emptyState h4 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.emptyState p {
+  font-size: 15px;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reviewsList {
+    margin-top: 30px;
+    padding: 15px 0;
+  }
+  
+  .reviewItem {
+    padding: 20px;
+  }
+  
+  .reviewHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .userAvatar {
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+  
+  .ratingStars {
+    font-size: 18px;
+  }
+}

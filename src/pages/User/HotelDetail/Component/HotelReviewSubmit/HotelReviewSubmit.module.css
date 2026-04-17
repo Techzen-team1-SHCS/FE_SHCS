@@ -1,0 +1,102 @@
+.reviewSubmit {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  flex: 0 0 20%;
+  font-size: 40px;
+  font-weight: 600;
+  color: #333;
+  
+}
+
+.starRating {
+  width: 100%;
+  flex:0 0 30%;
+}
+@media (max-width: 768px) {
+  .starRating{
+    display: flex;
+    justify-content: center;
+  }
+}
+.form{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.starBtn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #e4e5e9;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0 4px;
+  align-items: center;
+}
+.group{
+  height: 39px;
+  gap:40px;
+  justify-content: left;
+  align-items: center;
+  flex: 0 0 80%;
+  width: 100%;
+  display: flex;
+}
+.starBtn.active {
+  color: #ffc107;
+}
+
+.starBtn:hover {
+  color: #ffc107;
+}
+
+.input {
+  width: 100%;
+  align-items: center;
+  justify-self: center;
+}
+
+.input input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 100px;
+  font-size: 14px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.input input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.submitBtn {
+  width: 109px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 10px 0px 10px;
+  height: 39px;
+  background-color: #AD9668;
+  color: black;
+  border: none;
+  border-radius: 200px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.submitBtn:hover {
+  background-color: #79602d;
+}

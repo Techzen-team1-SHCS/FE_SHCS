@@ -1,0 +1,263 @@
+/* NavigationTabs.module.css */
+.navigationTabs {
+  width: 100%;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tabContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 auto;
+  position: relative;
+  max-width: 80%;
+}
+
+.tab {
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+  justify-content: center;
+  min-height: 80px;
+}
+
+.loader.disabled{
+  background-color: #cbcbcb;
+  cursor: not-allowed;
+}
+.tab.disabled {
+  color: #000000;
+  cursor: not-allowed;
+}
+
+.tabIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-weight: bold;
+  font-size: 18px;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  border: 1px solid #000000;
+  border-radius: 9999px;
+  
+}
+.activeIcon{
+  background-color: #62B4F5;
+  border: none;
+  color: white;
+}
+.completedIcon{
+  background-color: #62B4F5;
+  border: none;
+  color: white;
+}
+.tabContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.tabText {
+  font-weight: 600;
+  font-size: 16px;
+  white-space: nowrap;
+  margin-bottom: 0px;
+}
+
+.tabDescription {
+  font-size: 12px;
+  color: #6c757d;
+  white-space: nowrap;
+}
+
+
+.loader  {
+  position: relative;
+  font-size: 16px;
+  width: 100%;
+  height: 2px;
+  background-color: #000000;
+  z-index: 1;
+  flex:1;
+}
+.loader:before {
+
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(45deg);
+  height: 100%;
+  width: 4px;
+  background: #fff;
+  left: 50%;
+  top:0;
+}
+.loader:after {
+  content: '';
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  background-color: orange;
+  border-radius: 15%;
+  animation: rollingRock 2.5s cubic-bezier(.79, 0, .47, .97) infinite;
+}
+.loader.active:after,
+.loader.paused:after {
+  content: '';
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  background-color: orange;
+  border-radius: 15%;
+  display: block;
+}
+
+/* Animation khi active */
+.loader.active:after {
+  animation: rollingRock 2.5s cubic-bezier(.79, 0, .47, .97) infinite;
+}
+
+/* Tạm dừng animation nhưng vẫn hiển thị hòn đá */
+.loader.paused:after {
+  animation: none;
+  left: 0; /* Giữ hòn đá ở vị trí bắt đầu */
+  transform: translateY(-50%) rotate(0deg);
+}
+
+/* Ẩn hòn đá khi disabled */
+.loader.disabled:after {
+  display: none;
+}
+@keyframes rollingRock {
+  0% {
+    left: 0;
+    transform: translateY(-50%) rotate(0deg);
+  }
+
+  20% {
+    left: 20%;
+    transform: translateY(-50%) rotate(72deg);
+  }
+
+  40% {
+    left: 40%;
+    transform: translateY(-50%) rotate(144deg);
+  }
+
+  60% {
+    left: 60%;
+    transform: translateY(-50%) rotate(216deg);
+  }
+
+  80% {
+    left: 80%;
+    transform: translateY(-50%) rotate(288deg);
+  }
+
+  100% {
+    left: 100%;
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tab {
+    padding: 15px 20px;
+    min-height: 70px;
+  }
+  
+  .tabText {
+    font-size: 14px;
+  }
+  
+  .tabDescription {
+    font-size: 11px;
+  }
+  
+  .tabIcon {
+    font-size: 16px;
+    margin-right: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .tabContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    height: 400px;
+  }
+
+  .tab {
+    width: 100%;
+    justify-content: flex-start;
+    min-height: 60px;
+  }
+
+  /* Loader chuyển thành dọc */
+  .loader {
+    width: 2px;
+    height: 100%;
+    align-self: left;
+    margin-left: 40px;  
+  }
+
+  /* Hòn đá */
+  .loader:after {
+    left: 50%;
+    top: 0;
+  }
+
+  /* Active → chạy từ trên xuống */
+  .loader.active:after {
+    animation: rollingRockVertical 2.5s cubic-bezier(.79, 0, .47, .97) infinite;
+  }
+
+  /* Paused → đứng yên ở trên */
+  .loader.paused:after {
+    animation: none;
+    top: 0;
+    transform: translateX(-50%) rotate(0deg);
+  }
+}
+@keyframes rollingRockVertical {
+  0% {
+    top: 0;
+    transform: translateX(-50%) rotate(0deg);
+  }
+
+  20% {
+    top: 20%;
+    transform: translateX(-50%) rotate(72deg);
+  }
+
+  40% {
+    top: 40%;
+    transform: translateX(-50%) rotate(144deg);
+  }
+
+  60% {
+    top: 60%;
+    transform: translateX(-50%) rotate(216deg);
+  }
+
+  80% {
+    top: 80%;
+    transform: translateX(-50%) rotate(288deg);
+  }
+
+  100% {
+    top: 100%;
+    transform: translateX(-50%) rotate(360deg);
+  }
+}

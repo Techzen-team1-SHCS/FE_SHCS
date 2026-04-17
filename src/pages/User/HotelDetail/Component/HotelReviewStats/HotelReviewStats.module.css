@@ -1,0 +1,126 @@
+.reviewStats {
+  border-radius: 12px;
+  margin-bottom: 50px;
+}
+
+.statsHeader {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  
+}
+
+.statsHeader h3 {
+  display: flex;
+  align-items: center;
+  flex: 0 0 20%;
+  font-size: 40px;
+  font-weight: 600;
+  color: #333;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px 30px;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statCategory {
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.statPercentage {
+  font-size: 14px;
+  font-weight: 600;
+  color: #AD9668;
+}
+
+.statBar {
+  width: 100%;
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.statBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #AD9668, #D4B97D);
+  border-radius: 3px;
+  transition: width 0.8s ease-in-out;
+  position: relative;
+}
+
+.statBarFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .reviewStats {
+    padding: 20px;
+  }
+  
+  .statsGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 16px;
+  }
+  
+  .statCategory {
+    font-size: 13px;
+  }
+  
+  .statPercentage {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reviewStats {
+    padding: 16px;
+  }
+  
+  .statsHeader h3 {
+    font-size: 18px;
+  }
+}   
