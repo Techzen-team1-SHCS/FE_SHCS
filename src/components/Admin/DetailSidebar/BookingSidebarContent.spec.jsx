@@ -80,4 +80,20 @@ describe("BookingSidebarContent", () => {
     render(<BookingSidebarContent booking={booking} />);
     expect(screen.getByText("U")).toBeInTheDocument(); // getInitials null
   });
+
+  test("hiển thị email xác nhận chưa gửi", () => {
+    const booking = { ...defaultBooking, pre_checkin_email_sent: false };
+    render(<BookingSidebarContent booking={booking} />);
+    expect(screen.getByText("📧 Email xác nhận chưa được gửi")).toBeInTheDocument();
+  });
+
+  test("cover default branches of status and payment badges", () => {
+    // getStatusBadge default case
+    const bookingStatus = { ...defaultBooking, status: "Unknown" };
+    render(<BookingSidebarContent booking={bookingStatus} />);
+    
+    // getPaymentBadge default case
+    const bookingPayment = { ...defaultBooking, payment_status: "Unknown" };
+    render(<BookingSidebarContent booking={bookingPayment} />);
+  });
 });

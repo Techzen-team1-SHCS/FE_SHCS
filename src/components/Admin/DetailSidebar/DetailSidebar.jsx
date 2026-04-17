@@ -39,7 +39,7 @@ const DetailSidebar = ({
                 onClick={onClose}
                 aria-hidden="true"
             />
-            <div className={`${sidebar} ${isOpen ? sidebarOpen : ''} ${getSidebarTypeClass()}`}>
+            <div className={`${sidebar} ${sidebarOpen} ${getSidebarTypeClass()}`}>
                 <div className={sidebarHeader}>
                     <h2 className={sidebarTitle}>{title}</h2>
                     <button 

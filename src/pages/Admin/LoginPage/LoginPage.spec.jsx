@@ -167,5 +167,65 @@ describe("Admin - LoginPage", () => {
     fireEvent.click(toggleBtn);
     expect(passwordInput).toHaveAttribute("type", "password");
   });
+
+  test("nhập input sau khi validate thất bại => xóa lỗi tương ứng", async () => {
+    renderWithAuth(<LoginPage />);
+
+    // Trigger validation errors
+    fireEvent.click(screen.getByRole("button", { name: /đăng nhập/i }));
+    expect(await screen.findByText("Email là bắt buộc")).toBeInTheDocument();
+    expect(screen.getByText("Mật khẩu là bắt buộc")).toBeInTheDocument();
+
+    // Type in email => email error should disappear
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "a" } });
+    expect(screen.queryByText("Email là bắt buộc")).not.toBeInTheDocument();
+
+    // Type in password => password error should disappear
+    fireEvent.change(screen.getByLabelText("Mật khẩu"), { target: { value: "x" } });
+    expect(screen.queryByText("Mật khẩu là bắt buộc")).not.toBeInTheDocument();
+  });
+
+  test("getUserById không có user => dùng user từ login", async () => {
+    const loginFn = vi.fn();
+    authService.login.mockResolvedValueOnce({
+      status: 200,
+      user: { id: 1, role: 1, name: "LoginUser" },
+      token: "t",
+    });
+    authService.getUserById.mockResolvedValueOnce({}); // empty object, no .user
+
+    renderWithAuth(<LoginPage />, { login: loginFn });
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "a@ex.com" } });
+    fireEvent.change(screen.getByLabelText("Mật khẩu"), { target: { value: "123456" } });
+    fireEvent.click(screen.getByRole("button", { name: /đăng nhập/i }));
+
+    await waitFor(() => expect(loginFn).toHaveBeenCalledWith(expect.objectContaining({ name: "LoginUser" }), "t"));
+  });
+
+  test("nhánh lỗi API dùng key error thay vì message", async () => {
+    authService.login.mockRejectedValue({
+      response: { data: { error: "Lỗi từ key error" } }
+    });
+
+    renderWithAuth(<LoginPage />);
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "a@ex.com" } });
+    fireEvent.change(screen.getByLabelText("Mật khẩu"), { target: { value: "123456" } });
+    fireEvent.click(screen.getByRole("button", { name: /đăng nhập/i }));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Lỗi từ key error"));
+  });
+
+  test("nhánh lỗi API hoàn toàn không có data => fallback message", async () => {
+    authService.login.mockRejectedValue({
+      response: { data: {} }
+    });
+
+    renderWithAuth(<LoginPage />);
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "a@ex.com" } });
+    fireEvent.change(screen.getByLabelText("Mật khẩu"), { target: { value: "123456" } });
+    fireEvent.click(screen.getByRole("button", { name: /đăng nhập/i }));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Có lỗi xảy ra khi đăng nhập"));
+  });
 });
 
