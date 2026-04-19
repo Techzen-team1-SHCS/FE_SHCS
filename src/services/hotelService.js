@@ -80,6 +80,10 @@ export const hotelService = {
     const response = await api.get(`/auth/hotel/${id}`);
     return response.data.data;
   },
+  async getFullHotelDetail(id) {
+    const response = await api.get(`/auth/hotel/${id}/full-details`);
+    return response.data.data;
+  },
 
   async getHotelManagerHotelById(id) {
     const token = localStorage.getItem("token");

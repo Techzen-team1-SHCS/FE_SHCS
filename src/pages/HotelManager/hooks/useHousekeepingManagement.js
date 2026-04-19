@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getEcho } from "../../../services/echo";
 
 const BASE = `${import.meta.env.VITE_API_URL}/auth/hotel-manager/housekeeping`;
 
@@ -26,6 +27,31 @@ export const useHousekeepingManagement = () => {
   const [roomFilter, setRoomFilter] = useState("");
 
   // ─── 1. Dashboard Query ───────────────────────────────────────────────────
+  const realtimePollMs = 10000;
+
+  useEffect(() => {
+    let echo;
+
+    try {
+      echo = getEcho();
+    } catch (error) {
+      console.warn(error);
+      return undefined;
+    }
+
+    const channel = echo.private("hotel-manager.housekeeping");
+
+    const onUpdate = () => {
+      InvalidateAll();
+    };
+
+    channel.listen(".HousekeepingUpdated", onUpdate);
+
+    return () => {
+      echo.leave("hotel-manager.housekeeping");
+    };
+  }, []);
+
   const { data: dashboard = null, isLoading: loadingDashboard } = useQuery({
     queryKey: ["hk_dashboard"],
     queryFn: async () => {
@@ -33,6 +59,9 @@ export const useHousekeepingManagement = () => {
       return res.data.data;
     },
     staleTime: 5 * 60 * 1000,
+    refetchInterval: realtimePollMs,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   });
 
   // ─── 2. Tasks Query ───────────────────────────────────────────────────────
@@ -44,6 +73,9 @@ export const useHousekeepingManagement = () => {
       return res.data.data;
     },
     staleTime: 2 * 60 * 1000,
+    refetchInterval: realtimePollMs,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   });
 
   // ─── 3. Rooms Query ───────────────────────────────────────────────────────
@@ -55,6 +87,9 @@ export const useHousekeepingManagement = () => {
       return res.data.data;
     },
     staleTime: 2 * 60 * 1000,
+    refetchInterval: realtimePollMs,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   });
 
   // ─── 4. Issues Query ──────────────────────────────────────────────────────
@@ -66,6 +101,9 @@ export const useHousekeepingManagement = () => {
       return res.data.data;
     },
     staleTime: 2 * 60 * 1000,
+    refetchInterval: realtimePollMs,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   });
 
   // ─── 5. Staff Query ───────────────────────────────────────────────────────
@@ -76,6 +114,7 @@ export const useHousekeepingManagement = () => {
       return res.data.status === 200 ? res.data.data : [];
     },
     staleTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
   });
 
   // ─── 6. Mutations ─────────────────────────────────────────────────────────

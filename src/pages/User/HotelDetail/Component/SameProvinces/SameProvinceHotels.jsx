@@ -6,18 +6,18 @@ import PartLoading from '../../../../../components/Loading/PartLoading';
 import { getHotelImage, getHotelStars } from "../../Helpers/hotelHelper";
 import { useSameProvinceHotels } from '../../Hooks/useSameProvinceHotels';
 
-const SameProvinceHotels = ({ currentHotelId }) => {
+const SameProvinceHotels = ({ currentHotelId, initialData }) => {
   const navigate = useNavigate();
   console.log('🔴 [SameProvinceHotels] RENDER, hotelId:', currentHotelId);
 
-  // QUAN TRỌNG: Đảm bảo queryKey là UNIQUE và STABLE
-    const {
-    data: hotels,
-    isLoading,
-    isError,
-    error
-  } = useSameProvinceHotels(currentHotelId);
-    const stars = getHotelStars(hotels);
+  // Dùng initialData nếu có, nếu không thì fallback gọi query
+  const queryResult = useSameProvinceHotels(!initialData ? currentHotelId : null);
+  const hotels = initialData || queryResult.data || [];
+  const isLoading = !initialData && queryResult.isLoading;
+  const isError = !initialData && queryResult.isError;
+  const error = queryResult.error;
+
+  const stars = 5;
 
   if (isLoading) {
     console.log('⏳ [SameProvinceHotels] Loading...');

@@ -48,6 +48,8 @@ const HotelDetail = () => {
     amenitiesArray,
     roomArray,
     styleArray,
+    sameProvinceHotels,
+    similarHotels,
   } = useHotelDetail(hotelId);
   if (loadingHotel) {
     return (
@@ -180,11 +182,17 @@ const HotelDetail = () => {
             >
               Khách sạn cùng khu vực
             </h3>
-            <SameProvinceHotels currentHotelId={hotelData?.id} />
+            <SameProvinceHotels 
+                currentHotelId={hotelData?.id} 
+                initialData={sameProvinceHotels}
+            />
           </div>
 
           <div>
-            <SimilarHotel currentHotelId={hotelData?.id} />
+            <SimilarHotel 
+                currentHotelId={hotelData?.id} 
+                initialData={similarHotels}
+            />
           </div>
         </div>
       </div>
