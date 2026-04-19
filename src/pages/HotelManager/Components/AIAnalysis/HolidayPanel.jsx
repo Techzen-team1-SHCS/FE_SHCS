@@ -7,8 +7,9 @@ import {
 import { AI_HOLIDAY_EVENTS } from "../../Mock/aiForecastData";
 import styles from "./HolidayPanel.module.css";
 
-export default function HolidayPanel() {
-  const hasEvents = AI_HOLIDAY_EVENTS && AI_HOLIDAY_EVENTS.length > 0;
+export default function HolidayPanel({ holidayWarnings = [] }) {
+  const events = holidayWarnings.length ? holidayWarnings : AI_HOLIDAY_EVENTS;
+  const hasEvents = events && events.length > 0;
 
   return (
     <div className={styles.panel}>
@@ -19,7 +20,7 @@ export default function HolidayPanel() {
       <p className={styles.specialTitle}>{LABEL_HOLIDAY_SPECIAL}</p>
       {hasEvents ? (
         <ul className={styles.eventList}>
-          {AI_HOLIDAY_EVENTS.map((event, idx) => (
+          {events.map((event, idx) => (
             <li key={idx} className={styles.eventItem}>
               <span className={styles.eventDot} />
               {event}

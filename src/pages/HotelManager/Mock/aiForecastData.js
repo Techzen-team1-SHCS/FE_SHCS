@@ -24,7 +24,7 @@ export const AI_STAFF_PLAN = {
 export const AI_HOLIDAY_EVENTS = [];
 
 export const AI_PERIOD_OPTIONS = [
-  { value: "7", label: "7 Ngày" },
-  { value: "14", label: "14 Ngày" },
   { value: "30", label: "30 Ngày" },
+  { value: "60", label: "60 Ngày" },
+  { value: "180", label: "180 Ngày" }
 ];

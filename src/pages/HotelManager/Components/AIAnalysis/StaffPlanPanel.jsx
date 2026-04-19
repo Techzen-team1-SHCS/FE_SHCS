@@ -10,8 +10,23 @@ import {
 import { AI_STAFF_PLAN } from "../../Mock/aiForecastData";
 import styles from "./StaffPlanPanel.module.css";
 
-export default function StaffPlanPanel() {
-  const { totalRooms, housekeeping, receptionPerShift } = AI_STAFF_PLAN;
+function parseStaffingText(staffing = "") {
+  const houseMatch = staffing.match(/(\d+)\s*nhân\s*viên\s*dọn\s*phòng/i);
+  const recepMatch = staffing.match(/(\d+)\s*lễ\s*tân\s*\/\s*ca/i);
+
+  return {
+    housekeeping: houseMatch ? Number(houseMatch[1]) : null,
+    receptionPerShift: recepMatch ? Number(recepMatch[1]) : null,
+  };
+}
+
+export default function StaffPlanPanel({ staffing = "", peakForecast = 0 }) {
+  const parsed = parseStaffingText(staffing);
+  const { housekeeping, receptionPerShift } = AI_STAFF_PLAN;
+
+  const totalRooms = peakForecast || AI_STAFF_PLAN.totalRooms;
+  const finalHousekeeping = parsed.housekeeping ?? housekeeping;
+  const finalReception = parsed.receptionPerShift ?? receptionPerShift;
 
   return (
     <div className={styles.panel}>
@@ -20,20 +35,20 @@ export default function StaffPlanPanel() {
         <span className={styles.staffIcon}>👥</span>
       </div>
       <div className={styles.totalRow}>
-        <span className={styles.totalNumber}>{totalRooms}</span>
+        <span className={styles.totalNumber}>{Math.round(totalRooms)}</span>
         <span className={styles.totalLabel}>{LABEL_ROOMS_FORECAST}</span>
       </div>
       <div className={styles.divider} />
       <div className={styles.staffRow}>
         <span className={styles.staffName}>{LABEL_HOUSEKEEPING}</span>
         <span className={styles.staffValue}>
-          {housekeeping} <span className={styles.unit}>{LABEL_STAFF_UNIT}</span>
+          {finalHousekeeping} <span className={styles.unit}>{LABEL_STAFF_UNIT}</span>
         </span>
       </div>
       <div className={styles.staffRow}>
         <span className={styles.staffName}>{LABEL_RECEPTION}</span>
         <span className={styles.staffValue}>
-          {receptionPerShift} <span className={styles.unit}>{LABEL_SHIFT_UNIT}</span>
+          {finalReception} <span className={styles.unit}>{LABEL_SHIFT_UNIT}</span>
         </span>
       </div>
     </div>

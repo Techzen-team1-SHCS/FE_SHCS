@@ -6,7 +6,7 @@ import {
 } from "../../Constants/Analysis/aiAnalysisConstants";
 import styles from "./RoomPricePanel.module.css";
 
-export default function RoomPricePanel({ occupancyTarget = "61.1%" }) {
+export default function RoomPricePanel({ occupancyTarget = "61.1%", dynamicPricing = "" }) {
   return (
     <div className={styles.panel}>
       <div className={styles.header}>
@@ -15,7 +15,7 @@ export default function RoomPricePanel({ occupancyTarget = "61.1%" }) {
       </div>
       <p className={styles.value}>{occupancyTarget}</p>
       <p className={styles.subLabel}>{LABEL_OCCUPANCY_TARGET}</p>
-      <button className={styles.ctaBtn}>{LABEL_PRICE_CTA}</button>
+      <button className={styles.ctaBtn}>{dynamicPricing || LABEL_PRICE_CTA}</button>
     </div>
   );
 }

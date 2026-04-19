@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./Analysis.module.css";
 import { useAIAnalysis } from "../../hooks/useAIAnalysis";
 import ForecastChart from "../../Components/AIAnalysis/ForecastChart";
@@ -16,12 +15,23 @@ import {
 export default function Analysis() {
   const {
     selectedPeriod,
+    hotels,
+    selectedHotelId,
     isRunning,
+    apiError,
     chartData,
     peakForecast,
     occupancyTarget,
+    confidenceLevel,
+    isStable,
+    suggestedAction,
+    explanation,
+    dynamicPricing,
+    staffing,
+    holidayWarnings,
     handleRun,
     handlePeriodChange,
+    handleHotelChange,
     periodOptions,
   } = useAIAnalysis();
 
@@ -35,6 +45,23 @@ export default function Analysis() {
         </div>
 
         <div className={styles.controls}>
+          <span className={styles.periodLabel}>Khách sạn</span>
+          <select
+            className={styles.periodSelect}
+            value={selectedHotelId}
+            onChange={(e) => handleHotelChange(e.target.value)}
+          >
+            {hotels.length === 0 ? (
+              <option value="">Chưa có khách sạn</option>
+            ) : (
+              hotels.map((hotel) => (
+                <option key={hotel.id} value={hotel.id}>
+                  {hotel.name}
+                </option>
+              ))
+            )}
+          </select>
+
           <span className={styles.periodLabel}>{LABEL_PERIOD}</span>
           <select
             className={styles.periodSelect}
@@ -55,7 +82,7 @@ export default function Analysis() {
             id="ai-run-btn"
             className={styles.runBtn}
             onClick={handleRun}
-            disabled={isRunning}
+            disabled={isRunning || !selectedHotelId}
           >
             <span className={styles.runIcon}>▶</span>
             {isRunning ? "Đang chạy…" : LABEL_RUN}
@@ -64,6 +91,8 @@ export default function Analysis() {
       </div>
 
       {/* ── Main 2-column grid ── */}
+      {apiError ? <p className={styles.pageSubtitle}>{apiError}</p> : null}
+
       <div className={styles.mainGrid}>
         {/* Left: Forecast chart */}
         <div className={styles.leftCol}>
@@ -72,16 +101,16 @@ export default function Analysis() {
 
         {/* Right: trust + advice panels */}
         <div className={styles.rightCol}>
-          <AITrustPanel trustLevel="CAO" isStable={true} />
-          <OperationAdvicePanel />
+          <AITrustPanel trustLevel={confidenceLevel} isStable={isStable} />
+          <OperationAdvicePanel suggestedAction={suggestedAction} explanation={explanation} />
         </div>
       </div>
 
       {/* ── Bottom 3-column row ── */}
       <div className={styles.bottomRow}>
-        <RoomPricePanel occupancyTarget={occupancyTarget} />
-        <StaffPlanPanel />
-        <HolidayPanel />
+        <RoomPricePanel occupancyTarget={occupancyTarget} dynamicPricing={dynamicPricing} />
+        <StaffPlanPanel staffing={staffing} peakForecast={peakForecast} />
+        <HolidayPanel holidayWarnings={holidayWarnings} />
       </div>
     </div>
   );
