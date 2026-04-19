@@ -19,7 +19,7 @@ import ManageBooking from "./pages/User/ManageBooking/Main/ManageBooking";
 import Profile from "./pages/User/Profile/Main/Profile";
 import AdminLayout from "./layouts/AdminLayout/AdminLayout";
 import Dashboard from "./pages/Admin/Dashboard/Dashboard";
-import BookingManage from "./pages/Admin/BookingManage/BookingManage";
+import BookingManage from "./pages/Admin/BookingManage/Main/BookingManage";
 import WishList from "./pages/User/WishList/Main/WishList";
 import Notification from "./pages/Admin/Notification/Notification";
 import HotelManage from "./pages/Admin/HotelManage/HotelManage";
