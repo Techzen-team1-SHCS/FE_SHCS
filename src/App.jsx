@@ -23,7 +23,7 @@ import BookingManage from "./pages/Admin/BookingManage/BookingManage";
 import WishList from "./pages/User/WishList/Main/WishList";
 import Notification from "./pages/Admin/Notification/Notification";
 import HotelManage from "./pages/Admin/HotelManage/HotelManage";
-import UserManage from "./pages/Admin/UserManage/UserManage";
+import UserManage from "./pages/Admin/UserManage/Main/UserManage";
 import LoginPage from "./pages/Admin/LoginPage/LoginPage";
 import Help from "./pages/User/Help/Main/Help";
 import DiscountList from "./pages/User/Discount/Main/DiscountList";
