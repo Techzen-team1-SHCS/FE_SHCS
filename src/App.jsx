@@ -28,7 +28,7 @@ import LoginPage from "./pages/Admin/LoginPage/LoginPage";
 import Help from "./pages/User/Help/Main/Help";
 import DiscountList from "./pages/User/Discount/Main/DiscountList";
 import DiscountDetail from "./pages/User/Discount/Main/DiscountDetail";
-import SettingPage from "./pages/Admin/Setting/SettingPage";
+import SettingPage from "./pages/Admin/Setting/Main/SettingPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import HotelManagerLayout from "./layouts/HotelManagerLayout/HotelManagerLayout";
 import Hotel from "./pages/HotelManager/Main/Hotel/Hotel";
