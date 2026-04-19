@@ -1,5 +1,5 @@
 import styles from "../../Notification.module.css";
-import { getNotificationTypeConfig } from "../../Helpers/notificationHelpers";
+import { getNotificationTypeConfig } from "../../helpers/notificationHelpers";
 
 const NotificationCard = ({ notification, onRead }) => {
   const {
