@@ -5,15 +5,14 @@ import PartLoading from '../../../../../components/Loading/PartLoading';
 import { useSimilarHotels } from '../../Hooks/useSimilarHotels';
 import { getHotelImage, getHotelGuest } from '../../Helpers/hotelHelper';
 
-function SimilarHotel({ currentHotelId }) {
+function SimilarHotel({ currentHotelId, initialData }) {
 
-  // SỬA: Dùng React Query thay vì useState + useEffect
-  const {
-    data: similarHotels,
-    isLoading,
-    isError,
-    error,
-  } = useSimilarHotels(currentHotelId);
+  // Dùng initialData nếu có, nếu không thì fallback gọi query
+  const queryResult = useSimilarHotels(!initialData ? currentHotelId : null);
+  const similarHotels = initialData || queryResult.data || [];
+  const isLoading = !initialData && queryResult.isLoading;
+  const isError = !initialData && queryResult.isError;
+  const error = queryResult.error;
 
   // Debug: Xem component có bị re-render không
   React.useEffect(() => {

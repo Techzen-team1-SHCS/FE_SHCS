@@ -14,47 +14,31 @@ export const useHotelDetail = (hotelId) => {
   const availableRoomsSectionRef = useRef(null);
   const queryClient = useQueryClient();
 
-  // Hotel detail
+  // Full Hotel Detail (Combined API)
   const {
-    data: hotelData,
-    isLoading: loadingHotel,
+    data: fullData,
+    isLoading: loadingFull,
     isError: hotelError,
     error: hotelErrorDetail,
+    refetch: refetchAll,
   } = useQuery({
-    queryKey: ['hotel', hotelId],
-    queryFn: () => hotelService.getHotelById(hotelId),
+    queryKey: ['hotel-full', hotelId],
+    queryFn: () => hotelService.getFullHotelDetail(hotelId),
     enabled: !!hotelId,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
   });
 
-  // Comments
-  const {
-    data: commentsData,
-    isLoading: loadingComments,
-    isError: commentsError,
-    refetch: refetchComments,
-  } = useQuery({
-    queryKey: ['hotel-comments', hotelId],
-    queryFn: () =>
-      commentService
-        .getComments({ maHotel: hotelId })
-        .then((res) => res.data || []),
-    enabled: !!hotelId,
-    staleTime: 2 * 60 * 1000,
-  });
+  const hotelData = fullData?.hotel;
+  const commentsData = fullData?.comments || [];
+  const reviewStats = fullData?.reviewStats;
+  const sameProvinceHotels = fullData?.sameProvinceHotels || [];
+  const similarHotels = fullData?.similarHotels || [];
 
-  // Review stats
-  const {
-    data: reviewStats,
-    isLoading: loadingStats,
-    isError: statsError,
-  } = useQuery({
-    queryKey: ['hotel-review-stats', hotelId],
-    queryFn: () => commentService.getReviewStats(hotelId),
-    enabled: !!hotelId,
-    staleTime: 3 * 60 * 1000,
-  });
+  const loadingHotel = loadingFull;
+  const loadingComments = loadingFull;
+  const loadingStats = loadingFull;
+
+  const refetchComments = refetchAll;
 
   // Submit review
   const submitReviewMutation = useMutation({
@@ -159,10 +143,10 @@ export const useHotelDetail = (hotelId) => {
     hotelErrorDetail,
     commentsData,
     loadingComments,
-    commentsError,
     reviewStats,
     loadingStats,
-    statsError,
+    sameProvinceHotels,
+    similarHotels,
 
     // booking state
     availableRooms,
