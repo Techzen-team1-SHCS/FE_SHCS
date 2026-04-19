@@ -156,34 +156,42 @@ const HotelManage = () => {
                         onClick={handleCloseSidebar}
                     />
                     <HotelSidebar
-                        isSidebarOpen={isSidebarOpen}
-                        isEditMode={isEditMode}
-                        selectedHotel={selectedHotel}
-                        amenities={amenities}
-                        editForm={editForm}
-                        newAmenity={newAmenity}
+                        state={{
+                            isSidebarOpen,
+                            isEditMode,
+                            selectedHotel,
+                            amenities,
+                            editForm,
+                            newAmenity
+                        }}
 
-                        handleCloseSidebar={handleCloseSidebar}
-                        handleInputChange={handleInputChange}
-                        handleAddAmenity={handleAddAmenity}
-                        handleRemoveAmenity={handleRemoveAmenity}
-                        handleCancelEdit={handleCancelEdit}
-                        handleUpdate={handleUpdate}
-                        handleDelete={handleDelete}
-                        setNewAmenity={setNewAmenity}
-                        setIsEditMode={setIsEditMode}
+                        actions={{
+                            handleCloseSidebar,
+                            handleInputChange,
+                            handleAddAmenity,
+                            handleRemoveAmenity,
+                            handleCancelEdit,
+                            handleUpdate,
+                            handleDelete,
+                            setNewAmenity,
+                            setIsEditMode
+                        }}
 
-                        formatCurrency={formatCurrency}
-                        formatDate={formatDate}
-                        getRoomStats={getRoomStats}
-                        getStatusText={getStatusText}
-                        getStatusClass={getStatusClass}
-                        getStarValue={getStarValue}
-                        getStarText={getStarText}
+                        utils={{
+                            formatCurrency,
+                            formatDate,
+                            getRoomStats,
+                            getStatusText,
+                            getStatusClass,
+                            getStarValue,
+                            getStarText
+                        }}
 
-                        StarRating={StarRating}
+                        components={{
+                            StarRating
+                        }}
 
-                        {...styles}
+                        
                     />
                 </>
             )}
