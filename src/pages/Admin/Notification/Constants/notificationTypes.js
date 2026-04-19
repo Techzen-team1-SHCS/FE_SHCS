@@ -4,7 +4,7 @@ export const NOTIFICATION_TYPES = {
     bg: "#E5EEFF",
     color: "#2E5AAC",
   },
-  user_updated_profile:{
+  user_updated_profile: {
     icon: "/assets/images/banner/info.png",
     bg: "white",
     color: "green",

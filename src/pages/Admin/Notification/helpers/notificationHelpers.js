@@ -1,7 +1,10 @@
+import { NOTIFICATION_TYPES } from "../Constants/notificationTypes";
+
 export const formatTimeAgo = (dateString) => {
   const date = new Date(dateString);
   const now = new Date();
   const diffMs = now - date;
+
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
@@ -15,4 +18,15 @@ export const formatTimeAgo = (dateString) => {
     month: "short",
     day: "numeric",
   });
+};
+
+
+export const getNotificationTypeConfig = (type) => {
+  return (
+    NOTIFICATION_TYPES[type] || {
+      icon: "/assets/images/icons/default.png",
+      bg: "#F5F5F5",
+      color: "#999",
+    }
+  );
 };

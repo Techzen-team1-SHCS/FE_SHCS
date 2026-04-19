@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { notificationService } from "../../../../services/notificationService";
 
 export const useNotifications = () => {
@@ -6,17 +6,14 @@ export const useNotifications = () => {
   const [pendingHotels, setPendingHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [approving, setApproving] = useState(null);
-  const [rejectReason, setRejectReason] = useState({});
-  const [showRejectModal, setShowRejectModal] = useState(null);
 
-  const fetchAllData = useCallback(async () => {
+  const fetchAllData = async () => {
     try {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1500));
 
       const [notificationsData, hotelsData] = await Promise.all([
         notificationService.getAllNotifications(),
-        notificationService.getPendingHotels()
+        notificationService.getPendingHotels(),
       ]);
 
       setNotifications(Array.isArray(notificationsData) ? notificationsData : []);
@@ -28,17 +25,15 @@ export const useNotifications = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  useEffect(() => {
-    fetchAllData();
-  }, [fetchAllData]);
+  };
 
   const markAsRead = async (id) => {
     try {
       await notificationService.markAsRead(id);
-      setNotifications(prev =>
-        prev.map(n => n.id === id ? { ...n, is_read: true } : n)
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n.id === id ? { ...n, is_read: true } : n
+        )
       );
     } catch (error) {
       console.error("Mark as read error:", error);
@@ -48,8 +43,8 @@ export const useNotifications = () => {
   const markAllAsRead = async () => {
     try {
       await notificationService.markAllAsRead();
-      setNotifications(prev =>
-        prev.map(n => ({ ...n, is_read: true }))
+      setNotifications((prev) =>
+        prev.map((n) => ({ ...n, is_read: true }))
       );
     } catch (error) {
       console.error("Mark all as read error:", error);
@@ -60,49 +55,52 @@ export const useNotifications = () => {
     try {
       setApproving(hotelId);
       await notificationService.approveHotel(hotelId);
-      setPendingHotels(prev => prev.filter(h => h.id !== hotelId));
+
+      setPendingHotels((prev) =>
+        prev.filter((h) => h.id !== hotelId)
+      );
 
       const notificationsData = await notificationService.getNotifications();
       setNotifications(notificationsData || []);
     } catch (error) {
       console.error("Approve hotel error:", error);
-      alert("Lỗi duyệt khách sạn: " + (error.response?.data?.message || error.message));
     } finally {
       setApproving(null);
     }
   };
 
-  const rejectHotel = async (hotelId) => {
+  const rejectHotel = async (hotelId, reason) => {
     try {
       setApproving(hotelId);
-      const reason = rejectReason[hotelId] || "Admin không chấp nhận";
+
       await notificationService.rejectHotel(hotelId, reason);
-      setPendingHotels(prev => prev.filter(h => h.id !== hotelId));
-      setShowRejectModal(null);
+
+      setPendingHotels((prev) =>
+        prev.filter((h) => h.id !== hotelId)
+      );
 
       const notificationsData = await notificationService.getNotifications();
       setNotifications(notificationsData || []);
     } catch (error) {
       console.error("Reject hotel error:", error);
-      alert("Lỗi từ chối khách sạn: " + (error.response?.data?.message || error.message));
     } finally {
       setApproving(null);
     }
   };
+
+  useEffect(() => {
+    fetchAllData();
+  }, []);
 
   return {
     notifications,
     pendingHotels,
     loading,
     approving,
-    rejectReason,
-    setRejectReason,
-    showRejectModal,
-    setShowRejectModal,
     fetchAllData,
     markAsRead,
     markAllAsRead,
     approveHotel,
-    rejectHotel
+    rejectHotel,
   };
 };
