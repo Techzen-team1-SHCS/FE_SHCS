@@ -227,3 +227,362 @@
   color: white !important;
   border-color: #3b82f6 !important;
 }
+
+/* Responsive breakpoints */
+@media (max-width: 992px) {
+  .container {
+    padding: 24px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .actionBtn, .actionBtnDanger {
+    padding: 6px 12px;
+    font-size: 13px;
+    gap: 6px;
+  }
+
+  .tabs {
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+  }
+
+  .tab {
+    padding: 6px 16px;
+    font-size: 13px;
+  }
+
+  .list {
+    gap: 12px;
+  }
+
+  .card {
+    padding: 16px 20px;
+  }
+
+  .leftIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    margin-right: 16px;
+  }
+
+  .header h4 {
+    font-size: 15px;
+  }
+
+  .content p {
+    font-size: 13px;
+  }
+
+  .actions {
+    margin-left: 16px;
+    gap: 12px;
+  }
+
+  .pagination {
+    margin-top: 24px;
+    gap: 12px;
+  }
+
+  .pagination button {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .container > div:first-child {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px;
+  }
+
+  .actionBtn, .actionBtnDanger {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .tabs {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+  }
+
+  .tab {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .list {
+    gap: 10px;
+  }
+
+  .card {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+  }
+
+  .leftIcon {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    margin-right: 12px;
+  }
+
+  .content {
+    flex: 1 1 calc(100% - 60px);
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .header h4 {
+    font-size: 14px;
+  }
+
+  .date {
+    font-size: 11px;
+  }
+
+  .content p {
+    font-size: 12px;
+    margin: 2px 0 4px 0;
+  }
+
+  .time {
+    font-size: 11px;
+  }
+
+  .actions {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    margin-left: 0;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .deleteBtn {
+    font-size: 18px;
+    padding: 2px;
+  }
+
+  .pagination {
+    margin-top: 20px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .pagination button {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 12px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .container > div:first-child {
+    gap: 10px;
+  }
+
+  .actionBtn, .actionBtnDanger {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .tabs {
+    gap: 6px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+
+  .tab {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+
+  .list {
+    gap: 8px;
+  }
+
+  .card {
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+
+  .leftIcon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    margin-right: 10px;
+  }
+
+  .content {
+    flex: 1 1 calc(100% - 50px);
+  }
+
+  .header h4 {
+    font-size: 13px;
+  }
+
+  .date {
+    font-size: 10px;
+  }
+
+  .content p {
+    font-size: 11px;
+  }
+
+  .time {
+    font-size: 10px;
+  }
+
+  .actions {
+    top: 10px;
+    right: 10px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .deleteBtn {
+    font-size: 14px;
+  }
+
+  .pagination {
+    margin-top: 16px;
+    gap: 6px;
+  }
+
+  .pagination button {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 8px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .container > div:first-child {
+    gap: 8px;
+  }
+
+  .actionBtn, .actionBtnDanger {
+    padding: 4px 8px;
+    font-size: 10px;
+    gap: 4px;
+  }
+
+  .tabs {
+    gap: 4px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .tab {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .list {
+    gap: 6px;
+  }
+
+  .card {
+    padding: 8px 10px;
+    border-radius: 6px;
+  }
+
+  .leftIcon {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+    margin-right: 8px;
+  }
+
+  .content {
+    flex: 1 1 calc(100% - 44px);
+  }
+
+  .header h4 {
+    font-size: 12px;
+  }
+
+  .date {
+    font-size: 9px;
+  }
+
+  .content p {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  .time {
+    font-size: 9px;
+  }
+
+  .actions {
+    top: 8px;
+    right: 8px;
+    gap: 4px;
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .deleteBtn {
+    font-size: 12px;
+    padding: 1px;
+  }
+
+  .pagination {
+    margin-top: 12px;
+    gap: 4px;
+  }
+
+  .pagination button {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+}

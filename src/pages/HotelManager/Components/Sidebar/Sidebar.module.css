@@ -3,13 +3,14 @@
     border-radius: 120px;
     display: flex;
     align-items: center;
-    justify-content: left;
-    padding: 5px 10px 5px 20px;
+    justify-content: flex-start;
+    padding: 10px 14px;
     text-decoration: none;
     transition: all 0.3s ease;
     color: gray;
     height: 50px;
-    gap: 20px;
+    gap: 14px;
+    box-sizing: border-box;
 }
 
 .notActive:hover{
@@ -36,10 +37,11 @@ a:hover{
     justify-content: center;
     align-items: center;
     height: 90px;
-    
+    width: 100%;
 }
 .nav{
     padding-top: 20px;
+    width: 100%;
 }
 .logoutButton {
     background: none;
@@ -54,4 +56,41 @@ a:hover{
 .logoutButton:hover {
     background-color: #fed7d7;
     color: #c53030;
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    width: 100%;
+    padding: 12px 0;
+  }
+
+  .logo {
+    justify-content: flex-start;
+    padding: 0 18px;
+  }
+
+  .nav {
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .navList {
+    gap: 8px;
+  }
+
+  .navLink {
+    border-radius: 16px;
+    padding: 12px 18px;
+    font-size: 0.95rem;
+  }
+
+  .logoutButton {
+    padding-left: 18px;
+  }
+
+  .icon {
+    min-width: 24px;
+    display: inline-flex;
+    justify-content: center;
+  }
 }

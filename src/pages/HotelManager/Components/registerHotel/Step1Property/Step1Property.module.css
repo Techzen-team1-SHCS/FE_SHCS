@@ -141,3 +141,102 @@
 .continueBtn:hover {
   background: #648DDB;
 }
+
+@media (max-width: 992px) {
+  .container {
+    padding: 40px 24px;
+  }
+
+  .layout {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .formColumn {
+    width: 100%;
+  }
+
+  .mapColumn {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .col {
+    min-width: auto;
+  }
+
+  .continueBtn {
+    max-width: 100%;
+  }
+
+  .title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 20px 16px;
+  }
+
+  .title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .label {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .input {
+    height: 36px;
+    font-size: 13px;
+    padding: 0 8px;
+  }
+
+  .field {
+    margin-bottom: 12px;
+  }
+
+  .row {
+    gap: 12px;
+  }
+
+  .mapSearchBtn {
+    height: 36px;
+    font-size: 13px;
+    margin-top: 12px;
+  }
+
+  .mapHint {
+    font-size: 11px;
+    margin-top: 8px;
+  }
+
+  .continueBtn {
+    height: 40px;
+    font-size: 14px;
+    margin-top: 16px;
+  }
+
+  .mapTitle {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+}

@@ -587,23 +587,412 @@
   }
 }
 
-@media (max-width: 640px) {
-  .hm-chat-sidebar,
-  .hm-chat-panel-header,
-  .hm-chat-messages,
-  .hm-chat-composer {
-    padding-left: 16px;
-    padding-right: 16px;
+@media (max-width: 768px) {
+  .hm-chat-dashboard {
+    grid-template-columns: 1fr;
+    border-radius: 16px;
   }
 
-  .hm-thread-topline,
-  .hm-composer-actions,
-  .hm-chat-panel-header {
-    flex-direction: column;
-    align-items: flex-start;
+  .hm-chat-sidebar,
+  .hm-chat-panel {
+    padding: 12px;
+  }
+
+  .hm-chat-sidebar-header {
+    gap: 8px;
+  }
+
+  .hm-chat-sidebar h2 {
+    font-size: 15px;
+  }
+
+  .hm-chat-sidebar p {
+    font-size: 11px;
+  }
+
+  .hm-icon-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .hm-status-strip {
+    gap: 3px;
+  }
+
+  .hm-status-chip {
+    padding: 3px 5px;
+    font-size: 9px;
+  }
+
+  .hm-sidebar-stats {
+    gap: 4px;
+  }
+
+  .hm-stat-card {
+    min-height: 38px;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .hm-stat-card strong {
+    font-size: 14px;
+  }
+
+  .hm-stat-card span {
+    font-size: 9px;
+  }
+
+  .hm-thread-list {
+    gap: 8px;
+    padding-right: 2px;
+  }
+
+  .hm-thread-group {
+    gap: 8px;
+  }
+
+  .hm-group-header {
+    padding: 10px 12px;
+  }
+
+  .hm-thread-item {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .hm-thread-avatar,
+  .hm-group-badge {
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
+  }
+
+  .hm-thread-topline {
+    font-size: 13px;
+  }
+
+  .hm-thread-subline,
+  .hm-thread-preview {
+    font-size: 12px;
+  }
+
+  .hm-thread-footnote {
+    font-size: 11px;
   }
 
   .hm-message-bubble {
-    max-width: 94%;
+    max-width: 90%;
+    padding: 12px 14px;
+  }
+
+  .hm-message-content {
+    font-size: 13px;
+  }
+
+  .hm-message-time {
+    font-size: 11px;
+  }
+
+  .hm-chat-panel-header {
+    padding: 16px 12px;
+    gap: 12px;
+  }
+
+  .hm-chat-panel-header h3 {
+    font-size: 16px;
+  }
+
+  .hm-chat-panel-header p {
+    font-size: 11px;
+  }
+
+  .hm-connection-pill {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+
+  .hm-chat-messages {
+    padding: 16px 12px;
+    gap: 10px;
+  }
+
+  .hm-chat-composer {
+    padding: 14px 12px 16px;
+    gap: 10px;
+  }
+
+  .hm-chat-composer textarea {
+    min-height: 52px;
+    max-height: 140px;
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+
+  .hm-composer-hint {
+    font-size: 10px;
+  }
+
+  .hm-chat-composer button {
+    padding: 10px 16px;
+    font-size: 12px;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hm-chat-dashboard {
+    border-radius: 12px;
+    grid-gap: 0;
+  }
+
+  .hm-chat-sidebar {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .hm-chat-sidebar-header {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .hm-chat-kicker {
+    font-size: 10px;
+  }
+
+  .hm-chat-sidebar h2 {
+    font-size: 14px;
+  }
+
+  .hm-chat-sidebar p {
+    font-size: 10px;
+    display: none;
+  }
+
+  .hm-icon-button {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .hm-search-box {
+    padding: 6px 8px;
+  }
+
+  .hm-search-box input {
+    font-size: 12px;
+  }
+
+  .hm-status-strip {
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+
+  .hm-status-chip {
+    padding: 2px 4px;
+    font-size: 8px;
+  }
+
+  .hm-status-chip svg {
+    display: none;
+  }
+
+  .hm-sidebar-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+  }
+
+  .hm-stat-card {
+    min-height: 36px;
+    padding: 5px 6px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hm-stat-card strong {
+    font-size: 13px;
+  }
+
+  .hm-stat-card span {
+    font-size: 8px;
+  }
+
+  .hm-thread-list {
+    gap: 6px;
+    padding-bottom: 8px;
+  }
+
+  .hm-group-header {
+    padding: 8px 10px;
+  }
+
+  .hm-group-title {
+    gap: 8px;
+  }
+
+  .hm-group-title strong {
+    font-size: 13px;
+  }
+
+  .hm-group-title p {
+    font-size: 11px;
+  }
+
+  .hm-thread-item {
+    grid-template-columns: 40px minmax(0, 1fr);
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .hm-thread-avatar,
+  .hm-group-badge {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .hm-thread-topline {
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  .hm-thread-topline strong {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .hm-thread-topline-right {
+    display: none;
+  }
+
+  .hm-thread-subline {
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .hm-thread-preview {
+    font-size: 11px;
+    margin-top: 4px;
+  }
+
+  .hm-thread-footnote {
+    font-size: 10px;
+    margin-top: 6px;
+  }
+
+  .hm-thread-actions {
+    display: none;
+  }
+
+  .hm-empty-state {
+    min-height: 100px;
+    padding: 16px;
+  }
+
+  .hm-empty-state svg {
+    font-size: 24px;
+  }
+
+  .hm-empty-hero {
+    min-height: 200px;
+  }
+
+  .hm-empty-hero h4 {
+    font-size: 14px;
+  }
+
+  .hm-empty-hero p {
+    font-size: 11px;
+  }
+
+  .hm-chat-panel {
+    padding: 0;
+  }
+
+  .hm-chat-panel-header {
+    padding: 12px 10px;
+    gap: 8px;
+    border-radius: 0;
+  }
+
+  .hm-panel-title {
+    font-size: 10px;
+  }
+
+  .hm-chat-panel-header h3 {
+    font-size: 14px;
+    line-height: 1.3;
+  }
+
+  .hm-chat-panel-header p {
+    font-size: 10px;
+    display: none;
+  }
+
+  .hm-connection-pill {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .hm-connection-pill svg {
+    font-size: 12px;
+  }
+
+  .hm-chat-messages {
+    padding: 12px 10px;
+    gap: 8px;
+  }
+
+  .hm-load-more {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .hm-message-bubble {
+    max-width: 95%;
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .hm-message-content {
+    font-size: 12px;
+  }
+
+  .hm-message-time {
+    font-size: 10px;
+    margin-top: 6px;
+  }
+
+  .hm-chat-composer {
+    padding: 10px;
+    gap: 8px;
+    border-radius: 0;
+  }
+
+  .hm-chat-composer textarea {
+    min-height: 48px;
+    max-height: 120px;
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .hm-composer-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .hm-composer-hint {
+    display: none;
+  }
+
+  .hm-chat-composer button {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 11px;
+    justify-content: center;
+  }
+
+  .hm-thread-topline-right span {
+    display: none;
   }
 }

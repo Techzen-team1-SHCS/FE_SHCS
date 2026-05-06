@@ -17,15 +17,18 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .tabs {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .tab {
-  width: 100px;
+  min-width: 100px;
   padding: 6px 16px;
   border-radius: 20px;
   border: 1px solid #ccc;
@@ -47,15 +50,39 @@
   width: 220px;
 }
 
+@media (max-width: 768px) {
+  .topBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tabs {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .tab {
+    flex: 1 1 auto;
+    min-width: calc(50% - 10px);
+  }
+
+  .searchBox input {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
 .tableWrapper {
   background: white;
   border-radius: 8px;
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid #e7eef8;
 }
 
 .table {
   width: 100%;
+  min-width: 900px;
   border-collapse: collapse;
   font-size: 14px;
 }
@@ -69,6 +96,7 @@
   text-align: center;
   border-bottom: 1px dashed #edf2f9;
   font-weight: 600;
+  white-space: nowrap;
 }
 .deleteButton:disabled {
   background-color: #cccccc;
@@ -81,6 +109,7 @@
   text-align: center;
   padding: 14px;
   border-bottom: 1px dashed #edf2f9;
+  white-space: nowrap;
 }
 tr:hover td {
   background-color: lightcyan;
