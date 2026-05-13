@@ -29,6 +29,7 @@ export default function Analysis() {
     dynamicPricing,
     staffing,
     holidayWarnings,
+    selectedHotelNormalPrice,
     handleRun,
     handlePeriodChange,
     handleHotelChange,
@@ -108,7 +109,11 @@ export default function Analysis() {
 
       {/* ── Bottom 3-column row ── */}
       <div className={styles.bottomRow}>
-        <RoomPricePanel occupancyTarget={occupancyTarget} dynamicPricing={dynamicPricing} />
+        <RoomPricePanel
+          occupancyTarget={occupancyTarget}
+          dynamicPricing={dynamicPricing}
+          normalPrice={selectedHotelNormalPrice}
+        />
         <StaffPlanPanel staffing={staffing} peakForecast={peakForecast} />
         <HolidayPanel holidayWarnings={holidayWarnings} />
       </div>

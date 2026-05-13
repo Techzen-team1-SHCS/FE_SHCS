@@ -1,4 +1,3 @@
-import React from "react";
 import {
   LABEL_STAFF_PLAN,
   LABEL_HOUSEKEEPING,
@@ -11,10 +10,14 @@ import { AI_STAFF_PLAN } from "../../Mock/aiForecastData";
 import styles from "./StaffPlanPanel.module.css";
 
 function parseStaffingText(staffing = "") {
-  const houseMatch = staffing.match(/(\d+)\s*nhân\s*viên\s*dọn\s*phòng/i);
-  const recepMatch = staffing.match(/(\d+)\s*lễ\s*tân\s*\/\s*ca/i);
+  const normalized = String(staffing || "");
+
+  const roomsMatch = normalized.match(/(\d+)\s*phòng\s*có\s*khách/i);
+  const houseMatch = normalized.match(/(\d+)\s*nhân\s*viên\s*dọn\s*phòng/i);
+  const recepMatch = normalized.match(/(\d+)\s*nhân\s*viên\s*lễ\s*tân/i);
 
   return {
+    totalRooms: roomsMatch ? Number(roomsMatch[1]) : null,
     housekeeping: houseMatch ? Number(houseMatch[1]) : null,
     receptionPerShift: recepMatch ? Number(recepMatch[1]) : null,
   };
@@ -24,7 +27,7 @@ export default function StaffPlanPanel({ staffing = "", peakForecast = 0 }) {
   const parsed = parseStaffingText(staffing);
   const { housekeeping, receptionPerShift } = AI_STAFF_PLAN;
 
-  const totalRooms = peakForecast || AI_STAFF_PLAN.totalRooms;
+  const totalRooms = parsed.totalRooms ?? peakForecast ?? AI_STAFF_PLAN.totalRooms;
   const finalHousekeeping = parsed.housekeeping ?? housekeeping;
   const finalReception = parsed.receptionPerShift ?? receptionPerShift;
 

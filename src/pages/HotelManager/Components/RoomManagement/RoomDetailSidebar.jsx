@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { FiX, FiInfo, FiTag, FiList, FiAlertCircle } from "react-icons/fi";
 import { hotelService } from "../../../../services/hotelService";
@@ -10,17 +10,11 @@ const RoomDetailSidebar = ({ roomId, isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (isOpen && roomId) {
-      fetchRoomDetail();
-    }
-  });
-
-  const fetchRoomDetail = async () => {
+  const fetchRoomDetail = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await hotelService.getRoomDetail(roomId)
+      const response = await hotelService.getRoomDetail(roomId);
       if (response.status && Array.isArray(response.data)) {
         const room = response.data.find(r => r.id === roomId) || response.data[0];
         setData(room);
@@ -33,7 +27,13 @@ const RoomDetailSidebar = ({ roomId, isOpen, onClose }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [roomId]);
+
+  useEffect(() => {
+    if (isOpen && roomId) {
+      fetchRoomDetail();
+    }
+  }, [isOpen, roomId, fetchRoomDetail]);
 
   const getStatusClass = (status) => {
     switch (status?.toLowerCase()) {

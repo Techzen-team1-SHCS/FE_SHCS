@@ -1,9 +1,88 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import api from "../../../services/api";
-import { AI_FORECAST_CHART_DATA, AI_PERIOD_OPTIONS } from "../Mock/aiForecastData";
-import { filterByDays, getPeakForecast, getOccupancyTarget } from "../Helpers/aiAnalysisHelpers";
+import {
+  AI_FORECAST_CHART_DATA,
+  AI_PERIOD_OPTIONS,
+} from "../Mock/aiForecastData";
+import {
+  filterByDays,
+  getPeakForecast,
+  getOccupancyTarget,
+} from "../Helpers/aiAnalysisHelpers";
 
 const DEFAULT_HOTEL_CAPACITY = 30;
+
+function toPositiveNumber(value) {
+  if (value == null) return 0;
+  if (typeof value === "number")
+    return Number.isFinite(value) && value > 0 ? value : 0;
+
+  const raw = String(value).trim();
+  if (!raw) return 0;
+
+  const onlyNumeric = raw.replace(/[^\d.,-]/g, "");
+  if (!onlyNumeric) return 0;
+
+  const hasDot = onlyNumeric.includes(".");
+  const hasComma = onlyNumeric.includes(",");
+
+  let normalized = onlyNumeric;
+
+  if (hasDot && hasComma) {
+    normalized = normalized.replace(/\./g, "").replace(",", ".");
+  } else if (hasComma) {
+    normalized = normalized.replace(",", ".");
+  }
+
+  const n = Number(normalized);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+function pickFromObjectByKeys(source = {}, keys = []) {
+  for (const key of keys) {
+    const n = toPositiveNumber(source?.[key]);
+    if (n > 0) return n;
+  }
+  return 0;
+}
+
+function pickNormalRoomPrice(hotel = {}) {
+  const roomTypes = Array.isArray(hotel?.rooms) ? hotel.rooms : [];
+
+  const roomPriceKeys = [
+    "price",
+    "room_price",
+    "roomPrice",
+    "price_per_night",
+    "pricePerNight",
+    "base_price",
+    "basePrice",
+  ];
+
+  const normalRoom = roomTypes.find((room) => {
+    const label = String(room?.room_type || room?.roomType || "")
+      .trim()
+      .toLowerCase();
+    return label === "normal";
+  });
+
+  if (normalRoom) {
+    return pickFromObjectByKeys(normalRoom, roomPriceKeys);
+  }
+
+  const standardRoom = roomTypes.find((room) => {
+    const label = String(room?.room_type || room?.roomType || "")
+      .trim()
+      .toLowerCase();
+    return label === "standard";
+  });
+
+  if (standardRoom) {
+    return pickFromObjectByKeys(standardRoom, roomPriceKeys);
+  }
+
+  return 0;
+}
 
 function mapConfidenceToVietnamese(confidence) {
   const value = (confidence || "").toLowerCase();
@@ -28,6 +107,7 @@ export function useAIAnalysis() {
   const [apiError, setApiError] = useState("");
   const [hotels, setHotels] = useState([]);
   const [selectedHotelId, setSelectedHotelId] = useState("");
+  const [selectedHotelNormalPrice, setSelectedHotelNormalPrice] = useState(0);
 
   const [rawChartData, setRawChartData] = useState(AI_FORECAST_CHART_DATA);
   const [confidenceLevel, setConfidenceLevel] = useState("CAO");
@@ -37,15 +117,17 @@ export function useAIAnalysis() {
   const [dynamicPricing, setDynamicPricing] = useState("");
   const [staffing, setStaffing] = useState("");
   const [holidayWarnings, setHolidayWarnings] = useState([]);
-
   const chartData = useMemo(
     () => filterByDays(rawChartData, selectedPeriod.value),
     [rawChartData, selectedPeriod.value],
   );
 
   const peakForecast = getPeakForecast(chartData);
-  const occupancyTarget = getOccupancyTarget(peakForecast, DEFAULT_HOTEL_CAPACITY);
- 
+  const occupancyTarget = getOccupancyTarget(
+    peakForecast,
+    DEFAULT_HOTEL_CAPACITY,
+  );
+
   useEffect(() => {
     let mounted = true;
 
@@ -67,6 +149,7 @@ export function useAIAnalysis() {
           .map((hotel) => ({
             id: String(hotel.id),
             name: hotel.name || `Hotel #${hotel.id}`,
+            normalPrice: pickNormalRoomPrice(hotel),
           }));
 
         setHotels(normalized);
@@ -85,7 +168,9 @@ export function useAIAnalysis() {
         if (status === 401) {
           setApiError("Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn.");
         } else if (status === 403) {
-          setApiError("Bạn không có quyền Hotel Manager để xem danh sách khách sạn.");
+          setApiError(
+            "Bạn không có quyền Hotel Manager để xem danh sách khách sạn.",
+          );
         } else {
           setApiError("Không tải được danh sách khách sạn. Vui lòng thử lại.");
         }
@@ -130,7 +215,11 @@ export function useAIAnalysis() {
       setStaffing(aiResult?.advanced_insights?.staffing || "");
       setHolidayWarnings(aiResult?.advanced_insights?.holiday_warnings || []);
     } catch (error) {
-      setApiError(error?.response?.data?.message || error.message || "Không thể lấy dữ liệu AI");
+      setApiError(
+        error?.response?.data?.message ||
+          error.message ||
+          "Không thể lấy dữ liệu AI",
+      );
     } finally {
       setIsRunning(false);
     }
@@ -143,6 +232,11 @@ export function useAIAnalysis() {
   const handleHotelChange = useCallback((hotelId) => {
     setSelectedHotelId(String(hotelId));
   }, []);
+
+  useEffect(() => {
+    const selected = hotels.find((hotel) => hotel.id === selectedHotelId);
+    setSelectedHotelNormalPrice(selected?.normalPrice || 0);
+  }, [hotels, selectedHotelId]);
 
   return {
     selectedPeriod,
@@ -160,6 +254,7 @@ export function useAIAnalysis() {
     dynamicPricing,
     staffing,
     holidayWarnings,
+    selectedHotelNormalPrice,
     handleRun,
     handlePeriodChange,
     handleHotelChange,
