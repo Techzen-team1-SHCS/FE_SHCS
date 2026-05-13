@@ -183,7 +183,42 @@ export function useAIAnalysis() {
       mounted = false;
     };
   }, []);
+  useEffect(() => {
+  if (!selectedHotelId) return;
+  if (isRunning) return;
 
+  const fetchLatest = async () => {
+    try {
+      const res = await api.get("/auth/forecast/latest", {
+        params: { hotel_id: selectedHotelId },
+      });
+
+      const ai = res?.data?.ai_result;
+      if (!ai) return;
+
+      // 1. CHART
+      setRawChartData(mapForecastToChartData(ai.forecast || []));
+
+      // 2. TRUST PANEL
+      setConfidenceLevel(mapConfidenceToVietnamese(ai.confidence));
+      setIsStable(!ai.deviation);
+
+      // 3. ADVICE PANEL
+      setSuggestedAction(ai.suggested_action || "");
+      setExplanation(ai.explanation || "");
+
+      // 4. ADVANCED INSIGHTS (BOTTOM ROW)
+      setDynamicPricing(ai?.advanced_insights?.dynamic_pricing || "");
+      setStaffing(ai?.advanced_insights?.staffing || "");
+      setHolidayWarnings(ai?.advanced_insights?.holiday_warnings || []);
+
+    } catch (err) {
+      console.log("cache load error", err);
+    }
+  };
+
+  fetchLatest();
+}, [selectedHotelId, isRunning]);
   const handleRun = useCallback(async () => {
     setIsRunning(true);
     setApiError("");

@@ -64,7 +64,7 @@ export default function RoomPricePanel({
     normalPrice,
     dynamicPricing,
   );
-  const displayedTarget = recommendedPrice ? formatVnd(recommendedPrice) : "";
+  const displayedTarget = recommendedPrice ? formatVnd(recommendedPrice*1000) : "";
   return (
     <div className={styles.panel}>
       <div className={styles.header}>

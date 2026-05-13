@@ -41,7 +41,7 @@ export default function Analysis() {
       {/* ── Top bar ── */}
       <div className={styles.topBar}>
         <div className={styles.titleGroup}>
-          <h1 className={styles.pageTitle}>Thống Kê Dự Báo Lượng Khách AI</h1>
+          <h1 className={styles.pageTitle}>Thống Kê Dự Báo Lượng Khách</h1>
           <p className={styles.pageSubtitle}>{LABEL_SUB_TITLE}</p>
         </div>
 

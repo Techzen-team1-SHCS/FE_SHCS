@@ -15,7 +15,7 @@ export const useStaffManagement = () => {
   const { data: staffList = [], isLoading } = useQuery({
     queryKey: ["staff"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:8000/api/auth/hotel-manager/staff", {
+      const res = await axios.get(import.meta.env.VITE_API_URL + "/auth/hotel-manager/staff", {
         headers: { Authorization: `Bearer ${activeToken}` },
       });
       return res.data.status === 200 ? res.data.data : [];
@@ -26,7 +26,7 @@ export const useStaffManagement = () => {
   // ─── 2. Mutations ─────────────────────────────────────────────────────────
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
-      const res = await axios.delete(`http://localhost:8000/api/auth/hotel-manager/staff/${id}`, {
+      const res = await axios.delete(import.meta.env.VITE_API_URL + `/auth/hotel-manager/staff/${id}`, {
         headers: { Authorization: `Bearer ${activeToken}` },
       });
       return res.data;
@@ -43,7 +43,7 @@ export const useStaffManagement = () => {
 
   const addMutation = useMutation({
     mutationFn: async (newStaff) => {
-      const res = await axios.post("http://localhost:8000/api/auth/hotel-manager/staff", newStaff, {
+      const res = await axios.post(import.meta.env.VITE_API_URL + "/auth/hotel-manager/staff", newStaff, {
         headers: { Authorization: `Bearer ${activeToken}` },
       });
       return res.data;
@@ -60,7 +60,7 @@ export const useStaffManagement = () => {
 
   const editMutation = useMutation({
     mutationFn: async ({ id, updatedStaff }) => {
-      const res = await axios.put(`http://localhost:8000/api/auth/hotel-manager/staff/${id}`, updatedStaff, {
+      const res = await axios.put(import.meta.env.VITE_API_URL + `/auth/hotel-manager/staff/${id}`, updatedStaff, {
         headers: { Authorization: `Bearer ${activeToken}` },
       });
       return res.data;
