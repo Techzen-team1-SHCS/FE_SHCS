@@ -136,3 +136,154 @@
 .runBtn:not(:disabled) {
   animation: pulse 2.5s ease-in-out infinite;
 }
+
+@media (max-width: 1024px) {
+  .page {
+    padding: 20px 24px;
+  }
+
+  .mainGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .pageTitle {
+    font-size: 20px;
+  }
+
+  .bottomRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 16px 16px;
+  }
+
+  .topBar {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .periodLabel {
+    grid-column: 1 / -1;
+    font-size: 11px;
+  }
+
+  .periodSelect {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .runBtn {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-content: center;
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .pageTitle {
+    font-size: 18px;
+  }
+
+  .pageSubtitle {
+    font-size: 11px;
+  }
+
+  .bottomRow {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .mainGrid {
+    gap: 14px;
+  }
+
+  .leftCol {
+    gap: 14px;
+  }
+
+  .rightCol {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 12px 12px;
+  }
+
+  .topBar {
+    gap: 10px;
+  }
+
+  .titleGroup {
+    gap: 2px;
+  }
+
+  .pageTitle {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .pageSubtitle {
+    font-size: 10px;
+  }
+
+  .controls {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .periodLabel {
+    font-size: 10px;
+    display: none;
+  }
+
+  .periodSelect {
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .runBtn {
+    width: 100%;
+    padding: 7px 12px;
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .runIcon {
+    font-size: 12px;
+  }
+
+  .mainGrid {
+    gap: 12px;
+  }
+
+  .leftCol {
+    gap: 12px;
+  }
+
+  .rightCol {
+    gap: 10px;
+  }
+
+  .bottomRow {
+    gap: 12px;
+    margin-top: 12px;
+  }
+}
