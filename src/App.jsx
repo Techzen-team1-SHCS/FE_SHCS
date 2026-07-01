@@ -22,7 +22,7 @@ import Dashboard from "./pages/Admin/Dashboard/Dashboard";
 import BookingManage from "./pages/Admin/BookingManage/Main/BookingManage";
 import WishList from "./pages/User/WishList/Main/WishList";
 import Notification from "./pages/Admin/Notification/Notification";
-import HotelManage from "./pages/Admin/HotelManage/HotelManage";
+import HotelManage from "./pages/Admin/HotelManage/Main/HotelManage";
 import UserManage from "./pages/Admin/UserManage/Main/UserManage";
 import LoginPage from "./pages/Admin/LoginPage/LoginPage";
 import Help from "./pages/User/Help/Main/Help";
